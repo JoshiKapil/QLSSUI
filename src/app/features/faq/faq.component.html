@@ -1,0 +1,368 @@
+<!-- NAVBAR -->
+
+<!-- HERO -->
+<section class="faq-hero">
+  <div class="container">
+    <div class="faq-hero__inner reveal">
+      <span class="faq-eyebrow why-eyebrow">Help Center</span>
+      <h1>Frequently Asked Questions</h1>
+      <p>
+        Everything you need to know about QLSS Business Consulting our
+        services, process, fees, and the results we deliver.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ ACCORDION -->
+<section class="faq-section">
+  <div class="container">
+    <div class="faq-list-wrap">
+      
+      <!-- Q1 -->
+      <div class="q-block-item reveal" data-delay="0" [class.q-active-panel]="openIndex === 0">
+        <button class="q-trigger-btn" (click)="toggleFaq(0); $event.stopPropagation()" [attr.aria-expanded]="openIndex === 0">
+          <span class="faq-q__text">What services does QLSS Business Consulting offer?</span>
+          <span class="faq-q__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" class="arrow-svg">
+              <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="q-content-panel">
+          <div class="faq-a__inner">
+            <p>
+              QLSS provides a comprehensive range of consulting services
+              focused on driving efficiency and growth. Core areas include:
+            </p>
+            <ul class="faq-list">
+              <li><strong>Management Systems</strong> ISO certification support (QMS, EMS, OHSMS)</li>
+              <li><strong>Operational Excellence</strong> Lean Six Sigma, Kaizen, TPM, TQM</li>
+              <li><strong>Training &amp; Development</strong> Customised corporate training programmes</li>
+              <li><strong>Sustainability &amp; ESG</strong> Reporting, audits, carbon footprint, green building</li> 
+              <li><strong>Supply Chain Management &amp; Logistics</strong> Warehouse optimisation, global SCM</li>
+              <li><strong>Data Analytics</strong> Advanced Excel, Power BI, Machine Learning</li> 
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="q-block-item reveal" data-delay="1" [class.q-active-panel]="openIndex === 1">
+        <button class="q-trigger-btn" (click)="toggleFaq(1); $event.stopPropagation()" [attr.aria-expanded]="openIndex === 1">
+          <span class="faq-q__text">How do I know if my business needs a consultant?</span>
+          <span class="faq-q__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" class="arrow-svg">
+              <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="q-content-panel">
+          <div class="faq-a__inner">
+            <p>Consider engaging a consultant when your business is facing challenges such as:</p>
+            <ul class="faq-list">
+              <li>Stagnant growth or declining profitability</li>
+              <li>Inefficient processes and recurring quality issues</li>
+              <li>The need to implement complex changes like new ISO standards or system overhauls</li>
+              <li>Lack of in-house expertise for a specific initiative</li>
+            </ul>
+            <p class="faq-a__note">
+              QLSS provides specialised knowledge and an objective external perspective to deliver effective, lasting solutions.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="q-block-item reveal" data-delay="2" [class.q-active-panel]="openIndex === 2">
+        <button class="q-trigger-btn" (click)="toggleFaq(2); $event.stopPropagation()" [attr.aria-expanded]="openIndex === 2">
+          <span class="faq-q__text">What is the typical process for a consulting engagement?</span>
+          <span class="faq-q__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" class="arrow-svg">
+              <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="q-content-panel">
+          <div class="faq-a__inner">
+            <p>The process involves four key phases:</p>
+            <div class="faq-phases">
+              <div class="faq-phase">
+                <span class="faq-phase__num">1</span>
+                <div>
+                  <strong>Discovery &amp; Analysis</strong>
+                  <p>Defining the problem and analysing the current state of operations.</p>
+                </div>
+              </div>
+              <div class="faq-phase">
+                <span class="faq-phase__num">2</span>
+                <div>
+                  <strong>Strategy &amp; Recommendation</strong>
+                  <p>Developing customised solutions and actionable roadmaps.</p>
+                </div>
+              </div>
+              <div class="faq-phase">
+                <span class="faq-phase__num">3</span>
+                <div>
+                  <strong>Implementation &amp; Support</strong>
+                  <p>Working alongside your team to execute the plan with hands-on support.</p>
+                </div>
+              </div>
+              <div class="faq-phase">
+                <span class="faq-phase__num">4</span>
+                <div>
+                  <strong>Review &amp; Handover</strong>
+                  <p>Measuring results and ensuring complete knowledge transfer to your team.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="q-block-item reveal" data-delay="3" [class.q-active-panel]="openIndex === 3">
+        <button class="q-trigger-btn" (click)="toggleFaq(3); $event.stopPropagation()" [attr.aria-expanded]="openIndex === 3">
+          <span class="faq-q__text">How long does a typical engagement last?</span>
+          <span class="faq-q__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" class="arrow-svg">
+              <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="q-content-panel">
+          <div class="faq-a__inner">
+            <p>Duration depends on the scope and complexity of the project:</p>
+            <ul class="faq-list">
+              <li><strong>Targeted audits or training workshops</strong> a few days to a few weeks</li>
+              <li><strong>Operational Excellence programmes</strong> typically 3 to 6 months</li>
+              <li><strong>Full Management System certifications</strong> 3 to 6 months or more</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="q-block-item reveal" data-delay="4" [class.q-active-panel]="openIndex === 4">
+        <button class="q-trigger-btn" (click)="toggleFaq(4); $event.stopPropagation()" [attr.aria-expanded]="openIndex === 4">
+          <span class="faq-q__text">What industries does QLSS serve?</span>
+          <span class="faq-q__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" class="arrow-svg">
+              <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="q-content-panel">
+          <div class="faq-a__inner">
+            <p>Our expertise is transferable across a wide range of sectors including:</p>
+            <ul class="faq-list">
+              <li>Manufacturing &amp; Automotive</li>
+              <li>Service Industries</li> 
+              <li>Logistics &amp; Warehousing</li>
+              <li>Energy &amp; Sustainability</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="q-block-item reveal" data-delay="5" [class.q-active-panel]="openIndex === 5">
+        <button class="q-trigger-btn" (click)="toggleFaq(5); $event.stopPropagation()" [attr.aria-expanded]="openIndex === 5">
+          <span class="faq-q__text">What is the expected Return on Investment (ROI) from working with QLSS?</span>
+          <span class="faq-q__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" class="arrow-svg">
+              <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="q-content-panel">
+          <div class="faq-a__inner">
+            <p>ROI is delivered through four key levers:</p>
+            <ul class="faq-list">
+              <li><strong>Cost Reduction</strong> identifying and eliminating waste across processes</li>
+              <li><strong>Revenue Growth</strong> enhancing product/service quality and delivery speed</li>
+              <li><strong>Risk Mitigation</strong> ISO compliance and robust quality management</li>
+              <li><strong>Knowledge Transfer</strong> equipping your internal teams to sustain improvements</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q7 -->
+      <div class="q-block-item reveal" data-delay="6" [class.q-active-panel]="openIndex === 6">
+        <button class="q-trigger-btn" (click)="toggleFaq(6); $event.stopPropagation()" [attr.aria-expanded]="openIndex === 6">
+          <span class="faq-q__text">How are your consulting fees structured?</span>
+          <span class="faq-q__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" class="arrow-svg">
+              <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="q-content-panel">
+          <div class="faq-a__inner">
+            <p>Fees are based on project scope and complexity. We typically use:</p>
+            <ul class="faq-list">
+              <li><strong>Fixed-fee structure</strong> for well-defined projects with clear deliverables</li>
+              <li><strong>Retainer / time-and-materials model</strong> for flexible, long-term engagements</li>
+            </ul>
+            <p class="faq-a__note">
+              Contact us for a complimentary initial consultation and a tailored proposal.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="q-block-item reveal" data-delay="7" [class.q-active-panel]="openIndex === 7">
+        <button class="q-trigger-btn" (click)="toggleFaq(7); $event.stopPropagation()" [attr.aria-expanded]="openIndex === 7">
+          <span class="faq-q__text">Will QLSS only advise us, or will you help implement the changes too?</span>
+          <span class="faq-q__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" class="arrow-svg">
+              <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="q-content-panel">
+          <div class="faq-a__inner">
+            <p>
+              We are <strong>active partners in implementation</strong>, not just advisors. Our consultants provide hands-on support,
+              training, and coaching to ensure new systems and processes are embedded successfully and sustainably within your organisation.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q9 -->
+      <div class="q-block-item reveal" data-delay="8" [class.q-active-panel]="openIndex === 8">
+        <button class="q-trigger-btn" (click)="toggleFaq(8); $event.stopPropagation()" [attr.aria-expanded]="openIndex === 8">
+          <span class="faq-q__text">What makes QLSS different from other consulting firms?</span>
+          <span class="faq-q__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" class="arrow-svg">
+              <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="q-content-panel">
+          <div class="faq-a__inner">
+            <p>
+              Our focus is on <strong>practical, executable solutions</strong> and genuine knowledge transfer. We do not just deliver reports we build
+              internal capability within your organisation, utilising multi-disciplinary experts with real-world industry experience.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q10 -->
+      <div class="q-block-item reveal" data-delay="9" [class.q-active-panel]="openIndex === 9">
+        <button class="q-trigger-btn" (click)="toggleFaq(9); $event.stopPropagation()" [attr.aria-expanded]="openIndex === 9">
+          <span class="faq-q__text">How do we start the conversation with QLSS?</span>
+          <span class="faq-q__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" class="arrow-svg">
+              <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="q-content-panel">
+          <div class="faq-a__inner">
+            <p>
+              The best first step is to <strong>schedule a complimentary initial consultation</strong>. This gives you the opportunity to discuss your challenges
+              and goals with our experts, with no obligation. Reach us at:
+            </p>
+            <ul class="faq-list">
+              <li>Email: <a href="mailto:qlssbusinessconsulting@gmail.com">qlssbusinessconsulting@gmail.com</a></li>
+              <li>Phone: <a href="tel:+918180955888">+91 8180955888</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q11 -->
+      <div class="q-block-item reveal" data-delay="10" [class.q-active-panel]="openIndex === 10">
+        <button class="q-trigger-btn" (click)="toggleFaq(10); $event.stopPropagation()" [attr.aria-expanded]="openIndex === 10">
+          <span class="faq-q__text">How can I verify the authenticity of a QLSS training certificate?</span>
+          <span class="faq-q__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" class="arrow-svg">
+              <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="q-content-panel">
+          <div class="faq-a__inner">
+            <p>
+              All certificates can be verified directly on our website using the unique identifier printed on the certificate. Our
+              certifications are industry-recognised and affirmed by leading organisations in quality and operational management.
+            </p>
+            <p class="faq-a__note">
+              Visit the <a routerLink="/verify">Verify Certificate</a> page and enter your certificate number to confirm its authenticity instantly.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q12 -->
+      <div class="q-block-item reveal" data-delay="11" [class.q-active-panel]="openIndex === 11">
+        <button class="q-trigger-btn" (click)="toggleFaq(11); $event.stopPropagation()" [attr.aria-expanded]="openIndex === 11">
+          <span class="faq-q__text">What is the background and experience level of QLSS trainers?</span>
+          <span class="faq-q__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" class="arrow-svg">
+              <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="q-content-panel">
+          <div class="faq-a__inner">
+            <p>
+              All QLSS trainers are <strong>certified subject matter experts</strong> with more than <strong>20 years of hands-on industry experience</strong> in fields including:
+            </p>
+            <ul class="faq-list">
+              <li>Lean Six Sigma (Green Belt, Black Belt)</li>
+              <li>ISO Management Systems (9001, 14001, 45001, IATF 16949)</li>
+              <li>Data Analytics Advanced Excel, Power BI</li>
+              <li>TPM, TQM, APQP, FMEA, SPC</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q13 -->
+      <div class="q-block-item reveal" data-delay="12" [class.q-active-panel]="openIndex === 12">
+        <button class="q-trigger-btn" (click)="toggleFaq(12); $event.stopPropagation()" [attr.aria-expanded]="openIndex === 12">
+          <span class="faq-q__text">Does QLSS offer customised training programmes for corporate teams?</span>
+          <span class="faq-q__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" class="arrow-svg">
+              <path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="q-content-panel">
+          <div class="faq-a__inner">
+            <p>
+              Yes. We specialise in developing <strong>fully customised training programmes</strong> tailored
+              to your company's specific industry, operational challenges, and strategic goals. Whether you need a single workshop or a
+              multi-module development journey, we design it around your team's needs.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ─── CTA Strip ─── -->
+    <div class="faq-cta reveal">
+      <div class="faq-cta__text">
+        <h3>Still have questions?</h3>
+        <p>
+          Our team is ready to help. Reach out and we'll get back to you within 24 hours.
+        </p>
+      </div>
+      <a routerLink="/contact" class="faq-cta__btn">
+        Contact Us
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->

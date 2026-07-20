@@ -1,0 +1,1031 @@
+// ================================================================
+//  _dataAnalytics.scss    QLSS Data Analytics & Machine Learning Page
+//  Mirrors _operationalExcellence.scss structure exactly.
+//  All class names use da- prefix to avoid conflicts.
+//
+//  Palette: same CSS variables as OE page
+//    --primary        #5790E1
+//    --secondary      #83AAE3
+//    --accent         #CEE1FC
+//    --text-dark      #000B1D
+//    --text-light     #FFFFFF
+//    --bg-light       #EBF2FD
+//    --bg-dark        #171818
+//    --gray-mid       #6D6E70
+// ================================================================
+
+@use "../utilities/breakpoints" as *;
+
+// ================================================================
+// KEYFRAMES   same as OE
+// ================================================================
+
+@keyframes da-fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes da-blobFloat {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(12px, -16px) scale(1.03);
+  }
+}
+
+@keyframes da-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(87, 144, 225, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(87, 144, 225, 0);
+  }
+}
+
+// ================================================================
+// SCROLL REVEAL   same pattern as OE
+// ================================================================
+
+.reveal {
+  opacity: 0;
+  transform: translateY(44px);
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
+
+  &.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.reveal-delay-1 {
+  transition-delay: 0.1s;
+}
+.reveal-delay-2 {
+  transition-delay: 0.2s;
+}
+.reveal-delay-3 {
+  transition-delay: 0.3s;
+}
+
+// ================================================================
+// SHARED UTILITIES
+// ================================================================
+
+.da-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 5px 14px;
+  background: rgba(206, 225, 252, 0.15);
+  border: 1px solid rgba(206, 225, 252, 0.3);
+  border-radius: 40px;
+  margin-bottom: 18px;
+
+  i {
+    font-size: 11px;
+  }
+}
+
+.da-eyebrow-dark {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: var(--primary);
+  padding: 4px 14px;
+  background: rgba(87, 144, 225, 0.08);
+  border: 1px solid rgba(87, 144, 225, 0.18);
+  border-radius: 40px;
+  margin-bottom: 16px;
+}
+
+.da-eyebrow-light {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 4px 14px;
+  background: rgba(206, 225, 252, 0.12);
+  border: 1px solid rgba(206, 225, 252, 0.22);
+  border-radius: 40px;
+  margin-bottom: 16px;
+}
+
+.da-section-title {
+  font-size: clamp(26px, 3.5vw, 40px);
+  font-weight: 700;
+  color: var(--text-dark);
+  font-family: var(--font-heading);
+  line-height: 1.2;
+  margin: 0 0 12px;
+
+  &--light {
+    color: var(--text-light);
+  }
+}
+
+.da-accent-text {
+  color: var(--primary);
+}
+.da-accent-text--light {
+  color: var(--accent);
+}
+
+.da-section-sub--light {
+  font-size: 15.5px;
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.75;
+}
+
+.da-section-header {
+  text-align: center;
+  margin-bottom: 56px;
+
+  @include mobile {
+    margin-bottom: 40px;
+  }
+}
+
+.da-divider {
+  width: 52px;
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  margin: 0 0 20px;
+}
+
+// Shared buttons  identical to OE
+.da-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  border: none;
+
+  i {
+    transition: transform 0.3s ease;
+  }
+  &:hover i {
+    transform: translateX(4px);
+  }
+
+  &--primary {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: var(--text-light);
+    box-shadow: 0 6px 20px rgba(87, 144, 225, 0.32);
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(87, 144, 225, 0.44);
+      color: var(--text-light);
+    }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.85);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    &:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--text-light);
+      transform: translateY(-2px);
+    }
+  }
+
+  &--white {
+    background: var(--text-light);
+    color: var(--primary);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.16);
+    &:hover {
+      background: var(--secondary);
+      color: var(--text-light);
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// ================================================================
+// 1. HERO
+// ================================================================
+
+.da-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 100px;
+  overflow: hidden;
+  max-width: 100%;
+
+  @include tablet {
+    min-height: auto;
+    padding-top: 90px;
+  }
+
+  @include mobile {
+    min-height: auto;
+    padding-top: 80px;
+  }
+
+    &__bg{
+    position: absolute;
+    inset: 0;
+    background-image: url("../../assets/img/dataanalytics.png");
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+    opacity: 0.2;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      140deg,
+      rgba(11, 29, 57, 0.9) 0%,
+      rgba(15, 35, 75, 0.78) 50%,
+      rgba(87, 144, 225, 0.22) 100%
+    );
+    z-index: 1;
+  }
+
+  &__dot {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 2;
+    animation: da-blobFloat 8s ease-in-out infinite;
+
+    &--1 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(
+        circle,
+        rgba(87, 144, 225, 0.18),
+        transparent 65%
+      );
+      top: -100px;
+      right: -100px;
+      animation-delay: 0s;
+    }
+    &--2 {
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(
+        circle,
+        rgba(206, 225, 252, 0.1),
+        transparent 65%
+      );
+      bottom: 10%;
+      left: -60px;
+      animation-delay: 3s;
+    }
+    &--3 {
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(
+        circle,
+        rgba(131, 170, 227, 0.13),
+        transparent 65%
+      );
+      top: 40%;
+      right: 20%;
+      animation-delay: 5s;
+    }
+  }
+
+  .container {
+    position: relative;
+    z-index: 3;
+  }
+
+  &__content {
+    max-width: 700px;
+    padding: 60px 0 40px;
+    @include tablet {
+      padding: 50px 0 32px;
+    }
+  }
+
+  &__title {
+    font-size: clamp(36px, 5.5vw, 68px);
+    font-weight: 800;
+    color: var(--text-light);
+    font-family: var(--font-heading);
+    line-height: 1.08;
+    margin: 0 0 22px;
+    letter-spacing: -1px;
+    @include mobile {
+      letter-spacing: -0.5px;
+    }
+  }
+
+  &__accent {
+    color: var(--accent);
+  }
+
+  &__sub {
+    font-size: clamp(14px, 1.8vw, 17px);
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.8;
+    max-width: 580px;
+    margin-bottom: 32px;
+  }
+
+  &__ctas {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  &__stats {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-md);
+    padding: 20px 32px;
+    margin-bottom: 60px;
+    width: fit-content;
+
+    @include tablet {
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 40px;
+      padding: 16px 24px;
+    }
+    @include mobile {
+      width: 100%;
+      max-width: 100%;
+      justify-content: space-around;
+      padding: 12px 10px;
+      gap: 4px;
+    }
+  }
+}
+
+.da-hstat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 32px;
+
+  @include laptop {
+    padding: 0 20px;
+  }
+  @include tablet {
+    padding: 6px 14px;
+  }
+  @include mobile {
+    padding: 6px 8px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__num {
+    font-size: clamp(24px, 3vw, 34px);
+    font-weight: 800;
+    color: var(--text-light);
+    font-family: var(--font-heading);
+    line-height: 1;
+    background: linear-gradient(135deg, var(--text-light), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  &__label {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 500;
+    margin-top: 4px;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.3;
+  }
+}
+
+.da-hstat-div {
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+  @include mobile {
+    display: none;
+  }
+}
+
+// ================================================================
+// 2. INTRO
+// ================================================================
+
+.da-intro {
+  padding: 100px 0;
+  background: var(--text-light);
+  overflow: hidden;
+
+  @include laptop {
+    padding: 80px 0;
+  }
+  @include tablet {
+    padding: 70px 0;
+  }
+  @include mobile {
+    padding: 56px 0;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 72px;
+    align-items: center;
+
+    @include laptop {
+      gap: 52px;
+    }
+    @include tablet {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+  }
+
+  &__text {
+    p {
+      font-size: 15.5px;
+      color: var(--gray-mid);
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 24px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14.5px;
+      color: var(--text-dark);
+      font-weight: 500;
+      padding: 12px 16px;
+      background: var(--bg-light);
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--primary);
+
+      i {
+        color: var(--primary);
+        font-size: 16px;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+    }
+  }
+
+  &__img-wrap {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 20px 56px rgba(87, 144, 225, 0.16);
+    position: relative;
+
+    img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    &:hover img {
+      transform: scale(1.04);
+    }
+  }
+
+  &__image {
+    position: relative;
+    @include tablet {
+      order: -1;
+    }
+  }
+}
+
+.da-cert-badge {
+  position: absolute;
+  bottom: -20px;
+  right: -16px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 30px rgba(87, 144, 225, 0.35);
+  color: var(--text-light);
+  animation: da-pulse 3s ease infinite;
+
+  @include mobile {
+    right: 0;
+    bottom: -12px;
+    padding: 12px 16px;
+  }
+
+  i {
+    font-size: 24px;
+    color: var(--accent);
+  }
+  strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  span {
+    font-size: 12px;
+    opacity: 0.82;
+  }
+}
+
+// ================================================================
+// 3. SERVICES GRID
+// ================================================================
+
+.da-services {
+  position: relative;
+  padding: 100px 0;
+  overflow: hidden;
+
+  @include tablet {
+    padding: 72px 0;
+  }
+  @include mobile {
+    padding: 56px 0;
+  }
+
+  &__bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      145deg,
+      var(--bg-dark) 0%,
+      #1a2d5a 45%,
+      var(--primary) 100%
+    );
+    z-index: 0;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.03) 1px,
+        transparent 1px
+      );
+      background-size: 30px 30px;
+    }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+
+    @include laptop {
+      gap: 20px;
+    }
+    @include tablet {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+    @include mobile {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+}
+
+// Service card  identical to OE card
+.da-card {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: var(--radius-md);
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  transition:
+    transform 0.35s ease,
+    background 0.35s ease,
+    border-color 0.35s ease;
+  backdrop-filter: blur(6px);
+  overflow: hidden;
+
+  @include mobile {
+    padding: 26px 22px;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  &:hover {
+    transform: translateY(-6px);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(206, 225, 252, 0.22);
+    &::before {
+      transform: scaleX(1);
+    }
+    .da-card__icon {
+      transform: scale(1.1) rotate(-5deg);
+    }
+  }
+
+  &__icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(87, 144, 225, 0.32);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+
+    i {
+      color: var(--text-light);
+      font-size: 20px;
+    }
+  }
+
+  &__num {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--accent);
+    opacity: 0.6;
+  }
+
+  h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-light);
+    font-family: var(--font-heading);
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  p {
+    font-size: 13.5px;
+    color: rgba(255, 255, 255, 0.66);
+    line-height: 1.72;
+    flex: 1;
+    margin: 0;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    padding: 0;
+    margin: 4px 0 0;
+
+    li {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      color: var(--accent);
+      padding: 3px 9px;
+      background: rgba(206, 225, 252, 0.1);
+      border: 1px solid rgba(206, 225, 252, 0.18);
+      border-radius: 20px;
+    }
+  }
+}
+
+// ================================================================
+// 4. TOOLS GRID  (mirrors .oe-standards)
+// ================================================================
+
+.da-tools {
+  padding: 100px 0;
+  background: var(--text-light);
+  overflow: hidden;
+
+  @include tablet {
+    padding: 72px 0;
+  }
+  @include mobile {
+    padding: 56px 0;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+
+    @include laptop {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @include tablet {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    @include mobile {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+  }
+}
+
+.da-tool {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 28px 20px;
+  background: var(--bg-light);
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+
+  &:hover {
+    border-color: var(--primary);
+    background: var(--text-light);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-4px);
+  }
+
+  i {
+    font-size: 28px;
+    color: var(--primary);
+  }
+
+  strong {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-dark);
+    font-family: var(--font-heading);
+  }
+
+  span {
+    font-size: 12px;
+    color: var(--gray-mid);
+    line-height: 1.5;
+  }
+}
+
+// ================================================================
+// 5. EXPERT PROFILE  (mirrors .oe-founder)
+// ================================================================
+
+.da-expert {
+  padding: 100px 0;
+  background: var(--bg-light);
+  overflow: hidden;
+
+  @include tablet {
+    padding: 72px 0;
+  }
+  @include mobile {
+    padding: 56px 0;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 72px;
+    align-items: center;
+
+    @include laptop {
+      grid-template-columns: 300px 1fr;
+      gap: 52px;
+    }
+    @include tablet {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+
+  &__img-wrap {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 20px 56px rgba(87, 144, 225, 0.16);
+
+    img {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    &:hover img {
+      transform: scale(1.04);
+    }
+
+    @include tablet {
+      max-height: 360px;
+      img {
+        aspect-ratio: unset;
+        height: 360px;
+      }
+    }
+  }
+
+  &__content {
+    p {
+      font-size: 15.5px;
+      color: var(--gray-mid);
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+  }
+
+  &__role {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 16px !important;
+  }
+
+  &__certs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+  }
+}
+
+.da-cert-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--text-light);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--primary);
+  font-size: 13.5px;
+  color: var(--text-dark);
+  font-weight: 500;
+
+  i {
+    color: var(--primary);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+}
+
+// ================================================================
+// 6. CTA  (mirrors .oe-cta)
+// ================================================================
+
+.da-cta {
+  position: relative;
+  padding: 90px 0;
+  overflow: hidden;
+
+  @include mobile {
+    padding: 64px 0;
+  }
+
+  &__bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--bg-dark) 100%);
+    z-index: 0;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.03) 1px,
+        transparent 1px
+      );
+      background-size: 22px 22px;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(206, 225, 252, 0.07),
+        transparent 70%
+      );
+      right: -180px;
+      top: -280px;
+      pointer-events: none;
+    }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 48px;
+
+    @include tablet {
+      flex-direction: column;
+      text-align: center;
+      gap: 32px;
+    }
+  }
+
+  &__text {
+    h2 {
+      font-size: clamp(26px, 4vw, 44px);
+      font-weight: 800;
+      color: var(--text-light);
+      font-family: var(--font-heading);
+      line-height: 1.15;
+      margin-bottom: 14px;
+
+      span {
+        color: var(--accent);
+      }
+    }
+
+    p {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.75;
+      max-width: 520px;
+      margin: 0;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 14px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+
+    @include tablet {
+      justify-content: center;
+    }
+  }
+}

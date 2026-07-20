@@ -1,0 +1,145 @@
+<section class="certification-form-page">
+  <div class="container certification-form-shell">
+    <div class="certification-form-header">
+      <span class="auth-eyebrow">Certification</span>
+      <h1>Fill Certification Form</h1>
+      <p>
+        Submit your certification request details. Payment setup is prepared and
+        will be enabled after Razorpay keys are configured.
+      </p>
+    </div>
+
+    <form class="certification-form" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-grid">
+        <label class="form-field training-search-field">
+          Training
+          <div class="training-search-control">
+            <button
+              class="btn btn-outline btn-small training-dropdown-toggle"
+              type="button"
+              (click)="toggleTrainingDropdown()"
+              aria-haspopup="listbox"
+              [attr.aria-expanded]="isTrainingDropdownOpen"
+            >
+              {{ getSelectedTrainingLabel() }}
+              <span class="dropdown-icon">&#9662;</span>
+            </button>
+            <div
+              class="training-search-menu"
+              *ngIf="isTrainingDropdownOpen"
+              role="listbox"
+            >
+              <input
+                type="text"
+                [(ngModel)]="trainingSearch"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="Search training"
+                autocomplete="off"
+                (input)="onTrainingSearchChange()"
+              />
+              <button
+                class="training-search-option"
+                type="button"
+                *ngFor="let training of filteredTrainingList"
+                (mousedown)="selectTrainingFromDropdown(training)"
+                role="option"
+              >
+                {{ getTrainingLabel(training) }}
+              </button>
+              <div
+                class="training-search-empty"
+                *ngIf="!filteredTrainingList.length"
+              >
+                No training found
+              </div>
+            </div>
+          </div>
+          <small>{{ fieldError("trainingId", "Training") }}</small>
+        </label>
+        <label class="form-field"
+          >Name
+          <input type="text" formControlName="name" maxlength="200" />
+          <small>{{ fieldError("name", "Name") }}</small>
+        </label>
+
+        <label class="form-field"
+          >Mobile
+          <input type="text" formControlName="mobile" maxlength="10" />
+          <small>{{ fieldError("mobile", "Mobile") }}</small>
+        </label>
+
+        <label class="form-field"
+          >Email
+          <input type="email" formControlName="email" maxlength="200" />
+          <small>{{ fieldError("email", "Email") }}</small>
+        </label>
+
+        <label class="form-field"
+          >Trainer Name
+          <select formControlName="trainerId">
+            <option value="">
+              {{ isLoadingTrainers ? "Loading trainers..." : "Select Trainer" }}
+            </option>
+            <option
+              *ngFor="let trainer of trainers"
+              [value]="trainer.trainerId"
+            >
+              {{ trainer.name }}
+            </option>
+          </select>
+          <small>{{ fieldError("trainerId", "Trainer Name") }}</small>
+        </label>
+
+        <label class="form-field"
+          >Company/Location
+          <select formControlName="location">
+            <option value="">
+              {{
+                isLoadingCompanies ? "Loading companies..." : "Select Company"
+              }}
+            </option>
+            <option
+              *ngFor="let company of companies"
+              [value]="company.clientId"
+            >
+              {{ company.clientName }}
+            </option>
+          </select>
+          <small>{{ fieldError("location", "Company/Location") }}</small>
+        </label>
+
+
+        <label class="form-field"
+          >Days
+          <input type="number" formControlName="days" min="1" />
+          <small>{{ fieldError("days", "Days") }}</small>
+        </label>
+        
+        <label class="form-field"
+          >Date
+          <input type="date" formControlName="certificationDate" />
+          <small>{{ fieldError("certificationDate", "Date") }}</small>
+        </label>
+
+        <label class="checkbox-field">
+          <input type="checkbox" formControlName="isComplete" />
+          IsComplete
+        </label>
+
+        <label class="checkbox-field">
+          <input type="checkbox" formControlName="isPaid" />
+          IsPaid
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit" [disabled]="isSubmitting">
+          {{ isSubmitting ? "Submitting..." : "Submit" }}
+        </button>
+        <button class="btn btn-outline" type="button" (click)="reset()">
+          Reset
+        </button>
+      </div>
+    </form>
+  </div>
+</section>

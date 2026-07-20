@@ -1,0 +1,410 @@
+@use "../utilities/breakpoints" as *;
+
+// Keyframes 
+@keyframes faq-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+// HERO (Light Blue Layout)
+.faq-hero {
+  background: var(--bg-light); 
+  padding: 80px 0 72px;
+  border-bottom: 1px solid var(--gray-light-mid);
+
+  @include tablet { padding: 64px 0 56px; }
+  @include mobile { padding: 52px 0 44px; }
+
+  &__inner {
+    text-align: center;
+    max-width: 660px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: clamp(1.9rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: var(--text-dark);
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    margin-bottom: 16px;
+  }
+
+  p {
+    font-size: 0.97rem;
+    color: var(--gray-mid);
+    line-height: 1.78;
+    margin: 0;
+    @include mobile { font-size: 0.875rem; }
+  }
+}
+
+.faq-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px; 
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 14px;
+
+  &::before,
+  &::after {
+    content: "";
+    display: inline-block;
+    width: 22px;
+    height: 1.5px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    background-size: 200% auto;
+    animation: faq-shimmer 2.5s linear infinite;
+  }
+  @include mobile {
+    &::before, &::after { display: none; }
+  }
+}
+
+// MAIN CONTENT SECTION
+.faq-section {
+  background: #fff;
+  padding: 72px 0 96px;
+  @include tablet { padding: 56px 0 72px; }
+  @include mobile { padding: 40px 0 56px; }
+}
+
+.faq-list-wrap {
+  max-width: 820px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// ACCORDION BLOCK ITEM
+.q-block-item {
+  border: 1px solid var(--gray-light-mid);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #fff;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    border-color: var(--blue-light-mid);
+    box-shadow: var(--shadow-sm);
+  }
+
+  &.q-active-panel {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+// ACCORDION TRIGGER BUTTON
+.q-trigger-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.22s ease;
+
+  &:hover { background: var(--bg-light); }
+  
+  .q-block-item.q-active-panel & { background: var(--bg-light); }
+
+  @include mobile {
+    padding: 16px 18px;
+    gap: 12px;
+  }
+}
+
+// ACCORDION TEXT STRINGS
+.faq-q__text {
+  flex: 1;
+  font-size: 0.97rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+
+  @include tablet { font-size: 0.92rem; }
+  @include mobile { font-size: 0.875rem; }
+}
+
+// SYSTEM WORKING ARROW WITH ENCLOSING CIRCLE
+.faq-q__icon {
+  flex-shrink: 0;
+  width: 36px !important;
+  height: 36px !important;
+  border: 1.5px solid var(--gray-light-mid, #d8d8d8);
+  border-radius: 50% !important;
+  display: inline-flex !important; 
+  align-items: center !important;
+  justify-content: center !important;
+  color: var(--gray-mid, #6d6e70);
+  background: #ffffff !important;
+  box-sizing: border-box !important;
+  transition: 
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+    background 0.25s ease, 
+    border-color 0.25s ease, 
+    color 0.25s ease;
+
+  .arrow-svg {
+    width: 16px !important;
+    height: 16px !important;
+    display: block !important;
+    min-width: 16px !important;
+    min-height: 16px !important;
+    fill: none !important;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    path {
+      stroke: currentColor !important;
+      stroke-width: 2.5px !important;
+    }
+  }
+
+  // Flips arrow upwards instantly and adds primary filled background state
+  .q-block-item.q-active-panel & {
+    transform: rotate(180deg) !important;
+    background: var(--primary, #5790e1) !important;
+    border-color: var(--primary, #5790e1) !important;
+    color: #ffffff !important;
+  }
+}
+
+// PANELS TRANSITION CONTAINER
+.q-content-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  .q-block-item.q-active-panel & {
+    max-height: 1200px; // Safely set to hold comprehensive multi-list rows
+  }
+
+  &__inner {
+    padding: 0 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    @include mobile { padding: 0 18px 20px; }
+  }
+}
+
+// DETAILED INNER TEXT WRAPPERS
+.faq-a__inner {
+  padding: 2rem;
+
+  p {
+    font-size: 0.9rem;
+    color: var(--gray-mid);
+    line-height: 1.8; 
+    margin-bottom: 1rem;
+  }
+  strong { color: var(--text-dark); font-weight: 600; }
+  
+  a {
+    color: var(--primary);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: var(--transition);
+    &:hover { color: var(--secondary); }
+  }
+}
+
+.faq-a__note {
+  font-size: 0.84rem !important;
+  color: var(--primary) !important;
+  background: var(--bg-light);
+  border-left: 3px solid var(--primary);
+  padding: 10px 14px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin: 0;
+  margin-top: 1rem;
+  a { color: var(--primary) !important; font-weight: 600; }
+}
+
+// INTERNAL UL DATA LISTS
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 0;
+  margin: 0;
+
+  li {
+    font-size: 0.9rem;
+    color: var(--gray-mid);
+    padding-left: 18px;
+    position: relative;
+    line-height: 1.65;
+    list-style: none;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+    strong { color: var(--text-dark); font-weight: 600; }
+  }
+}
+
+// ENGAGEMENT PROCESS PHASES
+.faq-phases {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.faq-phase {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--bg-light);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--primary);
+  transition: var(--transition);
+
+  &:hover {
+    background: var(--accent);
+    transform: translateX(4px);
+  }
+
+  &__num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--text-light);
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+
+  div {
+    flex: 1;
+    strong {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 3px;
+    }
+    p {
+      font-size: 0.83rem !important;
+      color: var(--gray-mid) !important;
+      margin: 0;
+      line-height: 1.65;
+    }
+  }
+}
+
+// CTA ACTION SECTION
+.faq-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 820px;
+  margin: 56px auto 0;
+  padding: 36px 44px;
+  background: linear-gradient(135deg, var(--bg-dark) 0%, var(--gray-dark-mid) 100%);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    top: -80px;
+    right: -40px;
+    background: radial-gradient(circle, rgba(87, 144, 225, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  __text {
+    position: relative;
+    z-index: 1;
+    h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+    p {
+      font-size: 0.875rem;
+      color: var(--gray-light-mid);
+      margin: 0;
+      line-height: 1.6;
+    }
+  }
+
+  &__btn {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--primary);
+    color: var(--text-light);
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 14px 28px;
+    border-radius: 50px;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+    box-shadow: 0 8px 24px rgba(87, 144, 225, 0.35);
+    transition: var(--transition);
+
+    svg { width: 16px; height: 16px; }
+
+    &:hover {
+      color: var(--text-light);
+      background: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(87, 144, 225, 0.45);
+    }
+  }
+
+  @include tablet {
+    flex-direction: column;
+    text-align: center;
+    padding: 32px 28px;
+    margin-top: 40px;
+    border-radius: var(--radius-md);
+    &__btn { align-self: center; }
+  }
+  @include mobile {
+    padding: 28px 20px;
+    margin-top: 32px;
+    &__text h3 { font-size: 1.05rem; }
+  }
+}
+
+.faq-cta__text{
+  p,h3{
+    color: #ffffff;
+  }
+}
+
+// OVERRIDE CORE FONT STRINGS FOR CTA LIGHTNESS VALUES
+

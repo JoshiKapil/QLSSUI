@@ -1,0 +1,1370 @@
+<!--  LOGO REVEAL INTRO  -->
+  <div class="logo-reveal" id="logoReveal" aria-hidden="true">
+    <!-- Split dark panels -->
+    <div class="logo-reveal__panel logo-reveal__panel--left"></div>
+    <div class="logo-reveal__panel logo-reveal__panel--right"></div>
+
+    <!-- Corner accents -->
+    <div class="logo-reveal__corner logo-reveal__corner--tl"></div>
+    <div class="logo-reveal__corner logo-reveal__corner--tr"></div>
+    <div class="logo-reveal__corner logo-reveal__corner--bl"></div>
+    <div class="logo-reveal__corner logo-reveal__corner--br"></div>
+
+    <!-- Glow orb -->
+    <div class="logo-reveal__glow"></div>
+
+    <!-- Center: Logo + tagline + progress bar -->
+    <div class="logo-reveal__center">
+      <img class="logo-reveal__logo" src="assets/logos/logo.png" alt="QLSS Consulting" />
+      <p class="logo-reveal__tagline">Let's Improve</p>
+      <div class="logo-reveal__bar-track">
+        <div class="logo-reveal__bar-fill"></div>
+      </div>
+    </div>
+  </div>
+  <!--  NAVBAR  -->
+  
+  <!-- ===== MODAL POPUP ===== -->
+ 
+  <div class="contactModal" id="contactModal" style="display: none;">
+    <div class="contactModal__overlay"></div>
+
+    <div class="contactModal__box">
+      <!-- Close Button -->
+      <button class="contactModal__close" id="closeModal">&times;</button>
+
+      <!-- Header -->
+      <div class="contactModal__header">
+        <div class="contactModal__icon">
+          <i class="fa-solid fa-layer-group"></i>
+        </div>
+        <h2>Need help with anything? Get in touch with us</h2>
+      </div>
+
+      <!-- Form -->
+      <form class="contactModal__form" (ngSubmit)="sendToMe()" #contactForm="ngForm">
+        <!-- Row -->
+        <div class="contactModal__row">
+          <div class="contactModal__field">
+            <label>Name</label>
+            <input type="text" name="name" placeholder="enter name" [(ngModel)]="name" required />
+          </div>
+
+          <div class="contactModal__field">
+            <label>Phone</label>
+            <input type="tel" name="mobile" placeholder="(91) 555 9999" [(ngModel)]="mobile" required />
+          </div>
+        </div>
+
+        <div class="contactModal__field">
+          <label>Email</label>
+          <input type="email" name="email" placeholder="enter email" [(ngModel)]="email" required email />
+        </div>
+
+        <div class="contactModal__field">
+          <label>What do you want to discuss?</label>
+          <select name="messages" [(ngModel)]="messages">
+            <option>Select</option>
+            <option>Training</option>
+            <option>Consulting</option>
+            <option>Data Analytics</option>
+            <option>Sustainability</option>
+          </select>
+        </div>
+
+        <!-- Actions -->
+        <div class="contactModal__actions">
+          <button type="button" class="btnCancel" id="cancelModal">
+            Cancel
+          </button>
+          <button type="submit" class="btnSubmit">Contact us</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+   <section class="hero">
+    <div class="heroCarousel" id="heroCarousel">
+      <!-- Slide 1 - About QLSS -->
+      <div class="hero-slide active">
+        <div class="hero-slide__bg" style="
+              background-image: url(&quot;assets/img/slider5.jpeg&quot;);
+            "></div>
+        <div class="hero-slide__overlay"></div>
+        <div class="hero-slide__content container">
+          <h1 class="hero-slide__title">
+            Transform Vision Into<br />
+            <span class="hero-highlight">Operational Excellence.</span>
+          </h1>
+          <p class="hero-slide__sub">
+            QLSS is a dedicated, dynamic consulting firm delivering practical,
+            cost-effective solutions - with a multi-disciplinary team of
+            experts across training, analytics, sustainability, and
+            operational excellence.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 2 - Training (uses Traning_03.png) -->
+      <div class="hero-slide">
+        <div class="hero-slide__bg" style="background-image: url(&quot;assets/img/Traning_03.jpeg&quot;)"></div>
+        <div class="hero-slide__overlay"></div>
+        <div class="hero-slide__content container">
+          <h1 class="hero-slide__title">
+            One Stop Solution For<br />
+            <span class="hero-highlight">All Training Needs.</span>
+          </h1>
+          <p class="hero-slide__sub">
+            30+ certified programs covering Lean Six Sigma, IATF 16949, ISO
+            standards, 7 QC Tools, FMEA, Core Tools, Leadership, EHS and more
+            - tailored for your workforce and industry.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 3 - Operational Excellence (uses Operational_Excellence.png) -->
+      <div class="hero-slide">
+        <div class="hero-slide__bg" style="
+              background-image: url(&quot;assets/img/Operational_Excellence.png&quot;);
+            "></div>
+        <div class="hero-slide__overlay"></div>
+        <div class="hero-slide__content container">
+          <h1 class="hero-slide__title">
+            Delivering Measurable<br />
+            <span class="hero-highlight">Business Results.</span>
+          </h1>
+          <p class="hero-slide__sub">
+            From Lean Six Sigma and ISO 9001 / 14001 / 45001 / IATF 16949
+            implementation to TQM, TPM, and continuous improvement workshops -
+            QLSS drives sustainable operational success across every industry.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 4 - Sustainability (uses Sustainablity_02.png) -->
+      <div class="hero-slide">
+        <div class="hero-slide__bg" style="
+              background-image: url(&quot;assets/img/Sustainablity_02.jpeg&quot;);
+            "></div>
+        <div class="hero-slide__overlay"></div>
+        <div class="hero-slide__content container">
+          <h1 class="hero-slide__title">
+            Smart Analytics &amp;<br />
+            <span class="hero-highlight">Sustainable Growth.</span>
+          </h1>
+          <p class="hero-slide__sub">
+            Harness data with Advanced Excel and Power BI dashboards, while
+            achieving profitability with purpose through sustainability
+            audits, carbon footprint reduction, and environmental compliance.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 5 - Global Reach -->
+      <div class="hero-slide">
+        <div class="hero-slide__bg" style="
+              background-image: url(&quot;assets/img/HeroImg1.jpeg&quot;);
+            "></div>
+        <div class="hero-slide__overlay"></div>
+        <div class="hero-slide__content container">
+          <h1 class="hero-slide__title">
+            300+ Projects.<br />
+            <span class="hero-highlight">150+ Clients Worldwide.</span>
+          </h1>
+          <p class="hero-slide__sub">
+            Trusted by leading manufacturers, automotive OEMs, and corporates
+            across India, China, USA, Hungary, Saudi Arabia, and UAE. Your long-term partner
+            for sustainable business excellence and operational
+            transformation.
+          </p>
+        </div>
+      </div>
+
+      <!-- Carousel Controls -->
+      <button class="hero-prev" id="heroPrev" aria-label="Previous">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <button class="hero-next" id="heroNext" aria-label="Next">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+
+      <!-- Dots - sit above hero-tags strip -->
+      <div class="hero-dots" id="heroDots">
+        <span class="hero-dot active"></span>
+        <span class="hero-dot"></span>
+        <span class="hero-dot"></span>
+        <span class="hero-dot"></span>
+        <span class="hero-dot"></span>
+      </div>
+
+      <!-- Service tags strip -->
+      <div class="hero-tags">
+        <div class="hero-tags__inner">
+          <span><i class="fa-solid fa-graduation-cap"></i> Training for All
+            Sectors</span>
+          <span><i class="fa-solid fa-magnifying-glass-chart"></i> Operational
+            Excellence</span>
+          <span><i class="fa-solid fa-chart-line"></i> Data Analytics &amp; Power
+            BI</span>
+          <span><i class="fa-solid fa-leaf"></i> Sustainability</span> 
+          <span><i class="fa-solid fa-truck"></i> Supply Chain &amp;
+            Logistics</span>
+          <span><i class="fa-solid fa-people-group"></i> Management &amp;
+            Leadership</span>
+          <span><i class="fa-solid fa-shield"></i> ISMS, ITSM & TISAX</span>
+          <!-- Duplicate for seamless infinite scroll -->
+          <span><i class="fa-solid fa-graduation-cap"></i> Training for All
+            Sectors</span>
+          <span><i class="fa-solid fa-magnifying-glass-chart"></i> Operational
+            Excellence</span>
+          <span><i class="fa-solid fa-chart-line"></i> Data Analytics &amp; Power
+            BI</span>
+          <span><i class="fa-solid fa-leaf"></i> Sustainability</span> 
+          <span><i class="fa-solid fa-truck"></i> Supply Chain &amp;
+            Logistics</span>
+          <span><i class="fa-solid fa-people-group"></i> Management &amp;
+            Leadership</span>
+          <span><i class="fa-solid fa-shield"></i> ISMS, ITSM & TISAX</span>
+        </div>
+      </div>
+    </div>
+    <!-- /heroCarousel -->
+
+    <!-- <section class="excel-upload-section container reveal">
+      <div class="upload-panel">
+        <h2>Upload Certifications Excel</h2>
+        <div class="upload-panel__controls">
+          <input type="file" accept=".xlsx,.xls" (change)="onFileChange($event)" />
+          <button type="button" class="btnUpload" (click)="saveExcelToServer()">Save to server</button>
+        </div>
+        <p *ngIf="excelData?.length">Loaded rows: {{ excelData.length }}</p>
+        <p *ngIf="!excelData?.length">Select an Excel file to upload.</p>
+      </div>
+    </section> -->
+
+    <!-- subHero - Transformation Section -->
+    <div class="subHero">
+      <div class="subHero__glow" aria-hidden="true"></div>
+      <div class="container">
+        <div class="subHero__wrapper">
+          <span class="subHero__eyebrow why-eyebrow reveal">Why QLSS</span>
+          <h2 class="subHero__headline reveal">
+            Change Is the Only Constant -
+            <span class="subHero__accent">Let QLSS Guide Your Transformation</span>
+          </h2>
+          <p class="subHero__subtext reveal reveal-delay-1">
+            From Lean Six Sigma to data-driven strategies, we help businesses
+            adapt, optimize, and grow with confidence.
+          </p>
+          <div class="subHero__cta reveal reveal-delay-2">
+            <a href="expertise" class="subHero__btn subHero__btn--primary">
+              Explore Services
+              <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="https://wa.me/917058954942?text=Hello%2C%20I%20would%20like%20to%20talk%20to%20an%20expert%20at%20QLSS%20Consulting."
+              target="_blank" rel="noopener noreferrer" class="subHero__btn subHero__btn--secondary">
+              Talk to an Expert
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats wrapper -->
+  </section>
+  <!-- /hero -->
+  <!-- /hero -->
+  <!-- /hero -->
+
+  <!-- 
+         3. WHY CHOOSE US
+     -->
+  <section class="why-section">
+    <div class="container">
+      <div class="why-header reveal">
+        <span class="why-eyebrow">Why Choose Us</span>
+        <h2 class="why-title">Expert. Proven. Results-Driven.</h2>
+        <p class="why-subtitle">
+          We empower organizations with practical, cost-effective consulting and training solutions. Here is why
+          industry leaders trust us to drive their operational excellence.
+        </p>
+      </div>
+
+      <div class="why-grid">
+        <div class="why-features">
+          <div class="feature-item reveal reveal-delay-1">
+            <div class="feature-icon-wrap">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2zm-1 13l-3-3 1.41-1.41L11 12.17l4.59-4.58L17 9l-6 6z" />
+              </svg>
+            </div>
+            <div class="feature-body">
+              <h3 class="feature-title">Quality Focused</h3>
+              <p class="feature-desc">
+                We never compromise on the standard of our consulting services. Every training program and improvement
+                framework is crafted using global best practices to ensure sustainable, high-impact results for your
+                organization.
+              </p>
+            </div>
+          </div>
+
+          <div class="feature-item reveal reveal-delay-2">
+            <div class="feature-icon-wrap">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 2L4 13h7l-1 9 10-11h-7l1-9z" />
+              </svg>
+            </div>
+            <div class="feature-body">
+              <h3 class="feature-title">Quick Turnaround</h3>
+              <p class="feature-desc">
+                Operational challenges require prompt action. With our efficient methodologies and dedicated team of
+                experts, we ensure fast, effective implementation without compromising on the quality of business
+                outcomes.
+              </p>
+            </div>
+          </div>
+
+          <div class="feature-item reveal reveal-delay-3">
+            <div class="feature-icon-wrap">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58s1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41s-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z" />
+              </svg>
+            </div>
+            <div class="feature-body">
+              <h3 class="feature-title">Industry Expertise</h3>
+              <p class="feature-desc">
+                We bring deep, cross-functional experience to the table. Our solutions are fully tailored to your unique
+                challenges, combining proven frameworks with practical insights to deliver exceptional value and growth.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="why-image-wrap reveal reveal-delay-2">
+          <img src="assets/img/about-2.jpg" alt="Team training session"
+            loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 
+         4. OUR EXPERTISE (built from scratch)
+     -->
+  <section class="expertise-section">
+    <div class="expertise-section__bg"></div>
+    <div class="container">
+      <div class="expertise-header reveal">
+        <span class="lp-eyebrow why-eyebrow">What We Do</span>
+        <h2 class="lp-heading">
+          Our <span class="lp-accent">Expertise</span>
+        </h2>
+        <p class="lp-sub">
+          Comprehensive consulting and training solutions across multiple
+          domains.
+        </p>
+      </div>
+
+      <div class="expertise-grid">
+        <div class="expertise-card reveal reveal-delay-1">
+          <div class="expertise-card__head">
+            <div class="expertise-card__icon">
+              <i class="fa-solid fa-magnifying-glass-chart"></i>
+            </div>
+            <h3>Operational Excellence</h3>
+          </div>
+          <p>
+            Lean Six Sigma, TPM &amp; TQM consulting for manufacturing and
+            service industries.
+          </p>
+          <a routerLink="/expertise" class="expertise-card__link">
+            Learn More <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="expertise-card reveal reveal-delay-2">
+          <div class="expertise-card__head">
+            <div class="expertise-card__icon">
+              <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <h3>Professional Training</h3>
+          </div>
+          <p>
+            30+ certified programs in quality, safety, leadership, and
+            management systems.
+          </p>
+          <a routerLink="/training" class="expertise-card__link">
+            Learn More <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="expertise-card reveal reveal-delay-3">
+          <div class="expertise-card__head">
+            <div class="expertise-card__icon">
+              <i class="fa-solid fa-leaf"></i>
+            </div>
+            <h3>Sustainability</h3>
+          </div>
+          <p>
+            ISO 14001, ISO 50001, ESG compliance, and environmental monitoring
+            solutions.
+          </p>
+          <a routerLink="/sustainability" class="expertise-card__link">
+            Learn More <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="expertise-card reveal reveal-delay-1">
+          <div class="expertise-card__head">
+            <div class="expertise-card__icon">
+              <i class="fa-solid fa-truck"></i>
+            </div>
+            <h3>Supply Chain &amp; Logistics</h3>
+          </div>
+          <p>
+            End-to-end supply chain optimization, logistics consulting, and
+            vendor management.
+          </p>
+          <a routerLink="/supply-chain" class="expertise-card__link">
+            Learn More <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="expertise-card reveal reveal-delay-2">
+          <div class="expertise-card__head">
+            <div class="expertise-card__icon">
+              <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <h3>Data Analytics</h3>
+          </div>
+          <p>
+            Advanced Excel, Power BI dashboards, and data-driven
+            decision-making frameworks.
+          </p>
+          <a routerLink="/expertise" class="expertise-card__link">
+            Learn More <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="expertise-card reveal reveal-delay-3">
+          <div class="expertise-card__head">
+            <div class="expertise-card__icon">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3>QMS Software Solution</h3>
+          </div>
+          <p>
+            Risk assessment, compliance frameworks, and end-to-end
+            cybersecurity strategy for modern enterprises.
+          </p>
+          <a routerLink="/expertise" class="expertise-card__link">
+            Learn More <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="expertise-more reveal">
+        <a routerLink="/expertise" class="lp-btn lp-btn--outline-dark">
+          Explore All Services <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+<section class="blog-section home-blogs-section">
+  <div class="container">
+    <div class="blog-home-header reveal">
+      <span class="lp-eyebrow why-eyebrow"><i class="fa-regular fa-newspaper"></i> Our Blogs</span>
+      <h2 class="blog-hero__title">Our <span class="blog-hero__accent">Blogs</span></h2>
+      <p class="blog-hero__sub">Read the latest QLSS training updates, industry insights, and practical improvement ideas.</p>
+    </div>
+
+    <div class="blog-grid">
+      <div class="blog-card reveal reveal-delay-1">
+        <div class="blog-card__img-wrap">
+          <img src="assets/img/blog-1.jpg" alt="OLSS FEMA MSA Training" loading="lazy" />
+          <span class="blog-card__category">Training</span>
+        </div>
+        <div class="blog-card__meta">
+          <span class="blog-card__meta-item"><i class="fa-regular fa-calendar"></i> Sep 20, 2025</span>
+          <span class="blog-card__meta-sep"></span>
+          <span class="blog-card__meta-item"><i class="fa-regular fa-user"></i> Pravin Halkikar</span>
+        </div>
+        <div class="blog-card__body">
+          <h3 class="blog-card__title">FMEA MSA Training</h3>
+        </div>
+        <div class="blog-card__actions">
+          <a href="https://www.linkedin.com/posts/qlss-business-consulting_fmea-aiagvdafmea-qualitymanagement-activity-7365068194438332416-Pd3z?utm_source=share&utm_medium=member_ios&rcm=ACoAAAxSRa8BRqVImtghVLAxuW7tKTPhTxQwrx8"
+             target="_blank" rel="noopener noreferrer" class="blog-btn">
+            Read Article <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="blog-card reveal reveal-delay-2">
+        <div class="blog-card__img-wrap">
+          <img src="assets/img/blog-2.jpg" alt="PFMEA Training" loading="lazy" />
+          <span class="blog-card__category">Training</span>
+        </div>
+        <div class="blog-card__meta">
+          <span class="blog-card__meta-item"><i class="fa-regular fa-calendar"></i> Oct 01, 2025</span>
+          <span class="blog-card__meta-sep"></span>
+          <span class="blog-card__meta-item"><i class="fa-regular fa-user"></i> Pravin Halkikar</span>
+        </div>
+        <div class="blog-card__body">
+          <h3 class="blog-card__title">PFMEA Training</h3>
+        </div>
+        <div class="blog-card__actions">
+          <a href="https://www.linkedin.com/posts/qlss-business-consulting_pfmea-aiagvda-zerodefect-activity-7378429622838919168-EF0-?utm_source=share&utm_medium=member_ios&rcm=ACoAAAxSRa8BRqVImtghVLAxuW7tKTPhTxQwrx8"
+             target="_blank" rel="noopener noreferrer" class="blog-btn">
+            Read Article <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="blog-card reveal reveal-delay-3">
+        <div class="blog-card__img-wrap">
+          <img src="assets/img/blog-3.jpg" alt="20-yr Celebration Activity" loading="lazy" />
+          <span class="blog-card__category">Celebration</span>
+        </div>
+        <div class="blog-card__meta">
+          <span class="blog-card__meta-item"><i class="fa-regular fa-calendar"></i> Oct 07, 2025</span>
+          <span class="blog-card__meta-sep"></span>
+          <span class="blog-card__meta-item"><i class="fa-regular fa-user"></i> QLSS Team</span>
+        </div>
+        <div class="blog-card__body">
+          <h3 class="blog-card__title">20-yr Celebration Activity</h3>
+        </div>
+        <div class="blog-card__actions">
+          <a href="https://www.linkedin.com/posts/qlss-business-consulting_qlss-aonegroup-20yearsofexcellence-activity-7377211742583451648-RwEI?utm_source=share&utm_medium=member_ios&rcm=ACoAAAxSRa8BRqVImtghVLAxuW7tKTPhTxQwrx8"
+             target="_blank" rel="noopener noreferrer" class="blog-btn">
+            Read Article <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="blog-home-actions reveal">
+      <a routerLink="/blogs" class="blog-btn">View All Blogs <i class="fa-solid fa-arrow-right"></i></a>
+    </div> -->
+  </div>
+</section>
+
+  <!-- 
+         5. CLIENTS LOGO SCROLL
+     -->
+  <section class="clients-section">
+    <div class="container">
+      <div class="clients-header reveal">
+        <span class="lp-eyebrow why-eyebrow">Our Clients</span>
+        <h2 class="lp-heading-sm">
+          Brands That Trust <span class="lp-accent">Us</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="clients-marquee-wrap">
+      <div class="marquee-track">
+        <div class="marquee-inner marquee--rtl">
+          <div class="client-logo">
+            <img src="assets/Clientslogo/logo (1).jpeg" alt="Client Logo 1" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/Clientslogo/logo (2).jpeg" alt="Client Logo 2" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/Clientslogo/logo (3).jpeg" alt="Client Logo 3" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/Clientslogo/logo (4).jpeg" alt="Client Logo 4" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/Aberdare Technologies Private Limited.jpeg"
+              alt="Aberdare Technologies" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/Abhijeet%20Plastics%20(India)%20Pvt.%20Ltd.jpeg"
+              alt="Abhijeet Plastics" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/ADARSH%20STAINLESS%20PVT.LTD..png"
+              alt="Adarsh Stainless" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/ADM%20JOINFLEX%20INDIA%20Pvt.Ltd..jpeg"
+              alt="ADM Joinflex India" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Amrut%20Paper%20Products%20Pvt%20Ltd.png"
+              alt="Amrut Paper Products" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Autobus%20Laser%20UAE.jpeg"
+              alt="Autobus Laser UAE" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/AUTOCOMP%20CORPORATION%20PANSE.png"
+              alt="Autocomp Corporation Panse" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/BHOGALE%20AUTOMOTIVE%20PVT%20LTD.png"
+              alt="Bhogale Automotive" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/CENTRAL%20INSTITUTE%20OF%20ROAD%20TRANSPORT.jpg"
+              alt="Central Institute of Road Transport" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/CG%20Power%20and%20Industrial%20Solutions%20Limited.png"
+              alt="CG Power" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/Delkart Industries Private Limited.jpeg"
+              alt="Delkart Industries" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/DOLPHIN MANUFACTURING LLC, UAE.jpeg"
+              alt="Dolphin Manufacturing UAE" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/DYNA-TECH.png" alt="Dyna-Tech"
+              loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/EGEARZ%20PRIVATE%20LIMITED.jpeg"
+              alt="Egearz Private Limited" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/ELECTRICA%20ENGINEERS%20Pvt.%20Ltd..png"
+              alt="Electrica Engineers" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Epilson%20Auto,%20Mumbai.png"
+              alt="Epilson Auto" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/GORDON%20VENTURES%20LLP.png"
+              alt="Gordon Ventures" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Greaves%20Cotton%20Limited.png"
+              alt="Greaves Cotton" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Haldex%20Hungary%20Kft.jpeg"
+              alt="Haldex Hungary" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Happy%20Forgings%20Ltd..jpeg"
+              alt="Happy Forgings" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Hitachi%20Global%20Air%20Power.png"
+              alt="Hitachi Global Air Power" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/Hyundai%20Engineering%20Plastics%20India%20Pvt.%20Ltd..png"
+              alt="Hyundai Engineering Plastics" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Imperial%20Auto%20Industries%20Ltd.png"
+              alt="Imperial Auto Industries" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/IMPERIAL%20MARTOR%20ENGINE%20TUBES%20PRIVATE%20LIMITED.jpeg"
+              alt="Imperial Martor Engine Tubes" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/Jayashree%20Tubestech%20Components%20Pvt%20Ltd..png"
+              alt="Jayashree Tubestech" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/LE%20Transformation.jpeg"
+              alt="LE Transformation" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Magna%20Automotive.jpeg"
+              alt="Magna Automotive" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/MECORDS%20INDIA%20PRIVATE%20LIMITED.jpeg"
+              alt="Mecords India" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/METALYST%20FORGINGS%20LIMITED.jpeg"
+              alt="Metalyst Forgings" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/NICE%20Interactive%20Solutions%20India%20Pvt%20Ltd.jpeg"
+              alt="NICE Interactive Solutions" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/Aberdare%20Technologies%20Private%20Limited.jpeg"
+              alt="Aberdare Technologies" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/Abhijeet%20Plastics%20(India)%20Pvt.%20Ltd.jpeg"
+              alt="Abhijeet Plastics" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/ADARSH%20STAINLESS%20PVT.LTD..png"
+              alt="Adarsh Stainless" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/ADM%20JOINFLEX%20INDIA%20Pvt.Ltd..jpeg"
+              alt="ADM Joinflex India" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Amrut%20Paper%20Products%20Pvt%20Ltd.png"
+              alt="Amrut Paper Products" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Autobus%20Laser%20UAE.jpeg"
+              alt="Autobus Laser UAE" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/AUTOCOMP%20CORPORATION%20PANSE.png"
+              alt="Autocomp Corporation Panse" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/BHOGALE%20AUTOMOTIVE%20PVT%20LTD.png"
+              alt="Bhogale Automotive" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/CENTRAL%20INSTITUTE%20OF%20ROAD%20TRANSPORT.jpg"
+              alt="Central Institute of Road Transport" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/CG%20Power%20and%20Industrial%20Solutions%20Limited.png"
+              alt="CG Power" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/Delkart%20Industries%20Private%20Limited.jpeg"
+              alt="Delkart Industries" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/DOLPHIN%20MANUFACTURING%20LLC,%20UAE.jpeg"
+              alt="Dolphin Manufacturing UAE" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/DYNA-TECH.png" alt="Dyna-Tech"
+              loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/EGEARZ%20PRIVATE%20LIMITED.jpeg"
+              alt="Egearz Private Limited" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/ELECTRICA%20ENGINEERS%20Pvt.%20Ltd..png"
+              alt="Electrica Engineers" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Epilson%20Auto,%20Mumbai.png"
+              alt="Epilson Auto" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/GORDON%20VENTURES%20LLP.png"
+              alt="Gordon Ventures" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Greaves%20Cotton%20Limited.png"
+              alt="Greaves Cotton" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Haldex%20Hungary%20Kft.jpeg"
+              alt="Haldex Hungary" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Happy%20Forgings%20Ltd..jpeg"
+              alt="Happy Forgings" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Hitachi%20Global%20Air%20Power.png"
+              alt="Hitachi Global Air Power" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/Hyundai%20Engineering%20Plastics%20India%20Pvt.%20Ltd..png"
+              alt="Hyundai Engineering Plastics" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Imperial%20Auto%20Industries%20Ltd.png"
+              alt="Imperial Auto Industries" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/IMPERIAL%20MARTOR%20ENGINE%20TUBES%20PRIVATE%20LIMITED.jpeg"
+              alt="Imperial Martor Engine Tubes" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/Jayashree%20Tubestech%20Components%20Pvt%20Ltd..png"
+              alt="Jayashree Tubestech" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/LE%20Transformation.jpeg"
+              alt="LE Transformation" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Magna%20Automotive.jpeg"
+              alt="Magna Automotive" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/MECORDS%20INDIA%20PRIVATE%20LIMITED.jpeg"
+              alt="Mecords India" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/METALYST%20FORGINGS%20LIMITED.jpeg"
+              alt="Metalyst Forgings" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/NICE%20Interactive%20Solutions%20India%20Pvt%20Ltd.jpeg"
+              alt="NICE Interactive Solutions" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="marquee-track">
+        <div class="marquee-inner marquee--ltr">
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/P%20M%20Electro%20Auto%20Pvt.%20Ltd..jpeg"
+              alt="PM Electro Auto" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/PLA%20CRAFT%20ENGINEERING.jpg"
+              alt="Pla Craft Engineering" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Precision%20Stamping%20Industries.png"
+              alt="Precision Stamping Industries" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/PROSE%20Technologies%20India%20Pvt%20Ltd.png"
+              alt="PROSE Technologies" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/RBM%20Industries.png" alt="RBM Industries"
+              loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Raychem%20RPG%20Pvt.%20Ltd..png"
+              alt="Raychem RPG" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/RENU%20ELECTRONICS%20PVT.%20LTD.png"
+              alt="Renu Electronics" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/RIJ%20ENGINEERING%20PVT.LTD..jpeg"
+              alt="RIJ Engineering" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/SAARLOHA%20ADVANCE%20MATERIALS%20PVT.LTD.jpeg"
+              alt="Saarloha Advanced Materials" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/SAF-%20Holland,%20Hungary.png"
+              alt="SAF-Holland Hungary" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Sanhua%20India%20Pvt.%20Ltd..png"
+              alt="Sanhua India" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/SANTAJ%20TECHNOLOGIES.jpeg"
+              alt="Santaj Technologies" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Semifab%20India%20Pvt%20Ltd.jpeg"
+              alt="Semifab India" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/SFS%20Group%20India%20Private%20Limited.png"
+              alt="SFS Group India" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Sharv%20Polyplast%20Pvt%20Ltd.png"
+              alt="Sharv Polyplast" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/SIGMA%20ELECTRIC%20MANUFACTURING%20CORPORATION%20PVT%20LTD.jpg"
+              alt="Sigma Electric" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Sigma%20Engineered%20Solutions.png"
+              alt="Sigma Engineered Solutions" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/Speciality%20Sintered%20Products%20Pvt.%20Ltd..JPEG"
+              alt="Speciality Sintered Products" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/STARGOLD%20INFRASTRUCTURE%20LLP.png"
+              alt="Stargold Infrastructure" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/SUJAN%20CONTITECH%20AVS%20PRIVATE%20LIMITED.png"
+              alt="Sujan Contitech AVS" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Suyash%20Industries.jpeg"
+              alt="Suyash Industries" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/TATA%20Electronics%20Private%20Limited.jpeg"
+              alt="TATA Electronics" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/TATA%20SEMICONDUCTOR%20ASSEMBLY%20AND%20TEST%20PVT.%20LTD.png"
+              alt="TATA Semiconductor" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Technotree%20Engineers.png"
+              alt="Technotree Engineers" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/TECHSPEQ%20SOLUTIONS.jpeg"
+              alt="Techspeq Solutions" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/Teff%20Plast%20India%20Pvt%20Ltd,%20Pune.png"
+              alt="Teff Plast India" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Terminal%20Technologies.png"
+              alt="Terminal Technologies" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Thermax%20Ltd..gif" alt="Thermax Ltd."
+              loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/TIRUMALA%20INDUSTRIAL.png"
+              alt="Tirumala Industrial" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Track%20components.jpeg"
+              alt="Track Components" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Winoa-2EFFE%20Private%20Ltd.png"
+              alt="Winoa-2EFFE" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/P%20M%20Electro%20Auto%20Pvt.%20Ltd..jpeg"
+              alt="PM Electro Auto" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/PLA%20CRAFT%20ENGINEERING.jpg"
+              alt="Pla Craft Engineering" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Precision%20Stamping%20Industries.png"
+              alt="Precision Stamping Industries" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/PROSE%20Technologies%20India%20Pvt%20Ltd.png"
+              alt="PROSE Technologies" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/RBM%20Industries.png" alt="RBM Industries"
+              loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Raychem%20RPG%20Pvt.%20Ltd..png"
+              alt="Raychem RPG" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/RENU%20ELECTRONICS%20PVT.%20LTD.png"
+              alt="Renu Electronics" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/RIJ%20ENGINEERING%20PVT.LTD..jpeg"
+              alt="RIJ Engineering" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/SAARLOHA%20ADVANCE%20MATERIALS%20PVT.LTD.jpeg"
+              alt="Saarloha Advanced Materials" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/SAF-%20Holland,%20Hungary.png"
+              alt="SAF-Holland Hungary" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Sanhua%20India%20Pvt.%20Ltd..png"
+              alt="Sanhua India" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/SANTAJ%20TECHNOLOGIES.jpeg"
+              alt="Santaj Technologies" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Semifab%20India%20Pvt%20Ltd.jpeg"
+              alt="Semifab India" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/SFS%20Group%20India%20Private%20Limited.png"
+              alt="SFS Group India" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Sharv%20Polyplast%20Pvt%20Ltd.png"
+              alt="Sharv Polyplast" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/SIGMA%20ELECTRIC%20MANUFACTURING%20CORPORATION%20PVT%20LTD.jpg"
+              alt="Sigma Electric" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Sigma%20Engineered%20Solutions.png"
+              alt="Sigma Engineered Solutions" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/Speciality%20Sintered%20Products%20Pvt.%20Ltd..JPEG"
+              alt="Speciality Sintered Products" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/STARGOLD%20INFRASTRUCTURE%20LLP.png"
+              alt="Stargold Infrastructure" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/SUJAN%20CONTITECH%20AVS%20PRIVATE%20LIMITED.png"
+              alt="Sujan Contitech AVS" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Suyash%20Industries.jpeg"
+              alt="Suyash Industries" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/TATA%20Electronics%20Private%20Limited.jpeg"
+              alt="TATA Electronics" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/TATA%20SEMICONDUCTOR%20ASSEMBLY%20AND%20TEST%20PVT.%20LTD.png"
+              alt="TATA Semiconductor" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Technotree%20Engineers.png"
+              alt="Technotree Engineers" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/TECHSPEQ%20SOLUTIONS.jpeg"
+              alt="Techspeq Solutions" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img
+              src="assets/img/CustomerLogo/Teff%20Plast%20India%20Pvt%20Ltd,%20Pune.png"
+              alt="Teff Plast India" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Terminal%20Technologies.png"
+              alt="Terminal Technologies" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Thermax%20Ltd..gif" alt="Thermax Ltd."
+              loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/TIRUMALA%20INDUSTRIAL.png"
+              alt="Tirumala Industrial" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Track%20components.jpeg"
+              alt="Track Components" loading="lazy" />
+          </div>
+          <div class="client-logo">
+            <img src="assets/img/CustomerLogo/Winoa-2EFFE%20Private%20Ltd.png"
+              alt="Winoa-2EFFE" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 
+         6. VIDEO SECTION
+     -->
+  <section class="video-section">
+    <div class="container">
+      <div class="video-section__grid">
+        <!-- Left: Text -->
+        <div class="video-section__text reveal">
+          <!-- <span class="lp-eyebrow">Our Expertise</span> -->
+          <h2 class="video-section__title">
+            Change Is the Only Constant.<br />
+            <span class="lp-accent">Improvement</span> Is a Choice.
+          </h2>
+          <p class="video-section__desc">
+            Organizations must continuously adapt to succeed. Whether you need
+            to refine your operational excellence, enhance data-driven
+            decision-making, or embrace sustainable practices - our
+            multi-disciplinary team of experts is here to support you in
+            making measurable improvements.
+          </p>
+
+          <!-- <div class="video-section__stats">
+              <div class="vs-stat">
+                <span class="vs-stat__num">300+</span>
+                <span class="vs-stat__label"
+                  >Projects finished with superb quality</span
+                >
+              </div>
+              <div class="vs-stat">
+                <span class="vs-stat__num">23+</span>
+                <span class="vs-stat__label">Years of measurable impact</span>
+              </div>
+            </div> -->
+
+          <a href="https://www.youtube.com/@qlssbusinessconsulting" target="_blank" rel="noopener"
+            class="lp-btn lp-btn--outline-dark video-watch-btn">
+            <i class="fa-brands fa-youtube"></i> Watch on YouTube
+          </a>
+        </div>
+
+        <!-- Right: Video embed -->
+        <div class="video-section__player reveal reveal-delay-2">
+          <div class="video-embed-wrap">
+            <iframe src="https://www.youtube.com/embed/33Ly1waW0do?si=ra4Pql-7mDg93EAx"
+              title="QLSS Business Consulting  Lets Improve" frameborder="0" allow="
+                  accelerometer;
+                  autoplay;
+                  clipboard-write;
+                  encrypted-media;
+                  gyroscope;
+                  picture-in-picture;
+                  web-share;
+                " allowfullscreen loading="lazy"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 
+         7. TESTIMONIALS
+     -->
+  <section class="reviews-section">
+    <div class="container">
+      <div class="reviews-header reveal">
+        <span class="lp-eyebrow why-eyebrow">Testimonials</span>
+        <h2 class="lp-heading">
+          Client <span class="lp-accent">Experiences</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="reviews-carousel-wrap">
+      <div class="reviews-carousel" id="reviewsCarousel">
+        <div class="lp-review-card">
+          <div class="lp-review-card__top">
+            <span class="lp-review-card__tag">Training</span>
+            <div class="lp-review-card__stars">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star-half-stroke"></i>
+            </div>
+          </div>
+          <p>
+            "The session was very engaging and interactive. Pravin Halkikar
+            did a great job of keeping everyone involved. The technique for
+            simplifying complex problems was the most helpful part."
+          </p>
+          <div class="lp-review-card__footer">
+            <!-- No logo provided - initials shown -->
+            <div class="lp-review-card__avatar">MP</div>
+            <div class="lp-review-card__info">
+              <strong class="lp-review-card__name">Milind Patil</strong>
+              <span class="lp-review-card__role">Manager - Quality</span>
+              <span class="lp-review-card__company">Tata AutoComp Systems</span>
+            </div>
+            <div class="lp-review-card__rating">4.5 â˜…</div>
+          </div>
+        </div>
+
+        <div class="lp-review-card">
+          <div class="lp-review-card__top">
+            <span class="lp-review-card__tag">ISO Training</span>
+            <div class="lp-review-card__stars">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+            </div>
+          </div>
+          <p>
+            "The training was very helpful in understanding the key
+            requirements of ISO 50001. The examples and case studies made it
+            easier to apply energy management practices in our organization."
+          </p>
+          <div class="lp-review-card__footer">
+            <!-- No logo provided - initials shown -->
+            <div class="lp-review-card__avatar">JB</div>
+            <div class="lp-review-card__info">
+              <strong class="lp-review-card__name">Jyotraj Bhatkande</strong>
+              <span class="lp-review-card__role">Manager</span>
+              <span class="lp-review-card__company">Energy Management</span>
+            </div>
+            <div class="lp-review-card__rating">5.0 â˜…</div>
+          </div>
+        </div>
+
+        <div class="lp-review-card">
+          <div class="lp-review-card__top">
+            <span class="lp-review-card__tag">Audit Training</span>
+            <div class="lp-review-card__stars">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+            </div>
+          </div>
+          <p>
+            "Pravin Sir conducted a 3-day training program for Internal
+            Auditors on ISO 14001 and ISO 50001. Sessions were truly
+            energetic, engaging, and impactful. Complex concepts made easy to
+            understand."
+          </p>
+          <div class="lp-review-card__footer">
+            <!-- No logo provided - initials shown -->
+            <div class="lp-review-card__avatar">VH</div>
+            <div class="lp-review-card__info">
+              <strong class="lp-review-card__name">Vinayak Hinge</strong>
+              <span class="lp-review-card__role">Internal Audit Manager</span>
+              <span class="lp-review-card__company">ISO 14001 &amp; 50001</span>
+            </div>
+            <div class="lp-review-card__rating">5.0 â˜…</div>
+          </div>
+        </div>
+
+        <div class="lp-review-card">
+          <div class="lp-review-card__top">
+            <span class="lp-review-card__tag">Corporate Training</span>
+            <div class="lp-review-card__stars">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star-half-stroke"></i>
+            </div>
+          </div>
+          <p>
+            "Thanks for bringing your expertise to EPL. The unique blend of
+            knowledge, automotive expertise, and relevance to tube
+            manufacturing kept the entire team engaged during the 3-day
+            training."
+          </p>
+          <div class="lp-review-card__footer">
+            <!-- No logo provided - initials shown. To use logo: add has-logo class + <img> inside avatar div -->
+            <div class="lp-review-card__avatar">SP</div>
+            <div class="lp-review-card__info">
+              <strong class="lp-review-card__name">Shashank Pawde</strong>
+              <span class="lp-review-card__role">VP  Global Quality</span>
+              <span class="lp-review-card__company">EPL Limited</span>
+            </div>
+            <div class="lp-review-card__rating">4.8 â˜…</div>
+          </div>
+        </div>
+
+        <div class="lp-review-card">
+          <div class="lp-review-card__top">
+            <span class="lp-review-card__tag">Consulting</span>
+            <div class="lp-review-card__stars">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+            </div>
+          </div>
+          <p>
+            "Fantastic Training Program and a Great Learning Experience.
+            Highly recommend QLSS to any organisation looking to improve their
+            quality management systems."
+          </p>
+          <div class="lp-review-card__footer">
+            <!-- No logo provided - initials shown -->
+            <div class="lp-review-card__avatar">GN</div>
+            <div class="lp-review-card__info">
+              <strong class="lp-review-card__name">Greg Naidoo</strong>
+              <span class="lp-review-card__role">Trainer &amp; Consultant</span>
+              <span class="lp-review-card__company">South Africa</span>
+            </div>
+            <div class="lp-review-card__rating">5.0 â˜…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="reviews-controls">
+        <button class="rc-btn" id="rcPrev" aria-label="Previous">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+
+        <button class="rc-btn" id="rcNext" aria-label="Next">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 
+         8. FAQ
+     -->
+  <!-- 
+         WE SERVICE - Global Presence
+     -->
+
+  <!-- 
+         9. CTA
+     -->
+  <section class="cta-section reveal">
+    <div class="cta-section__bg"></div>
+    <div class="container">
+      <div class="cta-inner">
+        <div class="cta-text">
+          <h2>Ready to Empower Your<br /><span>Organization?</span></h2>
+          <p>
+            Partner with QLSS and unlock the potential of your business - from
+            consulting to training to auditing.
+          </p>
+        </div>
+        <div class="cta-actions">
+          <a routerLink="/contact" class="lp-btn lp-btn--white">
+            Get Started <i class="fa-solid fa-arrow-right"></i>
+          </a>
+          <a routerLink="/training" class="lp-btn lp-btn--ghost">
+            View Training
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--  FOOTER  -->

@@ -1,0 +1,21 @@
+@use "../utilities/breakpoints" as *;
+@use "../base/variables" as *;
+.faq {
+  .faq-item {
+    border-bottom: 1px solid #eee;
+    padding: 20px 0;
+  }
+
+  .faq-question {
+    background: none;
+    border: none;
+    font-weight: 600;
+    font-size: 18px;
+
+    cursor: pointer;
+  }
+
+  .faq-answer {
+    margin-top: 10px;
+  }
+}

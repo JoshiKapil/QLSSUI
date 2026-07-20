@@ -1,0 +1,397 @@
+<div class="dms-shell">
+  <aside class="dms-sidebar">
+    <div class="brand-card">
+      <div class="qlss-logo">
+        <span></span><span></span><span></span><span></span>
+      </div>
+
+      <div>
+        <h2>QLSS</h2>
+        <p>Document Management System</p>
+      </div>
+    </div>
+
+    <nav class="sidebar-menu">
+      <ng-container *ngFor="let group of menuGroups">
+        <div class="menu-title">{{ group.title }}</div>
+
+        <a
+          *ngFor="let item of group.items"
+          class="menu-item"
+          [class.active]="item.active"
+        >
+          <i [class]="item.icon"></i>
+          <span>{{ item.label }}</span>
+          <b *ngIf="item.badge" [class]="item.badgeClass">{{ item.badge }}</b>
+        </a>
+      </ng-container>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div>© 2025 QLSS DMS</div>
+      <div>Version 1.0.0</div>
+      <button>
+        <i class="bi bi-box-arrow-right"></i>
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <main class="dms-main">
+    <header class="topbar">
+      <div class="top-menu">
+        <a><i class="bi bi-folder2-open"></i> DMS</a>
+        <a><i class="bi bi-check2-square"></i> Tasks</a>
+        <a><i class="bi bi-graph-up-arrow"></i> KPI Entry</a>
+        <a><i class="bi bi-file-earmark-bar-graph"></i> Reports</a>
+        <a><i class="bi bi-sliders"></i> Administration</a>
+      </div>
+
+      <div class="top-right">
+        <div class="search-box">
+          <i class="bi bi-search"></i>
+          <input type="text" placeholder="Search documents, actions..." />
+        </div>
+
+        <button class="notify-btn">
+          <i class="bi bi-bell"></i>
+          <span>5</span>
+        </button>
+
+        <div class="user-card">
+          <div class="avatar">A</div>
+          <div>
+            <strong>Admin User</strong>
+            <small>Administrator</small>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="content-area">
+      <div class="page-title">
+        <div>
+          <span>Dashboard / Repository</span>
+          <h1>Document Repository</h1>
+        </div>
+
+        <button class="primary-action">
+          <i class="bi bi-plus-circle"></i>
+          New Document
+        </button>
+      </div>
+
+      <section class="stats-row" style="display: none;">
+        <div class="stat-card">
+          <i class="bi bi-folder-check"></i>
+          <div>
+            <strong>124</strong>
+            <span>Total Documents</span>
+          </div>
+        </div>
+
+        <div class="stat-card orange">
+          <i class="bi bi-hourglass-split"></i>
+          <div>
+            <strong>12</strong>
+            <span>In Review</span>
+          </div>
+        </div>
+
+        <div class="stat-card green">
+          <i class="bi bi-check-circle"></i>
+          <div>
+            <strong>89</strong>
+            <span>Approved</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="dashboard-grid">
+        <!-- Repository Tree -->
+        <section class="glass-card repository-card">
+          <div class="card-head">
+            <div>
+              <small>ISO 9001:2015</small>
+              <h3>Repository Tree</h3>
+            </div>
+
+            <div class="card-actions">
+              <button><i class="bi bi-arrow-clockwise"></i></button>
+              <button><i class="bi bi-arrows-fullscreen"></i></button>
+              <button><i class="bi bi-folder-plus"></i></button>
+            </div>
+          </div>
+
+          <div class="tree-search">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="Search in tree..." />
+          </div>
+<div class="tree-box">
+  <ng-container *ngFor="let node of repositoryTree">
+    <ng-container
+      *ngTemplateOutlet="treeTemplate; context: { $implicit: node, level: 0 }">
+    </ng-container>
+  </ng-container>
+</div>
+
+<ng-template #treeTemplate let-node let-level="level">
+  <div class="tree-node">
+    <div
+      class="tree-row"
+      [style.--level]="level"
+      (click)="toggleNode(node)">
+
+      <button
+        class="expand-btn"
+        type="button"
+        *ngIf="node.type === 'folder'; else fileSpace"
+        (click)="toggleNode(node); $event.stopPropagation()">
+
+        <i
+          class="bi"
+          [class.bi-dash]="node.expanded"
+          [class.bi-plus]="!node.expanded">
+        </i>
+      </button>
+
+      <ng-template #fileSpace>
+        <span class="expand-space"></span>
+      </ng-template>
+
+      <i
+        class="node-icon bi"
+        [class.bi-folder2-open]="node.type === 'folder' && node.expanded"
+        [class.bi-folder-fill]="node.type === 'folder' && !node.expanded"
+        [class.bi-file-earmark-pdf-fill]="node.type === 'file' && node.name?.toLowerCase().endsWith('.pdf')"
+        [class.bi-file-earmark-word-fill]="node.type === 'file' && node.name?.toLowerCase().endsWith('.docx')"
+        [class.bi-file-earmark-excel-fill]="node.type === 'file' && node.name?.toLowerCase().endsWith('.xlsx')"
+        [class.bi-file-earmark-fill]="node.type === 'file'">
+      </i>
+
+      <span class="node-title">{{ node.name }}</span>
+
+      <small *ngIf="node.rev">Rev {{ node.rev }}</small>
+    </div>
+
+    <div class="tree-children" *ngIf="node.expanded && node.children?.length">
+      <ng-container *ngFor="let child of node.children">
+        <ng-container
+          *ngTemplateOutlet="treeTemplate; context: { $implicit: child, level: level + 1 }">
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+</ng-template>
+        </section>
+
+        <!-- Workflow -->
+        <section class="glass-card workflow-card">
+          <div class="card-head">
+            <div>
+              <small>Live Workflow</small>
+              <h3>8.5.2 Work Instruction - Production Flow.pdf</h3>
+            </div>
+            <button class="close-btn">×</button>
+          </div>
+
+          <div class="current-status">
+            <span>Current Status</span>
+            <b>In Review Level 1</b>
+          </div>
+
+          <div class="timeline">
+            <div
+              class="timeline-step"
+              *ngFor="let step of workflowSteps"
+              [class.done]="step.status === 'done'"
+              [class.active]="step.status === 'active'"
+              [class.pending]="step.status === 'pending'"
+            >
+              <div class="dot">
+                <i [class]="step.icon"></i>
+              </div>
+
+              <div class="step-content">
+                <h4>{{ step.title }}</h4>
+                <p>{{ step.description }}</p>
+                <small>{{ step.date }}</small>
+                <em *ngIf="step.badge">{{ step.badge }}</em>
+              </div>
+            </div>
+          </div>
+
+          <div class="comment-box">
+            <h4>Comments / Rejection Reason</h4>
+            <p>No comments yet.</p>
+            <button>Open Workflow Popup</button>
+          </div>
+        </section>
+
+        <!-- Details -->
+        <section class="glass-card details-card">
+          <div class="card-head">
+            <div>
+              <small>Selected Document</small>
+              <h3>Document Details</h3>
+            </div>
+            <button class="edit-btn">Edit</button>
+          </div>
+
+          <div class="doc-preview">
+            <i class="bi bi-file-earmark-pdf-fill"></i>
+            <div>
+              <h4>Work Instruction</h4>
+              <p>Production Flow</p>
+            </div>
+          </div>
+
+          <div class="details-list">
+            <div *ngFor="let item of documentDetails">
+              <label>{{ item.label }}</label>
+              <span>{{ item.value }}</span>
+            </div>
+          </div>
+
+          <button class="history-btn">
+            <i class="bi bi-clock-history"></i>
+            View Complete History
+          </button>
+        </section>
+
+
+        <div class="bottom-dashboard-grid">
+  <!-- Organization Chart -->
+  <section class="dms-panel org-panel">
+    <div class="panel-header">
+      <h3>Organization Chart</h3>
+      <button class="icon-btn" type="button">
+        <i class="bi bi-arrows-fullscreen"></i>
+      </button>
+    </div>
+
+    <div class="org-chart">
+      <div class="org-row center">
+        <div class="org-card">
+          <div class="avatar blue">IS</div>
+          <strong>Pravin</strong>
+          <span>Managing Director</span>
+        </div>
+      </div>
+
+      <div class="org-row heads">
+        <div class="org-card">
+          <div class="avatar pink">SJ</div>
+          <strong>Suhas</strong>
+          <span>Operations Head</span>
+        </div>
+
+        <div class="org-card active">
+          <div class="avatar green">ED</div>
+          <strong>Makrand</strong>
+          <span>Technology Head</span>
+        </div>
+
+        <div class="org-card">
+          <div class="avatar teal">DL</div>
+          <strong>Kapil</strong>
+          <span>Quality Head</span>
+        </div>
+      </div>
+
+      <div class="org-row team">
+        <div class="org-card small">
+          <div class="avatar purple">MB</div>
+          <strong>Amit</strong>
+          <span>Ops Executive</span>
+        </div>
+
+        <div class="org-card small">
+          <div class="avatar orange">RT</div>
+          <strong>Aniket</strong>
+          <span>Developer</span>
+        </div>
+
+        <div class="org-card small">
+          <div class="avatar pink">SJ</div>
+          <strong>Priya</strong>
+          <span>QA Engineer</span>
+        </div>
+
+        <div class="org-card small">
+          <div class="avatar gray">JW</div>
+          <strong>Nilesh</strong>
+          <span>Store Assistant</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- My Actions -->
+  <section class="dms-panel actions-panel">
+    <div class="panel-header">
+      <h3>My Actions <span>(This Week)</span></h3>
+      <button class="export-btn" type="button">
+        <i class="bi bi-download"></i>
+        Export
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="actions-table">
+        <thead>
+          <tr>
+            <th>Action ID</th>
+            <th>Action / Task</th>
+            <th>Assigned To</th>
+            <th>Priority</th>
+            <th>Due Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>ACT-2025-001</td>
+            <td>Review Internal Audit Report</td>
+            <td>Priya Sharma</td>
+            <td><span class="badge high">High</span></td>
+            <td>21-May-2025</td>
+            <td><span class="badge progress">In Progress</span></td>
+          </tr>
+
+          <tr>
+            <td>ACT-2025-002</td>
+            <td>Update Quality Manual</td>
+            <td>Nikhil More</td>
+            <td><span class="badge medium">Medium</span></td>
+            <td>22-May-2025</td>
+            <td><span class="badge pending">Pending</span></td>
+          </tr>
+
+          <tr>
+            <td>ACT-2025-003</td>
+            <td>Check Supplier Evaluation</td>
+            <td>Rohit Gawade</td>
+            <td><span class="badge medium">Medium</span></td>
+            <td>23-May-2025</td>
+            <td><span class="badge pending">Pending</span></td>
+          </tr>
+
+          <tr>
+            <td>ACT-2025-004</td>
+            <td>Verify Training Records</td>
+            <td>Sneha Jadhav</td>
+            <td><span class="badge low">Low</span></td>
+            <td>24-May-2025</td>
+            <td><span class="badge pending">Pending</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+      </div>
+    </section>
+  </main>
+</div>

@@ -1,0 +1,147 @@
+<section class="training-hero training-hero--final">
+  <div class="training-hero__blob training-hero__blob--a"></div>
+  <div class="training-hero__blob training-hero__blob--b"></div>
+  <div class="training-hero__content">
+    <div class="training-hero__copy">
+      <div class="why-eyebrow-nb">
+              <span class="ey-line "></span>
+               Professional Development
+              <span class="ey-line"></span>
+      </div>
+      <h1 class="hero-title">
+              Empower Skills. <br />
+              Elevate <em>Excellence</em>
+      </h1>
+      <!-- <h1 class="training-hero__title" id="training-hero-title">Empower Skills. Elevate <span class="training-hero__accent"><em>Excellence</em>.</span></h1> -->
+      <p class="training-hero__sub">Instantly validate the authenticity of issued certifications.
+          Industry-leading training for quality, safety, and business excellence.</p>
+
+      <div class="training-hero__features" aria-label="Training highlights">
+        <div class="training-hero__feature"><i class="fa-solid fa-user-group"></i><div><strong>Expert Trainers</strong><span>Industry Specialists</span></div></div>
+        <div class="training-hero__feature"><i class="fa-solid fa-shield-halved"></i><div><strong>Practical Learning</strong><span>Real-world Skills</span></div></div>
+        <div class="training-hero__feature"><i class="fa-solid fa-award"></i><div><strong>Globally Recognized</strong><span>Best Practices</span></div></div>
+        <div class="training-hero__feature"><i class="fa-solid fa-chart-line"></i><div><strong>Career Impact</strong><span>Better Opportunities</span></div></div>
+      </div>
+    </div>
+
+    <div class="training-hero__visual" aria-label="Training illustration">
+      <span class="training-hero__orbit training-hero__orbit--one"></span>
+      <span class="training-hero__orbit training-hero__orbit--two"></span>
+      <span class="training-hero__shape training-hero__shape--triangle"></span>
+      <span class="training-hero__shape training-hero__shape--arrow"></span>
+      <div class="training-stat training-stat--left"><i class="fa-solid fa-users"></i><strong>2500+</strong><span>Professionals Trained</span></div>
+      <div class="training-stat training-stat--right"><i class="fa-solid fa-star"></i><strong>98%</strong><span>Learner Satisfaction</span></div>
+      <img src="assets/img/laptop.png" alt="Professional attending online training" class="training-hero__image" />
+    </div>
+  </div>
+</section>
+
+<section class="training-section p-0">
+  <div class="dashboard-wrapper">
+    <div *ngIf="isLoading" class="training-library__loading">Loading training documents...</div>
+
+    <div *ngIf="!isLoading && TrainingList.length" class="dashboard-container">
+      <div class="filter-search-container">
+        <div class="filter-tags-shell">
+          <button class="filter-scroll-btn" type="button" aria-label="Scroll categories left" (click)="scrollCategoryTags('left')"><i class="fa-solid fa-chevron-left"></i></button>
+          <div class="filter-tags" #categoryTagsScroller>
+            <span class="tag" *ngFor="let category of CategoryList" [class.tag-active]="selectedCategoryId === category.CategoryId" (click)="selectCategory(category.CategoryId)">
+              {{ category.CategoryName }} ({{ getCategoryCount(category.CategoryId) }})
+            </span>
+          </div>
+          <button class="filter-scroll-btn" type="button" aria-label="Scroll categories right" (click)="scrollCategoryTags('right')"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search training..." [(ngModel)]="searchText" (input)="onSearch()" />
+        </div>
+      </div>
+
+      <main class="cards-grid">
+        <div class="training-card" *ngFor="let training of filteredTrainings; trackBy: trackByTraining; index as i">
+          <div class="card-top-banner" [ngClass]="{ 'card-data': i % 3 === 1, 'card-dev': i % 3 === 0, 'card-design': i % 3 === 2 }">
+            <span class="category-title">{{ (training.DisplayName || training.TrainingName || 'Training Document').replace('Training', '') }}</span>
+            <i class="category-icon fa-solid fa-palette"></i>
+          </div>
+
+          <div class="card-body-content">
+            <h3 class="course-title">{{ (training.CategoryName || 'Training').replace('Training', '') }}</h3>
+            <p class="course-description">{{ training.TrainingDesc || 'Description not available' }}</p>
+
+            <div class="course-meta-metrics">
+              <span class="meta-item"><i class="fa-regular fa-clock"></i> {{ training.Duration * 8 }} Hours</span> |
+              <span class="meta-item"><i class="fa-regular fa-calendar"></i> {{ training.Modules }} Modules</span>
+            </div>
+
+            <div class="progress-track-bg"><div class="progress-track-fill" [ngClass]="{ 'data-fill': i % 3 === 1, 'dev-fill': i % 3 === 0, 'design-fill': i % 3 === 2 }" [style.width.%]="100"></div></div>
+
+            <div class="card-footer-panel">
+              <div class="card-footer-row">
+                <button type="button" class="training-action training-action--interest" aria-label="Interested" title="Interested" (click)="openInterestedModal(training)">
+                  <i class="fa-regular fa-heart"></i>
+                  <span>Interested</span>
+                </button>
+
+                <button type="button" class="training-action training-action--read" (click)="onViewPdf(training)">
+                  <i class="fa-solid fa-file-pdf"></i>
+                  <span>Read More</span>
+                </button>
+              </div>
+
+              <!-- <button type="button" class="training-action training-action--test" (click)="openTakeTestModal(training)">
+                <i class="fa-solid fa-clipboard-list"></i>
+                <span>Challenge your knowledge</span>
+              </button> -->
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div *ngIf="!isLoading && !TrainingList.length" class="training-library__empty">No training documents available.</div>
+  </div>
+</section>
+
+<div class="custom-modal custom-modal--pdf" id="readMoreModal" [class.active]="isReadMoreModalOpen">
+  <div class="custom-modal__overlay" (click)="closeReadMoreModal()"></div>
+  <div class="custom-modal__box">
+    <div class="custom-modal__pdf-header"><h2 class="custom-modal__pdf-title">{{ Name || selectedTrainingItem?.TrainingName || 'Training PDF' }}</h2></div>
+    <div class="custom-modal__pdf-container" tabindex="0" (contextmenu)="blockPdfActions($event)" (keydown)="blockPdfShortcuts($event)">
+      <div *ngIf="isPdfLoading" class="custom-modal__pdf-message">Loading PDF...</div>
+      <div *ngIf="!isPdfLoading && pdfErrorMessage" class="custom-modal__pdf-message custom-modal__pdf-message--error">{{ pdfErrorMessage }}</div>
+      <iframe *ngIf="selectedPdfUrl && !isPdfLoading && !pdfErrorMessage" id="pdfViewer" [src]="selectedPdfUrl" title="Training PDF viewer"></iframe>
+      <div *ngIf="selectedPdfUrl && !pdfErrorMessage" class="custom-modal__pdf-toolbar-cover" aria-hidden="true"></div>
+    </div>
+    <button type="button" class="custom-modal__close" id="closeReadMoreModal" (click)="closeReadMoreModal()">&times;</button>
+  </div>
+</div>
+
+<div class="custom-modal" id="takeTestModal" [class.active]="isTakeTestModalOpen">
+  <div class="custom-modal__overlay" (click)="closeTakeTestModal()"></div>
+  <div class="custom-modal__box">
+    <button type="button" class="custom-modal__close" aria-label="Close take test modal" (click)="closeTakeTestModal()">&times;</button>
+    <div class="custom-modal__header"><h2>Start Test</h2><p class="custom-modal__subtitle">{{ TrainingName || selectedTrainingItem?.DisplayName || selectedTrainingItem?.TrainingName }}</p></div>
+    <form class="custom-modal__form" id="takeTestForm" (ngSubmit)="submitTakeTestForm()">
+      <div class="custom-modal__field"><input type="text" name="testUserName" placeholder="Name" [(ngModel)]="testUserName" required /></div>
+      <div class="custom-modal__field"><input type="email" name="testUserEmail" placeholder="Email address" [(ngModel)]="testUserEmail" required /></div>
+      <div class="custom-modal__field"><input type="tel" name="testUserMobile" placeholder="Contact Number" [(ngModel)]="testUserMobile" required /></div>
+      <div class="custom-modal__actions"><button type="button" class="btn-close" (click)="closeTakeTestModal()">Cancel</button><button type="submit" class="btn-send">Start Test</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="custom-modal" id="interestedModal" [class.active]="isInterestedModalOpen">
+  <div class="custom-modal__overlay" (click)="closeInterestedModal()"></div>
+  <div class="custom-modal__box">
+    <button type="button" class="custom-modal__close" id="closeInterestedModal" (click)="closeInterestedModal()">&times;</button>
+    <div class="custom-modal__header"><h2>Please provide your details</h2></div>
+    <form class="custom-modal__form" id="interestedForm" (ngSubmit)="submitInterestedForm()">
+      <div class="custom-modal__row"><div class="custom-modal__field"><input type="text" name="name" placeholder="Name" [(ngModel)]="name" required /></div><div class="custom-modal__field"><input type="email" name="email" placeholder="Email address" [(ngModel)]="email" required /></div></div>
+      <div class="custom-modal__field"><input type="tel" name="mobile" placeholder="Mobile Number" [(ngModel)]="mobile" required /></div>
+      <div class="custom-modal__actions"><button type="button" class="btn-close" id="cancelInterestedModal" (click)="closeInterestedModal()">Close</button><button type="submit" class="btn-send">Send Mail</button></div>
+    </form>
+  </div>
+</div>
+
+

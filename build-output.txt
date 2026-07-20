@@ -1,0 +1,55 @@
+﻿
+> qlss-new-version@1.0.0 prebuild
+> node scripts/generate-sitemap.js
+
+Generated src\sitemap.xml with 18 public routes.
+Generated src\robots.txt.
+
+> qlss-new-version@1.0.0 build
+> ng build --watch=false
+
+node.exe : - Generating browser application bundles (phase: setup)...
+At line:1 char:1
++ & "C:\nvm4w\nodejs/node.exe" "C:\nvm4w\nodejs/node_modules/npm/bin/np ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (- Generating br...hase: setup)... 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Γ£ö Browser application bundle generation complete.
+Γ£ö Browser application bundle generation complete.
+- Copying assets...
+Γ£ö Copying assets complete.
+- Generating index html...
+Γ£ö Index html generation complete.
+
+Initial Chunk Files           | Names                                                       |  Raw Size | Estimated Transfer Size
+main.a52246351cf261ab.js      | main                                                        | 555.87 kB |               123.15 kB
+styles.f09f009d1ebc0e86.css   | styles                                                      | 189.51 kB |                25.91 kB
+polyfills.6e4def71ca19b16a.js | polyfills                                                   |  33.15 kB |                10.69 kB
+runtime.478c6c97aa2e96ca.js   | runtime                                                     |   3.15 kB |                 1.52 kB
+
+| Initial Total                                               | 781.68 kB |               161.27 kB
+
+Lazy Chunk Files              | Names                                                       |  Raw Size | Estimated Transfer Size
+997.01bd8abd1c7fb2c3.js       | features-home-home-module                                   | 372.18 kB |               104.50 kB
+113.9eee285b67d197fc.js       | features-test-test-module                                   |  61.03 kB |                11.55 kB
+28.64730721a0c25c02.js        | features-training-training-module                           |  56.67 kB |                16.11 kB
+630.c3bb3b4d19132718.js       | features-about-about-module                                 |  34.53 kB |                 8.49 kB
+728.40b837c1e4efbba6.js       | features-operationalexcellence-operationalexcellence-module |  31.05 kB |                 8.23 kB
+820.c85713d82165aa8d.js       | features-blogs-blogs-module                                 |  29.27 kB |                 6.71 kB
+749.ff428809758f3c09.js       | features-client-client-module                               |  27.00 kB |                 6.21 kB
+945.eeb961e1929adff0.js       | features-faq-faq-module                                     |  26.97 kB |                 7.00 kB
+574.fafbe2aff749b7df.js       | features-sustainability-sustainability-module               |  25.20 kB |                 6.79 kB
+687.a250340f5cc71bb6.js       | features-management-system-management-system-module         |  24.37 kB |                 6.41 kB
+514.0ad27f1f84077241.js       | features-training-training-module                           |  23.81 kB |                 5.25 kB
+601.18af537fe0129d56.js       | features-supply-chain-supply-chain-module                   |  23.62 kB |                 6.53 kB
+788.f7fbfc4837112e98.js       | features-financial-services-financial-services-module       |  23.61 kB |                 6.57 kB
+108.e898de102906519d.js       | features-expertise-expertise-module                         |  22.13 kB |                 6.11 kB
+625.ba428c7a56b75ffe.js       | features-dataanalytics-dataanalytics-module                 |  20.98 kB |                 5.91 kB
+367.b86ae7bbd27a1689.js       | features-contact-contact-module                             |  18.81 kB |                 5.51 kB
+534.be07465e224448fb.js       | features-teams-teams-module                                 |  18.10 kB |                 5.19 kB
+22.b19fcf2f21ff831d.js        | features-gallery-gallery-module                             |  13.53 kB |                 3.99 kB
+656.e352cdf39e2fa76b.js       | features-verify-verify-module                               |   8.44 kB |                 2.60 kB
+
+Build at: 2026-06-30T06:32:11.313Z - Hash: 27ceb7f71697e3b4 - Time: 34881ms

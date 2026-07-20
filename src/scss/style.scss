@@ -1,0 +1,69 @@
+/* =========================
+   BASE
+========================= */
+
+@use "base/variables";
+@use "base/fonts";
+@use "base/typography";
+@use "base/globals";
+
+/* =========================
+   UTILITIES
+========================= */
+@use "utilities/breakpoints" as *;
+@use "utilities/breakpoints";
+@use "utilities/helpers";
+@use "utilities/animations";
+@use "utilities/spacing";
+@use "utilities/logoReveal";
+
+/* =========================
+   LAYOUT
+========================= */
+
+@use "layout/container";
+@use "layout/navbar";
+@use "layout/footer";
+
+/* =========================
+   COMPONENTS
+========================= */
+
+@use "components/buttons";
+@use "components/cards";
+@use "components/accordion";
+@use "components/carousel";
+
+/* =========================
+   SECTIONS
+========================= */
+
+@use "sections/hero";
+@use "sections/stats";
+@use "sections/whychoose";
+@use "sections/expertise";
+@use "sections/video";
+@use "sections/clients";
+@use "sections/reviews";
+@use "sections/faq";
+@use "sections/cta";
+
+/* =========================
+   PAGE SPECIFIC
+========================= */
+
+@use "pages/landingPage";
+@use "pages/about";
+@use "pages/contact";
+@use "pages/expertisePage";
+@use "pages/_teams.scss";
+@use "pages/_client.scss";
+@use "pages/verify.scss";
+@use "pages/auth-admin.scss";
+@use "pages/training.scss";
+@use "pages/_faqPage.scss";
+@use "pages/operationalexcellence.scss";
+@use "pages/Dataanalytics.scss";
+
+@use "pages/blogs.scss";
+@use "pages/management-system.scss";

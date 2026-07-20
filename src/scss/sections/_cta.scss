@@ -1,0 +1,13 @@
+@use "../utilities/breakpoints" as *;
+@use "../base/variables" as *;
+.cta {
+  background: var(--primary);
+
+  color: white;
+
+  text-align: center;
+
+  h2 {
+    margin-bottom: 30px;
+  }
+}

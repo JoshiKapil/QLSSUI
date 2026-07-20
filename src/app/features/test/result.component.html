@@ -1,0 +1,123 @@
+<section class='result-page'>
+  <div class='container'>
+    <header class='result-page__header'>
+      <span class='result-page__kicker'>Assessment Result</span>
+      <h1>Test Result</h1>
+      <p *ngIf='submission'>{{ submission.testName }} - {{ submission.username }}</p>
+      <p *ngIf='!submission'>Select a user and training to view a saved result.</p>
+    </header>
+
+    <section class='result-search' *ngIf='showSelectors'>
+      <div>
+        <span class='result-page__kicker'>Saved Results</span>
+        <h2>Find a Result</h2>
+      </div>
+      <div class='result-search__controls'>
+        <select [(ngModel)]='selectedTestType' (ngModelChange)='onSelectionChange()' aria-label='Select test type'>
+          <option value=''>Select Test Type</option>
+          <option *ngFor='let type of testTypes' [value]='type'>{{ type | titlecase }}</option>
+        </select>
+        <select [(ngModel)]='selectedUsername' (ngModelChange)='onSelectionChange()' aria-label='Select user'>
+          <option value=''>Select User</option>
+          <option *ngFor='let user of users' [value]='user'>{{ user }}</option>
+        </select>
+        <select [(ngModel)]='selectedTraining' (ngModelChange)='onSelectionChange()' aria-label='Select training'>
+          <option value=''>Select Training</option>
+          <option *ngFor='let training of trainings' [value]='training.id'>{{ training.label }}</option>
+        </select>
+        <button type='button' class='result-button result-button--secondary' (click)='clearSelection()'>Clear</button>
+      </div>
+    </section>
+
+    <section class='result-state' *ngIf='isLoadingOptions || isLoadingResult || (showSelectors && !submission)'>
+      <h2>{{ isLoadingOptions ? 'Loading Users and Trainings' : isLoadingResult ? 'Loading Result' : 'Choose All Options' }}</h2>
+      <p *ngIf='!isLoadingOptions && !isLoadingResult && !resultMessage'>The result appears automatically after test type, user, and training are selected.</p>
+      <p class='result-state__message' *ngIf='resultMessage'>{{ resultMessage }}</p>
+    </section>
+
+    <section class='result-panel' *ngIf='result'>
+      <div class='result-summary'>
+        <div>
+          <span class='result-page__kicker'>{{ submission?.resultSource || 'Result' }}</span>
+          <h2>{{ result.passed ? 'Passed' : 'Needs Improvement' }}</h2>
+          <p class='result-note' *ngIf='resultSaveWarning'>{{ resultSaveWarning }}</p>
+          <p class='result-note' *ngIf='submission?.isAutoSubmitted'>The test was automatically submitted when time expired.</p>
+          <p class='result-note' *ngIf='result.manualReviewCount'>Final score may change after manual evaluation.</p>
+        </div>
+        <div class='result-summary__actions'>
+          <div class='score-circle' [class.score-circle--failed]='!result.passed' [style.--score.%]='result.percentage'>
+            <strong>{{ result.percentage }}%</strong>
+            <span>Percentage</span>
+          </div>
+          <div class='score-circle score-circle--marks' [style.--score.%]='result.totalMarks ? result.obtainedMarks / result.totalMarks * 100 : 0'>
+            <strong>{{ result.obtainedMarks }}/{{ result.totalMarks }}</strong>
+            <span>Marks</span>
+          </div>
+          <button type='button' class='result-button result-button--secondary' (click)='downloadCurrentResult()'>Download Result JSON</button>
+        </div>
+      </div>
+
+      <div class='result-grid'>
+        <article><span>Total Questions</span><strong>{{ result.totalQuestions }}</strong></article>
+        <article><span>Attempted</span><strong>{{ result.attempted }}</strong></article>
+        <article><span>Skipped</span><strong>{{ result.skipped }}</strong></article>
+        <article><span>Not Answered</span><strong>{{ result.notAnswered }}</strong></article>
+        <article><span>Correct</span><strong>{{ result.correct }}</strong></article>
+        <article><span>Wrong</span><strong>{{ result.wrong }}</strong></article>
+        <article><span>Manual Review</span><strong>{{ result.manualReviewCount }}</strong></article>
+        <article><span>Total Marks</span><strong>{{ result.totalMarks }}</strong></article>
+        <article><span>Obtained Marks</span><strong>{{ result.obtainedMarks }}</strong></article>
+        <article><span>Total Time</span><strong>{{ result.totalTimeUsedSeconds }}s</strong></article>
+      </div>
+
+      <div class='breakdown-grid'>
+        <article><h3>Question Type Breakdown</h3><p *ngFor='let item of result.questionTypeBreakdown'>{{ item.label }}: {{ item.total }} questions, {{ item.obtainedMarks }}/{{ item.marks }} marks</p></article>
+        <article><h3>Difficulty Breakdown</h3><p *ngFor='let item of result.difficultyBreakdown'>{{ item.label }}: {{ item.total }} questions, {{ item.correct }} correct</p></article>
+        <article><h3>Subject-wise Summary</h3><p *ngFor='let item of result.subjectWiseSummary'>{{ item.label }}: {{ item.obtainedMarks }}/{{ item.marks }} marks</p></article>
+        <article><h3>Topic-wise Summary</h3><p *ngFor='let item of result.topicWiseSummary'>{{ item.label }}: {{ item.total }} question(s)</p></article>
+      </div>
+
+      <div class='review-header'>
+        <h2>Solution Review</h2>
+        <button type='button' class='result-button result-button--secondary' (click)='retakeTest()'>Retake Test</button>
+      </div>
+      <div class='review-list'>
+        <article class='review-item' *ngFor='let question of questions; let index = index'>
+          <span>Question {{ question.questionNo }}</span>
+          <h3>{{ question.questionText }}</h3>
+          <p class='evaluation-badge' [ngClass]='getEvaluationClass(answers[index])'>{{ getEvaluationLabel(answers[index]) }}</p>
+          <div class="result-option-list" *ngIf="question.options?.length">
+            <div
+              class="result-option"
+              *ngFor="let option of question.options; let optionIndex = index"
+              [ngClass]="getReviewOptionClass(question, answers[index], option.id)"
+              aria-disabled="true"
+            >
+              <span class="result-option__marker">{{ getOptionLabel(optionIndex) }}</span>
+              <span
+                class="result-option__control"
+                [class.result-option__control--checkbox]="question.questionType === 'MCMA'"
+                [class.result-option__control--radio]="question.questionType !== 'MCMA'"
+                [class.result-option__control--checked]="isReviewOptionSelected(question, answers[index], option.id)"
+              ></span>
+              <span class="result-option__text">{{ option.text }}</span>
+              <span class="result-option__status" *ngIf="isCorrectOption(question, option.id)">Correct answer</span>
+              <span class="result-option__status" *ngIf="isReviewOptionSelected(question, answers[index], option.id)">Selected</span>
+            </div>
+          </div>
+          <div class="essay-review" *ngIf="question.questionType === 'ESSAY'">
+            <h4>Given answer</h4>
+            <div class="essay-review__answer">{{ getSelectedAnswerText(question, answers[index]) }}</div>
+            <p *ngIf="hasExpectedAnswer(question)"><strong>Expected answer:</strong> {{ question.expectedAnswer }}</p>
+            <p *ngIf="hasExplanation(question)"><strong>Explanation:</strong> {{ question.explanation }}</p>
+          </div>
+          <div class='answer-box' *ngIf="question.questionType !== 'ESSAY'">
+            <p><strong>Selected answer:</strong> {{ getSelectedAnswerText(question, answers[index]) }}</p>
+            <p><strong>Correct answer:</strong> {{ getCorrectAnswerText(question) }}</p>
+            <p *ngIf="hasExplanation(question)"><strong>Explanation:</strong> {{ question.explanation }}</p>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+</section>

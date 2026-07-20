@@ -1,0 +1,410 @@
+@use "../utilities/breakpoints" as *;
+
+/* =========================
+   NAVBAR BASE
+========================= */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 16px 0;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+/* =========================
+   WRAPPER
+========================= */
+
+.navbar-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* =========================
+   LOGO  Glass Capsule
+========================= */
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 5px;
+  border-radius: 60px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    0 8px 30px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+
+  img {
+    height: 45px;
+    width: auto;
+    object-fit: contain;
+    background: #ffffff;
+    padding: 6px 14px;
+    border-radius: 10px;
+    border-radius: 60px;
+
+    @include mobile {
+      height: 30px;
+      padding: 4px 10px;
+    }
+  }
+
+  @include mobile {
+    padding: 6px 16px;
+  }
+}
+
+/* =========================
+   CENTER ALIGNMENT
+========================= */
+
+.navbar-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  @include tablet {
+    position: static;
+    transform: none;
+  }
+}
+
+/* =========================
+   GLASS MENU  Desktop
+========================= */
+
+.navbar-menu {
+  display: flex;
+  gap: 25px;
+  padding: 10px 36px;
+  border-radius: 60px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    0 8px 30px rgba(0, 0, 0, 0.25);
+  transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s;
+
+  a {
+    color: #000;
+    font-size: 18px;
+    // background-color: #ffffff;
+    position: relative;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    transition: color 0.3s ease, transform 0.2s ease;
+    text-wrap: nowrap;
+
+    &:hover,
+    &.active-link {
+      color: rgb(54, 126, 227);
+      transform: translateY(-1px);
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 0%;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    &:hover::after,
+    &.active-link::after {
+      width: 100%;
+    }
+  }
+
+  // â”€â”€ MOBILE FULLSCREEN OVERLAY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  @include tablet {
+    position: fixed;
+    inset: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    border-radius: 0;
+    overflow: hidden;
+
+    // White / light-blue gradient bg
+    background: linear-gradient(150deg, #ffffff 0%, #eef4ff 55%, #d8e8ff 100%);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    box-shadow: none;
+    z-index: 999;
+
+    // Decorative blob  top right
+    &::before {
+      content: "";
+      position: absolute;
+      top: -110px;
+      right: -90px;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(47, 124, 232, 0.13) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    // Decorative blob  bottom left
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -90px;
+      left: -70px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(87, 144, 225, 0.10) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    // Hidden by default  slides in from right
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(100%);
+
+    &.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+    }
+
+    // Nav links  pill cards
+    a {
+      position: relative;
+      font-size: 15.5px;
+      font-weight: 700;
+      padding: 15px 0;
+      width: 82%;
+      max-width: 310px;
+      text-align: center;
+      color: #1a2a4a;
+      background: rgba(255, 255, 255, 0.80);
+      border: 1.5px solid rgba(47, 124, 232, 0.13);
+      border-radius: 50px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 2px 12px rgba(47, 124, 232, 0.06);
+      letter-spacing: 0.2px;
+      font-family: var(--font-heading);
+      transition: all 0.22s ease;
+
+      &::after {
+        display: none;
+      }
+
+      &:hover,
+      &.active-link {
+        color: var(--primary);
+        background: rgba(47, 124, 232, 0.09);
+        border-color: rgba(47, 124, 232, 0.30);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(47, 124, 232, 0.13);
+      }
+    }
+  }
+}
+
+// â”€â”€ Mobile menu inner header (brand strip) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+.navbar-menu__header {
+  display: none;
+
+  @include tablet {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 16px;
+    padding-bottom: 22px;
+    border-bottom: 1.5px solid rgba(47, 124, 232, 0.12);
+    width: 82%;
+    max-width: 310px;
+
+    img {
+      height: 36px;
+      width: auto;
+      object-fit: contain;
+      background: #ffffff;
+      padding: 5px 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(47, 124, 232, 0.1);
+    }
+
+    span {
+      font-size: 11px;
+      font-weight: 600;
+      color: #8aa0be;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+  }
+}
+
+// â”€â”€ Mobile-only CTA inside menu â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+.navbar-menu__cta {
+  @include tablet {
+    margin-top: 8px !important;
+    background: linear-gradient(135deg, #2f7ce8, #1a5ec9) !important;
+    color: #ffffff !important;
+    border-color: transparent !important;
+    box-shadow: 0 6px 22px rgba(47, 124, 232, 0.28) !important;
+
+    &:hover {
+      background: linear-gradient(135deg, #1a5ec9, #2f7ce8) !important;
+      color: #ffffff !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 10px 28px rgba(47, 124, 232, 0.38) !important;
+    }
+  }
+}
+
+/* =========================
+   RIGHT SIDE
+========================= */
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* =========================
+   VERIFY BTN
+========================= */
+
+.navbar-btn {
+  padding: 12px 26px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1e90ff, #007bff);
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+  transition: all 0.3s ease;
+
+  &:hover,
+  &.active-link {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 123, 255, 0.6);
+  }
+
+  @include tablet {
+    display: none;
+  }
+
+  @include mobile {
+    display: none;
+  }
+}
+
+.vrfbtn {
+  display: block;
+
+  @include tablet {
+    display: none !important;
+  }
+
+  @include mobile {
+    display: none !important;
+  }
+}
+
+/* =========================
+   HAMBURGER  White Capsule
+========================= */
+
+.navbar-toggle {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  z-index: 1001;
+  padding: 11px 16px;
+  border-radius: 50px;
+  background: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 4px 18px rgba(0, 0, 0, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+
+  &:hover {
+    box-shadow:
+      0 6px 24px rgba(0, 0, 0, 0.20),
+      inset 0 1px 0 rgba(255, 255, 255, 1);
+    transform: translateY(-1px);
+  }
+
+  span {
+    width: 22px;
+    height: 2.5px;
+    background: #1a2a4a;
+    border-radius: 3px;
+    display: block;
+    transition: transform 0.32s ease, opacity 0.2s ease;
+  }
+
+  &.active {
+    span:nth-child(1) {
+      transform: translateY(7.5px) rotate(45deg);
+    }
+
+    span:nth-child(2) {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+
+    span:nth-child(3) {
+      transform: translateY(-7.5px) rotate(-45deg);
+    }
+  }
+
+  @include tablet {
+    display: flex;
+  }
+
+  @include mobile {
+    padding: 9px 13px;
+
+    span {
+      width: 19px;
+      height: 2px;
+    }
+  }
+}
+
+/* =========================
+   SCROLL EFFECT
+========================= */
+
+.navbar.scrolled {
+  padding: 10px 0;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+}
+
+

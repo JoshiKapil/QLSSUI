@@ -1,0 +1,96 @@
+<section class="certificate-page">
+  <div class="container certificate-shell">
+    <header class="page-header">
+      <div>
+        <span class="eyebrow">Admin Facility</span>
+        <h1>Print Certificate</h1>
+        <p>Select a training and participant, review the populated details, then preview or export an A4 landscape PDF.</p>
+      </div>
+      <a class="btn btn-outline" routerLink="/admin/create-test">Create Test</a>
+    </header>
+
+    <div class="workspace-grid">
+      <form class="certificate-form" (submit)="$event.preventDefault()">
+        <section class="form-card training-card" [class.dropdown-open]="isTrainingDropdownOpen || isUserDropdownOpen">
+          <div class="section-heading">
+            <span class="step-badge" aria-label="Step 1">1</span>
+            <div><h2>Training &amp; participant</h2><p>Topics are brought in automatically from the selected training.</p></div>
+          </div>
+
+          <label class="field-label">Training</label>
+          <div class="search-select">
+            <button class="select-toggle" type="button" (click)="toggleTrainingDropdown()" [attr.aria-expanded]="isTrainingDropdownOpen">
+              <span>{{ selectedTraining ? getTrainingLabel(selectedTraining) : 'Select Training' }}</span><span aria-hidden="true">&#9662;</span>
+            </button>
+            <div class="select-menu" *ngIf="isTrainingDropdownOpen" role="listbox">
+              <input type="search" [(ngModel)]="trainingSearch" name="trainingSearch" placeholder="Search training" autocomplete="off" />
+              <button type="button" *ngFor="let training of filteredTrainingList; trackBy: trackByTrainingId" (click)="selectTraining(training)">
+                <strong>{{ getTrainingLabel(training) }}</strong>
+                <small>{{ getTrainingUserCount(training) }} {{ getTrainingUserCount(training) === 1 ? 'participant' : 'participants' }}</small>
+              </button>
+              <p class="empty-option" *ngIf="!filteredTrainingList.length">No training found.</p>
+            </div>
+          </div>
+
+          <label class="field-label">Participant</label>
+          <div class="search-select">
+            <button class="select-toggle" type="button" (click)="toggleUserDropdown()" [disabled]="!selectedTrainingId" [attr.aria-expanded]="isUserDropdownOpen">
+              <span>{{ selectedUser ? getUserLabel(selectedUser) : (selectedTrainingId ? 'Select User' : 'Select training first') }}</span><span aria-hidden="true">&#9662;</span>
+            </button>
+            <div class="select-menu" *ngIf="isUserDropdownOpen" role="listbox">
+              <input type="search" [(ngModel)]="userSearch" name="userSearch" placeholder="Search by name, email or certificate number" autocomplete="off" />
+              <button type="button" *ngFor="let user of filteredUserData; trackBy: trackByUserId" (click)="selectUser(user.CertificationDataId)">
+                <strong>{{ user.UserName }}</strong>
+                <small>{{ user.Email || user.CertificationNumber }}</small>
+              </button>
+              <p class="empty-option" *ngIf="!filteredUserData.length">No participant found.</p>
+            </div>
+          </div>
+
+          <!-- <div class="result-strip" *ngIf="selectedUser">
+            <div><span>Completion</span><strong>{{ certificate.completionType | titlecase }}</strong></div>
+            <div><span>Marks</span><strong>{{ certificate.marks === null ? 'N/A' : certificate.marks + '%' }}</strong></div>
+            <p>{{ completionPreview }}</p>
+          </div> -->
+        </section>
+
+        <section class="form-card" [class.is-disabled]="!selectedUserId">
+          <div class="section-heading">
+            <span class="step-badge" aria-label="Step 2">2</span>
+            <div><h2>Certificate details</h2><p>All fields remain editable before generation.</p></div>
+          </div>
+
+          <div class="form-grid">
+            <label class="full">Participant name<input type="text" [(ngModel)]="certificate.userName" name="userName" /></label>
+            <label class="full">Training name<input type="text" [(ngModel)]="certificate.trainingName" name="trainingName" /></label>
+            <label>Training hours<input type="number" min="0.5" step="0.5" [(ngModel)]="certificate.trainingHours" name="trainingHours" /></label>
+            <label>Date of issue<input type="date" [(ngModel)]="certificate.dateOfIssue" name="dateOfIssue" /></label>
+            <label>Location<input type="text" [(ngModel)]="certificate.location" name="location" /></label>
+            <label>Trainer name<input type="text" [(ngModel)]="certificate.trainerName" name="trainerName" /></label>
+            <label class="full">Certificate number<input type="text" [(ngModel)]="certificate.certificateNumber" name="certificateNumber" /></label>
+            <label class="full">Covered topics<textarea rows="5" [ngModel]="certificate.coveredTopics.join(', ')" (ngModelChange)="updateTopics($event)" name="coveredTopics" placeholder="Topic one, Topic two, Topic three, Topic four"></textarea><small>Enter 4 to 6 topics separated by commas. Each topic uses its own colored bullet line in the PDF.</small></label>
+          </div>
+        </section>
+
+        <div class="action-bar">
+          <button class="btn btn-primary" type="button" (click)="preview()" [disabled]="isGenerating">{{ isGenerating ? 'Generating...' : 'Preview PDF' }}</button>
+          <button class="btn btn-outline" type="button" (click)="download()" [disabled]="isGenerating">Download</button>
+          <button class="btn btn-outline" type="button" (click)="print()" [disabled]="isGenerating">Print</button>
+        </div>
+      </form>
+
+      <aside class="preview-card">
+        <div class="preview-heading"><div><span>Live output</span><h2>PDF Preview</h2></div><span class="page-size">A4 Landscape</span></div>
+        <iframe *ngIf="previewUrl; else previewPlaceholder" [src]="previewUrl" title="Certificate PDF preview"></iframe>
+        <ng-template #previewPlaceholder>
+          <div class="preview-placeholder">
+            <div class="document-icon">PDF</div>
+            <h3>Your certificate will appear here</h3>
+            <p>Select a training and participant, then choose Preview PDF.</p>
+          </div>
+        </ng-template>
+      </aside>
+    </div>
+  </div>
+</section>
+

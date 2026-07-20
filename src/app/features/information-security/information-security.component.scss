@@ -1,0 +1,31 @@
+@import '../management-system/management-system.component.scss';
+
+.information-security-hero__bg {
+  background-image: url('/assets/img/infosystem.png');
+}
+
+.information-security-intro__img {
+  min-height: 430px;
+  background-image: url('/assets/img/infosystem.png');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.oe-intro__text p{
+  text-align: justify;
+}
+@media (max-width: 768px) {
+  .information-security-hero__bg {
+    background-position: 60% 80%;
+  }
+
+  .information-security-intro__img {
+    min-height: 320px;
+  }
+}
+
+@media (max-width: 480px) {
+  .information-security-intro__img {
+    min-height: 260px;
+  }
+}

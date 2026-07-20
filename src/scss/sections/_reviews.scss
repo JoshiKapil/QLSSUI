@@ -1,0 +1,29 @@
+@use "../utilities/breakpoints" as *;
+@use "../base/variables" as *;
+.reviews {
+  background: var(--bg-light);
+
+  .reviews-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 30px;
+  }
+
+  .review-card {
+    background: white;
+
+    padding: 30px;
+
+    border-radius: var(--radius-md);
+
+    box-shadow: var(--shadow-sm);
+  }
+
+  @include tablet {
+    .reviews-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

@@ -1,0 +1,28 @@
+@use "../utilities/breakpoints" as *;
+@use "../base/variables" as *;
+.clients {
+  .clients-grid {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 40px;
+
+    align-items: center;
+
+    img {
+      // opacity: 0.6;
+      transition: 0.3s;
+    }
+
+    img:hover {
+      opacity: 1;
+    }
+  }
+
+  @include tablet {
+    .clients-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}

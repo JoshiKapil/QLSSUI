@@ -1,0 +1,82 @@
+<header class="navbar">
+  <div class="container navbar-wrapper">
+    <!-- LEFT: Logo -->
+    <div class="navbar-logo">
+      <img (click)="closeMenu()" routerLink="/" style="cursor: pointer;" src="assets/logos/logo.png" alt="QLSS Logo" />
+    </div>
+
+    <!-- CENTER: Nav links -->
+    <nav class="">
+      <div class="navbar-menu" [class.active]="menuOpen">
+        <!-- Mobile-only header inside fullscreen menu -->
+        <div class="navbar-menu__header">
+          <img src="assets/logos/logo.png" alt="QLSS Logo" />
+          <!-- <span>Business Consulting</span> -->
+        </div>
+
+        <!-- <a (click)="closeMenu()" routerLink="/">Home</a> -->
+        <a (click)="closeMenu()" routerLink="/training" routerLinkActive="active-link">Training</a>
+        <a (click)="closeMenu()" routerLink="/expertise" routerLinkActive="active-link">Expertise</a>
+        <a (click)="closeMenu()" routerLink="/about" routerLinkActive="active-link">About Us</a>
+        <a (click)="closeMenu()" routerLink="/teams" routerLinkActive="active-link">Our Team</a>
+        <a (click)="closeMenu()" routerLink="/contact" routerLinkActive="active-link">Contact</a>
+        <!-- <a (click)="closeMenu()" routerLink="/login" routerLink="/contact">Login</a> -->
+
+        <div *ngIf="isLoggedIn" class="navbar-account">          
+
+          <div *ngIf="isAdmin" class="account-nav-item account-nav-item--admin" [class.account-nav-item--open]="adminMenuOpen" (mouseenter)="adminMenuOpen = true" (mouseleave)="adminMenuOpen = false">
+            <a class="account-nav-item__link account-nav-item__link--secondary" (click)="toggleAdminMenu($event)" href="javascript:void(0)">
+              <span>Admin</span>
+              <span class="account-nav-item__caret">▾</span>
+            </a>
+            <div class="account-nav-item__dropdown account-nav-item__dropdown--admin">
+              <a (click)="closeMenu()" routerLink="/admin/trainings" routerLinkActive="active-link"><i class="fas fa-book"></i> Trainings</a>
+              <a (click)="closeMenu()" routerLink="/admin/trainer" routerLinkActive="active-link"><i class="fas fa-chalkboard-teacher"></i> Trainer</a>
+              <a (click)="closeMenu()" routerLink="/admin/clients" routerLinkActive="active-link"><i class="fa-solid fa-building-columns"></i> Company</a>
+               <a (click)="closeMenu()" routerLink="/admin/create-test" routerLinkActive="active-link"><i class="fas fa-flask"></i> Test</a>
+              <a (click)="closeMenu()" routerLink="/admin/create-question" routerLinkActive="active-link"><i class="fas fa-question-circle"></i> Question</a>
+              <a (click)="closeMenu()" routerLink="/admin/print-certificate" routerLinkActive="active-link"><i class="fas fa-certificate"></i> Print Certificate</a>
+              <a (click)="closeMenu()" routerLink="/admin/test" routerLinkActive="active-link"><i class="fas fa-chart-line"></i> Result</a>
+              <!-- <a (click)="closeMenu()" routerLink="/admin/linkedin-posts" routerLinkActive="active-link">LinkedIn Posts</a>
+              <a (click)="closeMenu()" routerLink="/admin/linkedin-comments" routerLinkActive="active-link">LinkedIn Comments</a> -->
+            </div>
+          </div>
+          <div class="account-nav-item" [class.account-nav-item--open]="userMenuOpen" (mouseenter)="userMenuOpen = true" (mouseleave)="closeUserMenu()">
+            <a class="account-nav-item__link" (click)="toggleUserMenu($event)" href="javascript:void(0)">
+              <i class="fas fa-user-circle account-nav-item__icon"></i>
+              <span>{{ truncatedUserName }}</span>
+              <span class="account-nav-item__caret">▾</span>
+            </a>
+
+            <div class="account-nav-item__dropdown">
+              <a (click)="closeMenu()" routerLink="/profile" routerLinkActive="active-link"><i class="fas fa-user"></i> Profile</a>
+              <a (click)="closeMenu()" routerLink="/change-password" routerLinkActive="active-link"><i class="fas fa-lock"></i> Change Password</a>
+              <a (click)="logout()" routerLink="/login" routerLinkActive="active-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile-only CTA
+        <a (click)="closeMenu()" routerLink="/verify" class="navbar-menu__cta"
+          >Verify Certificate</a
+        > -->
+      </div>
+    </nav>
+
+    <!-- RIGHT: Button + Hamburger -->
+    <div class="navbar-right">
+      <a (click)="closeMenu()" routerLink="/verify" routerLinkActive="active-link" class="btn btn-primary navbar-btn vrfbtn">
+        Verify Certificate
+      </a>
+
+      <button type="button" class="navbar-toggle" [class.active]="menuOpen" (click)="toggleMenu()" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+

@@ -1,0 +1,31 @@
+@use "../utilities/breakpoints" as *;
+@use "../base/variables" as *;
+.whychoose {
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+
+  .why-card {
+    background: white;
+
+    padding: 30px;
+
+    border-radius: var(--radius-md);
+
+    box-shadow: var(--shadow-sm);
+
+    transition: var(--transition);
+
+    &:hover {
+      transform: translateY(-8px);
+    }
+  }
+
+  @include tablet {
+    .why-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

@@ -1,0 +1,1067 @@
+// // ================================================================
+// //  _footer.scss    QLSS Footer
+// //  Breakpoints: utilities/_breakpoints.scss
+// //
+// //  CHANGES FROM ORIGINAL:
+// //  1. Removed f-socials-inline (no longer needed  socials now
+// //     live inside .f-contact-col at all screen sizes)
+// //  2. .f-socials-col moved inside .f-contact-col in HTML, so its
+// //     styles changed: flex-direction row, margin-top 20px,
+// //     always visible (no display:none / laptop hide)
+// //  3. Added .f-nav-wrapper  wraps both nav cols, always 1fr 1fr
+// //     internally so Main Links + Quick Links stay side-by-side
+// //     on tablet AND mobile
+// //  4. .f-inner grid updated: 3 cols [brand] [nav-wrapper] [contact]
+// //     instead of 5 cols
+// //  All other styles are UNCHANGED.
+// // ================================================================
+
+// @use "../utilities/breakpoints" as *;
+
+// // â”€â”€ Keyframes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+// @keyframes f-underline-grow {
+//   from {
+//     transform: scaleX(0);
+//   }
+//   to {
+//     transform: scaleX(1);
+//   }
+// }
+
+// @keyframes f-bounce {
+//   0% {
+//     transform: translateY(0) scale(1);
+//   }
+//   30% {
+//     transform: translateY(-8px) scale(1.12);
+//   }
+//   55% {
+//     transform: translateY(-3px) scale(1.05);
+//   }
+//   75% {
+//     transform: translateY(-6px) scale(1.08);
+//   }
+//   100% {
+//     transform: translateY(-4px) scale(1.04);
+//   }
+// }
+
+// @keyframes f-ring {
+//   0% {
+//     opacity: 0.55;
+//     transform: scale(1);
+//   }
+//   100% {
+//     opacity: 0;
+//     transform: scale(2.4);
+//   }
+// }
+
+// @keyframes f-shimmer {
+//   0% {
+//     background-position: -200% center;
+//   }
+//   100% {
+//     background-position: 200% center;
+//   }
+// }
+
+// // ================================================================
+// // OUTER WRAPPER   unchanged
+// // ================================================================
+
+// .qlss-footer {
+//   position: relative;
+//   font-family: "Poppins", sans-serif;
+//   -webkit-font-smoothing: antialiased;
+//   overflow: visible;
+
+//   background: linear-gradient(
+//     to bottom,
+//     var(--text-light) 0%,
+//     var(--text-light) 55%,
+//     var(--blue-light) 76%,
+//     var(--blue-light-mid) 90%,
+//     var(--blue-mid) 100%
+//   );
+
+//   border-top: 1px solid var(--gray-light-mid);
+
+//   &::before {
+//     content: "";
+//     position: absolute;
+//     inset: 0;
+//     background-image: radial-gradient(
+//       rgba(87, 144, 225, 0.04) 1px,
+//       transparent 1px
+//     );
+//     background-size: 22px 22px;
+//     pointer-events: none;
+//     z-index: 0;
+//     overflow: hidden;
+//   }
+// }
+
+// // ================================================================
+// // INNER  CHANGED: now 3 top-level columns
+// // [Brand 230px]  [Nav-wrapper (Main+Quick)]  [Get in Touch]
+// // Previously was 5 cols with a separate socials col at far right
+// // ================================================================
+
+// .f-inner {
+//   position: relative;
+//   z-index: 1;
+//   max-width: 1380px;
+//   margin: 0 auto;
+//   padding: 52px 48px 40px;
+//   display: grid;
+//   grid-template-columns: 230px 1fr 300px; // CHANGED: was 230px 1fr 1fr 1fr 56px
+//   gap: 0 40px;
+//   align-items: start;
+
+//   @media (max-width: 1200px) {
+//     grid-template-columns: 210px 1fr 270px; // CHANGED: was 210px 1fr 1fr 1fr 52px
+//     gap: 0 28px;
+//     padding: 48px 32px 36px;
+//   }
+
+//   // â‰¤1024px: brand full-width on top, nav-wrapper + contact side-by-side
+//   @include laptop {
+//     grid-template-columns: 1fr 1fr; // CHANGED: was 1fr 1fr 1fr
+//     gap: 32px 28px;
+//     padding: 44px 28px 36px;
+//   }
+
+//   // â‰¤768px: brand full-width, then nav-wrapper + contact side-by-side
+//   @include tablet {
+//     grid-template-columns: 1fr 1fr; // unchanged value, but now only 3 items flow
+//     gap: 28px 20px;
+//     padding: 36px 24px 32px;
+//   }
+
+//   // â‰¤480px: single column
+//   @include mobile {
+//     grid-template-columns: 1fr;
+//     gap: 24px;
+//     padding: 32px 20px 28px;
+//   }
+// }
+
+// // ================================================================
+// // COL 1  BRAND   unchanged except removed f-socials-inline child
+// // ================================================================
+
+// .f-brand {
+//   padding-bottom: 8px;
+
+//   @include laptop {
+//     grid-column: 1 / -1;
+//   }
+
+//   @include tablet {
+//     grid-column: 1 / -1;
+//   }
+
+//   @include mobile {
+//     grid-column: auto;
+//   }
+// }
+
+// .f-logo {
+//   display: inline-block;
+//   margin-bottom: 20px;
+//   transition: opacity 0.22s ease;
+
+//   &:hover {
+//     opacity: 0.82;
+//   }
+
+//   .flogo {
+//     width: 155px;
+//     height: auto;
+//     display: block;
+//     object-fit: contain;
+//   }
+// }
+
+// .f-tagline {
+//   font-size: 0.815rem;
+//   color: var(--gray-mid);
+//   line-height: 1.8;
+//   margin-bottom: 14px;
+// }
+
+// .f-office-lbl {
+//   font-size: 0.8rem;
+//   font-weight: 700;
+//   color: var(--text-dark);
+//   margin-bottom: 4px;
+// }
+
+// .f-office-addr {
+//   font-size: 0.8rem;
+//   color: var(--gray-mid);
+//   line-height: 1.72;
+// }
+
+// // NOTE: .f-socials-inline removed  socials now always live inside
+// // .f-contact-col so no need for a separate inline / desktop version
+
+// // ================================================================
+// // COL 2  NAV WRAPPER   NEW: wraps both nav cols
+// // Always renders Main Links + Quick Links as 1fr 1fr grid
+// // This single wrapper is one grid cell in .f-inner
+// // ================================================================
+
+// .f-nav-wrapper {
+//   display: grid;
+//   grid-template-columns: 1fr 1fr; // always side-by-side at every breakpoint
+//   gap: 0 24px;
+//   min-width: 0;
+//   align-items: start;
+
+//   @include tablet {
+//     gap: 0 16px;
+//   }
+
+//   @include mobile {
+//     gap: 0 12px;
+//   }
+// }
+
+// // ================================================================
+// // NAV COLUMNS   unchanged styles, just now children of f-nav-wrapper
+// // ================================================================
+
+// .f-nav-col {
+//   padding-bottom: 8px;
+//   min-width: 0;
+// }
+
+// .f-col-hd {
+//   font-size: 0.88rem;
+//   font-weight: 700;
+//   color: var(--text-dark);
+//   margin-bottom: 22px;
+//   position: relative;
+//   padding-bottom: 11px;
+//   letter-spacing: 0.01em;
+
+//   &::after {
+//     content: "";
+//     position: absolute;
+//     bottom: 0;
+//     left: 0;
+//     width: 28px;
+//     height: 2.5px;
+//     background: linear-gradient(90deg, var(--primary), var(--secondary));
+//     border-radius: 2px;
+//     transform-origin: left center;
+//     animation: f-underline-grow 0.5s 0.15s ease both;
+//   }
+// }
+
+// .f-nav {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 13px;
+
+//   a {
+//     font-size: 0.855rem;
+//     color: var(--gray-mid);
+//     display: inline-flex;
+//     align-items: center;
+//     position: relative;
+//     padding-bottom: 1px;
+//     transition:
+//       color 0.22s ease,
+//       padding-left 0.22s ease;
+
+//     &::after {
+//       content: "";
+//       position: absolute;
+//       bottom: 0;
+//       left: 0;
+//       width: 0%;
+//       height: 1px;
+//       background: var(--primary);
+//       transition: width 0.26s ease;
+//       border-radius: 1px;
+//     }
+
+//     &::before {
+//       content: "";
+//       position: absolute;
+//       left: 0;
+//       font-size: 0.95rem;
+//       color: var(--primary);
+//       opacity: 0;
+//       transform: translateX(-8px);
+//       transition:
+//         opacity 0.22s ease,
+//         transform 0.22s ease;
+//       line-height: 1;
+//     }
+
+//     &:hover {
+//       color: var(--primary);
+//       padding-left: 13px;
+
+//       &::after {
+//         width: calc(100% - 13px);
+//       }
+//       &::before {
+//         opacity: 1;
+//         transform: translateX(-13px);
+//       }
+//     }
+//   }
+// }
+
+// // ================================================================
+// // COL 3  GET IN TOUCH   unchanged styles
+// // ================================================================
+
+// .f-contact-col {
+//   padding-bottom: 8px;
+//   min-width: 0;
+//   display: flex;
+//   flex-direction: column; // lets f-socials-col sit naturally at bottom
+
+//   // On tablet/mobile, contact col stays in its grid cell (col 2)
+//   // alongside f-nav-wrapper (col 1)  no full-width span needed
+// }
+
+// .f-contact-list {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 16px;
+// }
+
+// .f-ci {
+//   display: flex;
+//   align-items: flex-start;
+//   gap: 12px;
+//   font-size: 0.84rem;
+//   color: var(--gray-mid);
+// }
+
+// .f-ci-ico {
+//   flex-shrink: 0;
+//   width: 34px;
+//   height: 34px;
+//   border: 1.5px solid var(--gray-light-mid);
+//   border-radius: var(--radius-sm);
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   color: var(--primary);
+//   margin-top: -1px;
+//   background: rgba(0, 0, 0, 0.05);
+//   transition:
+//     background 0.22s ease,
+//     border-color 0.22s ease,
+//     color 0.22s ease,
+//     box-shadow 0.22s ease,
+//     transform 0.22s ease;
+
+//   svg {
+//     width: 15px;
+//     height: 15px;
+//   }
+// }
+
+// .f-ci:hover .f-ci-ico {
+//   background: var(--primary);
+//   border-color: var(--primary);
+//   color: var(--text-light);
+//   box-shadow: var(--shadow-md);
+//   transform: scale(1.08);
+// }
+
+// .f-ci-text {
+//   overflow-wrap: anywhere;
+//   word-break: break-word;
+//   line-height: 1.5;
+
+//   a,
+//   span {
+//     color: var(--gray-mid);
+//     line-height: 1.55;
+//     transition: color 0.2s ease;
+//   }
+
+//   a {
+//     display: inline-block;
+//     max-width: 100%;
+//     text-decoration: none;
+//   }
+// }
+
+// .f-ci:hover .f-ci-text a,
+// .f-ci:hover .f-ci-text span {
+//   color: var(--primary);
+// }
+
+// // ================================================================
+// // SOCIAL ICONS  CHANGED: now inside .f-contact-col
+// // Renders as a horizontal row below the contact list
+// // display is always flex  no hide/show toggling needed
+// // ================================================================
+
+// .f-socials-col {
+//   display: flex; // CHANGED: was flex-direction:column + display:none@laptop
+//   flex-direction: row; // CHANGED: was column (vertical stack on desktop)
+//   align-items: center;
+//   gap: 10px;
+//   margin-top: 20px; // CHANGED: was padding-top:6px  now spacing below contact list
+//   padding-bottom: 8px;
+// }
+
+// // Social icon link  unchanged
+// .f-soc {
+//   position: relative;
+//   width: 46px;
+//   height: 46px;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   background: transparent;
+//   border: none;
+//   text-decoration: none;
+//   flex-shrink: 0;
+//   overflow: visible;
+//   transition:
+//     transform 0.25s ease,
+//     filter 0.25s ease;
+
+//   img {
+//     width: 46px;
+//     height: 46px;
+//     object-fit: contain;
+//     display: block;
+//     border-radius: var(--radius-sm);
+//     position: relative;
+//     z-index: 1;
+//     transition: transform 0.25s ease;
+//   }
+
+//   &:hover {
+//     animation: f-bounce 0.45s ease forwards;
+//   }
+
+//   &::after {
+//     content: "";
+//     position: absolute;
+//     inset: -3px;
+//     border-radius: 11px;
+//     opacity: 0;
+//     pointer-events: none;
+//   }
+
+//   &--fb:hover {
+//     filter: drop-shadow(0 8px 18px rgba(87, 144, 225, 0.55));
+//   }
+//   &--fb::after {
+//     background: rgba(87, 144, 225, 0.2);
+//   }
+//   &--fb:hover::after {
+//     animation: f-ring 0.6s ease forwards;
+//   }
+
+//   &--li:hover {
+//     filter: drop-shadow(0 8px 18px rgba(87, 144, 225, 0.55));
+//   }
+//   &--li::after {
+//     background: rgba(87, 144, 225, 0.2);
+//   }
+//   &--li:hover::after {
+//     animation: f-ring 0.6s ease forwards;
+//   }
+
+//   &--ig:hover {
+//     filter: drop-shadow(0 8px 18px rgba(214, 36, 159, 0.5));
+//   }
+//   &--ig::after {
+//     background: rgba(214, 36, 159, 0.15);
+//   }
+//   &--ig:hover::after {
+//     animation: f-ring 0.6s ease forwards;
+//   }
+// }
+
+// // ================================================================
+// // BOTTOM BAR   unchanged
+// // ================================================================
+
+// .f-bottom {
+//   position: relative;
+//   z-index: 1;
+//   background: linear-gradient(
+//     90deg,
+//     var(--blue-mid) 0%,
+//     var(--primary) 35%,
+//     var(--blue-dark-mid) 65%,
+//     var(--primary) 80%,
+//     var(--blue-mid) 100%
+//   );
+//   text-align: center;
+//   padding: 14px 32px;
+
+//   p {
+//     font-size: 0.8rem;
+//     font-weight: 500;
+//     color: var(--text-light);
+//     letter-spacing: 0.04em;
+//     font-family: "Poppins", sans-serif;
+//     margin: 0;
+//     text-transform: none;
+//   }
+
+//   @include mobile {
+//     padding: 12px 20px;
+//   }
+// }
+// ================================================================
+//  _footer.scss    QLSS Footer
+//  Breakpoints: utilities/_breakpoints.scss
+//
+//  CHANGES FROM ORIGINAL:
+//  1. Removed f-socials-inline (no longer needed  socials now
+//     live inside .f-contact-col at all screen sizes)
+//  2. .f-socials-col moved inside .f-contact-col in HTML, so its
+//     styles changed: flex-direction row, margin-top 20px,
+//     always visible (no display:none / laptop hide)
+//  3. Added .f-nav-wrapper  wraps both nav cols, always 1fr 1fr
+//     internally so Main Links + Quick Links stay side-by-side
+//     on tablet AND mobile
+//  4. .f-inner grid updated: 3 cols [brand] [nav-wrapper] [contact]
+//     instead of 5 cols
+//  All other styles are UNCHANGED.
+// ================================================================
+
+@use "../utilities/breakpoints" as *;
+
+// â”€â”€ Keyframes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+@keyframes f-underline-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes f-bounce {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  30% {
+    transform: translateY(-8px) scale(1.12);
+  }
+  55% {
+    transform: translateY(-3px) scale(1.05);
+  }
+  75% {
+    transform: translateY(-6px) scale(1.08);
+  }
+  100% {
+    transform: translateY(-4px) scale(1.04);
+  }
+}
+
+@keyframes f-ring {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+
+@keyframes f-shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+// ================================================================
+// OUTER WRAPPER   unchanged
+// ================================================================
+
+.qlss-footer {
+  position: relative;
+  font-family: "Poppins", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: visible;
+
+  background: linear-gradient(
+    to bottom,
+    // var(--text-light) 0%,
+    var(--text-light) 55%,
+    var(--blue-light) 76%,
+    var(--blue-light-mid) 90%,
+    var(--blue-mid) 100%
+  );
+
+  border-top: 1px solid var(--gray-light-mid);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+      rgba(87, 144, 225, 0.04) 1px,
+      transparent 1px
+    );
+    background-size: 22px 22px;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+}
+
+// ================================================================
+// INNER  CHANGED: now 3 top-level columns
+// [Brand 230px]  [Nav-wrapper (Main+Quick)]  [Get in Touch]
+// Previously was 5 cols with a separate socials col at far right
+// ================================================================
+
+.f-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 52px 48px 40px;
+  display: grid;
+  grid-template-columns: 230px 1fr 300px; // CHANGED: was 230px 1fr 1fr 1fr 56px
+  gap: 0 40px;
+  align-items: start;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: 210px 1fr 270px; // CHANGED: was 210px 1fr 1fr 1fr 52px
+    gap: 0 28px;
+    padding: 48px 32px 36px;
+  }
+
+  // â‰¤1024px: brand full-width on top, nav-wrapper + contact side-by-side
+  @include laptop {
+    grid-template-columns: 1fr 1fr; // CHANGED: was 1fr 1fr 1fr
+    gap: 32px 28px;
+    padding: 44px 28px 36px;
+  }
+
+  // â‰¤768px: brand full-width, then nav-wrapper + contact side-by-side
+  @include tablet {
+    grid-template-columns: 1fr 1fr; // unchanged value, but now only 3 items flow
+    gap: 28px 20px;
+    padding: 36px 24px 32px;
+  }
+
+  // â‰¤480px: single column
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 32px 20px 28px;
+  }
+}
+
+// ================================================================
+// COL 1  BRAND   unchanged except removed f-socials-inline child
+// ================================================================
+
+.f-brand {
+  padding-bottom: 8px;
+
+  @include laptop {
+    grid-column: 1 / -1;
+  }
+
+  @include tablet {
+    grid-column: 1 / -1;
+  }
+
+  @include mobile {
+    grid-column: auto;
+  }
+}
+
+.f-logo {
+  display: inline-block;
+  margin-bottom: 20px;
+  transition: opacity 0.22s ease;
+
+  &:hover {
+    opacity: 0.82;
+  }
+
+  .flogo {
+    width: 155px;
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
+}
+
+.f-tagline {
+  font-size: 0.815rem;
+  color: var(--gray-mid);
+  line-height: 1.8;
+  margin-bottom: 14px;
+}
+
+.f-office-lbl {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.f-office-addr {
+  font-size: 0.8rem;
+  color: var(--gray-mid);
+  line-height: 1.72;
+}
+
+// NOTE: .f-socials-inline removed  socials now always live inside
+// .f-contact-col so no need for a separate inline / desktop version
+
+// ================================================================
+// COL 2  NAV WRAPPER   NEW: wraps both nav cols
+// Always renders Main Links + Quick Links as 1fr 1fr grid
+// This single wrapper is one grid cell in .f-inner
+// ================================================================
+
+.f-nav-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr; // always side-by-side at every breakpoint
+  gap: 0 24px;
+  min-width: 0;
+  align-items: start;
+  justify-items: center; // center each nav col inside its 1fr cell
+
+  @include tablet {
+    gap: 0 16px;
+    justify-items: start; // on tablet/mobile left-align is cleaner
+  }
+
+  @include mobile {
+    gap: 0 12px;
+    justify-items: start;
+  }
+}
+
+// ================================================================
+// NAV COLUMNS   fixed max-width so content doesn't stretch full cell
+// ================================================================
+
+.f-nav-col {
+  padding-bottom: 8px;
+  min-width: 0;
+  width: 100%;
+  max-width: 190px; // shrink-to-content: content stays left-aligned inside this box
+
+  @include tablet {
+    max-width: 100%; // full width on tablet/mobile  no centering needed
+  }
+}
+
+.f-col-hd {
+  font-weight: normal;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 22px;
+  position: relative;
+  padding-bottom: 11px;
+  letter-spacing: 0.01em;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 28px;
+    height: 2.5px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 2px;
+    transform-origin: left center;
+    animation: f-underline-grow 0.5s 0.15s ease both;
+  }
+}
+
+.f-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+
+  a {
+    font-weight: normal;
+    font-size: 17px;
+    color: var(--gray-mid);
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    padding-bottom: 1px;
+    transition:
+      color 0.22s ease,
+      padding-left 0.22s ease;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0%;
+      height: 1px;
+      background: var(--primary);
+      transition: width 0.26s ease;
+      border-radius: 1px;
+    }
+
+    &::before {
+      content: ">";
+      position: absolute;
+      left: 0;
+      font-size: 0.95rem;
+      color: var(--primary);
+      opacity: 0;
+      transform: translateX(-8px);
+      transition:
+        opacity 0.22s ease,
+        transform 0.22s ease;
+      line-height: 1;
+    }
+
+    &:hover {
+      color: var(--primary);
+      padding-left: 13px;
+
+      &::after {
+        width: calc(100% - 13px);
+      }
+      &::before {
+        opacity: 1;
+        transform: translateX(-13px);
+      }
+    }
+  }
+}
+
+// ================================================================
+// COL 3  GET IN TOUCH   unchanged styles
+// ================================================================
+
+.f-contact-col {
+  padding-bottom: 8px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column; // lets f-socials-col sit naturally at bottom
+
+  // On tablet/mobile, contact col stays in its grid cell (col 2)
+  // alongside f-nav-wrapper (col 1)  no full-width span needed
+}
+
+.f-contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.f-ci {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.84rem;
+  color: var(--gray-mid);
+}
+
+.f-ci-ico {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid var(--gray-light-mid);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  margin-top: -1px;
+  background: rgba(0, 0, 0, 0.05);
+  transition:
+    background 0.22s ease,
+    border-color 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.22s ease;
+
+  i {
+    font-size: 15px;
+  }
+}
+
+.f-ci:hover .f-ci-ico {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--text-light);
+  box-shadow: var(--shadow-md);
+  transform: scale(1.08);
+}
+
+.f-ci-text {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-height: 1.5;
+
+  a,
+  span {
+    color: var(--gray-mid);
+    line-height: 1.55;
+    transition: color 0.2s ease;
+  }
+
+  a {
+    display: inline-block;
+    max-width: 100%;
+    text-decoration: none;
+  }
+}
+
+.f-ci:hover .f-ci-text a,
+.f-ci:hover .f-ci-text span {
+  color: var(--primary);
+}
+
+// ================================================================
+// SOCIAL ICONS  CHANGED: now inside .f-contact-col
+// Renders as a horizontal row below the contact list
+// display is always flex  no hide/show toggling needed
+// ================================================================
+
+.f-socials-col {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding-bottom: 8px;
+  min-height: 46px;
+}
+
+// Social icon link
+.f-soc {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  text-decoration: none;
+  flex-shrink: 0;
+  overflow: visible;
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease;
+
+  border-radius: var(--radius-sm);
+
+  i {
+    font-size: 20px;
+    color: #ffffff;
+    display: block;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.25s ease;
+  }
+
+  &:hover {
+    animation: f-bounce 0.45s ease forwards;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 11px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &--fb { background: #1877F2; }
+  &--fb:hover {
+    filter: drop-shadow(0 8px 18px rgba(87, 144, 225, 0.55));
+  }
+  &--fb::after {
+    background: rgba(87, 144, 225, 0.2);
+  }
+  &--fb:hover::after {
+    animation: f-ring 0.6s ease forwards;
+  }
+
+  &--li { background: #0A66C2; }
+  &--li:hover {
+    filter: drop-shadow(0 8px 18px rgba(87, 144, 225, 0.55));
+  }
+  &--li::after {
+    background: rgba(87, 144, 225, 0.2);
+  }
+  &--li:hover::after {
+    animation: f-ring 0.6s ease forwards;
+  }
+
+  &--ig { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+  &--ig:hover {
+    filter: drop-shadow(0 8px 18px rgba(214, 36, 159, 0.5));
+  }
+  &--ig::after {
+    background: rgba(214, 36, 159, 0.15);
+  }
+  &--ig:hover::after {
+    animation: f-ring 0.6s ease forwards;
+  }
+}
+
+// ================================================================
+// BOTTOM BAR   unchanged
+// ================================================================
+
+.f-bottom {
+  position: relative;
+  z-index: 1;
+  // background: linear-gradient(
+  //   90deg,
+  //   var(--blue-mid) 0%,
+  //   var(--primary) 35%,
+  //   var(--blue-dark-mid) 65%,
+  //   var(--primary) 80%,
+  //   var(--blue-mid) 100%
+  // );
+  text-align: center;
+  padding: 14px 32px;
+
+  p {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #1a1a1a;
+    letter-spacing: 0.04em;
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    text-transform: none;
+  }
+
+  @include mobile {
+    padding: 12px 20px;
+  }
+}

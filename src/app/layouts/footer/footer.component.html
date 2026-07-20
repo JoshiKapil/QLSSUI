@@ -1,0 +1,92 @@
+<!-- =========================================================
+     QLSS FOOTER  |  /components/footer.html
+     Loaded via: fetch('/components/footer.html')
+     Styles live in: scss/layout/_footer.scss
+     NOTE: NO script tags here  they break innerHTML parsing.
+     Year auto-fill is handled by main.js after injection.
+========================================================== -->
+
+<footer class="qlss-footer" role="contentinfo">
+  <div class="f-inner">
+    <!-- COL 1  BRAND -->
+    <div class="f-brand">
+      <a routerLink="/" class="f-logo" aria-label="QLSS Business Consulting  Home">
+        <img src="assets/logos/logo.png" class="flogo" alt="QLSS Business Consulting" />
+      </a>
+      <p class="f-office-lbl">Office :</p>
+      <p class="f-office-addr">
+        01, Navchaitanya Mitra Mandal Chowk,<br />
+        Near Hadapsar Police Station, Hadapsar,<br />
+        Pune  411028
+      </p>
+    </div>
+
+    <!-- COL 2 & 3  NAV WRAPPER -->
+    <div class="f-nav-wrapper">
+      <div class="f-nav-col">
+        <h3 class="f-col-hd">Main Links</h3>
+        <nav class="f-nav" aria-label="Main navigation links">
+          <a routerLink="/">Home</a>
+          <a routerLink="/about">About Us</a>
+          <a routerLink="/expertise">Our Expertise</a>
+          <a routerLink="/training">Training</a>
+          <a routerLink="/contact">Contact Us</a>
+        </nav>
+      </div>
+      <div class="f-nav-col">
+        <h3 class="f-col-hd">Quick Links</h3>
+        <nav class="f-nav" aria-label="Quick navigation links">
+          <a routerLink="/client">Our Clients</a>
+          <a routerLink="/faq">FAQ's</a>
+          <!-- <a routerLink="/blogs">Blogs</a> -->
+          <a routerLink="/teams">Our Team</a>
+          <a routerLink="/verify">Verify Certificate</a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- COL 4  GET IN TOUCH + SOCIALS -->
+    <div class="f-contact-col">
+      <h3 class="f-col-hd">Get in Touch</h3>
+      <ul class="f-contact-list">
+        <li class="f-ci">
+          <span class="f-ci-ico" aria-hidden="true">
+            <i class="fa-regular fa-envelope"></i>
+          </span>
+          <span class="f-ci-text">
+            <a href="mailto:sales@qlssconsulting.com">sales@qlssconsulting.com</a>
+          </span>
+        </li>
+        <li class="f-ci">
+          <span class="f-ci-ico" aria-hidden="true">
+            <i class="fa-solid fa-phone"></i>
+          </span>
+          <span class="f-ci-text">
+            <a href="tel:+918180955888">+91 8180955888 / +91 7058954942</a>
+          </span>
+        </li>
+      </ul>
+
+      <div class="f-socials-col" aria-label="Social media links">
+        <a href="https://www.facebook.com/qlssbusinessconsulting/" target="_blank" rel="noopener noreferrer" class="f-soc f-soc--fb" aria-label="Facebook">
+          <i class="fa-brands fa-facebook-f"></i>
+        </a>
+        <a href="https://www.linkedin.com/company/qlss-business-consulting/about/?viewAsMember=true" target="_blank" rel="noopener noreferrer" class="f-soc f-soc--li" aria-label="LinkedIn">
+          <i class="fa-brands fa-linkedin-in"></i>
+        </a>
+        <a href="https://www.instagram.com/qlss_business_consulting/" target="_blank" rel="noopener noreferrer" class="f-soc f-soc--ig" aria-label="Instagram">
+          <i class="fa-brands fa-instagram"></i>
+        </a>
+      </div>
+    </div>
+    <!-- /f-contact-col -->
+  </div>
+  <!-- /f-inner -->
+
+  <!-- 
+       BOTTOM BAR
+   -->
+  <div class="f-bottom">
+    <p>ALL RIGHTS RESERVED &copy; QLSS <span class="f-yr">{{ currentYear }}</span></p>
+  </div>
+</footer>

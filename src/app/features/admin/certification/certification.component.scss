@@ -1,0 +1,136 @@
+.admin-form small {
+  min-height: 1rem;
+}
+
+.cert-upload {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(47, 124, 232, 0.2);
+  border-radius: 16px;
+  background: linear-gradient(145deg, #ffffff 0%, rgba(206, 225, 252, 0.35) 100%);
+  box-shadow: 0 12px 30px rgba(21, 54, 93, 0.08);
+}
+
+.cert-upload__heading {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+
+  h2 {
+    margin: 0 0 0.2rem;
+    font-size: 1.15rem;
+  }
+
+  p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.85rem;
+    line-height: 1.45;
+  }
+}
+
+.cert-upload__icon {
+  display: grid;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 12px;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  box-shadow: 0 8px 18px rgba(47, 124, 232, 0.24);
+}
+
+.cert-upload__dropzone {
+  display: flex;
+  min-height: 150px;
+  padding: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.45rem;
+  border: 2px dashed rgba(47, 124, 232, 0.42);
+  border-radius: 14px;
+  color: #334155;
+  background: rgba(255, 255, 255, 0.72);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+
+  &:hover,
+  &:focus-within {
+    border-color: var(--primary);
+    background: rgba(206, 225, 252, 0.38);
+    transform: translateY(-2px);
+  }
+
+  > i {
+    margin-bottom: 0.2rem;
+    color: var(--primary);
+    font-size: 2rem;
+  }
+
+  strong {
+    color: #1e293b;
+    font-size: 0.95rem;
+  }
+
+  span {
+    color: #64748b;
+    font-size: 0.78rem;
+  }
+}
+
+.cert-upload__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.cert-upload__status {
+  display: flex;
+  margin-top: 0.85rem;
+  padding: 0.65rem 0.8rem;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 10px;
+  color: #166534;
+  background: #dcfce7;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.cert-upload__button {
+  width: 100%;
+  margin-top: 1rem;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
+  }
+}
+
+.cert-upload__error {
+  display: flex;
+  margin-top: 0.85rem;
+  align-items: flex-start;
+  gap: 0.45rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 576px) {
+  .cert-upload {
+    padding: 1rem;
+  }
+
+  .cert-upload__dropzone {
+    min-height: 130px;
+  }
+}

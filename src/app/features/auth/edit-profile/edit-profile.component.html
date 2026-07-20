@@ -1,0 +1,62 @@
+<section class="auth-section">
+  <div class="container auth-shell">
+    <div class="auth-panel">
+      <div class="auth-panel__header">
+        <span class="auth-eyebrow">My Account</span>
+        <h1>Edit Profile</h1>
+        <p>Keep your profile details up to date.</p>
+      </div>
+
+      <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
+        <div class="auth-grid">
+          <label class="form-field">
+            Name
+            <input type="text" formControlName="name" />
+            <small>{{ firstError(form.get('name'), 'Name') }}</small>
+          </label>
+
+          <label class="form-field">
+            Email
+            <input type="email" formControlName="email" />
+            <small>{{ firstError(form.get('email'), 'Email') }}</small>
+          </label>
+
+          <label class="form-field">
+            Phone
+            <input type="tel" formControlName="phone" />
+            <small>{{ firstError(form.get('phone'), 'Phone') }}</small>
+          </label>
+
+          <label class="form-field">
+            Role
+            <select formControlName="role">
+              <option value="User">User</option>
+              <option value="Admin">Admin</option>
+            </select>
+            <small>{{ firstError(form.get('role'), 'Role') }}</small>
+          </label>
+
+          <label class="form-field">
+            CreatedAt
+            <input type="text" formControlName="createdAt" readonly />
+          </label>
+
+          <label class="form-field">
+            UpdatedAt
+            <input type="text" formControlName="updatedAt" readonly />
+          </label>
+        </div>
+
+        <label class="form-field">
+          Address
+          <textarea rows="3" formControlName="address"></textarea>
+          <small>{{ firstError(form.get('address'), 'Address') }}</small>
+        </label>
+
+        <button class="btn btn-primary auth-submit" type="submit" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Saving...' : 'Save Profile' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</section>

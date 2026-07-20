@@ -1,0 +1,100 @@
+// :root {
+//   --primary: #0b3d91;
+//   --secondary: #2b7bff;
+//   --accent: #1e90ff;
+
+//   --text-dark: #1a1a1a;
+//   --text-light: #ffffff;
+
+//   --bg-light: #f4f6fb;
+//   --bg-dark: #0c1c3c;
+
+//   --glass-bg: rgba(255, 255, 255, 0.08);
+//   --glass-border: rgba(255, 255, 255, 0.2);
+
+//   --radius-sm: 8px;
+//   --radius-md: 16px;
+//   --radius-lg: 28px;
+
+//   --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.05);
+//   --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.08);
+
+//   --transition: all 0.3s ease;
+
+//   --font-heading: sans-serif;
+//   --font-body: sans-serif;
+// }
+
+// ================================================================
+//  _variables.scss    QLSS Design System
+//
+//  Color Reference (from brand color guide):
+//
+//  BASIC       Black #000B1D  |  White #FFFFFF
+//  GRAY        Light #F4F4F4  |  Light Medium #D8D8D8
+//              Medium #6D6E70 |  Medium Dark #252627  |  Dark #171818
+//  WARM BLUE   Light #EBF2FD  |  Light Medium #CEE1FC
+//              Medium #83AAE3 |  Medium Dark #5790E1
+//
+//  NOTE: Variable NAMES are unchanged  every page continues to work.
+//  Only the color VALUES have been updated to match the brand palette.
+// ================================================================
+
+:root {
+  // â”€â”€ Primary brand colors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // primary   â†’ Warm Blue Medium Dark  (main CTA, headings, links)
+  // secondary â†’ Warm Blue Medium       (hover states, gradients)
+  // accent    â†’ Warm Blue Light Medium (subtle highlights, icons)
+
+  --primary: #2f7ce8; // Warm Blue  Medium Dark
+  --secondary: #5992e8; // Warm Blue  Medium
+  --accent: #cee1fc; // Warm Blue  Light Medium
+
+  // â”€â”€ Text colors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // text-dark  â†’ Basic Black  (body copy, headings)
+  // text-light â†’ Basic White  (text on dark/colored backgrounds)
+
+  --text-dark: #000b1d; // Basic Black
+  --text-light: #ffffff; // Basic White
+
+  // â”€â”€ Background colors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // bg-light â†’ Warm Blue Light  (section backgrounds, cards)
+  // bg-dark  â†’ Gray Dark        (footer, dark sections)
+
+  --bg-light: #ebf2fd; // Warm Blue  Light
+  --bg-dark: #171818; // Gray  Dark
+
+  // â”€â”€ Glass / overlay effects â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.2);
+
+  // â”€â”€ Extended gray scale (available for borders, dividers, etc) â”€
+  --gray-light: #f4f4f4; // Gray  Light
+  --gray-light-mid: #d8d8d8; // Gray  Light Medium
+  --gray-mid: #6d6e70; // Gray  Medium
+  --gray-dark-mid: #252627; // Gray  Medium Dark
+  --gray-dark: #171818; // Gray  Dark
+
+  // â”€â”€ Extended warm blue scale (for gradients, tints) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  --blue-light: #ebf2fd; // Warm Blue  Light
+  --blue-light-mid: #cee1fc; // Warm Blue  Light Medium
+  --blue-mid: #83aae3; // Warm Blue  Medium
+  --blue-dark-mid: #5790e1; // Warm Blue  Medium Dark
+
+  // â”€â”€ Border radius â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 28px;
+
+  // â”€â”€ Shadows â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // Adjusted to use brand primary color tint instead of pure black
+  --shadow-sm: 0 4px 10px rgba(87, 144, 225, 0.08);
+  --shadow-md: 0 10px 25px rgba(87, 144, 225, 0.14);
+
+  // â”€â”€ Global transition â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  --transition: all 0.3s ease;
+
+  // â”€â”€ Typography â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  --font-heading: sans-serif;
+  --font-body: sans-serif;
+}

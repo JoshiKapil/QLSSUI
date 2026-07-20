@@ -1,0 +1,215 @@
+<!-- NAVBAR -->
+
+    <!--  HERO  -->
+    <section class="contact-hero">
+      <div class="hero-blob hero-blob--tl"></div>
+      <div class="hero-blob hero-blob--br"></div>
+      <div class="container">
+        <div class="contact-hero__inner reveal">
+          <h1 class="contact-hero__title">
+            Get in Touch with us<br /><span class="highlight"></span>
+          </h1>
+          <p class="contact-hero__sub">
+            Reach out to QLSS Business Consulting for custom solutions,
+            corporate services, promotional support, and professional consulting
+            across Pune, Maharashtra, and India.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!--  INFO STRIP  -->
+    <section class="contact-strip">
+      <div class="container">
+        <div class="contact-strip__grid">
+          <div class="strip-card reveal reveal-delay-1">
+            <div class="strip-card__icon">
+              <i class="fa-solid fa-phone"></i>
+            </div>
+            <div class="strip-card__body">
+              <h4>CALL US AT</h4>
+              <a href="tel:+918180955888">+91 8180955888</a>
+              <a href="tel:+917058954942">+91 7058954942</a>
+            </div>
+          </div>
+
+          <div class="strip-divider"></div>
+
+          <div class="strip-card reveal reveal-delay-2">
+            <div class="strip-card__icon">
+              <i class="fa-solid fa-envelope"></i>
+            </div>
+            <div class="strip-card__body">
+              <h4>EMAIL ADDRESS</h4>
+              <!-- <a href="mailto:qlssbusinessconsulting@gmail.com"
+                >qlssbusinessconsulting@gmail.com</a
+              > -->
+              <a href="mailto:sales@qlssconsulting.com"
+                >sales@qlssconsulting.com</a
+              >
+            </div>
+          </div>
+
+          <div class="strip-divider"></div>
+
+          <div class="strip-card reveal reveal-delay-3">
+            <div class="strip-card__icon">
+              <i class="fa-solid fa-location-dot"></i>
+            </div>
+            <div class="strip-card__body">
+              <h4>OPENING HOURS</h4>
+              <p>Monday &ndash; Friday: 9 am &ndash; 6 pm</p>
+              <p>Saturday: 9 am &ndash; 3 pm</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!--  MAIN  -->
+    <section class="contact-main">
+      <div class="container">
+        <div class="contact-main__grid">
+          <!-- LEFT CONTENT -->
+          <div class="contact-left reveal">
+            <span class="section-tag">Get in touch</span>
+            <h2 class="contact-main__title">
+              We’d love to hear from you.<br />Send us a message!
+            </h2>
+            <p class="contact-left__desc">
+              Whether you have a question about our consulting services,
+              training programs, or anything else, our team is ready to answer
+              all your questions. Fill out the form and we'll be in touch as
+              soon as possible.
+            </p>
+
+            <div class="contact-left__cards">
+              <div class="info-card">
+                <div class="info-card__icon">
+                  <i class="fa-solid fa-building"></i>
+                </div>
+                <div class="info-card__content">
+                  <h4>Head Office</h4>
+                  <p>QLSS Business Consulting,<br />Pune, Maharashtra, India</p>
+                </div>
+              </div>
+              <div class="info-card">
+                <div class="info-card__icon">
+                  <i class="fa-solid fa-globe"></i>
+                </div>
+                <div class="info-card__content">
+                  <h4>Global Reach</h4>
+                  <p>
+                    Serving clients across India, China, USA, Hungary, Saudi Arabia
+                    & UAE.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FORM -->
+          <div class="contact-form-wrap reveal reveal-delay-1">
+            <form class="contact-form" id="contactForm" novalidate  (ngSubmit)="sendToMe()" #contactForm="ngForm">
+              <div class="form-group">
+                <label for="fullName"
+                  >Full Name <span class="req">*</span></label
+                >
+                <input
+                  type="text"
+                  id="fullName"
+                  name="fullName"  [(ngModel)]="name" required
+                  placeholder="Enter full name"
+                  required
+                />
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="mobile"
+                    >Mobile Number <span class="req">*</span></label
+                  >
+                  <input
+                    type="tel"
+                    id="mobile"
+                    name="mobile" [(ngModel)]="mobile" required 
+                    placeholder="Ex: 8945488541"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="email"
+                    >E-Mail Address <span class="req">*</span></label
+                  >
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"  [(ngModel)]="email" required email
+                    placeholder="dhawal@tech.com"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-group"  style="display: none;">
+                <label for="solutions"
+                  >I am looking for solutions on&hellip;</label
+                >
+                <div class="select-wrapper">
+                  <select id="solutions" name="solutions">
+                    <option value="" disabled selected>Select</option>
+                    <option value="financial">Financial Services</option>
+                    <option value="supply">Supply Chain</option>
+                    <option value="sustainability">Sustainability</option>
+                    <option value="training">Training &amp; Development</option>
+                    <option value="consulting">Business Consulting</option>
+                  </select>
+                  <i class="fa-solid fa-chevron-down select-arrow"></i>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="serviceType"
+                  >Service Type <span class="req">*</span></label
+                >
+                <textarea
+                  id="serviceType"
+                  name="serviceType"
+                  placeholder="Write Short Description"
+                  rows="4"
+                  required [(ngModel)]="messages"
+                ></textarea>
+              </div>
+
+              <div class="form-group" style="display: none;">
+                <label>Upload file</label>
+                <div class="upload-zone" id="uploadZone">
+                  <input
+                    type="file"
+                    id="fileInput"
+                    class="upload-input"
+                    multiple
+                  />
+                  <!-- <div class="upload-zone__inner">
+                    <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                    <p>
+                      Drag and Drop or
+                      <label for="fileInput" class="choose-link"
+                        >Choose file</label
+                      >
+                    </p>
+                    <span class="upload-hint" id="uploadHint"></span>
+                  </div> -->
+                </div>
+              </div>
+
+              <button type="submit" class="btn-send">
+                <span>Send Message</span>
+                <i class="fa-solid fa-paper-plane"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- FOOTER -->

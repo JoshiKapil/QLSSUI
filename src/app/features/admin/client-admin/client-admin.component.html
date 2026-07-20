@@ -1,0 +1,215 @@
+<section class="admin-section">
+  <div class="container admin-shell">
+    <div class="admin-header">
+      <div>
+        <span class="auth-eyebrow">Admin</span>
+        <h1>Company</h1>
+      </div>
+      <div class="admin-actions">
+        <a class="btn btn-outline" routerLink="/admin/trainings">Trainings</a>
+        <a class="btn btn-outline" routerLink="/admin/trainer">Trainer</a>
+        <a class="btn btn-outline" routerLink="/admin/clients">Companies</a>
+        <!-- <a class="btn btn-outline" routerLink="/admin/linkedin-posts">Posts</a>
+        <a class="btn btn-outline" routerLink="/admin/linkedin-comments"
+          >Comments</a
+        > -->
+      </div>
+    </div>
+
+    <div class="admin-layout">
+      <form class="admin-form" [formGroup]="form" (ngSubmit)="submit()">
+        <h2>{{ selectedRecord ? "Edit" : "Add" }} Company</h2>
+
+        <label class="form-field client-search-field"
+          >Company Name
+          <div class="client-search-control">
+            <button
+              class="btn btn-outline btn-small client-dropdown-toggle"
+              type="button"
+              (click)="toggleClientDropdown()"
+              aria-haspopup="listbox"
+              [attr.aria-expanded]="isClientDropdownOpen"
+            >
+              {{ getSelectedClientLabel() }}
+              <span class="dropdown-icon">&#9662;</span>
+            </button>
+            <div
+              class="client-search-menu"
+              *ngIf="isClientDropdownOpen"
+              role="listbox"
+            >
+              <input
+                type="text"
+                [(ngModel)]="clientSearch"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="Search Company name"
+                autocomplete="off"
+              />
+              <button
+                class="client-search-option"
+                type="button"
+                (mousedown)="selectClient(null)"
+              >
+                New Company
+              </button>
+              <button
+                class="client-search-option"
+                type="button"
+                *ngFor="
+                  let client of filteredClientList;
+                  trackBy: trackByRecordId
+                "
+                (mousedown)="selectClient(client)"
+              >
+                {{ client.clientName }}
+              </button>
+              <div
+                class="client-search-empty"
+                *ngIf="!filteredClientList.length"
+              >
+                No Company found
+              </div>
+            </div>
+          </div>
+        </label>
+
+        <label class="form-field"
+          >Company Name
+          <input type="text" formControlName="clientName" />
+          <small>{{ fieldError("clientName", "Company Name") }}</small>
+        </label>
+        <label class="form-field"
+          >Description
+          <textarea rows="4" formControlName="clientNameDesc"></textarea>
+          <small>{{ fieldError("clientNameDesc", "Description") }}</small>
+        </label>
+        <label class="form-field">
+          Image
+          <input
+            type="text"
+            formControlName="image"
+            readonly
+            placeholder="No image selected"
+          />
+          <input
+            #imageFileInput
+            type="file"
+            accept="image/*"
+            (change)="onImageSelected($event)"
+          />
+          <img
+            class="client-image-preview"
+            *ngIf="imagePreviewUrl || form.controls['image'].value"
+            [src]="
+              imagePreviewUrl || getClientImageUrl(form.controls['image'].value)
+            "
+            [alt]="form.controls['clientName'].value || 'Client logo preview'"
+          />
+          <small>The image is uploaded only when you save the Company.</small>
+        </label>
+        <label class="form-field"
+          >Display Order
+          <input type="number" formControlName="displayOrder" />
+          <small>{{ fieldError("displayOrder", "Display Order") }}</small>
+        </label>
+        <div class="admin-actions">
+          <button class="btn btn-primary" type="submit" [disabled]="isSaving">
+            {{ isSaving ? "Saving..." : selectedRecord ? "Update" : "Save" }}
+          </button>
+          <button class="btn btn-outline" type="button" (click)="resetForm()">
+            Clear
+          </button>
+        </div>
+      </form>
+
+      <!-- <div class="admin-tools">
+        <h2>Search</h2>
+        <div class="admin-search">
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            [placeholder]="searchPlaceholder"
+            name="searchTerm"
+            (keydown.enter)="search()"
+          />
+          <button class="btn btn-primary" type="button" (click)="search()">
+            Search
+          </button>
+          <button class="btn btn-outline" type="button" (click)="loadRecords()">
+            Reset
+          </button>
+        </div>
+        <div class="admin-loading" *ngIf="isLoading">Loading Companies...</div>
+      </div> -->
+    
+
+      <div class="admin-table-wrap">
+        <table class="admin-table" *ngIf="records.length; else emptyState">
+          <thead>
+            <tr>
+              <th>Company Name</th>
+              <!-- <th>Description</th> -->
+              <th>Image</th>
+              <!-- <th>Display Order</th>
+              <th>Status</th> -->
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let record of records; trackBy: trackByRecordId">
+              <td>{{ record.clientName }}</td>
+              <!-- <td>{{ record.clientNameDesc }}</td> -->
+              <td>
+                <img
+                  class="client-logo"
+                  *ngIf="record.image"
+                  [src]="getClientImageUrl(record.image)"
+                  [alt]="record.clientName + ' logo'"
+                /><span *ngIf="!record.image">No image</span>
+              </td>
+             <!-- <td>{{ record.displayOrder }}</td>
+               <td>
+                <span
+                  class="status-pill"
+                  [class.inactive]="record.isActive === false"
+                  >{{ record.isActive === false ? "Inactive" : "Active" }}</span
+                >
+              </td> -->
+              <td class="row-actions">
+                <button
+                  class="table-link"
+                  type="button"
+                  (click)="selectClient(record)"
+                >
+                  Edit
+                </button>
+                <!-- <button
+                  class="table-link"
+                  type="button"
+                  [disabled]="busyClientId === record.clientId?.toString()"
+                  (click)="setActive(record, record.isActive === false)"
+                >
+                  {{ record.isActive === false ? "Activate" : "Deactivate" }}
+                </button>
+                <button
+                  class="table-link danger"
+                  type="button"
+                  [disabled]="busyClientId === record.clientId?.toString()"
+                  (click)="delete(record)"
+                >
+                  Delete
+                </button> -->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #emptyState
+          ><div class="admin-loading">No clients found.</div></ng-template
+        >
+      </div>
+    </div>
+  </div>
+</section>
+
+
+

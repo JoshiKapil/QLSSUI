@@ -1,0 +1,380 @@
+// ================================================================
+//  _client.scss    QLSS Clients Page
+//  Variables: base/_variables.scss
+//  Breakpoints: utilities/_breakpoints.scss
+// ================================================================
+
+@use "../utilities/breakpoints" as *;
+
+// â”€â”€ Keyframes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// ================================================================
+// SECTION
+// ================================================================
+
+.clients {
+  background: var(--text-light);
+  padding: 100px 0 110px;
+  position: relative;
+  overflow: hidden;
+
+  @include laptop {
+    padding: 80px 0;
+  }
+  @include tablet {
+    padding: 70px 0;
+  }
+  @include mobile {
+    padding: 56px 0;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -120px;
+    right: -120px;
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(
+      circle,
+      rgba(87, 144, 225, 0.07) 0%,
+      transparent 70%
+    );
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -80px;
+    left: -80px;
+    width: 360px;
+    height: 360px;
+    background: radial-gradient(
+      circle,
+      rgba(87, 144, 225, 0.05) 0%,
+      transparent 70%
+    );
+    border-radius: 50%;
+    pointer-events: none;
+  }
+}
+
+// ================================================================
+// HEADER
+// ================================================================
+
+.clients-header {
+  text-align: center;
+  margin-bottom: 60px;
+  position: relative;
+  z-index: 1;
+
+  @include tablet {
+    margin-bottom: 44px;
+  }
+
+  h2 {
+    font-size: clamp(1.7rem, 3.2vw, 2.4rem);
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 14px;
+    letter-spacing: -0.02em;
+    font-family: var(--font-heading);
+
+    span {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+
+  p {
+    max-width: 520px;
+    margin: 0 auto;
+    font-size: 0.96rem;
+    color: var(--gray-mid);
+    line-height: 1.8;
+  }
+}
+
+.clients-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 14px;
+
+  .line {
+    display: block;
+    width: 32px;
+    height: 1.5px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    background-size: 200% auto;
+    animation: shimmer 2.5s linear infinite;
+    border-radius: 2px;
+
+    @include tablet {
+      display: none;
+    }
+  }
+}
+
+// ================================================================
+// STATS
+// ================================================================
+
+.clients-stats {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  margin-top: 36px;
+  padding-top: 32px;
+  border-top: 1px solid var(--gray-light);
+
+  @include tablet {
+    gap: 28px;
+  }
+  @include mobile {
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+}
+
+.stat-item {
+  text-align: center;
+  animation: countUp 0.6s ease both;
+
+  &:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+  &:nth-child(3) {
+    animation-delay: 0.2s;
+  }
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--primary);
+  font-family: var(--font-heading);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+}
+
+// ================================================================
+// FILTER TABS
+// ================================================================
+
+.clients-filters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 48px;
+  position: relative;
+  z-index: 1;
+}
+
+.filter-btn {
+  padding: 7px 20px;
+  border-radius: 40px;
+  border: 1.5px solid var(--gray-light-mid);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gray-mid);
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: 0.03em;
+
+  &:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  &.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--text-light);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+// ================================================================
+// GRID
+// ================================================================
+
+.clients-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  align-items: stretch;
+  position: relative;
+  z-index: 1;
+
+  @include desktop {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  @include laptop {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  @include tablet {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  @include mobile {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  @include mobile-sm {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+}
+
+// ================================================================
+// LOGO CARD   .clientslogo matches the HTML exactly
+// No hover lift/scale/glow. Always colourful. Bigger.
+// ================================================================
+
+.clientslogo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 18px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--gray-light);
+  position: relative;
+  background: var(--gray-light);
+  min-height: 110px;
+
+  // Scroll-reveal  JS adds .visible
+  opacity: 0;
+  transform: translateY(20px) scale(0.97);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+
+  &.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  &.hidden {
+    display: none;
+  }
+
+  @include mobile {
+    padding: 18px 14px;
+    min-height: 90px;
+  }
+  @include mobile-sm {
+    padding: 14px 10px;
+    min-height: 80px;
+  }
+
+  // â”€â”€ Logo image  full colour, bigger, no hover effect â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  img {
+    width: 100%;
+    max-width: 130px;
+    height: 80px;
+    object-fit: contain;
+    display: block;
+    position: relative;
+    z-index: 1;
+
+    @include mobile {
+      max-width: 100px;
+      height: 52px;
+    }
+    @include mobile-sm {
+      max-width: 80px;
+      height: 44px;
+    }
+  }
+
+  // â”€â”€ Tooltip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  .tooltip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: var(--bg-dark);
+    color: var(--text-light);
+    font-size: 0.68rem;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 6px;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.4;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+    z-index: 100;
+    width: max-content;
+    max-width: 160px;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: var(--bg-dark);
+    }
+  }
+}
+
+// Tooltip only on pointer/mouse devices
+@media (hover: hover) {
+  .clientslogo {
+    cursor: pointer;
+
+    &:hover .tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+}

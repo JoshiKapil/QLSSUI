@@ -1,0 +1,264 @@
+<section class="test-page">
+  <div class="container">
+    <div class="test-header">
+      <div>
+        <div class="why-eyebrow-nb">
+          <span class="ey-line"></span>
+          Assessment
+          <span class="ey-line"></span>
+        </div>
+        <h1 class="hero-title">Online Assessment <em>Engine</em></h1>
+        <p>Answer mixed question types, review your progress, and submit when ready.</p>
+      </div>
+
+      <div class="test-timer" *ngIf="!isAdmin" [class.test-timer--ending]="remainingSeconds <= 60 && !isSubmitted">
+        <i class="fa-regular fa-clock"></i>
+        <span>{{ isSubmitted ? 'Submitted' : timerText }}</span>
+      </div>
+    </div>
+
+    <section class="direct-test-entry" *ngIf="isDirectEntry">
+      <span class="test-kicker">Start Test</span>
+      <h2>Select Your Test</h2>
+      <p>Choose a training, enter your email, and select the test type.</p>
+
+      <div class="direct-test-form">
+        <label class="direct-training-field">
+          <span>Training</span>
+          <div class="direct-training-search">
+            <button
+              type="button"
+              class="direct-training-toggle"
+              (click)="toggleDirectTrainingDropdown()"
+              [disabled]="directEntryLoading"
+              [attr.aria-expanded]="isTrainingDropdownOpen"
+            >
+              <span>{{ getSelectedDirectTrainingLabel() }}</span>
+              <span aria-hidden="true">&#9662;</span>
+            </button>
+
+            <div class="direct-training-menu" *ngIf="isTrainingDropdownOpen">
+              <input
+                type="text"
+                [(ngModel)]="trainingSearch"
+                placeholder="Search training"
+                autocomplete="off"
+              />
+              <button
+                type="button"
+                class="direct-training-option"
+                *ngFor="let training of filteredDirectTrainings"
+                (click)="selectDirectTraining(training)"
+              >
+                {{ getDirectTrainingLabel(training) }}
+              </button>
+              <div class="direct-training-empty" *ngIf="!filteredDirectTrainings.length">No training found</div>
+            </div>
+          </div>
+        </label>
+
+        <label>
+          <span>Email Address</span>
+          <input
+            type="email"
+            [(ngModel)]="directEmail"
+            placeholder="Enter your email"
+            [disabled]="directEntryLoading"
+          />
+        </label>
+
+        <label>
+          <span>Test Type</span>
+          <select [(ngModel)]="testType" [disabled]="directEntryLoading">
+            <option value="assessment">Assessment</option>
+            <option value="post">Post Test</option>
+          </select>
+        </label>
+      </div>
+
+      <p class="direct-test-message" *ngIf="directEntryMessage">{{ directEntryMessage }}</p>
+      <button type="button" class="test-btn test-btn--primary" (click)="startDirectTest()" [disabled]="directEntryLoading">
+        {{ directEntryLoading ? 'Please wait...' : 'Load Test' }}
+      </button>
+    </section>
+
+
+    <section class="test-load-state" *ngIf="!isDirectEntry && !isAdmin && !isSubmitted && (isLoadingTest || testLoadWarning || !questions.length)">
+      <span class="test-kicker">Assessment Loader</span>
+      <h2>{{ isLoadingTest ? 'Loading Assessment' : 'Assessment Not Ready' }}</h2>
+      <p *ngIf="isLoadingTest">Loading encrypted assessment and question bank...</p>
+      <p *ngIf="!isLoadingTest && testLoadWarning">{{ testLoadWarning }}</p>
+      <button type="button" class="test-btn test-btn--primary" (click)="loadTestForAttempt(testName)" [disabled]="isLoadingTest">Reload Test</button>
+    </section>
+
+    <ng-container *ngIf="!isDirectEntry && !isAdmin && !isSubmitted && !isLoadingTest && questions.length;">
+      <div class="test-layout">
+        <main class="test-panel">
+          <div class="question-top">
+            <div class="question-heading">
+              <span>Question {{ currentQuestion.questionNo }} of {{ questions.length }}</span>
+              <!-- <strong>{{ getQuestionStatus(currentQuestionIndex) }}</strong> -->
+               <strong>{{ testName }}</strong>
+            </div>
+            <button type="button" class="test-btn test-btn--submit question-submit" (click)="openSubmitModal()">
+              <i class="fa-solid fa-check"></i>
+              Submit Test
+            </button>
+          </div>
+
+          <div class="question-meta">
+            <span>{{ getQuestionTypeLabel(currentQuestion.questionType) }}</span>
+            <!-- <span>{{ currentQuestion.subject }}</span>
+            <span>{{ currentQuestion.topic }}</span> -->
+            <span class="difficulty-badge" [ngClass]="'difficulty--' + currentQuestion.difficulty.toLowerCase()">{{ currentQuestion.difficulty }}</span>
+            <span>{{ getQuestionMarks(currentQuestion) }} marks</span>
+            <span>{{ getQuestionNegativeMarks(currentQuestion) }} negative</span>
+            <span>{{ currentQuestion.estimatedTimeSeconds }}s estimated</span>
+          </div>
+
+          <h2>{{ currentQuestion.questionText }}</h2>
+
+          <div class="question-media" *ngIf="hasVisibleMedia(currentQuestion)">
+            <img
+              *ngIf="isMediaAvailable(currentQuestion.questionImageUrl)"
+              [src]="currentQuestion.questionImageUrl"
+              [alt]="currentQuestion.questionImageAlt || 'Question image'"
+              (error)="markBrokenMedia(currentQuestion.questionImageUrl)"
+            />
+
+            <audio *ngIf="isMediaAvailable(currentQuestion.audioUrl)" controls preload="none" aria-label="Question audio" (error)="markBrokenMedia(currentQuestion.audioUrl)">
+              <source [src]="currentQuestion.audioUrl" type="audio/wav" />
+            </audio>
+
+            <video *ngIf="isMediaAvailable(currentQuestion.videoUrl)" controls preload="metadata" playsinline aria-label="Question video" (error)="markBrokenMedia(currentQuestion.videoUrl)">
+              <source [src]="currentQuestion.videoUrl" type="video/mp4" />
+            </video>
+
+            <div class="media-fallback" *ngIf="currentQuestion.audioUrl && !isMediaAvailable(currentQuestion.audioUrl)">
+              <i class="fa-solid fa-volume-high"></i>
+              <span>Demo audio is not playable in this browser.</span>
+            </div>
+          </div>
+
+          <div class="option-list" *ngIf="hasOptions(currentQuestion)">
+            <button
+              type="button"
+              class="test-option"
+              *ngFor="let option of currentQuestion.options; let optionIndex = index; trackBy: trackByOptionId"
+              [class.test-option--selected]="isOptionSelected(option.id)"
+              (click)="selectOption(option.id)"
+              [attr.aria-label]="'Select option ' + getOptionLabel(optionIndex)"
+            >
+              <span class="option-marker">{{ getOptionLabel(optionIndex) }}</span>
+              <span
+                class="option-control"
+                [class.option-control--checkbox]="isMultipleAnswerQuestion(currentQuestion)"
+                [class.option-control--radio]="!isMultipleAnswerQuestion(currentQuestion)"
+                [class.option-control--checked]="isOptionSelected(option.id)"
+                aria-hidden="true"
+              ></span>
+              <span class="option-content">
+                <img
+                  *ngIf="isMediaAvailable(option.imageUrl)"
+                  class="option-image"
+                  [src]="option.imageUrl"
+                  [alt]="option.imageAlt || option.text"
+                  (error)="markBrokenMedia(option.imageUrl)"
+                />
+                <span>{{ option.text }}</span>
+              </span>
+            </button>
+          </div>
+
+          <div class="essay-answer" *ngIf="isEssayQuestion(currentQuestion)">
+            <label for="essayAnswer">Your Answer</label>
+            <textarea
+              id="essayAnswer"
+              rows="7"
+              [ngModel]="currentAnswer.essayAnswer"
+              (ngModelChange)="onEssayAnswerChange($event)"
+              placeholder="Type your answer here"
+            ></textarea>
+            <span>Essay responses may require manual evaluation.</span>
+          </div>
+
+          <div class="test-actions">
+            <button type="button" class="test-btn test-btn--light" (click)="clearCurrentAnswer()" [disabled]="!hasCurrentAnswer()">
+              <i class="fa-solid fa-eraser"></i>
+              Clear
+            </button>
+            <button type="button" class="test-btn test-btn--warning" (click)="skipQuestion()">
+              <i class="fa-solid fa-forward"></i>
+              Skip
+            </button>
+            <button type="button" class="test-btn test-btn--light" (click)="previousQuestion()" [disabled]="currentQuestionIndex === 0">
+              <i class="fa-solid fa-arrow-left"></i>
+              Previous
+            </button>
+            <button type="button" class="test-btn test-btn--primary" (click)="nextQuestion()">
+              Next
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </main>
+
+        <aside class="test-summary">
+          <h3>Question Summary</h3>
+
+          <div class="summary-counts">
+            <div><strong>{{ answeredCount }}</strong><span>Answered</span></div>
+            <div><strong>{{ notAnsweredCount }}</strong><span>Not Answered</span></div>
+            <div><strong>{{ skippedCount }}</strong><span>Skipped</span></div>
+          </div>
+
+          <div class="question-map">
+            <button
+              type="button"
+              *ngFor="let question of questions; let index = index; trackBy: trackByQuestionId"
+              [class.is-current]="index === currentQuestionIndex"
+              [class.is-answered]="answers[index].status === 'answered'"
+              [class.is-skipped]="answers[index].status === 'skipped'"
+              [attr.title]="getQuestionTypeLabel(question.questionType) + ' - ' + question.difficulty"
+              (click)="goToQuestion(index)"
+              [attr.aria-label]="getQuestionStatus(index)"
+            >
+              {{ question.questionNo }}
+            </button>
+          </div>
+
+          <div class="summary-legend">
+            <span><i class="legend-dot legend-dot--answered"></i>Answered</span>
+            <span><i class="legend-dot legend-dot--pending"></i>Not Answered</span>
+            <span><i class="legend-dot legend-dot--skipped"></i>Skipped</span>
+            <span><i class="legend-dot legend-dot--current"></i>Current</span>
+          </div>
+        </aside>
+      </div>
+    </ng-container>
+
+  </div>
+</section>
+
+<div class="custom-modal" [class.active]="isSubmitModalOpen" role="dialog" aria-modal="true" aria-labelledby="submitTestTitle">
+  <div class="custom-modal__overlay" (click)="closeSubmitModal()"></div>
+  <div class="custom-modal__box custom-modal__box--submit">
+    <button type="button" class="custom-modal__close" aria-label="Close submit confirmation" (click)="closeSubmitModal()">&times;</button>
+    <div class="custom-modal__header">
+      <h2 id="submitTestTitle">Submit Test?</h2>
+      <p>Are you sure you want to submit your test? Once submitted, you cannot change your answers.</p>
+    </div>
+
+    <div class="submit-summary">
+      <div><span>Total Questions</span><strong>{{ questions.length }}</strong></div>
+      <div><span>Answered</span><strong>{{ answeredCount }}</strong></div>
+      <div><span>Skipped</span><strong>{{ skippedCount }}</strong></div>
+      <div><span>Not Answered</span><strong>{{ notAnsweredCount }}</strong></div>
+      <div><span>Time Remaining</span><strong>{{ timerText }}</strong></div>
+    </div>
+
+    <div class="custom-modal__actions">
+      <button type="button" class="btn-close" (click)="closeSubmitModal()">Cancel</button>
+      <button type="button" class="btn-send" (click)="submitFromModal()">Submit Test</button>
+    </div>
+  </div>
+</div>

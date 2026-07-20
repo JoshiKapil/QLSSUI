@@ -1,0 +1,145 @@
+﻿<section class="import-page">
+  <header>
+    <p class="eyebrow">Question administration</p>
+    <h1>Create Test Questions</h1>
+    <p>Upload a Word document, preview validation, and save valid questions.</p>
+  </header>
+
+  <div class="panel controls">
+    <label class="training-search-field">Training (optional)
+      <div class="training-search-control">
+        <button class="training-dropdown-toggle" type="button" (click)="toggleTrainingDropdown()" [disabled]="busy" aria-haspopup="listbox" [attr.aria-expanded]="isTrainingDropdownOpen">
+          <span>{{ getSelectedTrainingLabel() }}</span>
+          <span class="dropdown-icon">&#9662;</span>
+        </button>
+        <div class="training-search-menu" *ngIf="isTrainingDropdownOpen" role="listbox">
+          <input type="text" [(ngModel)]="trainingSearch" placeholder="Search training" autocomplete="off" (input)="onTrainingSearchChange()" />
+          <button class="training-search-option training-search-clear" type="button" (mousedown)="clearTrainingSelection()" role="option">No training selected</button>
+          <button class="training-search-option" type="button" *ngFor="let training of filteredTrainingList" (mousedown)="selectTrainingFromDropdown(training)" role="option">
+            <span>{{ getTrainingLabel(training) }}</span>
+            <!-- <small>{{ training.trainingId }}</small> -->
+          </button>
+          <div class="training-search-empty" *ngIf="!filteredTrainingList.length">No training found</div>
+        </div>
+      </div>
+    </label>
+    <label>Test type (optional)
+      <select [(ngModel)]="testType" [disabled]="busy">
+        <option value="">No test type selected</option>
+        <option *ngFor="let type of testTypes" [value]="type">{{ type | titlecase }}</option>
+      </select>
+    </label>
+    <label>Test name
+      <input [(ngModel)]="testName" [disabled]="busy" placeholder="Defaults to Word filename">
+    </label>
+    <label>Word file (.docx, maximum 10 MB)
+      <input type="file" accept=".docx" (change)="selectFile($event)" [disabled]="busy">
+    </label>
+  </div>
+
+  <p class="note">
+    Word Training Name and Test Type are ignored. If both dropdowns are selected, a test is created and
+    inserted questions are mapped. Otherwise only valid questions and options are saved.
+  </p>
+
+  <div class="progress" *ngIf="progress">
+    <span [style.width.%]="progress"></span>
+    <small>{{ progress }}%</small>
+  </div>
+  <div class="status-notification status-notification--success" *ngIf="message && saveStatus === 'idle'" role="status">
+    <span class="status-icon">&#10003;</span>
+    <div><strong>Preview ready</strong><span>{{ message }}</span></div>
+  </div>
+  <div class="status-notification status-notification--error" *ngIf="errorMessage && saveStatus === 'idle'" role="alert">
+    <span class="status-icon">!</span>
+    <div><strong>Unable to complete import</strong><span>{{ errorMessage }}</span></div>
+  </div>
+
+  <details class="panel help">
+    <summary>Supported Word labels</summary>
+    <pre>Question: What is 2 + 2?
+Type: MCSA
+Subject: Mathematics
+Topic: Addition
+Difficulty: Easy
+Option A: 3
+Option B: 4
+Answer: B
+Explanation: 2 + 2 equals 4
+Marks: 1</pre>
+  </details>
+
+  <section *ngIf="questions.length" class="preview">
+    <div class="preview-heading">
+      <div>
+        <h2>Validation preview</h2>
+        <p>{{ questions.length }} total | {{ validQuestions.length }} valid |
+          {{ questions.length - validQuestions.length }} invalid</p>
+      </div>
+      <button class="save-questions-btn" type="button" (click)="save()" [disabled]="busy || fileSaving || !validQuestions.length">
+        <span class="save-spinner" *ngIf="busy"></span>
+        {{ (busy || fileSaving) ? 'Saving...' : (trainingId && testType ? 'Create Test & Map Questions' : 'Save Valid Questions') }}
+      </button>
+    </div>
+
+    <div class="status-notification save-result-notification" [class.status-notification--progress]="saveStatus === 'saving'" [class.status-notification--success]="saveStatus === 'success'" [class.status-notification--error]="saveStatus === 'error'" *ngIf="saveStatus !== 'idle'" [attr.role]="saveStatus === 'error' ? 'alert' : 'status'" aria-live="polite">
+      <span class="save-spinner save-spinner--blue" *ngIf="saveStatus === 'saving'"></span>
+      <span class="status-icon" *ngIf="saveStatus === 'success'">&#10003;</span>
+      <span class="status-icon" *ngIf="saveStatus === 'error'">!</span>
+      <div *ngIf="saveStatus === 'saving'"><strong>Saving questions</strong><span>Please wait while questions and mappings are saved.</span></div>
+      <div *ngIf="saveStatus === 'success' && result">
+        <strong>{{ result.testCreated ? 'Test created and questions mapped' : 'Questions saved' }}</strong>
+        <span>New: {{ result.inserted }} | Reused: {{ result.duplicate }} | Failed: {{ result.failed }}<ng-container *ngIf="result.testCreated"> | Mapped: {{ result.inserted + result.duplicate }} | Test ID: {{ result.testId }}</ng-container></span>
+      </div>
+      <div *ngIf="saveStatus === 'error'"><strong>Save failed</strong><span>{{ errorMessage }}</span></div>
+    </div>
+
+    <article *ngFor="let question of questions; let index = index"
+             [class.invalid]="question.validationErrors.length">
+      <div class="question-heading">
+        <strong>{{ index + 1 }}. {{ question.questionText }}</strong>
+        <span>{{ question.validationErrors.length ? 'Invalid' : 'Valid' }}</span>
+      </div>
+      <p>
+        <strong>Type:</strong> {{ question.questionType }} |
+        <!-- Subject is intentionally hidden from the question preview. -->
+        <!-- <strong>Subject:</strong> {{ question.subject || 'No subject' }} | -->
+        <!-- Topic is intentionally hidden from the question preview. -->
+        <!-- <strong>Topic:</strong> {{ question.topic || 'No topic' }} | -->
+        <strong>Marks:</strong> {{ question.marks }}
+      </p>
+      <ul *ngIf="question.options.length">
+        <li *ngFor="let option of question.options" [class.correct]="option.isCorrect">
+          {{ option.id | uppercase }}. {{ option.text }} <em *ngIf="option.isCorrect">Correct</em>
+        </li>
+      </ul>
+      <p *ngIf="question.questionType === 'ESSAY'"><b>Expected answer:</b> {{ question.expectedAnswer }}</p>
+      <ul class="errors" *ngIf="question.validationErrors.length">
+        <li *ngFor="let validationError of question.validationErrors">{{ validationError }}</li>
+      </ul>
+    </article>
+  </section>
+
+  <section class="panel" *ngIf="result">
+    <h2>Import result</h2>
+    <div class="counts">
+      <div><b>{{ result.total }}</b><span>Total</span></div>
+      <div><b>{{ result.inserted }}</b><span>Inserted</span></div>
+      <div><b>{{ result.skipped }}</b><span>Skipped</span></div>
+      <div><b>{{ result.duplicate }}</b><span>Duplicate</span></div>
+      <div><b>{{ result.failed }}</b><span>Failed</span></div>
+    </div>
+    <p *ngIf="result.testCreated">Created Test ID: <b>{{ result.testId }}</b></p>
+    <div class="table-wrap">
+      <table *ngIf="result.details.length">
+        <thead><tr><th>Row</th><th>Question</th><th>Status</th><th>Validation/details</th><th>ID</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let detail of result.details">
+            <td>{{ detail.rowNumber }}</td><td>{{ detail.questionText }}</td><td>{{ detail.status }}</td>
+            <td>{{ detail.message }}</td><td>{{ detail.questionId || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

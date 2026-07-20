@@ -1,0 +1,139 @@
+<section class="admin-section">
+  <div class="container admin-shell">
+    <div class="admin-header">
+      <div>
+        <span class="auth-eyebrow">Admin</span>
+        <h1>Certification</h1>
+      </div>
+      <div class="admin-actions">
+        <a class="btn btn-outline" routerLink="/admin/trainings">Trainings</a>
+        <a class="btn btn-outline" routerLink="/admin/trainer">Trainer</a>
+        <a class="btn btn-outline" routerLink="/admin/clients">Clients</a>
+        <a class="btn btn-outline" routerLink="/admin/linkedin-posts">Posts</a>
+        <a class="btn btn-outline" routerLink="/admin/linkedin-comments">Comments</a>
+      </div>
+    </div>
+
+    <div class="admin-layout">
+      <form class="admin-form" [formGroup]="form" (ngSubmit)="submit()">
+        <h2>{{ selectedRecord ? 'Edit' : 'Add' }} Certification</h2>
+        <label class="form-field">UserName
+          <input type="text" formControlName="userName" />
+          <small>{{ fieldError('userName', 'UserName') }}</small>
+        </label>
+        <label class="form-field">CertificationNumber
+          <input type="text" formControlName="certificationNumber" />
+          <small>{{ fieldError('certificationNumber', 'CertificationNumber') }}</small>
+        </label>
+        <label class="form-field">IssuedDate
+          <input type="date" formControlName="issuedDate" />
+          <small>{{ fieldError('issuedDate', 'IssuedDate') }}</small>
+        </label>
+        <label class="form-field">Topic
+          <input type="text" formControlName="topic" />
+          <small>{{ fieldError('topic', 'Topic') }}</small>
+        </label>
+        <label class="form-field">Description
+          <textarea rows="4" formControlName="description"></textarea>
+          <small>{{ fieldError('description', 'Description') }}</small>
+        </label>
+
+        <div class="admin-actions">
+          <button class="btn btn-primary" type="submit" [disabled]="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</button>
+          <button class="btn btn-outline" type="button" (click)="resetForm()">Clear</button>
+        </div>
+      </form>
+
+      <div class="admin-tools">
+        <h2>Search</h2>
+        <div class="admin-search">
+          <input type="text" [(ngModel)]="searchTerm" [placeholder]="searchPlaceholder" name="searchTerm" (keydown.enter)="search()" />
+          <button class="btn btn-primary" type="button" (click)="search()">Search</button>
+          <button class="btn btn-outline" type="button" (click)="loadRecords()">Reset</button>
+        </div>
+        <section class="cert-upload" aria-labelledby="certUploadTitle">
+          <div class="cert-upload__heading">
+            <span class="cert-upload__icon" aria-hidden="true">
+              <i class="fa-solid fa-file-excel"></i>
+            </span>
+            <div>
+              <h2 id="certUploadTitle">Bulk Upload</h2>
+              <p>Import certification records from an Excel or CSV file.</p>
+            </div>
+          </div>
+
+          <label class="cert-upload__dropzone" for="fileInput">
+            <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
+            <strong>Choose certification file</strong>
+            <span>Supported formats: XLSX, XLS and CSV</span>
+            <input
+              class="cert-upload__input"
+              type="file"
+              id="fileInput"
+              (change)="onFileChange($event)"
+              accept=".xlsx,.xls,.csv"
+            />
+          </label>
+
+          <div class="cert-upload__status" *ngIf="excelData.length > 0">
+            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+            <span>{{ excelData.length }} certification {{ excelData.length === 1 ? 'row' : 'rows' }} ready to upload</span>
+          </div>
+
+          <button
+            class="btn btn-primary cert-upload__button"
+            type="button"
+            (click)="saveExcelToServer()"
+            [disabled]="isUploading || excelData.length === 0"
+          >
+            <i class="fa-solid" [ngClass]="isUploading ? 'fa-spinner fa-spin' : 'fa-cloud-arrow-up'" aria-hidden="true"></i>
+            {{ isUploading ? 'Uploading...' : 'Upload to Server' }}
+          </button>
+
+          <div *ngIf="uploadMessage" class="form-error cert-upload__error" role="alert">
+            <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+            {{ uploadMessage }}
+          </div>
+        </section>
+        <!-- <div class="bulk-upload">
+          <h2>Bulk Upload</h2>
+          <label class="form-field">Excel / CSV File
+            <input type="file" accept=".xlsx,.xls,.csv" (change)="onBulkFileSelected($event)" />
+          </label>
+          <button class="btn btn-primary" type="button" (click)="uploadBulk()" [disabled]="isUploading || !bulkFile">{{ isUploading ? 'Uploading...' : 'Upload' }}</button>
+          <div *ngIf="uploadMessage" class="form-error">{{ uploadMessage }}</div>
+        </div> -->
+
+        <div class="admin-loading" *ngIf="isLoading">Loading records...</div>
+      </div>
+    </div>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table" *ngIf="records.length; else emptyState">
+        <thead>
+          <tr>
+            <th>UserName</th>
+            <th>CertificationNumber</th>
+            <th>IssuedDate</th>
+            <th>Topic</th>
+            <th>Description</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of records; trackBy: trackByRecordId">
+            <td>{{ record.userName }}</td>
+            <td>{{ record.certificationNumber }}</td>
+            <td>{{ record.issuedDate }}</td>
+            <td>{{ record.topic }}</td>
+            <td>{{ record.description }}</td>
+            <td><button class="table-link" type="button" (click)="edit(record)">Edit</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-template #emptyState>
+        <div class="admin-loading">No records found.</div>
+      </ng-template>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,357 @@
+﻿<section class="admin-section create-test-section">
+  <div class="container admin-shell create-test-shell">
+    <div class="admin-header">
+      <div>
+        <span class="auth-eyebrow">Admin</span>
+        <h1>Create Test</h1>
+      </div>
+      <div class="admin-actions">
+        <!-- <a class="btn btn-outline" routerLink="/admin/trainings">Trainings</a> -->
+        <a class="btn btn-outline" routerLink="/admin/create-question">Question Bank</a>
+        <a class="btn btn-outline" routerLink="/test">View Test Page</a>
+        <!-- <button class="btn btn-outline" type="button" (click)="downloadTestTemplate()">Download Test Template</button> -->
+        <label class="btn btn-outline import-bank-btn">Import Test From Excel<input type="file" accept=".xlsx,.xls,.csv" (change)="onAssessmentExcelSelected($event)" /></label>
+      </div>
+    </div>
+
+
+
+    <section class="admin-table-wrap import-preview-panel" *ngIf="assessmentImportPreview || assessmentImportResult">
+      <div class="section-title-row">
+        <div>
+          <span class="auth-eyebrow">Excel Import</span>
+          <h2>Test Import Preview</h2>
+        </div>
+      </div>
+
+      <ng-container *ngIf="assessmentImportPreview">
+        <p class="import-file-name">Selected file: <strong>{{ assessmentImportFileName || assessmentImportPreview.fileName }}</strong></p>
+        <div class="preview-instructions" *ngIf="assessmentImportPreview.testDefinition">
+          <strong>{{ assessmentImportPreview.testDefinition.displayName || assessmentImportPreview.testDefinition.testName }}</strong>
+          <p>{{ assessmentImportPreview.testDefinition.description || 'No description added.' }}</p>
+        </div>
+        <div class="import-summary-grid">
+          <div><strong>{{ assessmentImportPreview.totalRows }}</strong><span>Total Rows</span></div>
+          <div><strong>{{ assessmentImportPreview.validRows }}</strong><span>Valid Rows</span></div>
+          <div><strong>{{ assessmentImportPreview.existingQuestionsFound }}</strong><span>Existing Found</span></div>
+          <div><strong>{{ assessmentImportPreview.newQuestionsToCreate }}</strong><span>New Questions</span></div>
+          <div><strong>{{ assessmentImportPreview.duplicateMappings }}</strong><span>Duplicates</span></div>
+          <div><strong>{{ assessmentImportPreview.invalidRows }}</strong><span>Invalid</span></div>
+          <div><strong>{{ assessmentImportPreview.finalMappedQuestionCount }}</strong><span>Mapped</span></div>
+          <div><strong>{{ assessmentImportPreview.finalTotalMarks }}</strong><span>Total Marks</span></div>
+        </div>
+        <div class="validation-list" *ngIf="assessmentImportPreview.errors.length">
+          <p *ngFor="let error of assessmentImportPreview.errors">Row {{ error.rowNumber }}: {{ error.message }}</p>
+        </div>
+        <div class="import-table-wrap">
+          <table class="import-table">
+            <thead><tr><th>Row</th><th>Order</th><th>Action</th><th>Question</th><th>Issue</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let item of assessmentImportPreview.items">
+                <td>{{ item.rowNumber }}</td>
+                <td>{{ item.questionOrder }}</td>
+                <td>{{ item.action }}</td>
+                <td>{{ item.question?.questionText || item.questionId || '-' }}</td>
+                <td>{{ item.errors.length ? item.errors[0].message : '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="admin-actions page-actions">
+          <button class="btn btn-outline" type="button" (click)="cancelAssessmentImport()">Cancel</button>
+          <button class="btn btn-primary" type="button" (click)="confirmAssessmentImport()" [disabled]="!assessmentImportPreview.finalMappedQuestionCount || assessmentImportPreview.errors.length > 0">Confirm Import</button>
+        </div>
+      </ng-container>
+
+      <div class="file-note" *ngIf="assessmentImportResult">
+        <strong>Assessment import completed</strong>
+        <span>Display Name: {{ assessmentImportResult.displayName }}</span>
+        <span>Normalized File Name: {{ assessmentImportResult.fileName }}</span>
+        <span>Storage Key: {{ assessmentImportResult.storageKey }}</span>
+        <span>New Questions: {{ assessmentImportResult.newQuestionsAdded }} | Existing Mapped: {{ assessmentImportResult.existingQuestionsMapped }} | Duplicates Skipped: {{ assessmentImportResult.duplicatesSkipped }} | Failed: {{ assessmentImportResult.failedRows }}</span>
+        <span>Total Mapped: {{ assessmentImportResult.totalMappedQuestions }} | Total Marks: {{ assessmentImportResult.totalMarks }} | Question Bank Total: {{ assessmentImportResult.questionBankTotal }}</span>
+      </div>
+    </section>
+
+    <div class="create-test-layout">
+      <section class="admin-form create-card">
+        <div class="section-title-row">
+          <h2>Test Basic Details</h2>
+          <div class="test-selection-row test-dropdown">
+            <button class="btn btn-outline btn-small dropdown-toggle" type="button" (click)="toggleTestDropdown()" (keydown)="onDropdownKeydown($event)" aria-haspopup="listbox" [attr.aria-expanded]="isTestDropdownOpen">
+              {{ getSelectedTestLabel() }}
+              <span class="dropdown-icon">&#9662;</span>
+            </button>
+            <div class="dropdown-menu" *ngIf="isTestDropdownOpen" role="listbox">
+              <button class="dropdown-item" type="button" (click)="clearTestSelection()" [class.highlighted]="highlightedTestIndex === 0">
+                New Test
+              </button>
+              <button class="dropdown-item" type="button" *ngFor="let t of availableTests; let idx = index" (click)="selectTestKey(t.optionKey || '')" [class.highlighted]="highlightedTestIndex === idx + 1">
+                {{ t.displayName || t.testName }}{{ t.assetFileName ? ' (asset)' : '' }}
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-grid">
+           <label class="form-field training-search-field">
+            Training
+            <div class="training-search-control">
+              <button class="btn btn-outline btn-small training-dropdown-toggle" type="button" (click)="toggleTrainingDropdown()" aria-haspopup="listbox" [attr.aria-expanded]="isTrainingDropdownOpen">
+                {{ getSelectedTrainingLabel() }}
+                <span class="dropdown-icon">&#9662;</span>
+              </button>
+              <div class="training-search-menu" *ngIf="isTrainingDropdownOpen" role="listbox">
+                <input type="text" [(ngModel)]="trainingSearch" name="trainingSearch" placeholder="Search training" autocomplete="off" (input)="onTrainingSearchChange()" />
+                <button class="training-search-option" type="button" *ngFor="let training of filteredTrainingList" (mousedown)="selectTrainingFromDropdown(training)" role="option">
+                  {{ getTrainingLabel(training) }}
+                </button>
+                <div class="training-search-empty" *ngIf="!filteredTrainingList.length">No training found</div>
+              </div>
+            </div>
+          </label>
+          <label class="form-field">
+            Test File Type
+            <select [(ngModel)]="testFileType" name="testFileType">
+              <option *ngFor="let type of testFileTypes" [ngValue]="type">{{ type | titlecase }}</option>
+            </select>
+          </label>
+         
+
+          <label class="form-field">
+            Test Title
+            <input type="text" [(ngModel)]="testDetails.testTitle" name="testTitle" placeholder="Enter test title" />
+            <small *ngIf="detailSubmitted && !testDetails.testTitle.trim()">Test title is required.</small>
+          </label>
+          <label class="form-field">
+            Duration in Minutes
+            <input type="number" min="1" [(ngModel)]="testDetails.durationMinutes" name="durationMinutes" />
+            <small *ngIf="detailSubmitted && (!testDetails.durationMinutes || testDetails.durationMinutes <= 0)">Duration must be greater than 0.</small>
+          </label>
+
+          <label class="form-field">
+            Total Questions
+            <input type="number" min="1" [(ngModel)]="testDetails.totalQuestions" name="totalQuestions" />
+            <small *ngIf="detailSubmitted && testDetails.totalQuestions !== null && testDetails.totalQuestions !== undefined && testDetails.totalQuestions < (questions.length || 0)">Total questions must be >= mapped questions.</small>
+          </label>
+
+          <label class="form-field">
+            Total Marks
+            <input type="number" [value]="totalMarks" readonly />
+          </label>
+
+          <label class="form-field">
+            Passing Percentage
+            <input type="number" min="1" max="100" [(ngModel)]="testDetails.passingPercentage" name="passingPercentage" />
+          </label>
+
+          <label class="form-field">
+            Status
+            <select [(ngModel)]="testDetails.status" name="status">
+              <option *ngFor="let status of statuses" [ngValue]="status">{{ status }}</option>
+            </select>
+          </label>
+
+         
+        </div>
+
+        <label class="form-field">
+          Test Description
+          <textarea rows="4" [(ngModel)]="testDetails.description" name="description" placeholder="Describe the test"></textarea>
+        </label>
+
+        <label class="form-field">
+          Instructions
+          <textarea rows="4" [(ngModel)]="testDetails.instructions" name="instructions" placeholder="Add instructions for test takers"></textarea>
+        </label>
+
+        <div class="validation-list" *ngIf="detailErrors.length">
+          <p *ngFor="let error of detailErrors">{{ error }}</p>
+        </div>
+
+        <div class="file-note" *ngIf="lastSavedFileName">
+          <strong>Last file:</strong> {{ lastSavedFileName }}
+          <span>Target folder: {{ getTestFileFolder() }}</span>
+        </div>
+      </section>
+
+      <aside class="admin-tools create-card create-summary">
+        <h2>Mapped Questions</h2>
+        <div class="summary-strip">
+          <div><strong>{{ questions.length }}</strong><span>Mapped</span></div>
+          <div><strong>{{ questionBank.length }}</strong><span>Bank</span></div>
+          <div><strong>{{ totalMarks }}</strong><span>Marks</span></div>
+        </div>
+
+        <a class="btn btn-primary" routerLink="/admin/create-question">Manage Question Bank</a>
+
+        <div class="question-list" *ngIf="questions.length; else noMappedQuestions">
+          <article class="question-list-item" *ngFor="let question of pagedMappedQuestions; let index = index; trackBy: trackByQuestionId">
+            <div>
+              <strong>Q{{ question.questionNo }}. {{ getQuestionTypeLabel(question.questionType) }}</strong>
+              <span>{{ question.subject || 'No subject' }} / {{ question.topic || 'No topic' }}</span>
+              <small>{{ question.difficulty }} | {{ question.marks }} mark(s) | {{ question.estimatedTimeSeconds }}s</small>
+            </div>
+            <div class="row-actions">
+              <button class="table-link" type="button" (click)="moveMappedQuestion(index, -1)" [disabled]="index === 0">Up</button>
+              <button class="table-link" type="button" (click)="moveMappedQuestion(index, 1)" [disabled]="(mappedQuestionsCurrentPage - 1) * mappedQuestionsPageSize + index === questions.length - 1">Down</button>
+              <button class="table-link" type="button" (click)="editMappedQuestion(index)">Edit</button>
+              <button class="table-link table-link--danger" type="button" (click)="deleteMappedQuestion(index)">Unmap</button>
+            </div>
+          </article>
+
+          <div class="pagination" *ngIf="mappedQuestionsTotalPages > 1">
+            <button class="btn btn-outline" type="button" (click)="mappedQuestionsPrevPage()" [disabled]="mappedQuestionsCurrentPage === 1">Prev</button>
+            <span class="pagination-info">Page {{ mappedQuestionsCurrentPage }} of {{ mappedQuestionsTotalPages }}</span>
+            <button class="btn btn-outline" type="button" (click)="mappedQuestionsNextPage()" [disabled]="mappedQuestionsCurrentPage === mappedQuestionsTotalPages">Next</button>
+          </div>
+        </div>
+
+        <ng-template #noMappedQuestions>
+          <div class="empty-state">No questions mapped to this test yet.</div>
+        </ng-template>
+      </aside>
+    </div>
+
+
+    <section class="admin-table-wrap question-bank-panel">
+      <div class="section-title-row question-bank-head">
+        <div>
+          <span class="auth-eyebrow">Question Facility</span>
+          <h2>Question Bank</h2>
+        </div>
+        <div class="bank-meta">
+          <span class="bank-count">{{ filteredQuestionBank.length }} / {{ questionBank.length }} question(s)</span>
+          <div *ngIf="testDetails?.totalQuestions !== null && testDetails?.totalQuestions !== undefined" class="mapping-summary">
+            <span><strong>{{ mappedCount }}</strong> mapped</span>
+            <span>/</span>
+            <span><strong>{{ testDetails.totalQuestions }}</strong> total</span>
+            <span class="mapping-remaining">({{ remainingSlots }} left)</span>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="bank-filters">
+        <input type="text" [(ngModel)]="questionBankSearch" name="questionBankSearch" placeholder="Search question, subject, topic" />
+        <select [(ngModel)]="questionBankTypeFilter" name="questionBankTypeFilter">
+          <option [ngValue]="''">All Types</option>
+          <option *ngFor="let type of questionTypes" [ngValue]="type">{{ getQuestionTypeLabel(type) }}</option>
+        </select>
+        <select [(ngModel)]="questionBankDifficultyFilter" name="questionBankDifficultyFilter">
+          <option [ngValue]="''">All Difficulty</option>
+          <option *ngFor="let difficulty of difficulties" [ngValue]="difficulty">{{ difficulty }}</option>
+        </select>
+        <input type="text" [(ngModel)]="questionBankSubjectFilter" name="questionBankSubjectFilter" placeholder="Subject" />
+        <input type="text" [(ngModel)]="questionBankTopicFilter" name="questionBankTopicFilter" placeholder="Topic" />
+        <input type="number" [(ngModel)]="questionBankMarksFilter" name="questionBankMarksFilter" placeholder="Marks" />
+        <div *ngIf="testDetails?.totalQuestions !== null && testDetails?.totalQuestions !== undefined" class="mapping-info">
+          <span *ngIf="!isMappingFull">You can map up to {{ testDetails.totalQuestions }} questions. <strong>{{ remainingSlots }}</strong> slot(s) remaining.</span>
+          <span *ngIf="isMappingFull" class="mapping-warning">Mapping limit reached â€” unmap a question to add another.</span>
+        </div>
+      </div>
+
+      <div class="question-list question-list--bank" *ngIf="filteredQuestionBank.length; else emptyQuestionBank">
+        <article class="question-list-item" *ngFor="let question of pagedQuestionBank; let i = index; trackBy: trackByQuestionId">
+          <div class="question-left">
+            <span class="question-number-badge">{{ (questionBankCurrentPage - 1) * questionBankPageSize + i + 1 }}</span>
+            <div>
+              <strong>{{ getQuestionTypeLabel(question.questionType) }} - {{ question.questionText }}</strong>
+              <span>{{ question.subject || 'No subject' }} / {{ question.topic || 'No topic' }}</span>
+              <small>{{ question.difficulty }} | {{ question.marks }} mark(s) | {{ question.estimatedTimeSeconds }}s</small>
+            </div>
+            <div class="row-actions">
+              <input
+                class="map-position"
+                type="number"
+                min="1"
+                [max]="(testDetails.totalQuestions || questionBank.length)"
+                [value]="mapQuestionPositions[question.id] || ''"
+                (input)="setMapQuestionPosition(question.id, parseMapPosition($any($event.target).value))"
+                placeholder="Map #"
+              />
+              <button class="table-link map-btn" type="button" (click)="mapQuestionToTestByQuestion(question)" [disabled]="isQuestionMapped(question.id) || isMappingFull">
+                <ng-container *ngIf="isQuestionMapped(question.id); else mapLabel">Mapped</ng-container>
+                <ng-template #mapLabel>
+                  <span>Map to Test</span>
+                  <span *ngIf="remainingSlots !== null" class="map-badge">{{ remainingSlots }}</span>
+                </ng-template>
+              </button>
+            </div>
+          </div>
+        </article>
+        <div class="pagination" *ngIf="filteredQuestionBank.length">
+          <button class="btn btn-outline" type="button" (click)="questionBankPrevPage()" [disabled]="questionBankCurrentPage === 1">Prev</button>
+          <span>Page {{ questionBankCurrentPage }} of {{ questionBankTotalPages }}</span>
+          <button class="btn btn-outline" type="button" (click)="questionBankNextPage()" [disabled]="questionBankCurrentPage === questionBankTotalPages">Next</button>
+        </div>
+      </div>
+
+      <ng-template #emptyQuestionBank>
+        <div class="empty-state">Create questions here first, then map them to the test.</div>
+      </ng-template>
+    </section>
+
+    <div class="admin-actions page-actions">
+      <button class="btn btn-outline" type="button" (click)="previewTest()">{{ showPreview ? 'Hide Preview' : 'Preview Test' }}</button>
+      <button class="btn btn-primary" type="button" (click)="saveDraft()">Save Encrypted Draft</button>
+    </div>
+
+    <section class="admin-table-wrap preview-panel" *ngIf="showPreview">
+      <div class="preview-head">
+        <div>
+          <span class="auth-eyebrow">Preview</span>
+          <h2>{{ testDetails.testTitle || 'Untitled Test' }}</h2>
+          <p>{{ testDetails.description || 'No description added.' }}</p>
+        </div>
+        <div class="preview-stats">
+          <span>{{ questions.length }} Questions</span>
+          <span>{{ totalMarks }} Marks</span>
+          <span>{{ testDetails.durationMinutes || 0 }} Minutes</span>
+        </div>
+      </div>
+
+      <div class="preview-instructions" *ngIf="testDetails.instructions">
+        <strong>Instructions:</strong>
+        <p>{{ testDetails.instructions }}</p>
+      </div>
+
+      <article class="preview-question" *ngFor="let question of questions; trackBy: trackByQuestionId">
+        <div class="preview-question__head">
+          <h3>Q{{ question.questionNo }}. {{ question.questionText }}</h3>
+          <span>{{ getQuestionTypeLabel(question.questionType) }} | {{ question.difficulty }} | {{ question.marks }} mark(s) | {{ question.estimatedTimeSeconds }}s</span>
+        </div>
+
+        <div class="media-preview" *ngIf="question.questionImageUrl || question.audioUrl || question.videoUrl">
+          <img *ngIf="question.questionImageUrl" [src]="question.questionImageUrl" alt="Question media" />
+          <audio *ngIf="question.audioUrl" controls preload="none"><source [src]="question.audioUrl" /></audio>
+          <video *ngIf="question.videoUrl" controls preload="metadata"><source [src]="question.videoUrl" /></video>
+        </div>
+
+        <div class="preview-options" *ngIf="question.options?.length">
+          <div class="preview-option" *ngFor="let option of question.options; let optionIndex = index; trackBy: trackByOptionId" [class.preview-option--correct]="question.correctOptionIds?.includes(option.id)">
+            <strong>{{ getOptionLabel(optionIndex) }}</strong>
+            <img *ngIf="option.imageUrl" [src]="option.imageUrl" alt="Option media" />
+            <span>{{ option.text }}</span>
+          </div>
+        </div>
+
+        <div class="preview-answer" *ngIf="question.questionType === 'ESSAY'">
+          <p><strong>Expected Answer:</strong> {{ question.expectedAnswer || 'Not added' }}</p>
+          <p><strong>Sample Answer:</strong> {{ question.sampleAnswer || 'Not added' }}</p>
+        </div>
+
+        <div class="preview-explanation">
+          <p><strong>Explanation:</strong> {{ question.explanation || 'No explanation added.' }}</p>
+          <img *ngIf="question.explanationImageUrl" [src]="question.explanationImageUrl" alt="Explanation media" />
+        </div>
+      </article>
+    </section>
+  </div>
+</section>
+
+
+
+
+
+

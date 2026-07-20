@@ -1,0 +1,44 @@
+@use "../utilities/breakpoints" as *;
+@use "../base/variables" as *;
+.hero {
+  height: 90vh;
+
+   
+
+  display: flex;
+  align-items: center;
+
+  position: relative;
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8));
+  }
+
+  .hero-content {
+    position: relative;
+    color: white;
+
+    max-width: 650px;
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
+  }
+
+  @include tablet {
+    height: auto;
+    padding: 140px 0;
+
+    .hero-content h1 {
+      font-size: 34px;
+    }
+  }
+}

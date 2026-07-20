@@ -1,0 +1,145 @@
+<section class="admin-section">
+  <div class="container admin-shell">
+    <div class="admin-header">
+      <div>
+        <span class="auth-eyebrow">Admin</span>
+        <h1>Trainer</h1>
+      </div>
+      <div class="admin-actions">
+        <a class="btn btn-outline" routerLink="/admin/trainings">Trainings</a>
+        <a class="btn btn-outline" routerLink="/admin/trainer">Trainer</a>
+        <a class="btn btn-outline" routerLink="/admin/clients">Companies</a>
+        <!-- <a class="btn btn-outline" routerLink="/admin/linkedin-posts">Posts</a>
+        <a class="btn btn-outline" routerLink="/admin/linkedin-comments"
+          >Comments</a
+        > -->
+      </div>
+    </div>
+
+    <div class="admin-layout">
+      <form class="admin-form" [formGroup]="form" (ngSubmit)="submit()">
+        <h2>{{ selectedRecord ? "Edit" : "Add" }} Trainer</h2>
+
+        <label class="form-field"
+          >Name
+          <input type="text" formControlName="name" maxlength="200" />
+          <small>{{ fieldError("name", "Name") }}</small>
+        </label>
+
+        <label class="form-field"
+          >Mobile
+          <input type="text" formControlName="mobile" maxlength="10" />
+          <small>{{ fieldError("mobile", "Mobile") }}</small>
+        </label>
+
+        <label class="form-field"
+          >Email
+          <input type="email" formControlName="email" maxlength="200" />
+          <small>{{ fieldError("email", "Email") }}</small>
+        </label>
+
+        <label class="form-field"
+          >Address
+          <textarea
+            rows="4"
+            formControlName="address"
+            maxlength="1000"
+          ></textarea>
+          <small>{{ fieldError("address", "Address") }}</small>
+        </label>
+
+        <label class="form-field"
+          >Company
+          <textarea
+            rows="4"
+            formControlName="company"
+            maxlength="1000"
+          ></textarea>
+          <small>{{ fieldError("company", "Company") }}</small>
+        </label>
+
+        <div class="admin-actions">
+          <button class="btn btn-primary" type="submit" [disabled]="isSaving">
+            {{ isSaving ? "Saving..." : "Save" }}
+          </button>
+          <button class="btn btn-outline" type="button" (click)="resetForm()">
+            Clear
+          </button>
+        </div>
+      </form>
+
+      <!-- <div class="admin-tools">
+        <h2>Search</h2>
+        <div class="admin-search">
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            [placeholder]="searchPlaceholder"
+            name="trainerSearchTerm"
+            (keydown.enter)="search()"
+          />
+          <button class="btn btn-primary" type="button" (click)="search()">
+            Search
+          </button>
+          <button class="btn btn-outline" type="button" (click)="loadRecords()">
+            Reset
+          </button>
+        </div>
+        <div class="admin-loading" *ngIf="isLoading">Loading records...</div>
+      </div> -->
+
+      <div class="admin-table-wrap">
+        <table class="admin-table" *ngIf="records.length; else emptyState">
+          <thead>
+            <tr>
+              <!-- <th>TrainerId</th> -->
+              <th>Name</th>
+              <!-- <th>Mobile</th>
+              <th>Email</th>
+              <th>Address</th>
+              <th>Company</th> -->
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let record of records; trackBy: trackByTrainerId">
+              <!-- <td>{{ record.trainerId }}</td> -->
+              <td>{{ record.name }}</td>
+              <!-- <td>{{ record.mobile }}</td>
+              <td>{{ record.email }}</td>
+              <td>{{ record.address }}</td>
+              <td>{{ record.company }}</td> -->
+              <td>{{ record.isActive === false ? "Inactive" : "Active" }}</td>
+              <td class="table-actions">
+                <button class="table-link" type="button" (click)="edit(record)">
+                  Edit
+                </button> 
+              <!--  <button
+                  class="table-link"
+                  type="button"
+                  [disabled]="busyTrainerId === record.trainerId?.toString()"
+                  (click)="delete(record)"
+                >
+                  {{ record.isActive === false ? "Activate" : "Deactivate" }}
+                </button>
+                 <button
+                  class="table-link danger"
+                  type="button"
+                  [disabled]="isDeleting"
+                  (click)="delete(record)"
+                >
+                  Delete
+                </button> -->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #emptyState>
+          <div class="admin-loading">No records found.</div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</section>
+

@@ -1,0 +1,241 @@
+<section class="admin-section create-question-section">
+  <div class="container admin-shell create-question-shell">
+    <div class="admin-header">
+      <div>
+        <span class="auth-eyebrow">Admin</span>
+        <h1>Create / Edit Questions</h1>
+      </div>
+      <div class="admin-actions">
+        <a class="btn btn-outline" routerLink="/admin/create-test">Create Test</a>
+        <!-- <button class="btn btn-outline" type="button" (click)="downloadQuestionTemplate()">Download Question Template</button> -->
+        <label class="btn btn-outline import-btn">Import From Excel<input type="file" accept=".xlsx,.xls,.csv" (change)="onQuestionExcelSelected($event)" /></label>
+        <!-- <button class="btn btn-outline" type="button" (click)="exportQuestionBank()">Export Bank</button>
+        <label class="btn btn-outline import-btn">Import Bank<input type="file" accept=".json" (change)="importQuestionBank($event)" /></label> -->
+      </div>
+    </div>
+
+
+
+    <section class="admin-table-wrap import-preview-panel" *ngIf="questionImportPreview || questionImportResult">
+      <div class="section-title-row">
+        <div>
+          <span class="auth-eyebrow">Excel Import</span>
+          <h2>Question Import Preview</h2>
+        </div>
+        <label class="form-field duplicate-field">
+          Duplicate Handling
+          <select [(ngModel)]="questionImportDuplicateAction" name="questionImportDuplicateAction">
+            <option value="skip">Skip duplicate</option>
+            <option value="update">Update existing</option>
+            <option value="clone">Import as new clone</option>
+          </select>
+        </label>
+      </div>
+
+      <ng-container *ngIf="questionImportPreview">
+        <p class="import-file-name">Selected file: <strong>{{ questionImportFileName || questionImportPreview.fileName }}</strong></p>
+        <div class="import-summary-grid">
+          <div><strong>{{ questionImportPreview.totalRows }}</strong><span>Total Rows</span></div>
+          <div><strong>{{ questionImportPreview.validRows }}</strong><span>Valid</span></div>
+          <div><strong>{{ questionImportPreview.duplicateRows }}</strong><span>Duplicates</span></div>
+          <div><strong>{{ questionImportPreview.invalidRows }}</strong><span>Invalid</span></div>
+          <div><strong>{{ questionImportPreview.newQuestions }}</strong><span>New</span></div>
+          <div><strong>{{ questionImportPreview.updateQuestions }}</strong><span>Updates</span></div>
+          <div><strong>{{ questionImportPreview.skippedRows }}</strong><span>Skipped</span></div>
+          <div><strong>{{ questionImportPreview.failedRows }}</strong><span>Failed</span></div>
+        </div>
+        <div class="import-table-wrap">
+          <table class="import-table">
+            <thead><tr><th>Row</th><th>Action</th><th>Question</th><th>Issue</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let item of questionImportPreview.items">
+                <td>{{ item.rowNumber }}</td>
+                <td>{{ item.action }}</td>
+                <td>{{ item.question?.questionText || '-' }}</td>
+                <td>{{ item.errors.length ? item.errors[0].message : (item.duplicateReason || '-') }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="admin-actions page-actions">
+          <button class="btn btn-outline" type="button" (click)="cancelQuestionImport()">Cancel</button>
+          <button class="btn btn-primary" type="button" (click)="confirmQuestionImport()" [disabled]="!questionImportPreview.validRows">Confirm Import</button>
+        </div>
+      </ng-container>
+
+      <div class="file-note" *ngIf="questionImportResult">
+        <strong>Question import completed</strong>
+        <span>Imported: {{ questionImportResult.imported }} | Updated: {{ questionImportResult.updated }} | Skipped: {{ questionImportResult.skipped }} | Failed: {{ questionImportResult.failed }} | Bank Total: {{ questionImportResult.questionBankTotal }}</span>
+      </div>
+    </section>
+
+    <div class="question-admin-layout">
+      <section class="admin-form question-form-card">
+        <div class="section-title-row">
+          <h2>{{ editingIndex === null ? 'Add Question' : 'Edit Question' }}</h2>
+          <button class="btn btn-outline" type="button" (click)="clearForm()">Clear</button>
+        </div>
+
+        <div class="usage-warning" *ngIf="usageInfo?.usageCount">
+          This question is used in {{ usageInfo?.usageCount }} test(s). Editing affects future attempts, not submitted results.
+          <span *ngIf="getAffectedTestNames()">Tests: {{ getAffectedTestNames() }}</span>
+        </div>
+
+        <div class="form-grid form-grid--three">
+          <label class="form-field training-search-field">
+            Training
+            <div class="training-search-control">
+              <button class="btn btn-outline btn-small training-dropdown-toggle" type="button" (click)="toggleTrainingDropdown()" aria-haspopup="listbox" [attr.aria-expanded]="isTrainingDropdownOpen">
+                {{ getSelectedTrainingLabel() }}
+                <span class="dropdown-icon">&#9662;</span>
+              </button>
+              <div class="training-search-menu" *ngIf="isTrainingDropdownOpen" role="listbox">
+                <input type="text" [(ngModel)]="trainingSearch" name="trainingSearch" placeholder="Search training" autocomplete="off" (input)="onTrainingSearchChange()" />
+                <button class="training-search-option" type="button" *ngFor="let training of filteredTrainingList" (mousedown)="selectTrainingFromDropdown(training)" role="option">
+                  {{ getTrainingLabel(training) }}
+                </button>
+                <div class="training-search-empty" *ngIf="!filteredTrainingList.length">No training found</div>
+              </div>
+            </div>
+          </label>
+          <label class="form-field">Question Type<select [(ngModel)]="form.questionType" name="questionType" (ngModelChange)="onQuestionTypeChange()"><option *ngFor="let type of questionTypes" [ngValue]="type">{{ type }}</option></select></label>
+          <label class="form-field">Difficulty<select [(ngModel)]="form.difficulty" name="difficulty"><option *ngFor="let difficulty of difficulties" [ngValue]="difficulty">{{ difficulty }}</option></select></label>
+          <label class="form-field">Marks<input type="number" min="1" [(ngModel)]="form.marks" name="marks" /></label>
+          <label class="form-field">Negative Marks<input type="number" min="0" [(ngModel)]="form.negativeMarks" name="negativeMarks" /></label>
+          <label class="form-field">Estimated Time<input type="number" min="1" [(ngModel)]="form.estimatedTimeSeconds" name="estimatedTimeSeconds" /></label>
+        </div>
+
+        <label class="form-field">Question Text<textarea rows="4" [(ngModel)]="form.questionText" name="questionText"></textarea></label>
+
+        <div class="form-grid form-grid--two">
+          <label class="form-field">
+            Question Image URL
+            <input type="text" [(ngModel)]="form.questionImageUrl" name="questionImageUrl" />
+            <input type="file" accept="image/*" (change)="onMediaFileSelected('questionImageUrl', $event)" />
+            <small *ngIf="form.questionImageUrl">
+              Selected: {{ getMediaFileName(form.questionImageUrl) }}
+              <button class="table-link" type="button" (click)="removeMediaFile('questionImageUrl')">Remove</button>
+            </small>
+          </label>
+          <label class="form-field">
+            Audio URL
+            <input type="text" [(ngModel)]="form.audioUrl" name="audioUrl" />
+            <input type="file" accept="audio/*" (change)="onMediaFileSelected('audioUrl', $event)" />
+            <small *ngIf="form.audioUrl">
+              Selected: {{ getMediaFileName(form.audioUrl) }}
+              <button class="table-link" type="button" (click)="removeMediaFile('audioUrl')">Remove</button>
+            </small>
+          </label>
+          <label class="form-field">
+            Video URL
+            <input type="text" [(ngModel)]="form.videoUrl" name="videoUrl" />
+            <input type="file" accept="video/*" (change)="onMediaFileSelected('videoUrl', $event)" />
+            <small *ngIf="form.videoUrl">
+              Selected: {{ getMediaFileName(form.videoUrl) }}
+              <button class="table-link" type="button" (click)="removeMediaFile('videoUrl')">Remove</button>
+            </small>
+          </label>
+          <label class="form-field">
+            Explanation Image URL
+            <input type="text" [(ngModel)]="form.explanationImageUrl" name="explanationImageUrl" />
+            <input type="file" accept="image/*" (change)="onMediaFileSelected('explanationImageUrl', $event)" />
+            <small *ngIf="form.explanationImageUrl">
+              Selected: {{ getMediaFileName(form.explanationImageUrl) }}
+              <button class="table-link" type="button" (click)="removeMediaFile('explanationImageUrl')">Remove</button>
+            </small>
+          </label>
+        </div>
+
+        <div class="option-editor" *ngIf="form.questionType === 'MCSA' || form.questionType === 'MCMA'">
+          <div class="section-title-row"><h3>Options</h3><button class="btn btn-outline" type="button" (click)="addOption()">Add Option</button></div>
+          <div class="option-row" *ngFor="let option of form.options; let optionIndex = index; trackBy: trackByOption">
+            <button class="option-check" type="button" [class.option-check--active]="isCorrectOption(option.id)" (click)="toggleCorrectOption(option.id)">{{ getOptionLabel(optionIndex) }}</button>
+            <input type="text" [(ngModel)]="option.text" [name]="'optionText' + optionIndex" placeholder="Option text" />
+            <input type="text" [(ngModel)]="option.imageUrl" [name]="'optionImage' + optionIndex" placeholder="Image URL" />
+            <input type="file" accept="image/*" (change)="onOptionImageFileSelected(optionIndex, $event)" />
+            <small *ngIf="option.imageUrl">
+              Selected: {{ getMediaFileName(option.imageUrl) }}
+              <button class="table-link" type="button" (click)="removeOptionImage(optionIndex)">Remove</button>
+            </small>
+            <button class="table-link table-link--danger" type="button" (click)="removeOption(optionIndex)">Remove</button>
+          </div>
+        </div>
+
+        <div class="option-editor" *ngIf="form.questionType === 'TRUE_FALSE'">
+          <h3>True / False Answer</h3>
+          <div class="true-false-row">
+            <button class="option-check" type="button" [class.option-check--active]="form.correctOptionId === 'true'" (click)="toggleCorrectOption('true')">A True</button>
+            <button class="option-check" type="button" [class.option-check--active]="form.correctOptionId === 'false'" (click)="toggleCorrectOption('false')">B False</button>
+          </div>
+        </div>
+
+        <div class="form-grid form-grid--two" *ngIf="form.questionType === 'ESSAY'">
+          <label class="form-field">Expected Answer<textarea rows="4" [(ngModel)]="form.expectedAnswer" name="expectedAnswer"></textarea></label>
+          <label class="form-field">Sample Answer<textarea rows="4" [(ngModel)]="form.sampleAnswer" name="sampleAnswer"></textarea></label>
+        </div>
+
+        <label class="form-field">Explanation<textarea rows="4" [(ngModel)]="form.explanation" name="explanation"></textarea></label>
+        <label class="check-row"><input type="checkbox" [(ngModel)]="form.isActive" name="isActive" /> Active</label>
+
+        <div class="validation-list" *ngIf="validationErrors.length"><p *ngFor="let error of validationErrors">{{ error }}</p></div>
+
+        <div class="admin-actions editor-actions">
+          <button class="btn btn-primary" type="button" (click)="saveQuestion()" [disabled]="isSaving">{{ isSaving ? 'Saving...' : (editingIndex === null ? 'Save Question' : 'Update Question Bank') }}</button>
+          <button class="btn btn-outline" type="button" (click)="clearForm()">Cancel</button>
+        </div>
+      </section>
+
+      <aside class="admin-tools question-bank-tools">
+        <h2>Question Bank</h2>
+        <div class="summary-strip"><div><strong>{{ filteredQuestions.length }}</strong><span>Showing</span></div><div><strong>{{ questionBank.length }}</strong><span>Total</span></div></div>
+        <div class="map-test-panel">
+          <h3>Map Question to Test</h3>
+          <label class="form-field">Test Name<input type="text" [(ngModel)]="mappingTestName" name="mappingTestName" placeholder="Test 1" /></label>
+          <label class="form-field">Question Number<input type="number" min="1" [(ngModel)]="mappingQuestionNumber" name="mappingQuestionNumber" placeholder="Auto / append" /></label>
+          <p>Use the Map button on any question below. Existing mapped question is moved to the selected number.</p>
+          <strong *ngIf="mappingMessage">{{ mappingMessage }}</strong>
+        </div>
+        <div class="bank-filters">
+          <input type="text" [(ngModel)]="searchText" placeholder="Search question" />
+          <input type="text" [(ngModel)]="filterTraining" placeholder="Training" />
+          <input type="text" [(ngModel)]="filterSubject" placeholder="Subject" />
+          <input type="text" [(ngModel)]="filterTopic" placeholder="Topic" />
+          <select [(ngModel)]="filterType"><option [ngValue]="''">All Types</option><option *ngFor="let type of questionTypes" [ngValue]="type">{{ type }}</option></select>
+          <select [(ngModel)]="filterDifficulty"><option [ngValue]="''">All Difficulty</option><option *ngFor="let difficulty of difficulties" [ngValue]="difficulty">{{ difficulty }}</option></select>
+          <input type="number" [(ngModel)]="filterMarks" placeholder="Marks" />
+          <select [(ngModel)]="filterActive"><option value="all">All Status</option><option value="active">Active</option><option value="inactive">Inactive</option></select>
+        </div>
+      </aside>
+    </div>
+
+    <section class="admin-table-wrap question-list-panel">
+      <article class="question-list-item" *ngFor="let question of pagedQuestions; let index = index; trackBy: trackByQuestion">
+        <div class="question-left">
+          <span class="question-number-badge">{{ (currentPage - 1) * pageSize + index + 1 }}</span>
+          <div>
+            <strong>{{ question.questionText }}</strong>
+          <span>{{ question.trainingName || 'No training' }} | {{ question.subject }} | {{ question.topic }}</span>
+          <small>{{ question.questionType }} | {{ question.difficulty }} | {{ question.marks || 1 }} mark(s) | {{ question.isActive === false ? 'Inactive' : 'Active' }}</small>
+          </div>
+        </div>
+        <div class="row-actions">
+          <button class="table-link" type="button" (click)="mapQuestionToTest(question)">Map</button>
+          <button class="table-link" type="button" (click)="editQuestionByItem(question)">Edit</button>
+          <button class="table-link" type="button" (click)="cloneQuestionByItem(question)">Clone</button>
+          <button class="table-link" type="button" (click)="deactivateQuestionByItem(question)">Deactivate</button>
+          <button class="table-link table-link--danger" type="button" (click)="deleteQuestionByItem(question)">Delete</button>
+        </div>
+      </article>
+      <div class="empty-state" *ngIf="!filteredQuestions.length">No questions found.</div>
+
+      <div class="pagination" *ngIf="filteredQuestions.length">
+        <button class="btn btn-outline" type="button" (click)="prevPage()" [disabled]="currentPage === 1">Prev</button>
+        <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
+        <button class="btn btn-outline" type="button" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+      </div>
+    </section>
+  </div>
+</section>
+
+
+

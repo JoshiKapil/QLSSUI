@@ -1,0 +1,113 @@
+<section class="admin-section">
+  <div class="container admin-shell">
+    <div class="admin-header">
+      <div>
+        <span class="auth-eyebrow">Admin</span>
+        <h1>Training</h1>
+      </div>
+      <div class="admin-actions">
+        <a class="btn btn-outline" routerLink="/admin/trainings">Trainings</a>
+        <a class="btn btn-outline" routerLink="/admin/trainer">Trainer</a>
+        <a class="btn btn-outline" routerLink="/admin/clients">Companies</a>
+        <!-- <a class="btn btn-outline" routerLink="/admin/linkedin-posts">Posts</a>
+        <a class="btn btn-outline" routerLink="/admin/linkedin-comments">Comments</a> -->
+      </div>
+    </div>
+
+    <div class="admin-layout">
+      <form class="admin-form" [formGroup]="form" (ngSubmit)="submit()">
+        <h2>{{ selectedRecord ? 'Edit' : 'Add' }} Training</h2>
+        <label class="form-field training-search-field">Training
+          <div class="training-search-control">
+            <button class="btn btn-outline btn-small training-dropdown-toggle" type="button" (click)="toggleTrainingDropdown()" aria-haspopup="listbox" [attr.aria-expanded]="isTrainingDropdownOpen">
+              {{ getSelectedTrainingLabel() }}
+              <span class="dropdown-icon">&#9662;</span>
+            </button>
+            <div class="training-search-menu" *ngIf="isTrainingDropdownOpen" role="listbox">
+              <input type="text" [(ngModel)]="trainingSearch" [ngModelOptions]="{ standalone: true }" name="trainingSearch" placeholder="Search training" autocomplete="off" (input)="onTrainingSearchChange()" />
+              <button class="training-search-option" type="button" (mousedown)="selectTrainingFromDropdown(null)" role="option">New Training</button>
+              <button class="training-search-option" type="button" *ngFor="let training of filteredTrainingList" (mousedown)="selectTrainingFromDropdown(training)" role="option">
+                {{ getTrainingLabel(training) }}
+              </button>
+              <div class="training-search-empty" *ngIf="!filteredTrainingList.length">No training found</div>
+            </div>
+          </div>
+        </label>
+        <label class="form-field">TrainingName
+          <input type="text" formControlName="trainingName" />
+          <small>{{ fieldError('trainingName', 'TrainingName') }}</small>
+        </label>
+        <label class="form-field">TrainingDesc
+          <textarea rows="4" formControlName="trainingDesc"></textarea>
+          <small>{{ fieldError('trainingDesc', 'TrainingDesc') }}</small>
+        </label>
+        <label class="form-field">Topic Covered
+          <textarea rows="4" formControlName="topicCovered"></textarea>
+          <small>{{ fieldError('topicCovered', 'Topic Covered') }}</small>
+        </label>
+        <label class="form-field">DisplayName
+          <input type="text" formControlName="displayName" />
+          <small>{{ fieldError('displayName', 'DisplayName') }}</small>
+        </label>
+        <label class="form-field">Image
+          <input type="text" formControlName="image" placeholder="Image URL or uploaded file data" />
+          <input type="file" accept="image/*" (change)="onImageSelected($event, 'image')" />
+          <small>{{ fieldError('image', 'Image') }}</small>
+        </label>
+        <label class="form-field">DisplayOrder
+          <input type="number" formControlName="displayOrder" />
+          <small>{{ fieldError('displayOrder', 'DisplayOrder') }}</small>
+        </label>
+
+        <div class="admin-actions">
+          <button class="btn btn-primary" type="submit" [disabled]="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</button>
+          <button class="btn btn-outline" type="button" (click)="resetForm()">Clear</button>
+        </div>
+      </form>
+
+      <div class="admin-tools">
+        <h2>Search</h2>
+        <div class="admin-search">
+          <input type="text" [(ngModel)]="searchTerm" [placeholder]="searchPlaceholder" name="searchTerm" (keydown.enter)="search()" />
+          <button class="btn btn-primary" type="button" (click)="search()">Search</button>
+          <button class="btn btn-outline" type="button" (click)="loadRecords()">Reset</button>
+        </div>
+
+        <div class="admin-loading" *ngIf="isLoading">Loading records...</div>
+      </div>
+    </div>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table" *ngIf="records.length; else emptyState">
+        <thead>
+          <tr>
+            <th>TrainingId</th>
+            <th>TrainingName</th>
+            <th>TrainingDesc</th>
+            <th>Topic Covered</th>
+            <th>DisplayName</th>
+            <th>Image</th>
+            <th>DisplayOrder</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of records; trackBy: trackByRecordId">
+            <td>{{ record.trainingId }}</td>
+            <td>{{ record.trainingName }}</td>
+            <td>{{ record.trainingDesc }}</td>
+            <td>{{ record.topicCovered }}</td>
+            <td>{{ record.displayName }}</td>
+            <td>{{ record.image }}</td>
+            <td>{{ record.displayOrder }}</td>
+            <td><button class="table-link" type="button" (click)="edit(record)">Edit</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-template #emptyState>
+        <div class="admin-loading">No records found.</div>
+      </ng-template>
+    </div>
+  </div>
+</section>
+

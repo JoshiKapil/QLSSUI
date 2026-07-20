@@ -1,0 +1,88 @@
+<section class="admin-section">
+  <div class="container admin-shell">
+    <div class="admin-header">
+      <div>
+        <span class="auth-eyebrow">Admin</span>
+        <h1>LinkedInComment</h1>
+      </div>
+      <div class="admin-actions">
+        <a class="btn btn-outline" routerLink="/admin/trainings">Trainings</a>
+        <a class="btn btn-outline" routerLink="/admin/trainer">Trainer</a>
+        <a class="btn btn-outline" routerLink="/admin/clients">Clients</a>
+        <a class="btn btn-outline" routerLink="/admin/linkedin-posts">Posts</a>
+        <a class="btn btn-outline" routerLink="/admin/linkedin-comments">Comments</a>
+      </div>
+    </div>
+
+    <div class="admin-layout">
+      <form class="admin-form" [formGroup]="form" (ngSubmit)="submit()">
+        <h2>{{ selectedRecord ? 'Edit' : 'Add' }} LinkedInComment</h2>
+        <label class="form-field">CommentId
+          <input type="text" formControlName="commentId" />
+          <small>{{ fieldError('commentId', 'CommentId') }}</small>
+        </label>
+        <label class="form-field">PostId
+          <input type="text" formControlName="postId" />
+          <small>{{ fieldError('postId', 'PostId') }}</small>
+        </label>
+        <label class="form-field">CommentText
+          <textarea rows="4" formControlName="commentText"></textarea>
+          <small>{{ fieldError('commentText', 'CommentText') }}</small>
+        </label>
+        <label class="form-field">CreatedDate
+          <input type="date" formControlName="createdDate" />
+          <small>{{ fieldError('createdDate', 'CreatedDate') }}</small>
+        </label>
+        <label class="form-field">Author
+          <input type="text" formControlName="author" />
+          <small>{{ fieldError('author', 'Author') }}</small>
+        </label>
+
+        <div class="admin-actions">
+          <button class="btn btn-primary" type="submit" [disabled]="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</button>
+          <button class="btn btn-outline" type="button" (click)="resetForm()">Clear</button>
+        </div>
+      </form>
+
+      <div class="admin-tools">
+        <h2>Search</h2>
+        <div class="admin-search">
+          <input type="text" [(ngModel)]="searchTerm" [placeholder]="searchPlaceholder" name="searchTerm" (keydown.enter)="search()" />
+          <button class="btn btn-primary" type="button" (click)="search()">Search</button>
+          <button class="btn btn-outline" type="button" (click)="loadRecords()">Reset</button>
+        </div>
+
+        <div class="admin-loading" *ngIf="isLoading">Loading records...</div>
+      </div>
+    </div>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table" *ngIf="records.length; else emptyState">
+        <thead>
+          <tr>
+            <th>CommentId</th>
+            <th>PostId</th>
+            <th>CommentText</th>
+            <th>CreatedDate</th>
+            <th>Author</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of records; trackBy: trackByRecordId">
+            <td>{{ record.commentId }}</td>
+            <td>{{ record.postId }}</td>
+            <td>{{ record.commentText }}</td>
+            <td>{{ record.createdDate }}</td>
+            <td>{{ record.author }}</td>
+            <td><button class="table-link" type="button" (click)="edit(record)">Edit</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-template #emptyState>
+        <div class="admin-loading">No records found.</div>
+      </ng-template>
+    </div>
+  </div>
+</section>
+

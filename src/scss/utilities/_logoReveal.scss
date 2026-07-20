@@ -1,0 +1,281 @@
+// ================================================================
+//  _logoReveal.scss    QLSS Logo Reveal Intro Animation
+//  A full-screen cinematic overlay that plays once on page load.
+//  JS adds .logo-reveal--done after animation completes.
+// ================================================================
+
+// â”€â”€ Keyframes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+@keyframes revealOverlayExit {
+  0% {
+    opacity: 1;
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+}
+
+@keyframes revealLogoIn {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.92);
+    filter: blur(8px);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes revealLogoOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.12);
+    filter: blur(6px);
+  }
+}
+
+@keyframes revealTaglineIn {
+  0% {
+    opacity: 0;
+    letter-spacing: 0.35em;
+  }
+
+  100% {
+    opacity: 1;
+    letter-spacing: 0.14em;
+  }
+}
+
+@keyframes revealProgressBar {
+  0% {
+    transform: scaleX(0);
+  }
+
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes revealSplitLeft {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes revealSplitRight {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes revealDotPulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scale(1.6);
+    opacity: 1;
+  }
+}
+
+// â”€â”€ Container â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+.logo-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: all;
+
+  // Prevent flash of page content while overlay is up
+  &--done {
+    pointer-events: none;
+    display: none;
+  }
+}
+
+// â”€â”€ Split panels (dark bg in two halves) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+.logo-reveal__panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  will-change: transform;
+
+  &--left {
+    left: 0;
+    background: linear-gradient(to bottom right, #ffffff 0%, #e8f4fc 100%);
+  }
+
+  &--right {
+    right: 0;
+    background: linear-gradient(to bottom left, #ffffff 0%, #e8f4fc 100%);
+  }
+
+  // Subtle dot grid texture
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle,
+        rgba(87, 144, 225, 0.06) 1px,
+        transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+  }
+
+  // Exit: slide apart
+  .logo-reveal--exiting &--left {
+    animation: revealSplitLeft 0.72s cubic-bezier(0.76, 0, 0.24, 1) both;
+  }
+
+  .logo-reveal--exiting &--right {
+    animation: revealSplitRight 0.72s cubic-bezier(0.76, 0, 0.24, 1) both;
+  }
+}
+
+// â”€â”€ Center content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+.logo-reveal__center {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+  padding: 0 24px;
+}
+
+// â”€â”€ Logo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+.logo-reveal__logo {
+  width: clamp(220px, 30vw, 400px);
+  height: auto;
+  animation: revealLogoIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+  filter: drop-shadow(0 12px 36px rgba(0, 0, 0, 0.08));
+
+  .logo-reveal--exiting & {
+    animation: revealLogoOut 0.5s ease both;
+  }
+}
+
+// â”€â”€ Tagline text â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+.logo-reveal__tagline {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(11px, 1.4vw, 14px);
+  font-weight: 700;
+  color: var(--primary, #077eda);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  animation: revealTaglineIn 0.9s ease 0.8s both;
+
+  .logo-reveal--exiting & {
+    animation: revealLogoOut 0.4s ease 0.05s both;
+  }
+}
+
+// â”€â”€ Loading bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+.logo-reveal__bar-track {
+  width: clamp(160px, 25vw, 350px);
+  height: 2px;
+  background: rgba(87, 144, 225, 0.18);
+  border-radius: 2px;
+  overflow: hidden;
+  animation: revealTaglineIn 0.6s ease 0.9s both;
+}
+
+.logo-reveal__bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary, #5790e1), var(--accent, #cee1fc));
+  transform-origin: left;
+  border-radius: 2px;
+  animation: revealProgressBar 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.5s both;
+}
+
+// â”€â”€ Corner accent lines â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+.logo-reveal__corner {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  opacity: 0.35;
+
+  &--tl {
+    top: 28px;
+    left: 28px;
+    border-top: 1.5px solid var(--primary, #5790e1);
+    border-left: 1.5px solid var(--primary, #5790e1);
+  }
+
+  &--tr {
+    top: 28px;
+    right: 28px;
+    border-top: 1.5px solid var(--primary, #5790e1);
+    border-right: 1.5px solid var(--primary, #5790e1);
+  }
+
+  &--bl {
+    bottom: 28px;
+    left: 28px;
+    border-bottom: 1.5px solid var(--primary, #5790e1);
+    border-left: 1.5px solid var(--primary, #5790e1);
+  }
+
+  &--br {
+    bottom: 28px;
+    right: 28px;
+    border-bottom: 1.5px solid var(--primary, #5790e1);
+    border-right: 1.5px solid var(--primary, #5790e1);
+  }
+}
+
+// â”€â”€ Glow orb behind logo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+.logo-reveal__glow {
+  position: absolute;
+  width: clamp(350px, 50vw, 650px);
+  height: clamp(350px, 50vw, 650px);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(87, 144, 225, 0.14) 0%, transparent 70%);
+  pointer-events: none;
+  animation: revealTaglineIn 1s ease 0.2s both;
+}
