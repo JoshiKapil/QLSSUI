@@ -7,6 +7,7 @@ import { Training } from '../../../core/models/training.model';
 import { CertificatePdfService } from '../../../core/services/certificate-pdf.service';
 import { DataService } from '../../../core/services/data.service';
 import { NotifierService } from '../../../core/services/notifier.service';
+import { TrainingManagementService } from '../../../core/services/training-management.service';
 import { environment } from 'src/environments/environment';
 
 interface CertificateUserOption {
@@ -51,7 +52,8 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     private dataService: DataService,
     private pdfService: CertificatePdfService,
     private notifier: NotifierService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private trainingService: TrainingManagementService
   ) { }
 
   ngOnInit(): void {
@@ -240,6 +242,21 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Future API integration: call this method instead of loadTrainingList().
+  // private loadTrainingListFromApi(): void {
+  //   this.trainingService.getPaged(1, 100).pipe(takeUntil(this.destroy$)).subscribe({
+  //     next: (response) => {
+  //       this.trainingList = (response.items || [])
+  //         .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
+  //     },
+  //     error: (error) => {
+  //       console.error('Failed to load training data.', { status: error.status });
+  //       this.trainingList = [];
+  //       this.notifier.warningToastr('Training list could not be loaded.');
+  //     }
+  //   });
+  // }
+
   private mapTraining(item: any): Training {
     return {
       trainingId: item.trainingId ?? item.TrainingId ?? item.TrainingID ?? item.Id ?? item.id ?? '',
@@ -371,4 +388,3 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     this.previewUrl = null;
   }
 }
-

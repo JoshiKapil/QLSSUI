@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Training } from '../../../core/models/training.model';
 import { NotifierService } from '../../../core/services/notifier.service';
 import { DataService } from '../../../core/services/data.service';
+import { TrainingManagementService } from '../../../core/services/training-management.service';
 import { TestStorageService } from '../../test/services/test-storage.service';
 import { TestExcelImportService } from '../../test/services/test-excel-import.service';
 import { AssessmentImportPreview, AssessmentImportResult } from '../../test/services/test-excel-import.model';
@@ -94,7 +95,14 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     return this.testDetails?.totalQuestions !== null && this.testDetails?.totalQuestions !== undefined && this.questions.length >= (this.testDetails.totalQuestions || 0);
   }
 
-  constructor(private notifier: NotifierService, private testStorage: TestStorageService, private excelImport: TestExcelImportService, private http: HttpClient, private dataService: DataService) {}
+  constructor(
+    private notifier: NotifierService,
+    private testStorage: TestStorageService,
+    private excelImport: TestExcelImportService,
+    private http: HttpClient,
+    private dataService: DataService,
+    private trainingService: TrainingManagementService
+  ) {}
 
   ngOnInit(): void {
     this.loadStoredQuestionBank();
@@ -172,14 +180,17 @@ export class CreateTestComponent implements OnInit, OnDestroy {
         }
       });
 
-    // Server/API loader kept for later backend-connected flow:
-    // this.trainingService.getAll().subscribe({
-    //   next: (trainings) => {
-    //     this.trainingList = trainings || [];
+    // Future API integration: call this block instead of the asset request above.
+    // this.trainingService.getPaged(1, 100).pipe(takeUntil(this.Destroy$)).subscribe({
+    //   next: (response) => {
+    //     this.trainingList = (response.items || [])
+    //       .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
     //     this.syncSelectedTrainingFromDetails();
     //   },
-    //   error: () => {
+    //   error: (error) => {
+    //     console.error('Failed to load training data.', { status: error.status });
     //     this.trainingList = [];
+    //     this.syncSelectedTrainingFromDetails();
     //   }
     // });
   }

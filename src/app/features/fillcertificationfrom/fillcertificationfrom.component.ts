@@ -10,6 +10,7 @@ import { Training } from "../../core/models/training.model";
 import { DataService } from "../../core/services/data.service";
 import { Client } from "../../core/models/client.model";
 import { ClientManagementService } from "../../core/services/client-management.service";
+import { TrainingManagementService } from "../../core/services/training-management.service";
 
 @Component({
   selector: "app-fillcertificationfrom",
@@ -37,6 +38,7 @@ export class FillcertificationfromComponent implements OnInit {
     private trainerService: TrainerService,
     private clientService: ClientManagementService,
     private certificationFormService: CertificationFormService,
+    private trainingService: TrainingManagementService,
   ) {}
 
   ngOnInit(): void {
@@ -103,6 +105,22 @@ export class FillcertificationfromComponent implements OnInit {
         },
       });
   }
+
+  // Future API integration: call this method instead of loadTrainingList().
+  // private loadTrainingListFromApi(): void {
+  //   this.trainingService.getPaged(1, 100).subscribe({
+  //     next: (response) => {
+  //       this.trainingList = (response.items || [])
+  //         .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
+  //       this.syncSelectedTrainingFromDetails();
+  //     },
+  //     error: (error) => {
+  //       console.error("Failed to load training data.", { status: error.status });
+  //       this.trainingList = [];
+  //       this.syncSelectedTrainingFromDetails();
+  //     },
+  //   });
+  // }
 
   private mapTrainingFromAsset(training: any): Training {
     return {

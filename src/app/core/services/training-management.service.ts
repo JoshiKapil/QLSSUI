@@ -31,7 +31,7 @@ export class TrainingManagementService {
     return this.apiClient.get<PagedResult<Training>>(this.operationEndpoint, { pageNumber, pageSize });
   }
 
-  getDocument(fileName: string): Observable<HttpResponse<Blob>> {
-    return this.apiClient.getBlob(`${this.operationEndpoint}/documents/${encodeURIComponent(fileName)}`);
+  getDocument(trainingId: number | string): Observable<HttpResponse<Blob>> {
+    return this.apiClient.getBlob(`${this.operationEndpoint}/documents/${encodeURIComponent(String(trainingId))}`);
   }
 }

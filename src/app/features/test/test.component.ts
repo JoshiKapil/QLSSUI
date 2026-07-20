@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { TestStorageService } from './services/test-storage.service';
 import { AuthService } from '../../core/services/auth.service';
 import { DataService } from '../../core/services/data.service';
+import { TrainingManagementService } from '../../core/services/training-management.service';
 import {
   EvaluationStatus,
   QuestionResult,
@@ -101,7 +102,8 @@ export class TestComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private http: HttpClient,
-    private dataService: DataService
+    private dataService: DataService,
+    private trainingService: TrainingManagementService
   ) {
     this.authService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
       this.isAdmin = false;
@@ -171,6 +173,24 @@ export class TestComponent implements OnInit, OnDestroy {
         this.getDirectTrainingLabel(a).localeCompare(this.getDirectTrainingLabel(b))
       );
   }
+
+  // Future API integration: call this method instead of loadTrainingList().
+  // private async loadTrainingListFromApi(): Promise<void> {
+  //   try {
+  //     const response = await firstValueFrom(this.trainingService.getPaged(1, 100));
+  //     this.directTrainings = (response.items || [])
+  //       .map((training): DirectTrainingOption => ({
+  //         trainingId: String(training.trainingId ?? ''),
+  //         trainingName: training.trainingName || '',
+  //         displayName: training.displayName || training.trainingName || ''
+  //       }))
+  //       .filter((training) => training.trainingId && this.getDirectTrainingLabel(training))
+  //       .sort((a, b) => this.getDirectTrainingLabel(a).localeCompare(this.getDirectTrainingLabel(b)));
+  //   } catch (error: any) {
+  //     console.error('Failed to load training data.', { status: error.status });
+  //     this.directTrainings = [];
+  //   }
+  // }
 
   async startDirectTest(): Promise<void> {
     this.directEntryMessage = '';
@@ -1319,7 +1339,6 @@ export class TestComponent implements OnInit, OnDestroy {
     return value < 10 ? `0${value}` : `${value}`;
   }
 }
-
 
 
 

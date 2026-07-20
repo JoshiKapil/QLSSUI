@@ -3,6 +3,7 @@ import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { Training } from '../../../core/models/training.model';
 import { DataService } from '../../../core/services/data.service';
+import { TrainingManagementService } from '../../../core/services/training-management.service';
 import { QuestionApiService } from '../../test/services/question-api.service';
 import { TestApiService } from '../../test/services/test-api.service';
 import { TestStorageService } from '../../test/services/test-storage.service';
@@ -45,7 +46,8 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
     private readonly dataService: DataService,
     private readonly questionApi: QuestionApiService,
     private readonly testApi: TestApiService,
-    private readonly testStorage: TestStorageService
+    private readonly testStorage: TestStorageService,
+    private readonly trainingService: TrainingManagementService
   ) {}
 
   ngOnInit(): void {
@@ -84,6 +86,17 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
         error: (error) => this.fail('Training dropdown could not be loaded.', error)
       });
   }
+
+  // Future API integration: call this method instead of loadTrainingList().
+  // private loadTrainingListFromApi(): void {
+  //   this.trainingService.getPaged(1, 100).pipe(takeUntil(this.destroy$)).subscribe({
+  //     next: (response) => {
+  //       this.trainings = (response.items || [])
+  //         .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
+  //     },
+  //     error: (error) => this.fail('Training dropdown could not be loaded.', error)
+  //   });
+  // }
 
   private mapTrainingFromAsset(training: any): Training {
     return {

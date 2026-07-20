@@ -7,7 +7,7 @@ import { SiteInteractionsService } from '../../core/services/site-interactions.s
 import { DataService } from '../../core/services/data.service';
 import emailjs from '@emailjs/browser';
 import { NotifierService } from 'src/app/core/services/notifier.service';
-// import { environment } from '../../../environments/environment'; // Future API integration.
+import { TrainingManagementService } from '../../core/services/training-management.service';
 // interface TrainingCard {
 //   category: string;
 //   categoryClass: 'card-dev' | 'card-design' | 'card-data';
@@ -68,6 +68,7 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
     private meta: Meta,
     private _HttpClient: HttpClient,
     private dataService: DataService,
+    private trainingService: TrainingManagementService,
     private notifierService: NotifierService,
     private sanitizer: DomSanitizer,
     private router: Router
@@ -224,26 +225,23 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
   // Future API integration: uncomment this method and call it instead of GetData().
   // GetDataFromApi(): void {
   //   this.isLoading = true;
-  //   this._HttpClient
-  //     .get<{ items?: any[]; Items?: any[]; totalCount?: number; TotalCount?: number }>(
-  //       `${environment.apiBaseUrl}/TrainingOperation?pageNumber=1&pageSize=100`
-  //     )
+  //   this.trainingService
+  //     .getPaged(1, 100)
   //     .pipe(takeUntil(this.Destroy$))
   //     .subscribe({
-  //       next: (response) => {
-  //         const items = response.items ?? response.Items ?? [];
-  //         this.TrainingList = items.map(item => ({
+  //       next: (response:any) => {
+  //         this.TrainingList = (response.items || []).map((item: any) => ({
   //           ...item,
-  //           TrainingId: item.TrainingId ?? item.trainingId,
-  //           TrainingName: item.TrainingName ?? item.trainingName,
-  //           TrainingDesc: item.TrainingDesc ?? item.trainingDesc,
-  //           DisplayName: item.DisplayName ?? item.displayName,
-  //           Image: item.Image ?? item.image ?? '',
-  //           DisplayOrder: item.DisplayOrder ?? item.displayOrder,
-  //           CategoryId: item.CategoryId ?? item.categoryId,
-  //           Duration: item.Duration ?? item.duration,
-  //           Modules: item.Modules ?? item.modules,
-  //           TopicCovered: item.TopicCovered ?? item.topicCovered
+  //           TrainingId: item.trainingId,
+  //           TrainingName: item.trainingName,
+  //           TrainingDesc: item.trainingDesc,
+  //           DisplayName: item.displayName,
+  //           Image: item.image || '',
+  //           DisplayOrder: item.displayOrder,
+  //           CategoryId: item.categoryId,
+  //           Duration: item.duration,
+  //           Modules: item.modules,
+  //           TopicCovered: item.topicCovered
   //         }));
   //         this.TrainingList.sort((a, b) => Number(a.DisplayOrder) - Number(b.DisplayOrder));
   //         this.filteredTrainings = [...this.TrainingList];
@@ -251,7 +249,7 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
   //         this.CategoryList = [{ CategoryId: 0, CategoryName: 'All' }];
   //         this.isLoading = false;
   //       },
-  //       error: (error) => {
+  //       error: (error:any) => {
   //         console.error('Failed to load training data.', { status: error.status });
   //         this.TrainingList = [];
   //         this.filteredTrainings = [];
@@ -334,9 +332,7 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
     this.CId = item.TrainingId ?? null;
 
     const fileName = `${item.TrainingName || this.Name}.pdf`;
-    this.pdfSrc = `assets/doc/${fileName}`;
-    // Future API integration: comment the asset line above and uncomment the line below.
-    // this.pdfSrc = `${environment.apiBaseUrl}/TrainingOperation/documents/${encodeURIComponent(fileName)}`;
+    this.pdfSrc = `assets/doc/${this.CId}.pdf`;
 
     this.selectedPdfUrl = null;
     this.pdfErrorMessage = '';
@@ -344,10 +340,14 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
     this.isReadMoreModalOpen = true;
     this.pdfModalVisible = true;
 
-    this._HttpClient.get(this.pdfSrc, {
+    const pdfRequest$ = this._HttpClient.get(this.pdfSrc, {
       responseType: 'blob',
       observe: 'response'
-    })
+    });
+    // Future API integration: comment the request above and uncomment the service request below.
+    //const pdfRequest$ = this.trainingService.getDocument(this.CId!);
+
+    pdfRequest$
       .pipe(takeUntil(this.Destroy$))
       .subscribe({
         next: (res) => {

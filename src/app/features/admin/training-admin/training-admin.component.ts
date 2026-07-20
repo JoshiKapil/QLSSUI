@@ -85,11 +85,17 @@ export class TrainingAdminComponent implements OnInit, OnDestroy {
         }
       });
 
-    // Server/API loader kept for later backend-connected flow:
-    // this.trainingService.getAll().subscribe({
-    //   next: (records) => {
-    //     this.allRecords = records || [];
+    // Future API integration: call this method instead of loadRecords().
+    // this.trainingService.getPaged(1, 100).pipe(takeUntil(this.Destroy$)).subscribe({
+    //   next: (response) => {
+    //     this.allRecords = (response.items || [])
+    //       .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
     //     this.records = [...this.allRecords];
+    //   },
+    //   error: (error) => {
+    //     console.error('Failed to load training data.', { status: error.status });
+    //     this.allRecords = [];
+    //     this.records = [];
     //   },
     //   complete: () => (this.isLoading = false)
     // });
