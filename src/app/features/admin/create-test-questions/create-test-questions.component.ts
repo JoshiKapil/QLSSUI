@@ -68,35 +68,35 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
     return this.questions.filter((question) => !question.validationErrors.length);
   }
 
-  private loadTrainingList(): void {
-    const headers = new HttpHeaders({
-      ETag: 'f88dd058fe004909615a64f01be66a7',
-      'Content-Type': 'application/json'
-    });
+  //private loadTrainingList(): void {
+  //   const headers = new HttpHeaders({
+  //     ETag: 'f88dd058fe004909615a64f01be66a7',
+  //     'Content-Type': 'application/json'
+  //   });
 
-    this.http.get('assets/Training.json', { headers, responseType: 'text' })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          const decrypted = this.dataService.decrypt(data);
-          this.trainings = (decrypted?.Table || [])
-            .map((training: any) => this.mapTrainingFromAsset(training))
-            .sort((a: Training, b: Training) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
-        },
-        error: (error) => this.fail('Training dropdown could not be loaded.', error)
-      });
-  }
+  //   this.http.get('assets/Training.json', { headers, responseType: 'text' })
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (data) => {
+  //         const decrypted = this.dataService.decrypt(data);
+  //         this.trainings = (decrypted?.Table || [])
+  //           .map((training: any) => this.mapTrainingFromAsset(training))
+  //           .sort((a: Training, b: Training) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
+  //       },
+  //       error: (error) => this.fail('Training dropdown could not be loaded.', error)
+  //     });
+  // }
 
   // Future API integration: call this method instead of loadTrainingList().
-  // private loadTrainingListFromApi(): void {
-  //   this.trainingService.getPaged(1, 100).pipe(takeUntil(this.destroy$)).subscribe({
-  //     next: (response) => {
-  //       this.trainings = (response.items || [])
-  //         .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
-  //     },
-  //     error: (error) => this.fail('Training dropdown could not be loaded.', error)
-  //   });
-  // }
+  private loadTrainingList(): void {
+    this.trainingService.getPaged(1, 100).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response) => {
+        this.trainings = (response.items || [])
+          .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
+      },
+      error: (error) => this.fail('Training dropdown could not be loaded.', error)
+    });
+  }
 
   private mapTrainingFromAsset(training: any): Training {
     return {

@@ -579,42 +579,42 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
   }
 
   private loadTrainingList(): void {
-    const reqHeader = new HttpHeaders({
-      ETag: 'f88dd058fe004909615a64f01be66a7',
-      'Content-Type': 'application/json'
-    });
+    // const reqHeader = new HttpHeaders({
+    //   ETag: 'f88dd058fe004909615a64f01be66a7',
+    //   'Content-Type': 'application/json'
+    // });
 
-    this.http
-      .get('assets/Training.json', { headers: reqHeader, responseType: 'text' })
-      .pipe(takeUntil(this.Destroy$))
-      .subscribe({
-        next: (data: string) => {
-          const decrypted = this.dataService.decrypt(data);
-          const trainings = decrypted?.Table || [];
-          this.trainingList = trainings
-            .map((training: any) => this.mapTrainingFromAsset(training))
-            .sort((a: Training, b: Training) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
-          this.syncSelectedTrainingFromForm();
-        },
-        error: () => {
-          this.trainingList = [];
-          this.syncSelectedTrainingFromForm();
-        }
-      });
+    // this.http
+    //   .get('assets/Training.json', { headers: reqHeader, responseType: 'text' })
+    //   .pipe(takeUntil(this.Destroy$))
+    //   .subscribe({
+    //     next: (data: string) => {
+    //       const decrypted = this.dataService.decrypt(data);
+    //       const trainings = decrypted?.Table || [];
+    //       this.trainingList = trainings
+    //         .map((training: any) => this.mapTrainingFromAsset(training))
+    //         .sort((a: Training, b: Training) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
+    //       this.syncSelectedTrainingFromForm();
+    //     },
+    //     error: () => {
+    //       this.trainingList = [];
+    //       this.syncSelectedTrainingFromForm();
+    //     }
+    //   });
 
     // Future API integration: call this block instead of the asset request above.
-    // this.trainingService.getPaged(1, 100).pipe(takeUntil(this.Destroy$)).subscribe({
-    //   next: (response) => {
-    //     this.trainingList = (response.items || [])
-    //       .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
-    //     this.syncSelectedTrainingFromForm();
-    //   },
-    //   error: (error) => {
-    //     console.error('Failed to load training data.', { status: error.status });
-    //     this.trainingList = [];
-    //     this.syncSelectedTrainingFromForm();
-    //   }
-    // });
+    this.trainingService.getPaged(1, 100).pipe(takeUntil(this.Destroy$)).subscribe({
+      next: (response) => {
+        this.trainingList = (response.items || [])
+          .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
+        this.syncSelectedTrainingFromForm();
+      },
+      error: (error) => {
+        console.error('Failed to load training data.', { status: error.status });
+        this.trainingList = [];
+        this.syncSelectedTrainingFromForm();
+      }
+    });
   }
 
   private mapTrainingFromAsset(training: any): Training {

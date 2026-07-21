@@ -39,9 +39,9 @@
             </button>
             <div class="select-menu" *ngIf="isUserDropdownOpen" role="listbox">
               <input type="search" [(ngModel)]="userSearch" name="userSearch" placeholder="Search by name, email or certificate number" autocomplete="off" />
-              <button type="button" *ngFor="let user of filteredUserData; trackBy: trackByUserId" (click)="selectUser(user.CertificationDataId)">
-                <strong>{{ user.UserName }}</strong>
-                <small>{{ user.Email || user.CertificationNumber }}</small>
+              <button type="button" *ngFor="let user of filteredUserData; trackBy: trackByUserId" (click)="selectUser(user.certificationDataId)">
+                <strong>{{ user.userName }}</strong>
+                <small>{{ user.email || user.certificationNumber }}</small>
               </button>
               <p class="empty-option" *ngIf="!filteredUserData.length">No participant found.</p>
             </div>

@@ -59,46 +59,46 @@ export class TrainingAdminComponent implements OnInit, OnDestroy {
   }
 
   loadRecords(): void {
-    this.isLoading = true;
-    const reqHeader = new HttpHeaders({
-      ETag: 'f88dd058fe004909615a64f01be66a7',
-      'Content-Type': 'application/json'
-    });
+    // this.isLoading = true;
+    // const reqHeader = new HttpHeaders({
+    //   ETag: 'f88dd058fe004909615a64f01be66a7',
+    //   'Content-Type': 'application/json'
+    // });
 
-    this.http
-      .get('assets/Training.json', { headers: reqHeader, responseType: 'text' })
-      .pipe(takeUntil(this.Destroy$))
-      .subscribe({
-        next: (data: string) => {
-          const decrypted = this.dataService.decrypt(data);
-          const trainings = decrypted?.Table || [];
-          this.allRecords = trainings
-            .map((training: unknown) => this.mapTrainingFromAsset(training))
-            .sort((a: Training, b: Training) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
-          this.records = [...this.allRecords];
-          this.isLoading = false;
-        },
-        error: () => {
-          this.allRecords = [];
-          this.records = [];
-          this.isLoading = false;
-        }
-      });
+    // this.http
+    //   .get('assets/Training.json', { headers: reqHeader, responseType: 'text' })
+    //   .pipe(takeUntil(this.Destroy$))
+    //   .subscribe({
+    //     next: (data: string) => {
+    //       const decrypted = this.dataService.decrypt(data);
+    //       const trainings = decrypted?.Table || [];
+    //       this.allRecords = trainings
+    //         .map((training: unknown) => this.mapTrainingFromAsset(training))
+    //         .sort((a: Training, b: Training) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
+    //       this.records = [...this.allRecords];
+    //       this.isLoading = false;
+    //     },
+    //     error: () => {
+    //       this.allRecords = [];
+    //       this.records = [];
+    //       this.isLoading = false;
+    //     }
+    //   });
 
     // Future API integration: call this method instead of loadRecords().
-    // this.trainingService.getPaged(1, 100).pipe(takeUntil(this.Destroy$)).subscribe({
-    //   next: (response) => {
-    //     this.allRecords = (response.items || [])
-    //       .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
-    //     this.records = [...this.allRecords];
-    //   },
-    //   error: (error) => {
-    //     console.error('Failed to load training data.', { status: error.status });
-    //     this.allRecords = [];
-    //     this.records = [];
-    //   },
-    //   complete: () => (this.isLoading = false)
-    // });
+    this.trainingService.getPaged(1, 100).pipe(takeUntil(this.Destroy$)).subscribe({
+      next: (response) => {
+        this.allRecords = (response.items || [])
+          .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
+        this.records = [...this.allRecords];
+      },
+      error: (error) => {
+        console.error('Failed to load training data.', { status: error.status });
+        this.allRecords = [];
+        this.records = [];
+      },
+      complete: () => (this.isLoading = false)
+    });
   }
 
   search(): void {

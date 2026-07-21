@@ -81,7 +81,7 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.GetData();
+    this.GetDataFromApi();
   }
 
   ngAfterViewInit(): void {
@@ -198,6 +198,7 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
   //       title: 'Title Science',
   //       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=100'
   GetData(): void {
+    alert(1)
     const reqHeader = new HttpHeaders({
       ETag: 'f88dd058fe004909615a64f01be66a7',
       'Content-Type': 'application/json'
@@ -223,40 +224,40 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   // Future API integration: uncomment this method and call it instead of GetData().
-  // GetDataFromApi(): void {
-  //   this.isLoading = true;
-  //   this.trainingService
-  //     .getPaged(1, 100)
-  //     .pipe(takeUntil(this.Destroy$))
-  //     .subscribe({
-  //       next: (response:any) => {
-  //         this.TrainingList = (response.items || []).map((item: any) => ({
-  //           ...item,
-  //           TrainingId: item.trainingId,
-  //           TrainingName: item.trainingName,
-  //           TrainingDesc: item.trainingDesc,
-  //           DisplayName: item.displayName,
-  //           Image: item.image || '',
-  //           DisplayOrder: item.displayOrder,
-  //           CategoryId: item.categoryId,
-  //           Duration: item.duration,
-  //           Modules: item.modules,
-  //           TopicCovered: item.topicCovered
-  //         }));
-  //         this.TrainingList.sort((a, b) => Number(a.DisplayOrder) - Number(b.DisplayOrder));
-  //         this.filteredTrainings = [...this.TrainingList];
-  //         // The endpoint returns CategoryId but not CategoryName.
-  //         this.CategoryList = [{ CategoryId: 0, CategoryName: 'All' }];
-  //         this.isLoading = false;
-  //       },
-  //       error: (error:any) => {
-  //         console.error('Failed to load training data.', { status: error.status });
-  //         this.TrainingList = [];
-  //         this.filteredTrainings = [];
-  //         this.isLoading = false;
-  //       }
-  //     });
-  // }
+  GetDataFromApi(): void {
+    this.isLoading = true;
+    this.trainingService
+      .getPaged(1, 100)
+      .pipe(takeUntil(this.Destroy$))
+      .subscribe({
+        next: (response:any) => {
+          this.TrainingList = (response.items || []).map((item: any) => ({
+            ...item,
+            TrainingId: item.trainingId,
+            TrainingName: item.trainingName,
+            TrainingDesc: item.trainingDesc,
+            DisplayName: item.displayName,
+            Image: item.image || '',
+            DisplayOrder: item.displayOrder,
+            CategoryId: item.categoryId,
+            Duration: item.duration,
+            Modules: item.modules,
+            TopicCovered: item.topicCovered
+          }));
+          this.TrainingList.sort((a, b) => Number(a.DisplayOrder) - Number(b.DisplayOrder));
+          this.filteredTrainings = [...this.TrainingList];
+          // The endpoint returns CategoryId but not CategoryName.
+          this.CategoryList = [{ CategoryId: 0, CategoryName: 'All' }];
+          this.isLoading = false;
+        },
+        error: (error:any) => {
+          console.error('Failed to load training data.', { status: error.status });
+          this.TrainingList = [];
+          this.filteredTrainings = [];
+          this.isLoading = false;
+        }
+      });
+  }
 
   /* Create unique CategoryList from TrainingList */
   buildCategoryList(): void {
@@ -331,7 +332,7 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
     this.Name = item.DisplayName || item.TrainingName || '';
     this.CId = item.TrainingId ?? null;
 
-    const fileName = `${item.TrainingName || this.Name}.pdf`;
+    //const fileName = `${item.TrainingName || this.Name}.pdf`;
     this.pdfSrc = `assets/doc/${this.CId}.pdf`;
 
     this.selectedPdfUrl = null;
@@ -340,12 +341,12 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
     this.isReadMoreModalOpen = true;
     this.pdfModalVisible = true;
 
-    const pdfRequest$ = this._HttpClient.get(this.pdfSrc, {
-      responseType: 'blob',
-      observe: 'response'
-    });
+    // const pdfRequest$ = this._HttpClient.get(this.pdfSrc, {
+    //   responseType: 'blob',
+    //   observe: 'response'
+    // });
     // Future API integration: comment the request above and uncomment the service request below.
-    //const pdfRequest$ = this.trainingService.getDocument(this.CId!);
+    const pdfRequest$ = this.trainingService.getDocument(this.CId!);
 
     pdfRequest$
       .pipe(takeUntil(this.Destroy$))

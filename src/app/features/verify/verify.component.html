@@ -50,7 +50,7 @@
           <div class="verify-input-wrap" id="inputWrap">
             <!-- <span class="verify-prefix" id="prefixPill">QLSS/IATF/IA/</span> -->
             <input #certInput type="text" id="certInput" class="verify-input" placeholder="e.g. 001" autocomplete="off"
-              spellcheck="false" aria-label="Certificate number" [(ngModel)]="CertificateNo" name="certificateNo" (keydown.enter)="Validate()" />
+              spellcheck="false" aria-label="Certificate number" [(ngModel)]="CertificateNo" name="certificateNo" (keydown.enter)="ValidateFromApi()" />
             <button class="verify-clear" id="clearBtn" type="button" aria-label="Clear input" style="display: none"
               onclick="clearInput()">
               <svg viewBox="0 0 16 16" fill="none">
@@ -58,7 +58,7 @@
               </svg>
             </button>
           </div>
-          <button class="verify-btn" id="verifyBtn" type="button" (click)="Validate()">
+          <button class="verify-btn" id="verifyBtn" type="button" (click)="ValidateFromApi()">
             <span class="verify-btn__label">Verify</span>
             <span class="verify-btn__icon" aria-hidden="true">
               <svg viewBox="0 0 20 20" fill="none">
@@ -83,7 +83,7 @@
               <p class="result-status result-status--success">Certificate Verified</p>
               <p class="result-message">
                 The certificate is valid and issued to {{ UserData[0]?.UserName }} on
-                {{ UserData[0]?.IssuedDate }} for {{ UserData[0]?.TrainingName }}.
+                {{ formatIssuedDate(UserData[0]?.IssuedDate) }} for {{ UserData[0]?.trainingName }}.
               </p>
               <div class="result-tags">
                 <!-- <span class="result-tag">

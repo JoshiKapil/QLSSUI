@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { PagedResult, Training } from '../models/training.model';
 import { AdminManagementService } from './admin-management.service';
 import { ApiClientService } from './api-client.service';
+import { CertificateData } from '../models/certificate-data.model';
 
 @Injectable({ providedIn: 'root' })
 export class TrainingManagementService {
@@ -13,7 +14,7 @@ export class TrainingManagementService {
   constructor(
     private adminService: AdminManagementService,
     private apiClient: ApiClientService
-  ) {}
+  ) { }
 
   getAll(): Observable<Training[]> {
     return this.adminService.getAll<Training>(this.endpoint);
@@ -33,5 +34,9 @@ export class TrainingManagementService {
 
   getDocument(trainingId: number | string): Observable<HttpResponse<Blob>> {
     return this.apiClient.getBlob(`${this.operationEndpoint}/documents/${encodeURIComponent(String(trainingId))}`);
+  }
+
+  getCertificationData(): Observable<CertificateData> {
+    return this.apiClient.get<CertificateData>(`/CertificationData`);
   }
 }

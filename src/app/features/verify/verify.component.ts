@@ -88,6 +88,7 @@ export class VerifyComponent implements AfterViewInit {
   
     this.certificationService.getByNumber(certificationNumber).subscribe({
       next: (item: CertificationData) => {
+        console.log(item)
         const certificate = {
           ...item,
           UserName: item.name,
@@ -95,6 +96,7 @@ export class VerifyComponent implements AfterViewInit {
           TrainingName: item.trainingId
         };
         this.UserData = [certificate];
+        console.log(this.UserData)
         this.Certificate = true;
         this.resultMessage = 'Certificate Verified.';
       },
@@ -106,4 +108,18 @@ export class VerifyComponent implements AfterViewInit {
       }
     });
   }
+  formatIssuedDate(value: string | null | undefined): string {
+  if (!value) {
+    return '';
+  }
+  // Match format: yyyy-MM-dd or yyyy-MM-dd HH:mm:ss
+  const sqlDatePattern = /^\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}:\d{2})?$/;
+  if (sqlDatePattern.test(value.trim())) {
+    const datePart = value.trim().substring(0, 10);
+    const [year, month, day] = datePart.split('-');
+    return `${day}-${month}-${year}`;
+  }
+  // Keep old descriptive dates as they are
+  return value;
+}
 }

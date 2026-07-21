@@ -152,45 +152,45 @@ export class TestComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async loadTrainingList(): Promise<void> {
-    const headers = new HttpHeaders({
-      ETag: 'f88dd058fe004909615a64f01be66a7',
-      'Content-Type': 'application/json'
-    });
-    const encryptedData = await firstValueFrom(
-      this.http.get('assets/Training.json', { headers, responseType: 'text' })
-    );
-    const trainings = this.dataService.decrypt(encryptedData)?.Table || [];
+  // private async loadTrainingList(): Promise<void> {
+  //   const headers = new HttpHeaders({
+  //     ETag: 'f88dd058fe004909615a64f01be66a7',
+  //     'Content-Type': 'application/json'
+  //   });
+  //   const encryptedData = await firstValueFrom(
+  //     this.http.get('assets/Training.json', { headers, responseType: 'text' })
+  //   );
+  //   const trainings = this.dataService.decrypt(encryptedData)?.Table || [];
 
-    this.directTrainings = trainings
-      .map((training: any): DirectTrainingOption => ({
-        trainingId: String(training.TrainingId ?? training.trainingId ?? ''),
-        trainingName: training.TrainingName ?? training.trainingName ?? '',
-        displayName: training.DisplayName ?? training.displayName ?? training.TrainingName ?? ''
-      }))
-      .filter((training: DirectTrainingOption) => training.trainingId && this.getDirectTrainingLabel(training))
-      .sort((a: DirectTrainingOption, b: DirectTrainingOption) =>
-        this.getDirectTrainingLabel(a).localeCompare(this.getDirectTrainingLabel(b))
-      );
-  }
+  //   this.directTrainings = trainings
+  //     .map((training: any): DirectTrainingOption => ({
+  //       trainingId: String(training.TrainingId ?? training.trainingId ?? ''),
+  //       trainingName: training.TrainingName ?? training.trainingName ?? '',
+  //       displayName: training.DisplayName ?? training.displayName ?? training.TrainingName ?? ''
+  //     }))
+  //     .filter((training: DirectTrainingOption) => training.trainingId && this.getDirectTrainingLabel(training))
+  //     .sort((a: DirectTrainingOption, b: DirectTrainingOption) =>
+  //       this.getDirectTrainingLabel(a).localeCompare(this.getDirectTrainingLabel(b))
+  //     );
+  // }
 
   // Future API integration: call this method instead of loadTrainingList().
-  // private async loadTrainingListFromApi(): Promise<void> {
-  //   try {
-  //     const response = await firstValueFrom(this.trainingService.getPaged(1, 100));
-  //     this.directTrainings = (response.items || [])
-  //       .map((training): DirectTrainingOption => ({
-  //         trainingId: String(training.trainingId ?? ''),
-  //         trainingName: training.trainingName || '',
-  //         displayName: training.displayName || training.trainingName || ''
-  //       }))
-  //       .filter((training) => training.trainingId && this.getDirectTrainingLabel(training))
-  //       .sort((a, b) => this.getDirectTrainingLabel(a).localeCompare(this.getDirectTrainingLabel(b)));
-  //   } catch (error: any) {
-  //     console.error('Failed to load training data.', { status: error.status });
-  //     this.directTrainings = [];
-  //   }
-  // }
+  private async loadTrainingList(): Promise<void> {
+    try {
+      const response = await firstValueFrom(this.trainingService.getPaged(1, 100));
+      this.directTrainings = (response.items || [])
+        .map((training): DirectTrainingOption => ({
+          trainingId: String(training.trainingId ?? ''),
+          trainingName: training.trainingName || '',
+          displayName: training.displayName || training.trainingName || ''
+        }))
+        .filter((training) => training.trainingId && this.getDirectTrainingLabel(training))
+        .sort((a, b) => this.getDirectTrainingLabel(a).localeCompare(this.getDirectTrainingLabel(b)));
+    } catch (error: any) {
+      console.error('Failed to load training data.', { status: error.status });
+      this.directTrainings = [];
+    }
+  }
 
   async startDirectTest(): Promise<void> {
     this.directEntryMessage = '';

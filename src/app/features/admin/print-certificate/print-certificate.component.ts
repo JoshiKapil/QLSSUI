@@ -81,14 +81,14 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   }
 
   get selectedUser(): any | undefined {
-    return this.UserData.find((user) => String(user.CertificationDataId) === this.selectedUserId);
+    return this.UserData.find((user) => String(user.certificationDataId) === this.selectedUserId);
   }
 
   get filteredUserData(): any[] {
     const search = this.userSearch.trim().toLowerCase();
     if (!search) return this.UserData;
     return this.UserData.filter((user) =>
-      `${user.UserName || ''} ${user.Email || ''} ${user.CertificationNumber || ''}`.toLowerCase().includes(search)
+      `${user.userName || ''} ${user.email || ''} ${user.certificationNumber || ''}`.toLowerCase().includes(search)
     );
   }
 
@@ -134,20 +134,20 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
 
   selectUser(userId: string): void {
     this.selectedUserId = String(userId);
-    const user = this.UserData.find((x: any) => String(x.CertificationDataId) === String(userId));
+    const user = this.UserData.find((x: any) => String(x.certificationDataId) === String(userId));
     if (!user) return;
     this.userSearch = this.getUserLabel(user);
     this.isUserDropdownOpen = false;
     this.certificate = {
       ...this.certificate,
-      certificateNumber: user.CertificationNumber,
-      userName: user.UserName,
+      certificateNumber: user.certificationNumber,
+      userName: user.userName,
       marks: user.marks,
-      completionType: user.completionType,      
-      dateOfIssue: new Date(user.IssuedDate).toISOString().slice(0, 10),      
-      trainingHours:Number(user.Days) * 8,
-      location: user.Location,
-      trainerName: user.TrainerName,
+      completionType: user.completionType,
+      dateOfIssue: new Date(user.issuedDate).toISOString().slice(0, 10),
+      trainingHours: Number(user.days) * 8,
+      location: user.location,
+      trainerName: user.trainerName,
     };
     this.revokePreviewUrl();
   }
@@ -186,15 +186,15 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   }
 
   getTrainingUserCount(training: Training): number {
-    return this.allUserData.filter((user) => String(user.TrainingId) === String(training.trainingId ?? '')).length;
+    return this.allUserData.filter((user) => String(user.trainingId) === String(training.trainingId ?? '')).length;
   }
 
   getUserLabel(user: any): string {
-    return [user.UserName, user.Email].filter(Boolean).join(' - ');
+    return [user.userName, user.email].filter(Boolean).join(' - ');
   }
 
   trackByUserId(_index: number, user: any): string {
-    return String(user.CertificationDataId ?? user.Email ?? _index);
+    return String(user.certificationDataId ?? user.email ?? _index);
   }
   trackByTrainingId(_index: number, training: Training): string {
     return String(training.trainingId ?? training.displayName);
@@ -224,38 +224,38 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       && this.certificate.trainingHours > 0;
   }
 
-  private loadTrainingList(): void {
-    const headers = new HttpHeaders({ ETag: 'f88dd058fe004909615a64f01be66a7', 'Content-Type': 'application/json' });
-    this.http.get('assets/Training.json', { headers, responseType: 'text' })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          const decrypted = this.dataService.decrypt(data);
-          this.trainingList = (decrypted?.Table || [])
-            .map((item: any) => this.mapTraining(item))
-            .sort((a: Training, b: Training) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
-        },
-        error: () => {
-          this.trainingList = [];
-          this.notifier.warningToastr('Training list could not be loaded.');
-        }
-      });
-  }
+  // private loadTrainingList(): void {
+  //   const headers = new HttpHeaders({ ETag: 'f88dd058fe004909615a64f01be66a7', 'Content-Type': 'application/json' });
+  //   this.http.get('assets/Training.json', { headers, responseType: 'text' })
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (data) => {
+  //         const decrypted = this.dataService.decrypt(data);
+  //         this.trainingList = (decrypted?.Table || [])
+  //           .map((item: any) => this.mapTraining(item))
+  //           .sort((a: Training, b: Training) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
+  //       },
+  //       error: () => {
+  //         this.trainingList = [];
+  //         this.notifier.warningToastr('Training list could not be loaded.');
+  //       }
+  //     });
+  // }
 
   // Future API integration: call this method instead of loadTrainingList().
-  // private loadTrainingListFromApi(): void {
-  //   this.trainingService.getPaged(1, 100).pipe(takeUntil(this.destroy$)).subscribe({
-  //     next: (response) => {
-  //       this.trainingList = (response.items || [])
-  //         .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
-  //     },
-  //     error: (error) => {
-  //       console.error('Failed to load training data.', { status: error.status });
-  //       this.trainingList = [];
-  //       this.notifier.warningToastr('Training list could not be loaded.');
-  //     }
-  //   });
-  // }
+  private loadTrainingList(): void {
+    this.trainingService.getPaged(1, 100).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response) => {
+        this.trainingList = (response.items || [])
+          .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
+      },
+      error: (error) => {
+        console.error('Failed to load training data.', { status: error.status });
+        this.trainingList = [];
+        this.notifier.warningToastr('Training list could not be loaded.');
+      }
+    });
+  }
 
   private mapTraining(item: any): Training {
     return {
@@ -343,15 +343,30 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   }
 
   private loadCertificateUsers(): void {
-    const reqHeader = new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
-    this.http.get(environment.certificateUrl, { headers: reqHeader, responseType: 'text' })
+    // const reqHeader = new HttpHeaders({
+    //   'Content-Type': 'application/json'
+    // });
+
+
+    // this.http.get(environment.certificateUrl, { headers: reqHeader, responseType: 'text' })
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe({
+    //     next: (data) => {
+    //       const decryptedData = this.dataService.decrypt(data);
+    //       this.allUserData = Array.isArray(decryptedData) ? decryptedData : [];
+    //       this.getTrainingUsers();
+    //     },
+    //     error: () => {
+    //       this.allUserData = [];
+    //       this.UserData = [];
+    //     }
+    //   });
+
+    this.trainingService.getCertificationData()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (data) => {
-          const decryptedData = this.dataService.decrypt(data);
-          this.allUserData = Array.isArray(decryptedData) ? decryptedData : [];
+        next: (data) => { 
+          this.allUserData = Array.isArray(data) ? data : []; 
           this.getTrainingUsers();
         },
         error: () => {
@@ -363,7 +378,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
 
 
   private getTrainingUsers(): void {
-    this.UserData = this.allUserData.filter((user) => String(user.TrainingId) === this.selectedTrainingId);
+    this.UserData = this.allUserData.filter((user) => String(user.trainingId) === this.selectedTrainingId); 
   }
 
   private createEmptyCertificate(): CertificateData {
