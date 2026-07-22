@@ -9,6 +9,9 @@ export interface Training {
   categoryId?: number;
   duration?: string;
   modules?: number;
+  preTestId?: number | string | null;
+  postTestId?: number | string | null;
+  chalangeTestId?: number | string | null;
 }
 
 export interface PagedResult<T> {

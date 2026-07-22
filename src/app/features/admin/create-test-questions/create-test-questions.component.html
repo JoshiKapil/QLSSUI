@@ -6,7 +6,7 @@
   </header>
 
   <div class="panel controls">
-    <label class="training-search-field">Training (optional)
+    <label class="training-search-field">Training <span aria-hidden="true">*</span>
       <div class="training-search-control">
         <button class="training-dropdown-toggle" type="button" (click)="toggleTrainingDropdown()" [disabled]="busy" aria-haspopup="listbox" [attr.aria-expanded]="isTrainingDropdownOpen">
           <span>{{ getSelectedTrainingLabel() }}</span>
@@ -14,7 +14,6 @@
         </button>
         <div class="training-search-menu" *ngIf="isTrainingDropdownOpen" role="listbox">
           <input type="text" [(ngModel)]="trainingSearch" placeholder="Search training" autocomplete="off" (input)="onTrainingSearchChange()" />
-          <button class="training-search-option training-search-clear" type="button" (mousedown)="clearTrainingSelection()" role="option">No training selected</button>
           <button class="training-search-option" type="button" *ngFor="let training of filteredTrainingList" (mousedown)="selectTrainingFromDropdown(training)" role="option">
             <span>{{ getTrainingLabel(training) }}</span>
             <!-- <small>{{ training.trainingId }}</small> -->
@@ -23,9 +22,9 @@
         </div>
       </div>
     </label>
-    <label>Test type (optional)
+    <label>Test type <span aria-hidden="true">*</span>
       <select [(ngModel)]="testType" [disabled]="busy">
-        <option value="">No test type selected</option>
+        <option value="">Select test type</option>
         <option *ngFor="let type of testTypes" [value]="type">{{ type | titlecase }}</option>
       </select>
     </label>
@@ -38,8 +37,8 @@
   </div>
 
   <p class="note">
-    Word Training Name and Test Type are ignored. If both dropdowns are selected, a test is created and
-    inserted questions are mapped. Otherwise only valid questions and options are saved.
+    Word Training Name and Test Type are ignored. Select both fields above; the test is created and
+    all valid questions are mapped, and the matching training test field is updated.
   </p>
 
   <div class="progress" *ngIf="progress">
@@ -76,9 +75,9 @@ Marks: 1</pre>
         <p>{{ questions.length }} total | {{ validQuestions.length }} valid |
           {{ questions.length - validQuestions.length }} invalid</p>
       </div>
-      <button class="save-questions-btn" type="button" (click)="save()" [disabled]="busy || fileSaving || !validQuestions.length">
+      <button class="save-questions-btn" type="button" (click)="save()" [disabled]="busy || fileSaving || !validQuestions.length || !trainingId || !testType">
         <span class="save-spinner" *ngIf="busy"></span>
-        {{ (busy || fileSaving) ? 'Saving...' : (trainingId && testType ? 'Create Test & Map Questions' : 'Save Valid Questions') }}
+        {{ (busy || fileSaving) ? 'Saving...' : 'Create Test & Map Questions' }}
       </button>
     </div>
 

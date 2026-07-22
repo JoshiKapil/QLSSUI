@@ -36,8 +36,8 @@ export class CreateTestComponent implements OnInit, OnDestroy {
   questionTypes: CreateTestQuestionType[] = ['MCSA', 'MCMA', 'TRUE_FALSE', 'ESSAY'];
   difficulties: CreateTestDifficulty[] = ['Easy', 'Medium', 'Hard'];
   statuses: CreateTestStatus[] = ['Draft', 'Active', 'Inactive'];
-  testFileTypes: Array<'pre' | 'post' | 'assessment'> = ['pre', 'post', 'assessment'];
-  testFileType: 'pre' | 'post' | 'assessment' = 'assessment';
+  testFileTypes: Array<'pre' | 'post' | 'assessment' | 'chalange'> = ['pre', 'post', 'assessment', 'chalange'];
+  testFileType: 'pre' | 'post' | 'assessment' | 'chalange' = 'assessment';
 
   testDetails: CreateTestDetails = this.createEmptyTestDetails();
   trainingList: Training[] = [];
@@ -203,7 +203,10 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       topicCovered: training.topicCovered ?? training.TopicCovered ?? training.TopicCoveredName ?? '',
       displayName: training.displayName ?? training.DisplayName ?? training.TrainingName ?? '',
       image: training.image ?? training.Image ?? '',
-      displayOrder: Number(training.displayOrder ?? training.DisplayOrder ?? 0)
+      displayOrder: Number(training.displayOrder ?? training.DisplayOrder ?? 0),
+      preTestId: training.preTestId ?? training.PreTestId ?? null,
+      postTestId: training.postTestId ?? training.PostTestId ?? null,
+      chalangeTestId: training.chalangeTestId ?? training.ChalangeTestId ?? null
     };
   }
 
@@ -975,9 +978,9 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     return `assets/test/${this.testFileType}`;
   }
 
-  private normalizeTestFileType(value: unknown): 'pre' | 'post' | 'assessment' {
+  private normalizeTestFileType(value: unknown): 'pre' | 'post' | 'assessment' | 'chalange' {
     const normalized = String(value || '').trim().toLowerCase();
-    return normalized === 'pre' || normalized === 'post' ? normalized : 'assessment';
+    return normalized === 'pre' || normalized === 'post' || normalized === 'chalange' ? normalized : 'assessment';
   }
   buildPayload(): CreateTestPayload {
     const testTitle = this.getTrimmedValue(this.testDetails.testTitle);
@@ -1124,11 +1127,35 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       errors.push('Map at least 1 question to the test.');
     }
 
+    if (this.testFileType !== 'assessment') {
+      if (!this.testDetails.trainingId) {
+        errors.push('Training is required for Pre, Post, and Chalange tests.');
+      } else {
+        const training = this.trainingList.find((item) =>
+          String(item.trainingId ?? '') === String(this.testDetails.trainingId)
+        );
+        const linkedTestId = training ? this.getLinkedTestId(training, this.testFileType) : '';
+        const editingTestId = String(this.loadedTestDefinition?.testId ?? '').trim();
+        if (linkedTestId && linkedTestId !== editingTestId) {
+          errors.push(`This training already has a ${this.testFileType} test (Test ID: ${linkedTestId}).`);
+        }
+      }
+    }
+
     if (this.testDetails.totalQuestions && this.testDetails.totalQuestions < this.questions.length) {
       errors.push('Total questions cannot be less than currently mapped questions.');
     }
 
     return errors;
+  }
+
+  private getLinkedTestId(training: Training, type: 'pre' | 'post' | 'chalange'): string {
+    const value = type === 'pre'
+      ? training.preTestId
+      : type === 'post'
+        ? training.postTestId
+        : training.chalangeTestId;
+    return String(value ?? '').trim();
   }
 
   private validateQuestion(): string[] {
@@ -1315,8 +1342,6 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     return cleanValue || undefined;
   }
 }
-
-
 
 
 

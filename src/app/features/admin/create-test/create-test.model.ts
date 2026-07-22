@@ -82,7 +82,7 @@ export interface CreateTestPayload {
   description: string;
   trainingId?: string;
   trainingName?: string;
-  testFileType: 'pre' | 'post' | 'assessment';
+  testFileType: 'pre' | 'post' | 'assessment' | 'chalange';
   subject: string;
   topic: string;
   durationMinutes: number;

@@ -54,7 +54,9 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
     this.loadTrainingList();
 
     this.testApi.getTestTypes().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (types) => this.testTypes = types,
+      next: (types) => this.testTypes = types.filter((type) =>
+        ['pre', 'post', 'chalange'].includes(type.toLowerCase())
+      ),
       error: (error) => this.fail('Test type dropdown could not be loaded.', error)
     });
   }
@@ -66,6 +68,12 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
 
   get validQuestions(): PreviewQuestion[] {
     return this.questions.filter((question) => !question.validationErrors.length);
+  }
+
+  get availableTestTypes(): string[] {
+    const training = this.trainings.find((item) => String(item.trainingId ?? '') === this.trainingId);
+    if (!training) return this.testTypes;
+    return this.testTypes.filter((type) => !this.getLinkedTestId(training, type));
   }
 
   //private loadTrainingList(): void {
@@ -106,7 +114,10 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
       topicCovered: training.topicCovered ?? training.TopicCovered ?? training.TopicCoveredName ?? '',
       displayName: training.displayName ?? training.DisplayName ?? training.TrainingName ?? '',
       image: training.image ?? training.Image ?? '',
-      displayOrder: Number(training.displayOrder ?? training.DisplayOrder ?? 0)
+      displayOrder: Number(training.displayOrder ?? training.DisplayOrder ?? 0),
+      preTestId: training.preTestId ?? training.PreTestId ?? null,
+      postTestId: training.postTestId ?? training.PostTestId ?? null,
+      chalangeTestId: training.chalangeTestId ?? training.ChalangeTestId ?? null
     };
   }
   get filteredTrainingList(): Training[] {
@@ -143,6 +154,19 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
     this.trainingId = String(training.trainingId ?? '');
     this.trainingSearch = this.getTrainingLabel(training);
     this.isTrainingDropdownOpen = false;
+    if (this.testType && this.getLinkedTestId(training, this.testType)) this.testType = '';
+  }
+
+  private getLinkedTestId(training: Training, type: string): string {
+    const normalized = type.toLowerCase();
+    const value = normalized === 'pre'
+      ? training.preTestId
+      : normalized === 'post'
+        ? training.postTestId
+        : normalized === 'chalange'
+          ? training.chalangeTestId
+          : null;
+    return String(value ?? '').trim();
   }
 
   clearTrainingSelection(): void {
@@ -169,7 +193,9 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
     }
     this.busy = true;
     this.progress = 20;
-    //this.testName = file.name.replace(/\.docx$/i, '');
+    if (!this.testName.trim()) {
+      this.testName = file.name.replace(/\.docx$/i, '').trim();
+    }
     try {
       const mammoth = await import('mammoth');
       const extracted = await mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() });
@@ -186,9 +212,21 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
 
   save(): void {
     if (this.busy || this.fileSaving || !this.validQuestions.length) return;
+    if (!this.trainingId) {
+      this.fail('Select a training before creating the test.', null);
+      return;
+    }
+    if (!['pre', 'post', 'chalange'].includes(this.testType.toLowerCase())) {
+      this.fail('Select Pre, Post, or Chalange as the test type.', null);
+      return;
+    }
     const training = this.trainings.find((item) => String(item.trainingId || '') === this.trainingId);
+    if (!training) {
+      this.fail('The selected training is no longer available. Please select it again.', null);
+      return;
+    }
     const trainingName = training?.trainingName || training?.displayName || '';
-    const questions = this.questions.map(({ validationErrors, ...question }) => ({
+    const questions = this.validQuestions.map(({ validationErrors, ...question }) => ({
       ...question,
       trainingId: this.trainingId,
       trainingName
@@ -273,7 +311,7 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
       return;
     }
     const now = new Date().toISOString();
-    const testType = this.testType.toLowerCase() as 'pre' | 'post' | 'assessment';
+    const testType = this.testType.toLowerCase() as 'pre' | 'post' | 'assessment' | 'chalange';
     const testFile: TestDefinition = {
       testId: result.testId,
       testName: this.testName,
@@ -313,10 +351,15 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
       const start = line.match(/^(?:(?:question\s*\d*|q\s*\d+)|\d+)\s*[:.)-]\s*(.+)$/i);
       if (start) {
         if (current) parsed.push(current);
-        const marks = start[1].match(/\(\s*(\d+(?:\.\d+)?)\s*(?:points?|marks?)\s*\)\s*$/i);
-        const questionText = start[1].replace(/\s*\(\s*\d+(?:\.\d+)?\s*(?:points?|marks?)\s*\)\s*$/i, '').trim();
+        const type = start[1].match(/\b(?:question\s*)?type\s*:\s*([a-z_-]+)/i);
+        const marks = start[1].match(/\(\s*(\d+(?:\.\d+)?)\s*(?:points?|marks?)\s*\)/i);
+        const questionText = start[1]
+          .replace(/\s*\(\s*\d+(?:\.\d+)?\s*(?:points?|marks?)\s*\)/i, '')
+          .replace(/\s*,?\s*(?:question\s*)?type\s*:\s*[a-z_-]+\s*$/i, '')
+          .trim();
         current = this.emptyParsed(questionText);
         if (marks) current.marks = marks[1];
+        if (type) current.type = type[1];
         continue;
       }
       if (!current) continue;
@@ -335,7 +378,7 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
       if (label === 'difficulty') current.difficulty = value;
       if (label === 'answer' || label === 'correct answer') current.answer = value;
       if (label === 'expected answer' || label === 'sample answer') current.expectedAnswer = value;
-      if (label === 'explanation') current.explanation = value;
+      if (label === 'explanation' || label === 'explanation for incorrect answer') current.explanation = value;
       if (label === 'marks') current.marks = value;
     }
     if (current) parsed.push(current);
@@ -388,7 +431,6 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
     if (!question.questionText) errors.push('Question text is required.');
     if (!Number.isFinite(question.marks) || question.marks <= 0) errors.push('Marks must be greater than zero.');
     if (question.questionType === 'ESSAY') {
-      if (!question.expectedAnswer) errors.push('Expected answer is required.');
       return errors;
     }
     if (question.options.length < 2) errors.push('At least two options are required.');

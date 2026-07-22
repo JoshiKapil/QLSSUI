@@ -50,7 +50,7 @@ export interface TestDefinition {
   description: string;
   trainingId?: string;
   trainingName?: string;
-  testFileType?: 'pre' | 'post' | 'assessment' | 'NOR';
+  testFileType?: 'pre' | 'post' | 'assessment' | 'chalange' | 'NOR';
   subject: string;
   topic: string;
   durationMinutes: number;

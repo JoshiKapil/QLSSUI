@@ -60,7 +60,7 @@ export class TestComponent implements OnInit, OnDestroy {
   resultSaveWarning = '';
   username = DEFAULT_USERNAME;
   testName = DEFAULT_TEST_NAME;
-  testType: 'pre' | 'post' | 'assessment' | 'NOR' = 'assessment';
+  testType: 'pre' | 'post' | 'assessment' | 'chalange' | 'NOR' = 'assessment';
   private startTrainingId = '';
   savedResultUsername = '';
   savedResultTestName = '';
@@ -114,7 +114,7 @@ export class TestComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const startTestData = this.getStartTestData(); 
+    const startTestData = this.getStartTestData();
     console.log('Start Test Data:', startTestData); // Debugging line
     if (!startTestData) {
       this.isDirectEntry = true;
@@ -131,7 +131,7 @@ export class TestComponent implements OnInit, OnDestroy {
       this.loadResultDropdownData();
     }
     if (!this.isAdmin) {
-      this.loadTestForAttempt(this.testName);
+      this.loadTestForAttempt(String(startTestData?.testId || '').trim() || this.testName);
     }
   }
 
@@ -216,7 +216,7 @@ export class TestComponent implements OnInit, OnDestroy {
         String(test.trainingId || '') === this.selectedTrainingId &&
         this.getDefinitionTestType(test) === this.testType
       );
-
+      alert(selectedTest)
       if (!selectedTest) {
         this.directEntryMessage = 'No test is available for the selected training and test type.';
         return;
@@ -266,15 +266,16 @@ export class TestComponent implements OnInit, OnDestroy {
     this.isTrainingDropdownOpen = false;
   }
 
-  private getDefinitionTestType(test: TestDefinition): 'pre' | 'post' | 'assessment' | 'NOR' {
+  private getDefinitionTestType(test: TestDefinition): 'pre' | 'post' | 'assessment' | 'chalange' | 'NOR' {
     if (test.testFileType) {
       return test.testFileType;
     }
 
     try {
       const metadata = JSON.parse(String((test as any).metadataJson || '{}'));
-      if (metadata.testType === 'pre' || metadata.testType === 'post' || metadata.testType === 'assessment' || metadata.testType === 'NOR') {
-        return metadata.testType;
+      const type = metadata.testFileType || metadata.testType;
+      if (type === 'pre' || type === 'post' || type === 'assessment' || type === 'chalange' || type === 'NOR') {
+        return type;
       }
     } catch {
       // Test names are used only for older records without test type metadata.
@@ -287,7 +288,7 @@ export class TestComponent implements OnInit, OnDestroy {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  private getStartTestData(): { testName: string; username: string; testType?: 'pre' | 'post' | 'assessment' | 'NOR'; trainingId?: string; name?: string; contact?: string } | null {
+  private getStartTestData(): { testName: string; testId?: string; username: string; testType?: 'pre' | 'post' | 'assessment' | 'chalange' | 'NOR'; trainingId?: string; name?: string; contact?: string } | null {
     const savedData = sessionStorage.getItem(STORAGE_KEY_START_TEST);
     sessionStorage.removeItem(STORAGE_KEY_START_TEST);
 
@@ -306,10 +307,11 @@ export class TestComponent implements OnInit, OnDestroy {
     return (value || '').trim() || fallback;
   }
 
-  private getTestType(testName: string): 'pre' | 'post' | 'assessment' {
+  private getTestType(testName: string): 'pre' | 'post' | 'assessment' | 'chalange' {
     const normalizedName = testName.toLowerCase();
     if (normalizedName.includes('pre')) return 'pre';
     if (normalizedName.includes('post')) return 'post';
+    if (normalizedName.includes('chalange') || normalizedName.includes('challenge')) return 'chalange';
     return 'assessment';
   }
 
@@ -350,10 +352,10 @@ export class TestComponent implements OnInit, OnDestroy {
   loadAssessmentByTestName(testName: string): void {
     this.loadTestForAttempt(testName);
   }
-//SPCPreTest
+
+  //SPCPreTest
   loadTestForAttempt(testName: string): void {
     const displayTestName = this.sanitizeDisplayValue(testName, DEFAULT_TEST_NAME);
-
     this.isLoadingTest = true;
     this.testLoadWarning = '';
     this.saveCurrentQuestionTime();
@@ -824,12 +826,11 @@ export class TestComponent implements OnInit, OnDestroy {
   }
 
   private completeSubmissionNavigation(submission: TestSubmission, warning: string): void {
-    if (this.testType === 'NOR') {
-      this.router.navigate(['/training']);
+    if (this.testType === 'pre') {
+      this.openResultPage(submission, warning);
       return;
     }
-
-    this.openResultPage(submission, warning);
+    this.router.navigate(['/training']);
   }
 
   private openResultPage(submission: TestSubmission, warning: string): void {
@@ -1339,8 +1340,6 @@ export class TestComponent implements OnInit, OnDestroy {
     return value < 10 ? `0${value}` : `${value}`;
   }
 }
-
-
 
 
 

@@ -174,7 +174,8 @@ export class TestStorageService {
       // types differ from the API QuestionDto model.
       questions: [],
       status: test.status,
-      metadata: { fileName: test.fileName, displayName: test.displayName }
+      metadataJson: JSON.stringify({ testFileType: test.testFileType || 'assessment' }),
+      metadata: { fileName: test.fileName, displayName: test.displayName, testFileType: test.testFileType }
     };
   }
 
@@ -703,7 +704,7 @@ export class TestStorageService {
 
   async saveAssessmentFileToServer(
     test: TestDefinition,
-    testType: 'pre' | 'post' | 'assessment'
+    testType: 'pre' | 'post' | 'assessment' | 'chalange'
   ): Promise<void> {
     const normalized = this.normalizeAssessment(test, this.getAssessmentDisplayName(test));
     const envelope = await this.createEncryptedEnvelope('qlss-encrypted-assessment', normalized);
@@ -722,11 +723,10 @@ export class TestStorageService {
 
   async resolveAssessmentFileQuestions(
     testName: string,
-    testType: 'pre' | 'post' | 'assessment'
+    testType: 'pre' | 'post' | 'assessment' | 'chalange'
   ): Promise<TestAttempt> {
     const serverTest = await this.resolveServerTest(testName);
-    const testId = normalizeServerId(serverTest?.testId);
-
+    let testId = normalizeServerId(serverTest?.testId); 
     if (!testId) {
       throw new Error(`No database test ID was found for ${testName}.`);
     }
@@ -746,8 +746,8 @@ export class TestStorageService {
     );
     const orderedQuestions = mappedIds.length
       ? mappedIds
-          .map((questionId) => questionById.get(String(questionId)))
-          .filter((question): question is TestQuestion => !!question)
+        .map((questionId) => questionById.get(String(questionId)))
+        .filter((question): question is TestQuestion => !!question)
       : questions;
 
     return {
@@ -986,8 +986,8 @@ export class TestStorageService {
     if (!trainingId) {
       throw new Error('Training ID is required to save the result file.');
     }
-    if (!['pre', 'post', 'assessment', 'nor'].includes(testType)) {
-      throw new Error('Test type must be pre, post, assessment, or NOR.');
+    if (!['pre', 'post', 'assessment', 'chalange', 'nor'].includes(testType)) {
+      throw new Error('Test type must be pre, post, assessment, chalange, or NOR.');
     }
 
     const envelope = await this.createEncryptedEnvelope(
@@ -1002,7 +1002,7 @@ export class TestStorageService {
   }
 
   async loadSubmissionFileFromServer(
-    testType: 'pre' | 'post' | 'assessment',
+    testType: 'pre' | 'post' | 'assessment' | 'chalange',
     trainingId: string,
     username: string
   ): Promise<TestSubmission | null> {
@@ -1352,7 +1352,7 @@ export class TestStorageService {
 
   //     test.testId === testName ||
 
-    
+
 
 
 

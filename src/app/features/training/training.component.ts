@@ -242,7 +242,10 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
             CategoryId: item.categoryId,
             Duration: item.duration,
             Modules: item.modules,
-            TopicCovered: item.topicCovered
+            TopicCovered: item.topicCovered,
+            PreTestId: item.preTestId ?? null,
+            PostTestId: item.postTestId ?? null,
+            ChalangeTestId: item.chalangeTestId ?? null
           }));
           this.TrainingList.sort((a, b) => Number(a.DisplayOrder) - Number(b.DisplayOrder));
           this.filteredTrainings = [...this.TrainingList];
@@ -453,21 +456,25 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   submitTakeTestForm(): void {
-    let testName = this.TrainingName || this.selectedTrainingItem?.DisplayName || this.selectedTrainingItem?.TrainingName || 'Test 1';
+    const testName = this.TrainingName || this.selectedTrainingItem?.DisplayName || this.selectedTrainingItem?.TrainingName || 'Test 1';
     const username = this.testUserEmail.trim();
-    if (testName == 'SPC Training')
-      testName = 'SPCPreTest'
-    // Tests launched from the training page are always the pre-training test.
-    const testType: 'pre' = 'pre';
+    const trainingId = String(this.selectedTrainingItem?.TrainingId ?? this.selectedTrainingItem?.trainingId ?? '').trim();
+    const testId = String(this.selectedTrainingItem?.ChalangeTestId ?? this.selectedTrainingItem?.chalangeTestId ?? '').trim();
+    const testType: 'chalange' = 'chalange';
     if (!this.testUserName.trim() || !username || !this.testUserMobile.trim()) {
       this.notifierService.warningToastr('Please fill name, email and contact number.', 'Warning!');
+      return;
+    }
+    if (!trainingId || !testId) {
+      this.notifierService.warningToastr('Challenge test is not configured for this training.', 'Warning!');
       return;
     }
 
     sessionStorage.setItem('qlss-start-test', JSON.stringify({
       testName,
+      testId,
       testType,
-      trainingId: String(this.selectedTrainingItem?.TrainingId ?? this.selectedTrainingItem?.trainingId ?? ''),
+      trainingId,
       username,
       name: this.testUserName.trim(),
       contact: this.testUserMobile.trim()
