@@ -20,6 +20,7 @@ import { CreateQuestionComponent } from './features/admin/create-question/create
 import { PrintCertificateComponent } from './features/admin/print-certificate/print-certificate.component';
 import { CreateTestQuestionsComponent } from './features/admin/create-test-questions/create-test-questions.component';
 import { DemoComponent } from './features/demo/demo.component';
+import { ApproveCertificateComponent } from './features/admin/approve-certificate/approve-certificate.component';
 
 const routes: Routes = [
   {
@@ -43,6 +44,7 @@ const routes: Routes = [
   { path: 'admin/create-test-questions', component: CreateTestQuestionsComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: 'admin/question-bank', component: CreateQuestionComponent , canActivate: [AuthGuard, AdminGuard] },
   { path: 'admin/print-certificate', component: PrintCertificateComponent },
+  { path: 'admin/approve-certificate', component: ApproveCertificateComponent, canActivate: [AuthGuard, AdminGuard] },
   //{ path: 'demo', component: DemoComponent },
   { path: '', loadChildren: () => import('./features/home/home.module').then((m) => m.HomeModule) },
   { path: 'about', loadChildren: () => import('./features/about/about.module').then((m) => m.AboutModule) },
@@ -56,7 +58,8 @@ const routes: Routes = [
   { path: 'faq', loadChildren: () => import('./features/faq/faq.module').then((m) => m.FaqModule) },
   { path: 'teams', loadChildren: () => import('./features/teams/teams.module').then((m) => m.TeamsModule) },
   { path: 'verify', loadChildren: () => import('./features/verify/verify.module').then((m) => m.VerifyModule) },
-  { path: 'fill-certification-from', loadChildren: () => import('./features/fillcertificationfrom/fillcertificationfrom.module').then((m) => m.FillcertificationfromModule) },
+  { path: 'fill-exam-form', loadChildren: () => import('./features/fillcertificationfrom/fillcertificationfrom.module').then((m) => m.FillcertificationfromModule) },
+  { path: 'fill-certification-from', redirectTo: 'fill-exam-form', pathMatch: 'full' },
   { path: 'dataanalytics', loadChildren: () => import('./features/dataanalytics/dataanalytics.module').then((m) => m.DataanalyticsModule) },
   { path: 'financial-services', loadChildren: () => import('./features/financial-services/financial-services.module').then((m) => m.FinancialServicesModule) },
   { path: 'information-security', loadChildren: () => import('./features/information-security/information-security.module').then((m) => m.InformationSecurityModule) },

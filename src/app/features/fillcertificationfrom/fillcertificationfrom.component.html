@@ -1,11 +1,11 @@
 <section class="certification-form-page">
   <div class="container certification-form-shell">
     <div class="certification-form-header">
-      <span class="auth-eyebrow">Certification</span>
-      <h1>Fill Certification Form</h1>
+      <span class="auth-eyebrow">Assessment</span>
+      <h1>Fill Exam Form</h1>
       <p>
-        Submit your certification request details. Payment setup is prepared and
-        will be enabled after Razorpay keys are configured.
+        Enter your details to continue to the test. Existing details are loaded
+        automatically for the same email and training.
       </p>
     </div>
 
@@ -71,6 +71,7 @@
         <label class="form-field"
           >Email
           <input type="email" formControlName="email" maxlength="200" />
+          <button class="inline-link" type="button" (click)="findExistingRecord()">Load existing details</button>
           <small>{{ fieldError("email", "Email") }}</small>
         </label>
 
@@ -90,21 +91,23 @@
           <small>{{ fieldError("trainerId", "Trainer Name") }}</small>
         </label>
 
-        <label class="form-field"
-          >Company/Location
-          <select formControlName="location">
-            <option value="">
-              {{
-                isLoadingCompanies ? "Loading companies..." : "Select Company"
-              }}
-            </option>
-            <option
-              *ngFor="let company of companies"
-              [value]="company.clientId"
-            >
-              {{ company.clientName }}
-            </option>
-          </select>
+        <label class="form-field training-search-field">Company/Location
+          <div class="training-search-control">
+            <button class="btn btn-outline btn-small training-dropdown-toggle" type="button"
+              (click)="toggleCompanyDropdown()" [attr.aria-expanded]="isCompanyDropdownOpen">
+              {{ isLoadingCompanies ? "Loading companies..." : getSelectedCompanyLabel() }}
+              <span class="dropdown-icon">&#9662;</span>
+            </button>
+            <div class="training-search-menu" *ngIf="isCompanyDropdownOpen">
+              <input type="text" [(ngModel)]="companySearch" [ngModelOptions]="{ standalone: true }"
+                placeholder="Search company/location" autocomplete="off" />
+              <button class="training-search-option" type="button"
+                *ngFor="let company of filteredCompanies" (mousedown)="selectCompany(company)">
+                {{ company.clientName }}
+              </button>
+              <div class="training-search-empty" *ngIf="!filteredCompanies.length">No company found</div>
+            </div>
+          </div>
           <small>{{ fieldError("location", "Company/Location") }}</small>
         </label>
 
@@ -134,7 +137,7 @@
 
       <div class="form-actions">
         <button class="btn btn-primary" type="submit" [disabled]="isSubmitting">
-          {{ isSubmitting ? "Submitting..." : "Submit" }}
+          {{ isSubmitting ? "Submitting..." : "Save & Continue to Test" }}
         </button>
         <button class="btn btn-outline" type="button" (click)="reset()">
           Reset

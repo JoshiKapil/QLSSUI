@@ -214,7 +214,7 @@
           <span class="question-number-badge">{{ (currentPage - 1) * pageSize + index + 1 }}</span>
           <div>
             <strong>{{ question.questionText }}</strong>
-          <span>{{ question.trainingName || 'No training' }} | {{ question.subject }} | {{ question.topic }}</span>
+          <span>{{ getQuestionTrainingLabel(question) }} | {{ question.subject }} | {{ question.topic }}</span>
           <small>{{ question.questionType }} | {{ question.difficulty }} | {{ question.marks || 1 }} mark(s) | {{ question.isActive === false ? 'Inactive' : 'Active' }}</small>
           </div>
         </div>
@@ -236,6 +236,3 @@
     </section>
   </div>
 </section>
-
-
-

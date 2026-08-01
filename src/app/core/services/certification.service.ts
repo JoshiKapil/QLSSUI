@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Certification, CertificationBulk, CertificationData } from '../models/certification.model';
 import { AdminManagementService } from './admin-management.service';
 import { ApiClientService } from './api-client.service';
@@ -15,15 +16,28 @@ export class CertificationService {
   ) {}
 
   getAll(): Observable<Certification[]> {
-    return this.adminService.getAll<Certification>(this.endpoint);
+    return this.apiClient.get<CertificationData[]>(this.certificationDataEndpoint).pipe(
+      map((records) => records.map((record) => ({
+        userName: record.name,
+        certificationNumber: record.certificationNumber,
+        issuedDate: record.date,
+        topic: record.displayName || record.trainingName || String(record.trainingId),
+        description: ''
+      })))
+    );
   }
 
   search(query: string): Observable<Certification[]> {
-    return this.adminService.search<Certification>(this.endpoint, ['certificationNumber', 'userName'], query);
+    const search = query.trim().toLowerCase();
+    return this.getAll().pipe(map((records) => records.filter((record) =>
+      !search ||
+      record.certificationNumber.toLowerCase().includes(search) ||
+      record.userName.toLowerCase().includes(search)
+    )));
   }
 
   save(record: Certification): Observable<Certification> {
-    return this.adminService.save<Certification>(this.endpoint, 'certificationNumber', record);
+    return this.apiClient.post<Certification>(`${this.endpoint}/save`, record);
   }
 
   uploadExcelData(records: readonly CertificationBulk[]): Observable<number> {

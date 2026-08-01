@@ -12,6 +12,9 @@ export interface User {
 export interface AuthResponse {
   token: string;
   expiresAt?: string;
+  expiresAtUtc?: string;
+  refreshToken?: string;
+  refreshTokenExpiresAtUtc?: string;
   user: User;
 }
 
@@ -24,7 +27,7 @@ export interface LoginRequest {
 export interface RegisterRequest {
   name: string;
   email: string;
-  passwordHash: string;
+  password: string;
   phone: string;
   address: string;
   role: string;

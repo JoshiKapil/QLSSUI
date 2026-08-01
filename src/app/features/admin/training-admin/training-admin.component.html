@@ -94,7 +94,7 @@
         <tbody>
           <tr *ngFor="let record of records; trackBy: trackByRecordId">
             <td>{{ record.trainingId }}</td>
-            <td>{{ record.trainingName }}</td>
+            <td>{{ getTrainingLabel(record) }}</td>
             <td>{{ record.trainingDesc }}</td>
             <td>{{ record.topicCovered }}</td>
             <td>{{ record.displayName }}</td>
@@ -110,4 +110,3 @@
     </div>
   </div>
 </section>
-

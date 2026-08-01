@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { PagedResult, Training } from '../models/training.model';
-import { AdminManagementService } from './admin-management.service';
 import { ApiClientService } from './api-client.service';
-import { CertificateData } from '../models/certificate-data.model';
+import { CertificatePrintRecord } from '../models/certificate-data.model';
 
 @Injectable({ providedIn: 'root' })
 export class TrainingManagementService {
@@ -12,20 +12,26 @@ export class TrainingManagementService {
   private readonly operationEndpoint = 'TrainingOperation';
 
   constructor(
-    private adminService: AdminManagementService,
     private apiClient: ApiClientService
   ) { }
 
   getAll(): Observable<Training[]> {
-    return this.adminService.getAll<Training>(this.endpoint);
+    return this.getPaged(1, 500).pipe(map((response) => response.items || []));
   }
 
   search(query: string): Observable<Training[]> {
-    return this.adminService.search<Training>(this.endpoint, ['trainingName', 'trainingId'], query);
+    const search = query.trim().toLowerCase();
+    return this.getAll().pipe(map((records) => records.filter((record) =>
+      !search ||
+      String(record.trainingName || '').toLowerCase().includes(search) ||
+      String(record.trainingId || '').toLowerCase().includes(search)
+    )));
   }
 
   save(record: Training): Observable<Training> {
-    return this.adminService.save<Training>(this.endpoint, 'trainingId', record);
+    return record.trainingId
+      ? this.apiClient.put<Training>(`${this.operationEndpoint}/${record.trainingId}`, record)
+      : this.apiClient.post<Training>(`${this.operationEndpoint}/save`, record);
   }
 
   getPaged(pageNumber = 1, pageSize = 100): Observable<PagedResult<Training>> {
@@ -36,7 +42,7 @@ export class TrainingManagementService {
     return this.apiClient.getBlob(`${this.operationEndpoint}/documents/${encodeURIComponent(String(trainingId))}`);
   }
 
-  getCertificationData(): Observable<CertificateData> {
-    return this.apiClient.get<CertificateData>(`/CertificationData`);
+  getCertificationData(): Observable<CertificatePrintRecord[]> {
+    return this.apiClient.get<CertificatePrintRecord[]>(`/CertificationData`);
   }
 }

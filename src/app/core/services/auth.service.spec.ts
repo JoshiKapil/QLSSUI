@@ -43,6 +43,12 @@ describe('AuthService', () => {
     sessionStorage.clear();
   });
 
+  it('clears malformed stored-user values instead of throwing', () => {
+    localStorage.setItem('qlss_auth_user', 'undefined');
+
+    expect((service as any).readStoredUser()).toBeNull();
+    expect(localStorage.getItem('qlss_auth_user')).toBeNull();
+  });
   it('logs in through API and stores remembered sessions in localStorage', () => {
     const response: AuthResponse = {
       token: 'token-1',
@@ -60,25 +66,27 @@ describe('AuthService', () => {
     const req = httpMock.expectOne(`${environment.apiBaseUrl}/Auth/login`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ email: user.email, password: 'abc123', rememberMe: true });
-    req.flush(response);
+    req.flush({ success: true, data: response });
   });
 
-  it('falls back to locally registered users when login API fails', () => {
+  it('does not fall back to browser-local users when login API fails', () => {
     localStorage.setItem('qlss_registered_users', JSON.stringify([{ user, password: 'abc123' }]));
+    let status = 0;
 
-    service.login({ email: 'ADMIN@example.com', password: 'abc123', rememberMe: false }).subscribe((response) => {
-      expect(response.user).toEqual(user);
-      expect(sessionStorage.getItem('qlss_auth_token')).toContain('local-');
+    service.login({ email: 'ADMIN@example.com', password: 'abc123', rememberMe: false }).subscribe({
+      error: (error) => status = error.status
     });
 
     httpMock.expectOne(`${environment.apiBaseUrl}/Auth/login`).flush(null, { status: 500, statusText: 'Server Error' });
+    expect(status).toBe(500);
+    expect(sessionStorage.getItem('qlss_auth_token')).toBeNull();
   });
 
-  it('registers through API and saves a local fallback copy', () => {
+  it('registers only through the API', () => {
     const request: RegisterRequest = {
       name: user.name,
       email: user.email,
-      passwordHash: 'abc123',
+      password: 'abc123',
       phone: user.phone,
       address: user.address,
       role: 'User',
@@ -93,11 +101,33 @@ describe('AuthService', () => {
     expect(req.request.body).toEqual(request);
     req.flush({ ...user, role: 'User' });
 
-    const stored = JSON.parse(localStorage.getItem('qlss_registered_users') || '[]');
-    expect(stored[0].user.email).toBe(user.email);
+    expect(localStorage.getItem('qlss_registered_users')).toBeNull();
+
   });
 
-  it('updates profile locally when API fails', () => {
+  it('rotates and stores refresh tokens through the API', () => {
+    const refreshed: AuthResponse = {
+      token: 'access-token-2',
+      expiresAtUtc: new Date(Date.now() + 60_000).toISOString(),
+      refreshToken: 'refresh-token-2',
+      refreshTokenExpiresAtUtc: new Date(Date.now() + 86_400_000).toISOString(),
+      user
+    };
+    localStorage.setItem('qlss_auth_token', 'access-token-1');
+    localStorage.setItem('qlss_auth_refresh_token', 'refresh-token-1');
+
+    service.refreshAccessToken().subscribe((token) => expect(token).toBe('access-token-2'));
+
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/Auth/refresh`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ refreshToken: 'refresh-token-1' });
+    req.flush({ success: true, data: refreshed });
+
+    expect(localStorage.getItem('qlss_auth_token')).toBe('access-token-2');
+    expect(localStorage.getItem('qlss_auth_refresh_token')).toBe('refresh-token-2');
+    expect(service.isLoggedIn()).toBeTrue();
+  });
+  it('updates profile through the user API', () => {
     localStorage.setItem('qlss_auth_token', 'token-1');
     localStorage.setItem('qlss_auth_user', JSON.stringify(user));
     service = TestBed.inject(AuthService);
@@ -107,16 +137,16 @@ describe('AuthService', () => {
       expect(JSON.parse(localStorage.getItem('qlss_auth_user') || '{}').name).toBe('Updated');
     });
 
-    const req = httpMock.expectOne(`${environment.apiBaseUrl}/Auth/profile`);
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/User/profile`);
     expect(req.request.method).toBe('PUT');
-    req.flush(null, { status: 500, statusText: 'Server Error' });
+    req.flush({ success: true, data: { ...user, name: 'Updated' } });
   });
 
   it('checks email existence and logs out from both storages', () => {
     service.emailExists('admin@example.com').subscribe((exists) => expect(exists).toBeTrue());
     const req = httpMock.expectOne(`${environment.apiBaseUrl}/Auth/email-exists?email=admin@example.com`);
     expect(req.request.method).toBe('GET');
-    req.flush(true);
+    req.flush({ success: true, data: true });
 
     localStorage.setItem('qlss_auth_token', 'local');
     sessionStorage.setItem('qlss_auth_token', 'session');

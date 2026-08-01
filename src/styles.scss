@@ -1,1 +1,8 @@
 @use "scss/style";
+.req,
+.required-mark {
+  display: inline;
+  color: #dc2626;
+  font-weight: 800;
+  line-height: 1;
+}

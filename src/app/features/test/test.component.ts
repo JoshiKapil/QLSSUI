@@ -58,6 +58,7 @@ export class TestComponent implements OnInit, OnDestroy {
   result: TestResult | null = null;
   resultSourceLabel = '';
   resultSaveWarning = '';
+  submissionMessage = '';
   username = DEFAULT_USERNAME;
   testName = DEFAULT_TEST_NAME;
   testType: 'pre' | 'post' | 'assessment' | 'chalange' | 'NOR' = 'assessment';
@@ -114,12 +115,26 @@ export class TestComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const startTestData = this.getStartTestData();
-    console.log('Start Test Data:', startTestData); // Debugging line
-    if (!startTestData) {
+    const examFormSelection = sessionStorage.getItem('qlss-exam-form-selection');
+    if (examFormSelection) {
+      sessionStorage.removeItem('qlss-exam-form-selection');
+      try {
+        const selection = JSON.parse(examFormSelection);
+        this.directEmail = String(selection.username || '').trim();
+        this.selectedTrainingId = String(selection.trainingId || '').trim();
+      } catch {
+        // The direct-entry validation below will request any missing data.
+      }
       this.isDirectEntry = true;
       this.isLoadingTest = false;
       this.loadDirectEntryData();
+      return;
+    }
+
+    const startTestData = this.getStartTestData();
+    console.log('Start Test Data:', startTestData); // Debugging line
+    if (!startTestData) {
+      this.router.navigate(['/fill-exam-form']);
       return;
     }
     this.testName = this.sanitizeDisplayValue(startTestData?.testName, this.testName);
@@ -216,7 +231,6 @@ export class TestComponent implements OnInit, OnDestroy {
         String(test.trainingId || '') === this.selectedTrainingId &&
         this.getDefinitionTestType(test) === this.testType
       );
-      alert(selectedTest)
       if (!selectedTest) {
         this.directEntryMessage = 'No test is available for the selected training and test type.';
         return;
@@ -245,7 +259,7 @@ export class TestComponent implements OnInit, OnDestroy {
   }
 
   getDirectTrainingLabel(training: DirectTrainingOption): string {
-    return training.trainingName || training.displayName || training.trainingId;
+    return training.displayName || training.trainingName || training.trainingId;
   }
 
   getSelectedDirectTrainingLabel(): string {
@@ -748,6 +762,7 @@ export class TestComponent implements OnInit, OnDestroy {
     this.saveCurrentQuestionTime();
     this.currentQuestionIndex = index;
     this.startQuestionVisit();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   goToQuestion(index: number): void {
@@ -811,6 +826,7 @@ export class TestComponent implements OnInit, OnDestroy {
     this.clearTimer();
     this.isSubmitModalOpen = false;
     this.isAutoSubmitted = isAutoSubmitted;
+    this.submissionMessage = '';
 
     const resultSummary = this.calculateResult();
     const submission = this.buildSubmissionPayload(resultSummary, isAutoSubmitted, DEFAULT_RESULT_SOURCE);
@@ -820,9 +836,16 @@ export class TestComponent implements OnInit, OnDestroy {
       .then(() => {
         this.completeSubmissionNavigation(submission, '');
       })
-      .catch(() => {
-        this.completeSubmissionNavigation(submission, 'Result is shown, but could not be saved.');
+      .catch((error: unknown) => {
+        this.isSubmitted = false;
+        this.submissionMessage = error instanceof Error
+          ? error.message
+          : 'Your test result could not be submitted. Please try again.';
       });
+  }
+
+  returnToTraining(): void {
+    this.router.navigate(['/training']);
   }
 
   private completeSubmissionNavigation(submission: TestSubmission, warning: string): void {
@@ -1340,10 +1363,3 @@ export class TestComponent implements OnInit, OnDestroy {
     return value < 10 ? `0${value}` : `${value}`;
   }
 }
-
-
-
-
-
-
-

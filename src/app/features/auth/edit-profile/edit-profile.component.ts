@@ -35,6 +35,10 @@ export class EditProfileComponent {
     this.isSubmitting = true;
     this.authService.updateProfile({ ...this.user, ...this.form.value, updatedAt: new Date().toISOString() }).subscribe({
       next: () => this.notifier.successToastr('Profile updated successfully.'),
+      error: () => {
+        this.notifier.warningToastr('Unable to update the profile. Please try again.');
+        this.isSubmitting = false;
+      },
       complete: () => (this.isSubmitting = false)
     });
   }

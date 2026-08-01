@@ -31,11 +31,10 @@ export class CertificatePdfService {
       color: layout.colors.white
     });
 
-    const scale = Math.min(layout.page.width / template.width, layout.page.height / template.height);
-    const backgroundWidth = template.width * scale;
-    const backgroundHeight = template.height * scale;
-    const backgroundX = (layout.page.width - backgroundWidth) / 2;
-    const backgroundY = (layout.page.height - backgroundHeight) / 2;
+    const backgroundWidth = layout.page.width;
+    const backgroundHeight = layout.page.height;
+    const backgroundX = layout.background.x;
+    const backgroundY = layout.background.y;
     page.drawImage(template, {
       x: backgroundX,
       y: backgroundY,
@@ -128,22 +127,13 @@ export class CertificatePdfService {
       ? [...topics.slice(0, layout.maxItems - 1), topics.slice(layout.maxItems - 1).join(', ')]
       : topics;
 
-    layout.templateMarks.bulletY.forEach((y) => {
-      page.drawCircle({
-        x: layout.templateMarks.bulletX,
-        y,
-        size: layout.templateMarks.bulletRadius,
-        color: colors.templatePaper
-      });
-    });
-    layout.templateMarks.ruleY.forEach((y) => {
-      page.drawRectangle({
-        x: layout.templateMarks.ruleX,
-        y: y - layout.templateMarks.ruleHeight / 2,
-        width: layout.templateMarks.ruleWidth,
-        height: layout.templateMarks.ruleHeight,
-        color: colors.templatePaper
-      });
+    page.drawRectangle({
+      x: layout.panel.x,
+      y: layout.panel.y,
+      width: layout.panel.width,
+      height: layout.panel.height,
+      color: colors.white,
+      opacity: 1
     });
 
     const count = visibleTopics.length;
@@ -182,7 +172,7 @@ export class CertificatePdfService {
           color: CERTIFICATE_PDF_LAYOUT.colors.body
         });
       });
-      if (index < visibleTopics.length - 1) {
+      if (layout.separatorThickness > 0 && index < visibleTopics.length - 1) {
         const separatorY = rowCenterY - rowGap / 2;
         page.drawLine({
           start: { x: layout.separatorStartX, y: separatorY },

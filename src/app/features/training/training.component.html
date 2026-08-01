@@ -106,7 +106,7 @@
 <div class="custom-modal custom-modal--pdf" id="readMoreModal" [class.active]="isReadMoreModalOpen">
   <div class="custom-modal__overlay" (click)="closeReadMoreModal()"></div>
   <div class="custom-modal__box">
-    <div class="custom-modal__pdf-header"><h2 class="custom-modal__pdf-title">{{ Name || selectedTrainingItem?.TrainingName || 'Training PDF' }}</h2></div>
+    <div class="custom-modal__pdf-header"><h2 class="custom-modal__pdf-title">{{ Name || selectedTrainingItem?.DisplayName || selectedTrainingItem?.TrainingName || 'Training PDF' }}</h2></div>
     <div class="custom-modal__pdf-container" tabindex="0" (contextmenu)="blockPdfActions($event)" (keydown)="blockPdfShortcuts($event)">
       <div *ngIf="isPdfLoading" class="custom-modal__pdf-message">Loading PDF...</div>
       <div *ngIf="!isPdfLoading && pdfErrorMessage" class="custom-modal__pdf-message custom-modal__pdf-message--error">{{ pdfErrorMessage }}</div>
@@ -143,5 +143,3 @@
     </form>
   </div>
 </div>
-
-

@@ -6,7 +6,7 @@
   </header>
 
   <div class="panel controls">
-    <label class="training-search-field">Training <span aria-hidden="true">*</span>
+    <label class="training-search-field"><span class="field-label-text">Training <span class="required-mark" aria-hidden="true">*</span></span>
       <div class="training-search-control">
         <button class="training-dropdown-toggle" type="button" (click)="toggleTrainingDropdown()" [disabled]="busy" aria-haspopup="listbox" [attr.aria-expanded]="isTrainingDropdownOpen">
           <span>{{ getSelectedTrainingLabel() }}</span>
@@ -22,7 +22,7 @@
         </div>
       </div>
     </label>
-    <label>Test type <span aria-hidden="true">*</span>
+    <label><span class="field-label-text">Test type <span class="required-mark" aria-hidden="true">*</span></span>
       <select [(ngModel)]="testType" [disabled]="busy">
         <option value="">Select test type</option>
         <option *ngFor="let type of testTypes" [value]="type">{{ type | titlecase }}</option>
@@ -65,7 +65,10 @@ Option A: 3
 Option B: 4
 Answer: B
 Explanation: 2 + 2 equals 4
-Marks: 1</pre>
+Marks: 1
+
+For MCMA, separate correct answers with #:
+Answer: B # D</pre>
   </details>
 
   <section *ngIf="questions.length" class="preview">

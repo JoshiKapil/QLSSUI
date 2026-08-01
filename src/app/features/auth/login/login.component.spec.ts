@@ -63,7 +63,7 @@ describe('LoginComponent', () => {
 
     component.submit();
 
-    expect(component.errorMessage).toBe('Invalid');
+    expect(component.errorMessage).toBe('Invalid email or password.');
     expect(component.isSubmitting).toBeFalse();
   });
 });

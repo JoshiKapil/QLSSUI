@@ -19,7 +19,7 @@ export class RegisterComponent {
     {
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      passwordHash: ['', [Validators.required, Validators.pattern(passwordPattern)]],
+      password: ['', [Validators.required, Validators.pattern(passwordPattern)]],
       confirmPassword: ['', Validators.required],
       phone: ['', [Validators.required, Validators.pattern(phonePattern)]],
       address: ['', Validators.required],
@@ -50,7 +50,7 @@ export class RegisterComponent {
       .register({
         name: value.name || '',
         email: value.email || '',
-        passwordHash: value.passwordHash || '',
+        password: value.password || '',
         phone: value.phone || '',
         address: value.address || '',
         role: value.role || 'User',

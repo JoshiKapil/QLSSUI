@@ -95,7 +95,7 @@ export class ResultComponent implements OnInit {
             String(test.trainingId),
             {
               id: String(test.trainingId),
-              label: test.trainingName || test.displayName || test.testName
+              label: test.displayName || test.trainingName || test.testName
             }
           ])
       ).values()).sort((a, b) => a.label.localeCompare(b.label));

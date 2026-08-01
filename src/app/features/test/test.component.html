@@ -17,6 +17,13 @@
       </div>
     </div>
 
+    <section class="test-load-state" *ngIf="submissionMessage" role="alert" aria-live="assertive">
+      <span class="test-kicker">Submission Notice</span>
+      <h2>Test Already Submitted</h2>
+      <p>{{ submissionMessage }}</p>
+      <button type="button" class="test-btn test-btn--primary" (click)="returnToTraining()">Return to Training</button>
+    </section>
+
     <section class="direct-test-entry" *ngIf="isDirectEntry">
       <span class="test-kicker">Start Test</span>
       <h2>Select Your Test</h2>

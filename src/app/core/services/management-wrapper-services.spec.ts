@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { AdminManagementService } from './admin-management.service';
+import { ApiClientService } from './api-client.service';
 import { CertificationService } from './certification.service';
 import { ClientManagementService } from './client-management.service';
 import { LinkedInCommentService } from './linkedin-comment.service';
@@ -9,6 +10,7 @@ import { TrainingManagementService } from './training-management.service';
 
 describe('management wrapper services', () => {
   let adminService: jasmine.SpyObj<AdminManagementService>;
+  let apiClient: jasmine.SpyObj<ApiClientService>;
 
   beforeEach(() => {
     adminService = jasmine.createSpyObj<AdminManagementService>('AdminManagementService', [
@@ -21,6 +23,10 @@ describe('management wrapper services', () => {
     adminService.search.and.returnValue(of([]));
     adminService.save.and.returnValue(of({} as any));
     adminService.uploadBulk.and.returnValue(of(void 0));
+    apiClient = jasmine.createSpyObj<ApiClientService>('ApiClientService', ['get', 'post', 'put', 'delete', 'upload']);
+    apiClient.post.and.returnValue(of({} as any));
+    apiClient.put.and.returnValue(of({} as any));
+    apiClient.get.and.returnValue(of([] as any));
 
     TestBed.configureTestingModule({
       providers: [
@@ -29,6 +35,7 @@ describe('management wrapper services', () => {
         TrainingManagementService,
         LinkedInPostService,
         LinkedInCommentService,
+        { provide: ApiClientService, useValue: apiClient },
         { provide: AdminManagementService, useValue: adminService }
       ]
     });
@@ -43,10 +50,9 @@ describe('management wrapper services', () => {
     service.save({ certificationNumber: '001' } as any).subscribe();
     service.uploadBulk(file).subscribe();
 
-    expect(adminService.getAll).toHaveBeenCalledWith('Certification');
-    expect(adminService.search).toHaveBeenCalledWith('Certification', ['certificationNumber', 'userName'], 'cert');
-    expect(adminService.save).toHaveBeenCalledWith('Certification', 'certificationNumber', { certificationNumber: '001' });
-    expect(adminService.uploadBulk).toHaveBeenCalledWith('Certification', file);
+    expect(apiClient.get).toHaveBeenCalledWith('CertificationData');
+    expect(apiClient.post).toHaveBeenCalledWith('CertificateOperation/save', { certificationNumber: '001' });
+    expect(adminService.uploadBulk).toHaveBeenCalledWith('CertificateOperation', file);
   });
 
   it('delegates client, training, post, and comment service calls', () => {
@@ -56,7 +62,7 @@ describe('management wrapper services', () => {
     TestBed.inject(LinkedInCommentService).search('comment').subscribe();
 
     expect(adminService.search).toHaveBeenCalledWith('Client', ['clientName', 'clientId'], 'client');
-    expect(adminService.save).toHaveBeenCalledWith('Training', 'trainingId', { trainingId: 'T1' });
+    expect(apiClient.put).toHaveBeenCalledWith('TrainingOperation/T1', { trainingId: 'T1' });
     expect(adminService.getAll).toHaveBeenCalledWith('LinkedInPost');
     expect(adminService.search).toHaveBeenCalledWith('LinkedInComment', ['commentId', 'postId', 'author'], 'comment');
   });

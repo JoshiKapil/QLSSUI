@@ -219,7 +219,7 @@ export class TrainingAdminComponent implements OnInit, OnDestroy {
   }
 
   getTrainingLabel(training: Training): string {
-    return training.trainingName || training.displayName || String(training.trainingId || 'Training');
+    return training.displayName || training.trainingName || String(training.trainingId || 'Training');
   }
 
   getSelectedTrainingLabel(): string {

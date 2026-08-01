@@ -83,7 +83,7 @@
               <p class="result-status result-status--success">Certificate Verified</p>
               <p class="result-message">
                 The certificate is valid and issued to {{ UserData[0]?.UserName }} on
-                {{ formatIssuedDate(UserData[0]?.IssuedDate) }} for {{ UserData[0]?.trainingName }}.
+                {{ formatIssuedDate(UserData[0]?.IssuedDate) }} for {{ UserData[0]?.DisplayName || UserData[0]?.displayName || UserData[0]?.TrainingName || UserData[0]?.trainingName }}.
               </p>
               <div class="result-tags">
                 <!-- <span class="result-tag">

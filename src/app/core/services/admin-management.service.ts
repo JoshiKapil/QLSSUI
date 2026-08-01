@@ -33,23 +33,14 @@ export class AdminManagementService {
 
     return request$.pipe(
       map((response) => unwrapApiResponse<T>(response)),
-      tap((saved) => this.upsertLocalRecord(endpoint, idKey, saved)),
-      catchError(() => {
-        const saved = { ...record, [idKey]: id || Date.now() } as T;
-        this.upsertLocalRecord(endpoint, idKey, saved);
-        return of(saved);
-      })
+      tap((saved) => this.upsertLocalRecord(endpoint, idKey, saved))
     );
   }
 
   delete(endpoint: string, idKey: string, id: number | string): Observable<void> {
     return this.http.delete<ApiResponse<void> | void>(this.url(endpoint, id)).pipe(
       map((response) => unwrapApiResponse<void>(response)),
-      tap(() => this.deleteLocalRecord(endpoint, idKey, id)),
-      catchError(() => {
-        this.deleteLocalRecord(endpoint, idKey, id);
-        return of(void 0);
-      })
+      tap(() => this.deleteLocalRecord(endpoint, idKey, id))
     );
   }
 
@@ -77,8 +68,7 @@ export class AdminManagementService {
     formData.append('file', file);
 
     return this.http.post<ApiResponse<void> | void>(this.url(endpoint) + '/upload', formData).pipe(
-      map((response) => unwrapApiResponse<void>(response)),
-      catchError(() => of(void 0))
+      map((response) => unwrapApiResponse<void>(response))
     );
   }
 

@@ -1,0 +1,106 @@
+
+> qlss-new-version@1.0.0 start
+> ng serve --host 127.0.0.1 --port 4201
+
+
+Initial Chunk Files                                                       | Names                                                       |  Raw Size
+vendor.js                                                                 | vendor                                                      |   5.76 MB |
+main.js                                                                   | main                                                        |   1.34 MB |
+styles.css, styles.js                                                     | styles                                                      | 374.81 kB |
+polyfills.js                                                              | polyfills                                                   | 235.88 kB |
+runtime.js                                                                | runtime                                                     |  14.14 kB |
+
+| Initial Total                                               |   7.71 MB
+
+Lazy Chunk Files                                                          | Names                                                       |  Raw Size
+node_modules_mammoth_lib_index_js.js                                      | mammoth                                                     |   1.09 MB |
+src_app_features_home_home_module_ts.js                                   | features-home-home-module                                   | 353.86 kB |
+src_app_features_test_test_module_ts.js                                   | features-test-test-module                                   | 265.78 kB |
+src_app_features_training_training_module_ts.js                           | features-training-training-module                           | 111.28 kB |
+src_app_features_about_about_module_ts.js                                 | features-about-about-module                                 |  70.91 kB |
+src_app_features_operationalexcellence_operationalexcellence_module_ts.js | features-operationalexcellence-operationalexcellence-module |  62.81 kB |
+src_app_features_fillcertificationfrom_fillcertificationfrom_module_ts.js | features-fillcertificationfrom-fillcertificationfrom-module |  60.64 kB |
+src_app_features_blogs_blogs_module_ts.js                                 | features-blogs-blogs-module                                 |  55.63 kB |
+src_app_features_faq_faq_module_ts.js                                     | features-faq-faq-module                                     |  51.15 kB |
+src_app_features_sustainability_sustainability_module_ts.js               | features-sustainability-sustainability-module               |  44.83 kB |
+src_app_features_management-system_management-system_module_ts.js         | features-management-system-management-system-module         |  43.80 kB |
+src_app_features_client_client_module_ts.js                               | features-client-client-module                               |  43.09 kB |
+src_app_features_financial-services_financial-services_module_ts.js       | features-financial-services-financial-services-module       |  40.01 kB |
+src_app_features_supply-chain_supply-chain_module_ts.js                   | features-supply-chain-supply-chain-module                   |  39.58 kB |
+src_app_features_expertise_expertise_module_ts.js                         | features-expertise-expertise-module                         |  34.17 kB |
+src_app_features_dataanalytics_dataanalytics_module_ts.js                 | features-dataanalytics-dataanalytics-module                 |  33.37 kB |
+src_app_features_information-security_information-security_module_ts.js   | features-information-security-information-security-module   |  30.75 kB |
+src_app_features_verify_verify_module_ts.js                               | features-verify-verify-module                               |  27.38 kB |
+src_app_features_teams_teams_module_ts.js                                 | features-teams-teams-module                                 |  25.92 kB |
+src_app_features_contact_contact_module_ts.js                             | features-contact-contact-module                             |  24.95 kB |
+default-src_app_core_services_site-interactions_service_ts.js             | features-home-home-module                                   |  19.45 kB |
+src_app_features_gallery_gallery_module_ts.js                             | features-gallery-gallery-module                             |   9.86 kB |
+
+Build at: 2026-07-28T09:28:56.512Z - Hash: 065f06741dce51f2 - Time: 69416ms
+
+** Angular Live Development Server is listening on 127.0.0.1:4201, open your browser on http://127.0.0.1:4201/ **
+
+
+√ Compiled successfully.
+
+Initial Chunk Files | Names   | Raw Size
+vendor.js           | vendor  |  3.92 MB |
+main.js             | main    |  1.23 MB |
+runtime.js          | runtime | 14.14 kB |
+
+24 unchanged chunks
+
+Build at: 2026-07-28T11:36:13.874Z - Hash: 2b9737e127de5108 - Time: 12444ms
+
+× Failed to compile.
+
+Initial Chunk Files | Names   | Raw Size
+vendor.js           | vendor  |  5.76 MB |
+main.js             | main    |  1.34 MB |
+runtime.js          | runtime | 14.14 kB |
+
+24 unchanged chunks
+
+Build at: 2026-07-28T11:36:37.510Z - Hash: 2a9d25f8e93423ae - Time: 23342ms
+
+√ Compiled successfully.
+
+Initial Chunk Files | Names   | Raw Size
+main.js             | main    |  1.34 MB |
+runtime.js          | runtime | 14.14 kB |
+
+25 unchanged chunks
+
+Build at: 2026-07-28T11:37:15.046Z - Hash: 9e31af7975a7d68b - Time: 1917ms
+
+√ Compiled successfully.
+
+Initial Chunk Files | Names   | Raw Size
+main.js             | main    |  1.34 MB |
+runtime.js          | runtime | 14.14 kB |
+
+25 unchanged chunks
+
+Build at: 2026-07-28T11:37:40.710Z - Hash: 416a740badec3d47 - Time: 1396ms
+
+√ Compiled successfully.
+
+Initial Chunk Files | Names   | Raw Size
+main.js             | main    |  1.34 MB |
+runtime.js          | runtime | 14.14 kB |
+
+25 unchanged chunks
+
+Build at: 2026-07-28T11:42:47.885Z - Hash: f90fb2093f0b80f2 - Time: 1689ms
+
+√ Compiled successfully.
+
+Initial Chunk Files | Names   | Raw Size
+main.js             | main    |  1.34 MB |
+runtime.js          | runtime | 14.14 kB |
+
+25 unchanged chunks
+
+Build at: 2026-07-28T11:44:50.717Z - Hash: ff02992dcda6bfd4 - Time: 1324ms
+
+√ Compiled successfully.

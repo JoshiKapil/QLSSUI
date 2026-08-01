@@ -4,7 +4,10 @@ import { rgb } from 'pdf-lib';
 // certificate-template.png artwork. Keep every printable position here.
 export const CERTIFICATE_PDF_LAYOUT = {
   page: { width: 841.89, height: 595.28 },
-  background: { x: 0, y: 0, fit: 'contain' as const, cropPageToArtwork: true },
+  // Keep the PDF page itself at full A4 landscape size. Cropping to the
+  // template artwork changes the printable page box and can make print
+  // previews treat the certificate as a custom/square sheet.
+  background: { x: 0, y: 0, fit: 'fill' as const, cropPageToArtwork: false },
   colors: {
     navy: rgb(0.01, 0.05, 0.34),
     green: rgb(0.00, 0.40, 0.10),
@@ -34,57 +37,46 @@ export const CERTIFICATE_PDF_LAYOUT = {
   },
   trainingName: { centerX: 433, fontSize: 23, maxWidth: 410 },
   topics: {
-    // Mask only the template's sample marks; do not cover the panel background.
-    templateMarks: {
-      bulletX: 675.3,
-      bulletY: [451.9, 415.8, 379.6, 343.5, 307.4, 271.2, 235.6, 200.0],
-      bulletRadius: 6.8,
-      ruleX: 664,
-      ruleWidth: 130,
-      // The template line at y=177.4 is the metadata border, so never mask it.
-      ruleY: [431.5, 395.3, 359.2, 322.5, 285.8, 250.8, 214.6],
-      ruleHeight: 3.6
-    },
-    bulletX: 663,
-    bulletRadius: 3.2,
-    textX: 681,
-    firstRowCenterY: 438,
-    // Hard lower boundary keeps 6-8 topic rows above the metadata panel.
-    lastRowCenterY: 230,
-    maximumRowGap: 42,
-    maxWidth: 112,
-    fontSize: 9.8,
-    minimumFontSize: 8.6,
-    lineHeight: 12.5,
+    panel: { x: 646, y: 190, width: 180, height: 290 },
+    bulletX: 683,
+    bulletRadius: 3.1,
+    textX: 695,
+    firstRowCenterY: 435,
+    lastRowCenterY: 213,
+    maximumRowGap: 44,
+    maxWidth: 115,
+    fontSize: 9.4,
+    minimumFontSize: 7.8,
+    lineHeight: 10.8,
     compactAfterCount: 6,
     fontReductionPerItem: 0.15,
-    separatorStartX: 658,
-    separatorEndX: 794,
-    separatorThickness: 0.45,
+    separatorStartX: 657,
+    separatorEndX: 795,
+    separatorThickness: 0,
     separatorDash: [1.2, 1.8],
     maxItems: 8,
     maxLinesPerItem: 2,
     overflowMaxLines: 3
   },
   metadataPanel: {
-    mask: { x: 122, y: 113, width: 626, height: 70 },
-    x: 132,
-    y: 121,
-    width: 606,
-    height: 52,
+    mask: { x: 92, y: 108, width: 682, height: 80 },
+    x: 116,
+    y: 120,
+    width: 642,
+    height: 58,
     gap: 6,
-    border: { x: 126, y: 118, width: 618, height: 60, thickness: 1.15, radius: 11.25 },
-    labelY: 156,
-    labelFontSize: 7.2,
-    iconSize: 8,
-    iconGap: 3,
-    separator: { y1: 128, y2: 166, thickness: 0.55, dash: [1.2, 2.2] }
+    border: { x: 112, y: 117, width: 650, height: 64, thickness: 1.15, radius: 11 },
+    labelY: 155,
+    labelFontSize: 7.8,
+    iconSize: 8.5,
+    iconGap: 3.5,
+    separator: { y1: 124, y2: 167, thickness: 0.5, dash: [1.2, 2.2] }
   },
   details: {
-    certificateNumber: { label: 'CERTIFICATE NO.', centerX: 205.5, maxWidth: 128, fontSize: 9.2, minimumFontSize: 7.6, maxLines: 2, lineHeight: 9, weight: 'regular' as const },
-    trainingHours: { label: 'TRAINING HOURS', centerX: 358.5, maxWidth: 128, fontSize: 9.4, minimumFontSize: 8, maxLines: 1, lineHeight: 9, weight: 'regular' as const },
-    location: { label: 'LOCATION', centerX: 511.5, maxWidth: 128, fontSize: 9.2, minimumFontSize: 7.6, maxLines: 2, lineHeight: 9, weight: 'regular' as const },
-    trainerName: { label: 'TRAINER NAME', centerX: 664.5, maxWidth: 128, fontSize: 9.2, minimumFontSize: 7.6, maxLines: 2, lineHeight: 9, weight: 'regular' as const }
+    certificateNumber: { label: 'CERTIFICATE NO.', centerX: 193.25, maxWidth: 137, fontSize: 10.4, minimumFontSize: 8.2, maxLines: 2, lineHeight: 10, weight: 'bold' as const },
+    trainingHours: { label: 'TRAINING HOURS', centerX: 355.75, maxWidth: 137, fontSize: 10.4, minimumFontSize: 8.2, maxLines: 1, lineHeight: 10, weight: 'bold' as const },
+    location: { label: 'LOCATION', centerX: 518.25, maxWidth: 137, fontSize: 10.4, minimumFontSize: 8.2, maxLines: 2, lineHeight: 10, weight: 'bold' as const },
+    trainerName: { label: 'TRAINER NAME', centerX: 680.75, maxWidth: 137, fontSize: 10.4, minimumFontSize: 8.2, maxLines: 2, lineHeight: 10, weight: 'bold' as const }
   },
   dateOfIssue: { centerX: 220, fontSize: 9.4, minimumFontSize: 8, maxWidth: 93, maxLines: 1, lineHeight: 9, weight: 'regular' as const },
   fileName: { fallback: 'training-certificate', maxSlugLength: 60 }

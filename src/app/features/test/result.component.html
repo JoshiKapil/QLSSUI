@@ -42,7 +42,6 @@
           <h2>{{ result.passed ? 'Passed' : 'Needs Improvement' }}</h2>
           <p class='result-note' *ngIf='resultSaveWarning'>{{ resultSaveWarning }}</p>
           <p class='result-note' *ngIf='submission?.isAutoSubmitted'>The test was automatically submitted when time expired.</p>
-          <p class='result-note' *ngIf='result.manualReviewCount'>Final score may change after manual evaluation.</p>
         </div>
         <div class='result-summary__actions'>
           <div class='score-circle' [class.score-circle--failed]='!result.passed' [style.--score.%]='result.percentage'>

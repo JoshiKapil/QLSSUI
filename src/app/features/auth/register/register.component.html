@@ -22,9 +22,9 @@
           </label>
 
           <label class="form-field">
-            PasswordHash
-            <input type="password" formControlName="passwordHash" />
-            <small>{{ firstError(form.get('passwordHash'), 'PasswordHash') }}</small>
+            Password
+            <input type="password" formControlName="password" />
+            <small>{{ firstError(form.get('password'), 'Password') }}</small>
           </label>
 
           <label class="form-field">
@@ -43,7 +43,7 @@
             Role
             <select formControlName="role">
               <option value="User">User</option>
-              <option value="Admin">Admin</option>
+              <!-- <option value="Admin">Admin</option> -->
             </select>
             <small>{{ firstError(form.get('role'), 'Role') }}</small>
           </label>

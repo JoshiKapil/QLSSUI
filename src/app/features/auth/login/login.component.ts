@@ -49,7 +49,7 @@ export class LoginComponent {
           this.router.navigate(['/']);
         },
         error: (error) => {
-          this.errorMessage = error?.message || 'Invalid email or password.';
+          this.errorMessage = 'Invalid email or password.';
           this.isSubmitting = false;
         },
         complete: () => (this.isSubmitting = false)

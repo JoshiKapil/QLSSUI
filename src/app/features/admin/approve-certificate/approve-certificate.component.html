@@ -1,0 +1,143 @@
+<section class="admin-page">
+  <div class="container">
+    <div class="admin-header">
+      <div><span class="auth-eyebrow">Certificates</span><h1>Approve Certificates</h1>
+        <p>Approve every pending user for a company, one user, or a checkbox selection.</p></div>
+      <a class="btn btn-outline" routerLink="/admin/print-certificate">Print Certificates</a>
+    </div>
+
+    <section class="import-panel" aria-labelledby="excel-import-title">
+      <div class="import-panel__header">
+        <div><h2 id="excel-import-title">Upload certification data</h2><p>Import approved certification records from the first worksheet.</p></div>
+        <button *ngIf="importFileName" class="icon-button" type="button" title="Remove selected file" aria-label="Remove selected file" (click)="clearImport()"><i class="fas fa-times" aria-hidden="true"></i></button>
+      </div>
+      <div class="import-selectors">
+        <div class="import-field">
+          <div class="field-caption">Training <span class="required-mark">*</span></div>
+          <div class="search-dropdown">
+            <button class="search-dropdown__toggle" type="button" (click)="toggleImportDropdown('training')">
+              <span>{{ selectedImportTrainingLabel() }}</span><span aria-hidden="true">&#9662;</span>
+            </button>
+            <div class="search-dropdown__menu" *ngIf="importTrainingDropdownOpen">
+              <input type="search" [(ngModel)]="importTrainingSearch" placeholder="Search training" autocomplete="off" />
+              <button class="search-dropdown__option" type="button" *ngFor="let training of filteredImportTrainings" (mousedown)="selectImportTraining(training)">
+                <strong>{{ trainingLabel(training) }}</strong><!-- <small>{{ training.trainingId }}</small> -->
+              </button>
+              <div class="search-dropdown__empty" *ngIf="!filteredImportTrainings.length">No training found</div>
+            </div>
+          </div>
+        </div>
+        <div class="import-field">
+          <div class="field-caption">Trainer <span class="required-mark">*</span></div>
+          <div class="search-dropdown">
+            <button class="search-dropdown__toggle" type="button" (click)="toggleImportDropdown('trainer')">
+              <span>{{ selectedImportTrainerLabel() }}</span><span aria-hidden="true">&#9662;</span>
+            </button>
+            <div class="search-dropdown__menu" *ngIf="importTrainerDropdownOpen">
+              <input type="search" [(ngModel)]="importTrainerSearch" placeholder="Search trainer" autocomplete="off" />
+              <button class="search-dropdown__option" type="button" *ngFor="let trainer of filteredImportTrainers" (mousedown)="selectImportTrainer(trainer)">
+                <strong>{{ trainer.name }}</strong><small>{{ trainer.email || trainer.mobile }}</small>
+              </button>
+              <div class="search-dropdown__empty" *ngIf="!filteredImportTrainers.length">No trainer found</div>
+            </div>
+          </div>
+        </div>
+        <div class="import-field">
+          <div class="field-caption">Company <span class="required-mark">*</span></div>
+          <div class="search-dropdown">
+            <button class="search-dropdown__toggle" type="button" (click)="toggleImportDropdown('company')">
+              <span>{{ selectedImportCompanyLabel() }}</span><span aria-hidden="true">&#9662;</span>
+            </button>
+            <div class="search-dropdown__menu" *ngIf="importCompanyDropdownOpen">
+              <input type="search" [(ngModel)]="importCompanySearch" placeholder="Search company" autocomplete="off" />
+              <button class="search-dropdown__option" type="button" *ngFor="let company of filteredImportCompanies" (mousedown)="selectImportCompany(company)">
+                <strong>{{ company.clientName }}</strong>
+                <!-- <small>{{ company.clientId }}</small> -->
+              </button>
+              <div class="search-dropdown__empty" *ngIf="!filteredImportCompanies.length">No company found</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <label class="file-drop" [class.file-drop--active]="draggingFile" (drop)="onFileDrop($event)" (dragover)="onDragOver($event)" (dragleave)="draggingFile = false">
+        <input type="file" accept=".xlsx,.xls" (change)="onFileSelected($event)" />
+        <i class="fas fa-file-excel" aria-hidden="true"></i><strong>{{ importFileName || 'Choose or drop an Excel file' }}</strong><span>.xlsx or .xls</span>
+      </label>
+      <div class="import-summary" *ngIf="importFileName">
+        <span *ngIf="!importErrors.length">{{ importRecords.length }} row(s) ready to upload</span>
+        <span class="import-summary__error" *ngIf="importErrors.length">{{ importErrors.length }} validation error(s)</span>
+        <button class="btn btn-primary" type="button" (click)="uploadImport()" [disabled]="importing || !importRecords.length || importErrors.length || !importTrainingId || !importTrainerId || !importCompanyId"><i class="fas fa-upload" aria-hidden="true"></i> {{ importing ? 'Uploading...' : 'Upload' }}</button>
+      </div>
+      <ul class="import-errors" *ngIf="importErrors.length"><li *ngFor="let error of importErrors | slice:0:8">{{ error }}</li><li *ngIf="importErrors.length > 8">And {{ importErrors.length - 8 }} more.</li></ul>
+    </section>
+
+    <div class="filter-card">
+      <label>Company/Location
+        <div class="search-dropdown">
+          <button class="search-dropdown__toggle" type="button"
+            (click)="toggleCompanyDropdown()" [attr.aria-expanded]="companyDropdownOpen">
+            <span>{{ selectedCompanyName() }}</span><span aria-hidden="true">&#9662;</span>
+          </button>
+          <div class="search-dropdown__menu" *ngIf="companyDropdownOpen">
+            <input type="search" [(ngModel)]="companySearch"
+              placeholder="Search company/location" autocomplete="off" />
+            <button class="search-dropdown__option" type="button" (click)="selectCompany('')">
+              All companies
+            </button>
+            <button class="search-dropdown__option" type="button"
+              *ngFor="let company of filteredCompanies"
+              (click)="selectCompany(company.clientId)">
+              {{ company.clientName }}
+            </button>
+            <div class="search-dropdown__empty" *ngIf="!filteredCompanies.length">
+              No company found
+            </div>
+          </div>
+        </div>
+      </label>
+      <label>User
+        <div class="search-dropdown">
+          <button class="search-dropdown__toggle" type="button"
+            (click)="toggleUserDropdown()" [attr.aria-expanded]="userDropdownOpen">
+            <span>{{ selectedUserName() }}</span><span aria-hidden="true">&#9662;</span>
+          </button>
+          <div class="search-dropdown__menu" *ngIf="userDropdownOpen">
+            <input type="search" [(ngModel)]="userSearch"
+              placeholder="Search name or email" autocomplete="off" />
+            <button class="search-dropdown__option" type="button"
+              *ngFor="let user of filteredUsers"
+              (click)="selectUser(user.certificationDataId)">
+              <strong>{{ user.name }}</strong><small>{{ user.email }}</small>
+            </button>
+            <div class="search-dropdown__empty" *ngIf="!filteredUsers.length">
+              No user found
+            </div>
+          </div>
+        </div>
+      </label>
+      <div class="filter-actions">
+        <button class="btn btn-primary" type="button" (click)="approveCompany()" [disabled]="approving">Approve Company</button>
+        <button class="btn btn-outline" type="button" (click)="approveSelected()" [disabled]="approving">Approve Selected</button>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <table>
+        <thead><tr>
+          <th><input type="checkbox" (change)="toggleAll($any($event.target).checked)" aria-label="Select all visible users" /></th>
+          <th>Name</th><th>Email</th><th>Training</th><th>Company/Location</th><th>Date</th>
+        </tr></thead>
+        <tbody>
+          <tr *ngFor="let record of visibleRecords">
+            <td><input type="checkbox" [checked]="selectedIds.has(record.certificationDataId || 0)"
+              (change)="toggle(record, $any($event.target).checked)" /></td>
+            <td>{{ record.name }}</td><td>{{ record.email }}</td>
+            <td>{{ record.trainingName || record.trainingId }}</td>
+            <td>{{ companyName(record.location) }}</td><td>{{ record.date }}</td>
+          </tr>
+          <tr *ngIf="!loading && !visibleRecords.length"><td colspan="6">No pending certificate requests.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

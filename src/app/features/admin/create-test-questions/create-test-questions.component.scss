@@ -5,6 +5,8 @@ h1, h2 { margin: 0 0 8px; }
 .panel, article { margin-top: 20px; padding: 20px; border: 1px solid #dfe6ef; border-radius: 10px; background: white; }
 .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 label { display: flex; flex-direction: column; gap: 7px; font-weight: 600; }
+.field-label-text { display: inline-flex; align-items: baseline; gap: 4px; }
+.required-mark { display: inline; color: #dc2626; font-weight: 800; line-height: 1; }
 input, select { min-height: 42px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; }
 .note { padding: 14px; border-left: 4px solid #1b66d2; background: #eef5ff; }
 .progress { position: relative; height: 10px; margin-top: 18px; border-radius: 8px; background: #e5eaf1; }

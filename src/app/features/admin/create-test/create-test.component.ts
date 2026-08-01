@@ -1,4 +1,4 @@
-﻿import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Training } from '../../../core/models/training.model';
 import { NotifierService } from '../../../core/services/notifier.service';
@@ -228,7 +228,9 @@ export class CreateTestComponent implements OnInit, OnDestroy {
   }
 
   getTrainingLabel(training: Training): string {
-    return training.displayName.replace('Training','') || training.trainingName.replace('Training','') || String(training.trainingId || 'Training');
+    return String(training.displayName || '').trim()
+      || String(training.trainingName || '').trim()
+      || String(training.trainingId || 'Training');
   }
 
   openTrainingDropdown(): void {
@@ -1342,27 +1344,3 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     return cleanValue || undefined;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

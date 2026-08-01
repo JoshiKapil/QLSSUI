@@ -1,0 +1,649 @@
+- Generating browser application bundles (phase: setup)...
+√ Browser application bundle generation complete.
+
+Warning: I:\QLSS_New_Version\node_modules\@pdf-lib\standard-fonts\es\utils.js depends on 'pako'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: I:\QLSS_New_Version\node_modules\@pdf-lib\upng\UPNG.js depends on 'pako'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: I:\QLSS_New_Version\node_modules\pdf-lib\es\core\PDFContext.js depends on 'pako'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: I:\QLSS_New_Version\src\app\features\admin\create-test-questions\create-test-questions.component.ts depends on 'mammoth'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+
+√ Browser application bundle generation complete.
+
+Error: src/app/app-routing.module.ts:20:43 - error TS2306: File 'I:/QLSS_New_Version/src/app/features/admin/print-certificate/print-certificate.component.ts' is not a module.
+
+20 import { PrintCertificateComponent } from './features/admin/print-certificate/print-certificate.component';
+                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Error: src/app/app.module.ts:28:5 - error NG6002: 'AdminModule' does not appear to be an NgModule class.
+
+28     AdminModule,
+       ~~~~~~~~~~~
+
+  src/app/features/admin/admin.module.ts:44:14
+    44 export class AdminModule {}
+                    ~~~~~~~~~~~
+    Is it missing an @NgModule annotation?
+
+
+Error: src/app/features/admin/admin.module.ts:11:43 - error TS2306: File 'I:/QLSS_New_Version/src/app/features/admin/print-certificate/print-certificate.component.ts' is not a module.
+
+11 import { PrintCertificateComponent } from './print-certificate/print-certificate.component';
+                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Error: src/app/features/admin/admin.module.ts:16:17 - error NG1010: Value at position 8 in the NgModule.declarations of AdminModule is not a reference
+  Value could not be determined statically.
+
+ 16   declarations: [
+                    ~
+ 17     CertificationComponent,
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+... 
+ 27     ApproveCertificateComponent
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 28   ],
+    ~~~
+
+  src/app/features/admin/admin.module.ts:25:5
+    25     PrintCertificateComponent,
+           ~~~~~~~~~~~~~~~~~~~~~~~~~
+    Unknown reference.
+
+
+Error: src/app/features/admin/certification/certification.component.html:18:32 - error NG8002: Can't bind to 'formGroup' since it isn't a known property of 'form'.
+
+18       <form class="admin-form" [formGroup]="form" (ngSubmit)="submit()">
+                                  ~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/certification/certification.component.ts:11:16
+    11   templateUrl: './certification.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CertificationComponent.
+
+
+Error: src/app/features/admin/certification/certification.component.html:50:30 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+50           <input type="text" [(ngModel)]="searchTerm" [placeholder]="searchPlaceholder" name="searchTerm" (keydown.enter)="search()" />
+                                ~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/certification/certification.component.ts:11:16
+    11   templateUrl: './certification.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CertificationComponent.
+
+
+Error: src/app/features/admin/certification/certification.component.html:89:33 - error NG8002: Can't bind to 'ngClass' since it isn't a known property of 'i'.
+
+89             <i class="fa-solid" [ngClass]="isUploading ? 'fa-spinner fa-spin' : 'fa-cloud-arrow-up'" aria-hidden="true"></i>
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/certification/certification.component.ts:11:16
+    11   templateUrl: './certification.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CertificationComponent.
+
+
+Error: src/app/features/admin/client-admin/client-admin.component.html:20:32 - error NG8002: Can't bind to 'formGroup' since it isn't a known property of 'form'.
+
+20       <form class="admin-form" [formGroup]="form" (ngSubmit)="submit()">
+                                  ~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/client-admin/client-admin.component.ts:10:16
+    10   templateUrl: "./client-admin.component.html",
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component ClientAdminComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:101:58 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'select'.
+
+101           <label class="form-field">Question Type<select [(ngModel)]="form.questionType" name="questionType" (ngModelChange)="onQuestionTypeChange()"><option *ngFor="let type of questionTypes" [ngValue]="type">{{ type }}</option></select></label>
+                                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:102:55 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'select'.
+
+102           <label class="form-field">Difficulty<select [(ngModel)]="form.difficulty" name="difficulty"><option *ngFor="let difficulty of difficulties" [ngValue]="difficulty">{{ difficulty }}</option></select></label>
+                                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:103:71 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+103           <label class="form-field">Marks<input type="number" min="1" [(ngModel)]="form.marks" name="marks" /></label>
+                                                                          ~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:104:80 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+104           <label class="form-field">Negative Marks<input type="number" min="0" [(ngModel)]="form.negativeMarks" name="negativeMarks" /></label>
+                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:105:80 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+105           <label class="form-field">Estimated Time<input type="number" min="1" [(ngModel)]="form.estimatedTimeSeconds" name="estimatedTimeSeconds" /></label>
+                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:108:67 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'textarea'.
+
+108         <label class="form-field">Question Text<textarea rows="4" [(ngModel)]="form.questionText" name="questionText"></textarea></label>
+                                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:113:32 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+113             <input type="text" [(ngModel)]="form.questionImageUrl" name="questionImageUrl" />
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:122:32 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+122             <input type="text" [(ngModel)]="form.audioUrl" name="audioUrl" />
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:131:32 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+131             <input type="text" [(ngModel)]="form.videoUrl" name="videoUrl" />
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:140:32 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+140             <input type="text" [(ngModel)]="form.explanationImageUrl" name="explanationImageUrl" />
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:177:65 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'textarea'.
+
+177         <label class="form-field">Explanation<textarea rows="4" [(ngModel)]="form.explanation" name="explanation"></textarea></label>
+                                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:178:57 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+178         <label class="check-row"><input type="checkbox" [(ngModel)]="form.isActive" name="isActive" /> Active</label>
+                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:193:65 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+193           <label class="form-field">Test Name<input type="text" [(ngModel)]="mappingTestName" name="mappingTestName" placeholder="Test 1" /></label>
+                                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:194:81 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+194           <label class="form-field">Question Number<input type="number" min="1" [(ngModel)]="mappingQuestionNumber" name="mappingQuestionNumber" placeholder="Auto / append" /></label>
+                                                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:199:30 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+199           <input type="text" [(ngModel)]="searchText" placeholder="Search question" />
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:200:30 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+200           <input type="text" [(ngModel)]="filterTraining" placeholder="Training" />
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:201:30 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+201           <input type="text" [(ngModel)]="filterSubject" placeholder="Subject" />
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:202:30 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+202           <input type="text" [(ngModel)]="filterTopic" placeholder="Topic" />
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:203:19 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'select'.
+
+203           <select [(ngModel)]="filterType"><option [ngValue]="''">All Types</option><option *ngFor="let type of questionTypes" [ngValue]="type">{{ type }}</option></select>
+                      ~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:203:52 - error NG8002: Can't bind to 'ngValue' since it isn't a known property of 'option'.
+
+203           <select [(ngModel)]="filterType"><option [ngValue]="''">All Types</option><option *ngFor="let type of questionTypes" [ngValue]="type">{{ type }}</option></select>
+                                                       ~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:204:19 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'select'.
+
+204           <select [(ngModel)]="filterDifficulty"><option [ngValue]="''">All Difficulty</option><option *ngFor="let difficulty of difficulties" [ngValue]="difficulty">{{ difficulty }}</option></select>
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:204:58 - error NG8002: Can't bind to 'ngValue' since it isn't a known property of 'option'.
+
+204           <select [(ngModel)]="filterDifficulty"><option [ngValue]="''">All Difficulty</option><option *ngFor="let difficulty of difficulties" [ngValue]="difficulty">{{ difficulty }}</option></select>
+                                                             ~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:205:32 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+205           <input type="number" [(ngModel)]="filterMarks" placeholder="Marks" />
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-question/create-question.component.html:206:19 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'select'.
+
+206           <select [(ngModel)]="filterActive"><option value="all">All Status</option><option value="active">Active</option><option value="inactive">Inactive</option></select>
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-question/create-question.component.ts:20:16
+    20   templateUrl: './create-question.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateQuestionComponent.
+
+
+Error: src/app/features/admin/create-test-questions/create-test-questions.component.html:26:15 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'select'.
+
+26       <select [(ngModel)]="testType" [disabled]="busy">
+                 ~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test-questions/create-test-questions.component.ts:23:16
+    23   templateUrl: './create-test-questions.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestQuestionsComponent.
+
+
+Error: src/app/features/admin/create-test-questions/create-test-questions.component.html:32:14 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+32       <input [(ngModel)]="testName" [disabled]="busy" placeholder="Defaults to Word filename">
+                ~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test-questions/create-test-questions.component.ts:23:16
+    23   templateUrl: './create-test-questions.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestQuestionsComponent.
+
+
+Error: src/app/features/admin/create-test/create-test.component.html:115:21 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'select'.
+
+115             <select [(ngModel)]="testFileType" name="testFileType">
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test/create-test.component.ts:31:16
+    31   templateUrl: './create-test.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestComponent.
+
+
+Error: src/app/features/admin/create-test/create-test.component.html:123:32 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+123             <input type="text" [(ngModel)]="testDetails.testTitle" name="testTitle" placeholder="Enter test title" />
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test/create-test.component.ts:31:16
+    31   templateUrl: './create-test.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestComponent.
+
+
+Error: src/app/features/admin/create-test/create-test.component.html:128:42 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+128             <input type="number" min="1" [(ngModel)]="testDetails.durationMinutes" name="durationMinutes" />
+                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test/create-test.component.ts:31:16
+    31   templateUrl: './create-test.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestComponent.
+
+
+Error: src/app/features/admin/create-test/create-test.component.html:134:42 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+134             <input type="number" min="1" [(ngModel)]="testDetails.totalQuestions" name="totalQuestions" />
+                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test/create-test.component.ts:31:16
+    31   templateUrl: './create-test.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestComponent.
+
+
+Error: src/app/features/admin/create-test/create-test.component.html:145:52 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+145             <input type="number" min="1" max="100" [(ngModel)]="testDetails.passingPercentage" name="passingPercentage" />
+                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test/create-test.component.ts:31:16
+    31   templateUrl: './create-test.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestComponent.
+
+
+Error: src/app/features/admin/create-test/create-test.component.html:150:21 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'select'.
+
+150             <select [(ngModel)]="testDetails.status" name="status">
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test/create-test.component.ts:31:16
+    31   templateUrl: './create-test.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestComponent.
+
+
+Error: src/app/features/admin/create-test/create-test.component.html:160:30 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'textarea'.
+
+160           <textarea rows="4" [(ngModel)]="testDetails.description" name="description" placeholder="Describe the test"></textarea>
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test/create-test.component.ts:31:16
+    31   templateUrl: './create-test.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestComponent.
+
+
+Error: src/app/features/admin/create-test/create-test.component.html:165:30 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'textarea'.
+
+165           <textarea rows="4" [(ngModel)]="testDetails.instructions" name="instructions" placeholder="Add instructions for test takers"></textarea>
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test/create-test.component.ts:31:16
+    31   templateUrl: './create-test.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestComponent.
+
+
+Error: src/app/features/admin/create-test/create-test.component.html:236:28 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+236         <input type="text" [(ngModel)]="questionBankSearch" name="questionBankSearch" placeholder="Search question, subject, topic" />
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test/create-test.component.ts:31:16
+    31   templateUrl: './create-test.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestComponent.
+
+
+Error: src/app/features/admin/create-test/create-test.component.html:237:17 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'select'.
+
+237         <select [(ngModel)]="questionBankTypeFilter" name="questionBankTypeFilter">
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test/create-test.component.ts:31:16
+    31   templateUrl: './create-test.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestComponent.
+
+
+Error: src/app/features/admin/create-test/create-test.component.html:238:19 - error NG8002: Can't bind to 'ngValue' since it isn't a known property of 'option'.
+
+238           <option [ngValue]="''">All Types</option>
+                      ~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test/create-test.component.ts:31:16
+    31   templateUrl: './create-test.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestComponent.
+
+
+Error: src/app/features/admin/create-test/create-test.component.html:241:17 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'select'.
+
+241         <select [(ngModel)]="questionBankDifficultyFilter" name="questionBankDifficultyFilter">
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test/create-test.component.ts:31:16
+    31   templateUrl: './create-test.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestComponent.
+
+
+Error: src/app/features/admin/create-test/create-test.component.html:242:19 - error NG8002: Can't bind to 'ngValue' since it isn't a known property of 'option'.
+
+242           <option [ngValue]="''">All Difficulty</option>
+                      ~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test/create-test.component.ts:31:16
+    31   templateUrl: './create-test.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestComponent.
+
+
+Error: src/app/features/admin/create-test/create-test.component.html:245:28 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+245         <input type="text" [(ngModel)]="questionBankSubjectFilter" name="questionBankSubjectFilter" placeholder="Subject" />
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test/create-test.component.ts:31:16
+    31   templateUrl: './create-test.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestComponent.
+
+
+Error: src/app/features/admin/create-test/create-test.component.html:246:28 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+246         <input type="text" [(ngModel)]="questionBankTopicFilter" name="questionBankTopicFilter" placeholder="Topic" />
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test/create-test.component.ts:31:16
+    31   templateUrl: './create-test.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestComponent.
+
+
+Error: src/app/features/admin/create-test/create-test.component.html:247:30 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+247         <input type="number" [(ngModel)]="questionBankMarksFilter" name="questionBankMarksFilter" placeholder="Marks" />
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/create-test/create-test.component.ts:31:16
+    31   templateUrl: './create-test.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component CreateTestComponent.
+
+
+Error: src/app/features/admin/linkedin-comment/linkedin-comment.component.html:18:32 - error NG8002: Can't bind to 'formGroup' since it isn't a known property of 'form'.
+
+18       <form class="admin-form" [formGroup]="form" (ngSubmit)="submit()">
+                                  ~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/linkedin-comment/linkedin-comment.component.ts:9:16
+    9   templateUrl: './linkedin-comment.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component LinkedinCommentComponent.
+
+
+Error: src/app/features/admin/linkedin-comment/linkedin-comment.component.html:50:30 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+50           <input type="text" [(ngModel)]="searchTerm" [placeholder]="searchPlaceholder" name="searchTerm" (keydown.enter)="search()" />
+                                ~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/linkedin-comment/linkedin-comment.component.ts:9:16
+    9   templateUrl: './linkedin-comment.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component LinkedinCommentComponent.
+
+
+Error: src/app/features/admin/linkedin-post/linkedin-post.component.html:18:32 - error NG8002: Can't bind to 'formGroup' since it isn't a known property of 'form'.
+
+18       <form class="admin-form" [formGroup]="form" (ngSubmit)="submit()">
+                                  ~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/linkedin-post/linkedin-post.component.ts:9:16
+    9   templateUrl: './linkedin-post.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component LinkedinPostComponent.
+
+
+Error: src/app/features/admin/linkedin-post/linkedin-post.component.html:46:30 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+46           <input type="text" [(ngModel)]="searchTerm" [placeholder]="searchPlaceholder" name="searchTerm" (keydown.enter)="search()" />
+                                ~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/linkedin-post/linkedin-post.component.ts:9:16
+    9   templateUrl: './linkedin-post.component.html',
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component LinkedinPostComponent.
+
+
+Error: src/app/features/admin/trainer/trainer.component.html:20:32 - error NG8002: Can't bind to 'formGroup' since it isn't a known property of 'form'.
+
+20       <form class="admin-form" [formGroup]="form" (ngSubmit)="submit()">
+                                  ~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/trainer/trainer.component.ts:9:16
+    9   templateUrl: "./trainer.component.html",
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TrainerComponent.
+
+
+Error: src/app/features/admin/training-admin/training-admin.component.html:18:32 - error NG8002: Can't bind to 'formGroup' since it isn't a known property of 'form'.
+
+18       <form class="admin-form" [formGroup]="form" (ngSubmit)="submit()">
+                                  ~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/training-admin/training-admin.component.ts:12:16
+    12   templateUrl: './training-admin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TrainingAdminComponent.
+
+
+Error: src/app/features/admin/training-admin/training-admin.component.html:71:30 - error NG8002: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+71           <input type="text" [(ngModel)]="searchTerm" [placeholder]="searchPlaceholder" name="searchTerm" (keydown.enter)="search()" />
+                                ~~~~~~~~~~~~~~~~~~~~~~~~
+
+  src/app/features/admin/training-admin/training-admin.component.ts:12:16
+    12   templateUrl: './training-admin.component.html',
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Error occurs in the template of component TrainingAdminComponent.
+
+
+
+√ Browser application bundle generation complete.
+√ Browser application bundle generation complete.
+√ Browser application bundle generation complete.
+√ Browser application bundle generation complete.
+√ Browser application bundle generation complete.

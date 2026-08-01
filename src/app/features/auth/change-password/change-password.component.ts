@@ -38,6 +38,10 @@ export class ChangePasswordComponent {
       })
       .subscribe({
         next: () => this.notifier.successToastr('Password changed successfully.'),
+        error: () => {
+          this.notifier.warningToastr('Unable to change the password. Check the current password and try again.');
+          this.isSubmitting = false;
+        },
         complete: () => {
           this.form.reset();
           this.isSubmitting = false;

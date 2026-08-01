@@ -75,7 +75,7 @@ describe('AdminManagementService', () => {
 
     service.uploadBulk('Test', file).subscribe((result) => expect(result).toBeNull());
 
-    const req = httpMock.expectOne(`${environment.apiBaseUrl}/Test/bulk-upload`);
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/Test/upload`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body instanceof FormData).toBeTrue();
     req.flush(null);

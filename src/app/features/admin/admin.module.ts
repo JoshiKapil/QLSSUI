@@ -10,6 +10,7 @@ import { CreateTestComponent } from './create-test/create-test.component';
 import { CreateQuestionComponent } from './create-question/create-question.component';
 import { PrintCertificateComponent } from './print-certificate/print-certificate.component';
 import { CreateTestQuestionsComponent } from './create-test-questions/create-test-questions.component';
+import { ApproveCertificateComponent } from './approve-certificate/approve-certificate.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { CreateTestQuestionsComponent } from './create-test-questions/create-tes
     CreateTestComponent,
     CreateQuestionComponent,
     PrintCertificateComponent,
-    CreateTestQuestionsComponent
+    CreateTestQuestionsComponent,
+    ApproveCertificateComponent
   ],
   imports: [SharedModule],
   exports: [
@@ -35,7 +37,8 @@ import { CreateTestQuestionsComponent } from './create-test-questions/create-tes
     CreateTestComponent,
     CreateQuestionComponent,
     PrintCertificateComponent,
-    CreateTestQuestionsComponent
+    CreateTestQuestionsComponent,
+    ApproveCertificateComponent
   ]
 })
 export class AdminModule {}

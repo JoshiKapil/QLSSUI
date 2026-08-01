@@ -1,4 +1,4 @@
-﻿import { HttpClient, HttpEventType, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { Training } from '../../../core/models/training.model';
@@ -132,7 +132,9 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
   }
 
   getTrainingLabel(training: Training): string {
-    return training.displayName.replace('Training','') || training.trainingName.replace('Training','') || String(training.trainingId || 'Training');
+    return String(training.displayName || '').trim()
+      || String(training.trainingName || '').trim()
+      || String(training.trainingId || 'Training');
   }
 
   getSelectedTrainingLabel(): string {
@@ -397,11 +399,14 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
     const sourceOptions = type === 'TRUE_FALSE' && !item.options.length
       ? [{ id: 'true', text: 'True' }, { id: 'false', text: 'False' }]
       : item.options;
-    const answerIds = item.answer.split(/[,;|]/).map((value) => value.trim().toLowerCase()).filter(Boolean);
+    const answerIds = (type === 'MCMA' ? item.answer.split('#') : [item.answer])
+      .map((value) => this.normalizeAnswerValue(value))
+      .filter(Boolean);
     const options: QuestionOptionDto[] = sourceOptions.map((option, optionIndex) => {
-      const id = option.id.toLowerCase();
+      const id = this.normalizeAnswerValue(option.id);
+      const optionText = this.normalizeAnswerValue(option.text);
       const correct = answerIds.some((answer) =>
-        answer.replace(/^option\s+/, '') === id || answer === option.text.toLowerCase()
+        answer.replace(/^option\s+/, '') === id || answer === optionText
       );
       return {
         id, text: option.text, imageUrl: '', audioUrl: '', videoUrl: '', imageAlt: '',
@@ -425,6 +430,11 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
     question.validationErrors = this.validate(question);
     return question;
   }
+
+  private normalizeAnswerValue(value: string): string {
+    return value.trim().toLowerCase();
+  }
+
 
   private validate(question: PreviewQuestion): string[] {
     const errors: string[] = [];

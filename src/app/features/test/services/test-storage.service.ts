@@ -1235,8 +1235,8 @@ export class TestStorageService {
       const saved = await this.apiPost<any>('results/submit', await this.toUserResultDto(normalizedSubmission));
       return String(saved?.submissionId || saved?.SubmissionId || '').trim() || null;
     } catch (error) {
-      this.logApiFallback('Save submission result', error);
-      return null;
+      this.logApiError('Save submission result', error);
+      throw new Error(this.getApiErrorMessage(error));
     }
   }
 

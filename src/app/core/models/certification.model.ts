@@ -22,6 +22,8 @@ export interface CertificationData {
   certificationNumber: string;
   name: string;
   trainingId: number;
+  trainingName?: string;
+  displayName?: string;
   date: string;
   batchNo: string;
   contactNo: string;

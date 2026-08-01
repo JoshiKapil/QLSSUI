@@ -34,7 +34,7 @@ describe('RegisterComponent', () => {
   });
 
   it('creates and enforces password match validation', () => {
-    component.form.patchValue({ passwordHash: 'abc123', confirmPassword: 'abc124' });
+    component.form.patchValue({ password: 'abc123', confirmPassword: 'abc124' });
 
     expect(component).toBeTruthy();
     expect(component.form.errors).toEqual({ passwordMismatch: true });
@@ -45,7 +45,7 @@ describe('RegisterComponent', () => {
     component.form.patchValue({
       name: 'New User',
       email: 'new@example.com',
-      passwordHash: 'abc123',
+      password: 'abc123',
       confirmPassword: 'abc123',
       phone: '9876543210',
       address: 'Main Street',
@@ -64,7 +64,7 @@ describe('RegisterComponent', () => {
     component.form.patchValue({
       name: 'New User',
       email: 'new@example.com',
-      passwordHash: 'abc123',
+      password: 'abc123',
       confirmPassword: 'abc123',
       phone: '9876543210',
       address: 'Main Street',

@@ -3,7 +3,7 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 export const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
 export const phonePattern = /^[0-9+\-\s()]{7,20}$/;
 
-export function passwordMatchValidator(passwordKey = 'passwordHash', confirmKey = 'confirmPassword'): ValidatorFn {
+export function passwordMatchValidator(passwordKey = 'password', confirmKey = 'confirmPassword'): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const password = control.get(passwordKey)?.value;
     const confirmPassword = control.get(confirmKey)?.value;

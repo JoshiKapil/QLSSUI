@@ -647,9 +647,15 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
   }
 
   getTrainingLabel(training: Training): string {
-    return training.trainingName || training.displayName || String(training.trainingId || 'Training');
+    return training.displayName || training.trainingName || String(training.trainingId || 'Training');
   }
 
+  getQuestionTrainingLabel(question: { trainingId?: unknown; trainingName?: string }): string {
+    const training = this.trainingList.find(
+      (item) => String(item.trainingId ?? '') === String(question.trainingId ?? '')
+    );
+    return training ? this.getTrainingLabel(training) : (question.trainingName || 'No training');
+  }
   openTrainingDropdown(): void {
     this.isTrainingDropdownOpen = true;
   }
@@ -789,16 +795,3 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
     return { id: `option-${Date.now()}-${Math.round(Math.random() * 10000)}`, text: '', imageUrl: '' };
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

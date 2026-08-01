@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpEvent, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpEvent, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -15,7 +15,6 @@ export class ApiClientService {
 
   get<T>(endpoint: string, params?: QueryParams): Observable<T> {
     return this.http.get<ApiResponse<T> | T>(this.url(endpoint), {
-      headers: this.getAuthHeaders(),
       params: this.toHttpParams(params)
     }).pipe(
       map((response) => this.unwrap<T>(response)),
@@ -25,7 +24,6 @@ export class ApiClientService {
 
   getBlob(endpoint: string): Observable<HttpResponse<Blob>> {
     return this.http.get(this.url(endpoint), {
-      headers: this.getAuthHeaders(),
       observe: 'response',
       responseType: 'blob'
     }).pipe(catchError((error) => this.handleError(error)));
@@ -33,7 +31,6 @@ export class ApiClientService {
 
   post<T>(endpoint: string, body: unknown, params?: QueryParams): Observable<T> {
     return this.http.post<ApiResponse<T> | T>(this.url(endpoint), body, {
-      headers: this.getAuthHeaders(),
       params: this.toHttpParams(params)
     }).pipe(
       map((response) => this.unwrap<T>(response)),
@@ -43,7 +40,6 @@ export class ApiClientService {
 
   postWithProgress<T>(endpoint: string, body: unknown): Observable<HttpEvent<T>> {
     return this.http.post<ApiResponse<T> | T>(this.url(endpoint), body, {
-      headers: this.getAuthHeaders(),
       observe: 'events',
       reportProgress: true
     }).pipe(
@@ -59,7 +55,6 @@ export class ApiClientService {
 
   put<T>(endpoint: string, body: unknown, params?: QueryParams): Observable<T> {
     return this.http.put<ApiResponse<T> | T>(this.url(endpoint), body, {
-      headers: this.getAuthHeaders(),
       params: this.toHttpParams(params)
     }).pipe(
       map((response) => this.unwrap<T>(response)),
@@ -70,7 +65,6 @@ export class ApiClientService {
   delete<T>(endpoint: string, body?: unknown, params?: QueryParams): Observable<T> {
     return this.http.delete<ApiResponse<T> | T>(this.url(endpoint), {
       body,
-      headers: this.getAuthHeaders(),
       params: this.toHttpParams(params)
     }).pipe(
       map((response) => this.unwrap<T>(response)),
@@ -95,20 +89,6 @@ export class ApiClientService {
     } catch (error) {
       return this.throwApiError(error);
     }
-  }
-
-  private getAuthHeaders(): HttpHeaders | undefined {
-    const token =
-      localStorage.getItem('qlss_auth_token') ||
-      sessionStorage.getItem('qlss_auth_token') ||
-      localStorage.getItem('token') ||
-      sessionStorage.getItem('token');
-
-    if (!token || token.startsWith('local-')) {
-      return undefined;
-    }
-
-    return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 
   private toHttpParams(params?: QueryParams): HttpParams | undefined {

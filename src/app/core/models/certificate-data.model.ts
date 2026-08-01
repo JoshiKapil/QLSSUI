@@ -13,4 +13,18 @@ export interface CertificateData {
   trainerName: string;
   dateOfIssue: string | Date;
 }
-
+export interface CertificatePrintRecord {
+  certificationDataId: number;
+  certificationNumber: string;
+  userName: string;
+  name: string;
+  trainingId: number;
+  trainingName: string;
+  issuedDate: string;
+  date: string;
+  location: string;
+  days: number;
+  totalPoints: number;
+  trainerName: string;
+  completionType?: CertificateCompletionType;
+}

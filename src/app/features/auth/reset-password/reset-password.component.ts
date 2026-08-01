@@ -48,6 +48,10 @@ export class ResetPasswordComponent {
           this.notifier.successToastr('Password reset successfully.');
           this.router.navigate(['/login']);
         },
+        error: () => {
+          this.notifier.warningToastr('Unable to reset the password. The reset link may be invalid or expired.');
+          this.isSubmitting = false;
+        },
         complete: () => (this.isSubmitting = false)
       });
   }
