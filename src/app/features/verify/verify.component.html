@@ -49,7 +49,7 @@
         <div class="verify-form">
           <div class="verify-input-wrap" id="inputWrap">
             <!-- <span class="verify-prefix" id="prefixPill">QLSS/IATF/IA/</span> -->
-            <input #certInput type="text" id="certInput" class="verify-input" placeholder="e.g. 001" autocomplete="off"
+            <input #certInput type="text" id="certInput" class="verify-input" placeholder="e.g. 24477 or QLSS/24477" autocomplete="off"
               spellcheck="false" aria-label="Certificate number" [(ngModel)]="CertificateNo" name="certificateNo" (keydown.enter)="ValidateFromApi()" />
             <button class="verify-clear" id="clearBtn" type="button" aria-label="Clear input" style="display: none"
               onclick="clearInput()">
@@ -84,6 +84,9 @@
               <p class="result-message">
                 The certificate is valid and issued to {{ UserData[0]?.UserName }} on
                 {{ formatIssuedDate(UserData[0]?.IssuedDate) }} for {{ UserData[0]?.DisplayName || UserData[0]?.displayName || UserData[0]?.TrainingName || UserData[0]?.trainingName }}.
+                <ng-container *ngIf="UserData[0]?.locationName || UserData[0]?.LocationName">
+                  Location: {{ UserData[0]?.locationName || UserData[0]?.LocationName }}.
+                </ng-container>
               </p>
               <div class="result-tags">
                 <!-- <span class="result-tag">

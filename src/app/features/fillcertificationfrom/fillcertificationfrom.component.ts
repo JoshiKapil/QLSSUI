@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+﻿import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { CertificationForm } from "../../core/models/certification-form.model";
@@ -8,7 +8,7 @@ import { NotifierService } from "../../core/services/notifier.service";
 import { TrainerService } from "../../core/services/trainer.service";
 import { Training } from "../../core/models/training.model";
 import { DataService } from "../../core/services/data.service";
-import { Client } from "../../core/models/client.model";
+import { Client, ClientCity } from "../../core/models/client.model";
 import { ClientManagementService } from "../../core/services/client-management.service";
 import { TrainingManagementService } from "../../core/services/training-management.service";
 import { Router } from "@angular/router";
@@ -33,6 +33,9 @@ export class FillcertificationfromComponent implements OnInit {
   companySearch = "";
   isCompanyDropdownOpen = false;
   selectedCompanyId = "";
+  citySearch = "";
+  isCityDropdownOpen = false;
+  selectedCityId = "";
   existingRecordId?: number;
 
   constructor(
@@ -63,6 +66,7 @@ export class FillcertificationfromComponent implements OnInit {
       trainingId: ["", Validators.required],
       trainerId: ["", Validators.required],
       location: ["", Validators.required],
+      cityId: [""],
       certificationDate: ["", Validators.required],
       isComplete: [{ value: false, disabled: true }],
       isPaid: [{ value: false, disabled: true }],
@@ -214,8 +218,23 @@ export class FillcertificationfromComponent implements OnInit {
     return selected?.clientName || "Select Company";
   }
 
+  get selectedCompanyCities(): ClientCity[] {
+    return this.companies.find(company => String(company.clientId) === this.selectedCompanyId)?.cities
+      ?.filter(city => city.isActive !== false) || [];
+  }
+
+  get filteredCities(): ClientCity[] {
+    const search = this.citySearch.trim().toLowerCase();
+    return this.selectedCompanyCities.filter(city => !search || city.cityName.toLowerCase().includes(search));
+  }
+
+  getSelectedCityLabel(): string {
+    return this.selectedCompanyCities.find(city => String(city.cityId) === this.selectedCityId)?.cityName || "Select City";
+  }
+
   toggleCompanyDropdown(): void {
     this.isCompanyDropdownOpen = !this.isCompanyDropdownOpen;
+    this.isCityDropdownOpen = false;
     if (this.isCompanyDropdownOpen) this.companySearch = "";
   }
 
@@ -223,8 +242,25 @@ export class FillcertificationfromComponent implements OnInit {
     this.selectedCompanyId = String(company.clientId);
     this.form.controls["location"].setValue(this.selectedCompanyId);
     this.form.controls["location"].markAsTouched();
+    this.selectedCityId = "";
+    this.form.controls["cityId"].setValue("");
     this.companySearch = company.clientName;
     this.isCompanyDropdownOpen = false;
+  }
+
+  toggleCityDropdown(): void {
+    if (!this.selectedCompanyId || !this.selectedCompanyCities.length) return;
+    this.isCityDropdownOpen = !this.isCityDropdownOpen;
+    this.isCompanyDropdownOpen = false;
+    if (this.isCityDropdownOpen) this.citySearch = "";
+  }
+
+  selectCity(city: ClientCity): void {
+    this.selectedCityId = String(city.cityId ?? "");
+    this.form.controls["cityId"].setValue(this.selectedCityId);
+    this.form.controls["cityId"].markAsTouched();
+    this.citySearch = city.cityName;
+    this.isCityDropdownOpen = false;
   }
 
   findExistingRecord(): void {
@@ -242,9 +278,11 @@ export class FillcertificationfromComponent implements OnInit {
           days: record.days,
           trainerId: String(record.trainerId),
           location: String(record.location),
+          cityId: record.cityId == null ? "" : String(record.cityId),
           certificationDate: record.date || record.certificationDate
         });
         this.selectedCompanyId = String(record.location || "");
+        this.selectedCityId = record.cityId == null ? "" : String(record.cityId);
         this.notifier.successToastr("Your existing exam form has been loaded.");
       },
       error: () => this.existingRecordId = undefined
@@ -280,6 +318,7 @@ export class FillcertificationfromComponent implements OnInit {
       batchNo: "",
       date: raw.certificationDate,
       location: raw.location,
+      cityId: raw.cityId ? Number(raw.cityId) : null,
       paymentDate: "",
       trainingId: Number(raw.trainingId),
     };
@@ -381,6 +420,7 @@ export class FillcertificationfromComponent implements OnInit {
       trainingId: "",
       trainerId: "",
       location: "",
+      cityId: "",
       certificationDate: "",
       isComplete: false,
       isPaid: false,
@@ -389,6 +429,9 @@ export class FillcertificationfromComponent implements OnInit {
     this.trainingSearch = "";
     this.trainingName = "";
     this.selectedCompanyId = "";
+    this.selectedCityId = "";
+    this.citySearch = "";
+    this.isCityDropdownOpen = false;
     this.companySearch = "";
     this.isCompanyDropdownOpen = false;
     this.existingRecordId = undefined;

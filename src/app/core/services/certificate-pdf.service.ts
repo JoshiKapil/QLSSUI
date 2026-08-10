@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { PDFDocument, PDFFont, PDFPage, RGB, StandardFonts, rgb } from 'pdf-lib';
 import { CertificateData } from '../models/certificate-data.model';
 import { CERTIFICATE_PDF_LAYOUT } from './certificate-pdf-layout.config';
+import * as QRCode from 'qrcode';
 
 @Injectable({ providedIn: 'root' })
 export class CertificatePdfService {
@@ -60,6 +61,7 @@ export class CertificatePdfService {
     this.drawDetailValue(page, data.location, regularFont, boldFont, layout.details.location, layout.verticalFlow.detailValueY);
     this.drawDetailValue(page, data.trainerName, regularFont, boldFont, layout.details.trainerName, layout.verticalFlow.detailValueY);
     this.drawDetailValue(page, this.formatDate(data.dateOfIssue), regularFont, boldFont, layout.dateOfIssue, layout.verticalFlow.dateValueY);
+    await this.drawQrCode(document, page, data.certificateNumber, regularFont);
 
     document.setTitle(`${data.trainingName} - ${data.userName}`);
     document.setSubject('Training completion certificate');
@@ -101,6 +103,47 @@ export class CertificatePdfService {
     document.body.appendChild(frame);
   }
 
+  private async drawQrCode(
+    document: PDFDocument,
+    page: PDFPage,
+    certificateNumber: string,
+    regularFont: PDFFont
+  ): Promise<void> {
+    const layout = CERTIFICATE_PDF_LAYOUT.qrCode;
+    const verificationUrl = layout.urlBase + '?certificate=' + encodeURIComponent(certificateNumber.trim());
+    const dataUrl = await QRCode.toDataURL(verificationUrl, {
+      errorCorrectionLevel: 'M',
+      margin: 4,
+      width: 512,
+      color: {
+        dark: '#000000',
+        light: '#FFFFFF'
+      }
+    });
+    const qrImage = await document.embedPng(dataUrl);
+
+    page.drawRectangle({
+      ...layout.originalQrMask,
+      color: CERTIFICATE_PDF_LAYOUT.colors.templatePaper
+    });
+    page.drawImage(qrImage, {
+      x: layout.x,
+      y: layout.y,
+      width: layout.size,
+      height: layout.size
+    });
+
+    const drawQrLabel = (text: string, font: PDFFont, y: number): void => {
+      page.drawText(text, {
+        x: layout.labelCenterX - font.widthOfTextAtSize(text, layout.labelFontSize) / 2,
+        y,
+        size: layout.labelFontSize,
+        font,
+        color: CERTIFICATE_PDF_LAYOUT.colors.body
+      });
+    };
+    drawQrLabel('SCAN QR CODE TO VERIFY', regularFont, layout.labelY);
+  }
   private async loadTemplate(): Promise<ArrayBuffer> {
     if (!this.templateBytes) {
       this.templateBytes = await firstValueFrom(this.http.get(this.templateUrl, { responseType: 'arraybuffer' }));
@@ -109,13 +152,13 @@ export class CertificatePdfService {
   }
 
   private getCompletionSentence(data: CertificateData): string {
-    if (data.completionType === 'attendance') {
-      return 'has successfully attended the training program on';
-    }
-    if (data.marks !== null && data.marks !== undefined && data.marks < (data.passingMarks ?? 60)) {
-      return 'has successfully attended the training program on';
-    }
-    return 'has successfully attended and completed the assessment on';
+   return 'has attended and successfully completed the assessment on';
+    // if (this.certificate.completionType === 'attendance') {
+    //   return 'has successfully attended the training program on';
+    // }
+    // return (this.certificate.marks ?? 0) >= (this.certificate.passingMarks ?? 60)
+    //   ? 'has successfully attended and completed the assessment on'
+    //   : 'has successfully attended the training program on';
   }
 
   private drawTopics(page: PDFPage, sourceTopics: string[], font: PDFFont): void {
@@ -127,13 +170,15 @@ export class CertificatePdfService {
       ? [...topics.slice(0, layout.maxItems - 1), topics.slice(layout.maxItems - 1).join(', ')]
       : topics;
 
+    // The template PNG already contains placeholder bullets and separators in
+    // this area. Cover only that artwork with the template-matched paper color
+    // before drawing the live topics, avoiding a bright white-looking panel.
     page.drawRectangle({
       x: layout.panel.x,
       y: layout.panel.y,
       width: layout.panel.width,
       height: layout.panel.height,
-      color: colors.white,
-      opacity: 1
+      color: colors.templatePaper
     });
 
     const count = visibleTopics.length;
@@ -172,7 +217,7 @@ export class CertificatePdfService {
           color: CERTIFICATE_PDF_LAYOUT.colors.body
         });
       });
-      if (layout.separatorThickness > 0 && index < visibleTopics.length - 1) {
+      if (layout.separatorThickness > 0) {
         const separatorY = rowCenterY - rowGap / 2;
         page.drawLine({
           start: { x: layout.separatorStartX, y: separatorY },
@@ -387,7 +432,6 @@ export class CertificatePdfService {
     if (missing.length) throw new Error(`Missing certificate fields: ${missing.join(', ')}`);
   }
 }
-
 
 
 

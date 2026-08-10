@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Subject, takeUntil } from 'rxjs';
 import * as JSZip from 'jszip';
 import { CertificateCompletionType, CertificateData, CertificatePrintRecord } from '../../../core/models/certificate-data.model';
-import { Client } from '../../../core/models/client.model';
+import { Client, ClientCity } from '../../../core/models/client.model';
 import { Training } from '../../../core/models/training.model';
 import { CertificatePdfService } from '../../../core/services/certificate-pdf.service';
 import { DataService } from '../../../core/services/data.service';
@@ -59,16 +59,19 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   companies: Client[] = [];
   bulkTrainingList: Training[] = [];
   selectedCompanyId = '';
+  selectedBulkCityId = '';
   selectedBulkTrainingId = '';
   isBulkGenerating = false;
   bulkProcessed = 0;
   bulkTotal = 0;
   bulkStatus = '';
   companySearch = '';
+  bulkCitySearch = '';
   bulkTrainingSearch = '';
   bulkTrainingName = '';
   bulkCoveredTopics = '';
   isCompanyDropdownOpen = false;
+  isBulkCityDropdownOpen = false;
   isBulkTrainingDropdownOpen = false;
 
   emailCompanyId = '';
@@ -86,6 +89,11 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   emailProcessed = 0;
   emailTotal = 0;
   emailStatus = '';
+
+  currentCertificateName = '';
+  correctedCertificateName = '';
+  confirmNameCorrection = false;
+  isCorrectingName = false;
 
   // Temporary data until the training-result API is connected.
   readonly users: CertificateUserOption[] = [
@@ -121,6 +129,47 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     this.revokePreviewUrl();
   }
 
+  get matchingNameRecords(): CertificatePrintRecord[] {
+    const currentName = this.currentCertificateName.trim().toLowerCase();
+    if (!currentName) return [];
+
+    return this.allUserData.filter((record) =>
+      Number(record.trainingId) > 0 &&
+      String(record.userName || record.name || '').trim().toLowerCase() === currentName
+    );
+  }
+
+  get nameSearchSuggestions(): CertificatePrintRecord[] {
+    const search = this.currentCertificateName.trim().toLowerCase();
+    if (search.length < 2 || this.matchingNameRecords.length) return [];
+
+    const names = new Set<string>();
+    return this.allUserData.filter((record) => {
+      if (Number(record.trainingId) <= 0) return false;
+
+      const name = String(record.userName || record.name || '').trim();
+      const searchable = `${name} ${record.email || ''} ${record.certificationNumber || ''}`.toLowerCase();
+      const key = name.toLowerCase();
+      if (!name || !searchable.includes(search) || names.has(key)) return false;
+
+      names.add(key);
+      return true;
+    }).slice(0, 10);
+  }
+
+  get canCorrectCertificateName(): boolean {
+    const currentName = this.currentCertificateName.trim();
+    const newName = this.correctedCertificateName.trim();
+    return Boolean(
+      currentName &&
+      newName &&
+      currentName.toLowerCase() !== newName.toLowerCase() &&
+      this.matchingNameRecords.length &&
+      this.confirmNameCorrection &&
+      !this.isCorrectingName
+    );
+  }
+
   get filteredTrainingList(): Training[] {
     const search = this.trainingSearch.trim().toLowerCase();
     if (!search) return this.trainingList;
@@ -148,12 +197,13 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
 
   get completionPreview(): string {
     if (!this.selectedUser) return 'Select a user to calculate the completion statement.';
-    if (this.certificate.completionType === 'attendance') {
-      return 'has successfully attended the training program on';
-    }
-    return (this.certificate.marks ?? 0) >= (this.certificate.passingMarks ?? 60)
-      ? 'has successfully attended and completed the assessment on'
-      : 'has successfully attended the training program on';
+    return 'has attended and successfully completed the assessment on';
+    // if (this.certificate.completionType === 'attendance') {
+    //   return 'has successfully attended the training program on';
+    // }
+    // return (this.certificate.marks ?? 0) >= (this.certificate.passingMarks ?? 60)
+    //   ? 'has successfully attended and completed the assessment on'
+    //   : 'has successfully attended the training program on';
   }
 
   get bulkPercentage(): number {
@@ -162,6 +212,22 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
 
   get selectedCompany(): Client | undefined {
     return this.companies.find((company) => String(company.clientId) === this.selectedCompanyId);
+  }
+
+  get selectedBulkCompanyCities(): ClientCity[] {
+    return this.selectedCompany?.cities?.filter(city => city.isActive !== false) || [];
+  }
+
+  get selectedBulkCity(): ClientCity | undefined {
+    return this.selectedBulkCompanyCities.find(city => String(city.cityId) === this.selectedBulkCityId);
+  }
+
+  get filteredBulkCities(): ClientCity[] {
+    const search = this.bulkCitySearch.trim().toLowerCase();
+    return this.selectedBulkCompanyCities.filter(city =>
+      this.allUserData.some(record => String(record.location) === this.selectedCompanyId && String(record.cityId ?? '') === String(city.cityId))
+      && (!search || city.cityName.toLowerCase().includes(search))
+    );
   }
 
   get selectedBulkTraining(): Training | undefined {
@@ -426,17 +492,39 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     if (!this.selectedCompanyId || this.isBulkGenerating) return;
     this.isBulkTrainingDropdownOpen = !this.isBulkTrainingDropdownOpen;
     this.isCompanyDropdownOpen = false;
+    this.isBulkCityDropdownOpen = false;
     if (this.isBulkTrainingDropdownOpen) this.bulkTrainingSearch = '';
   }
 
   selectCompany(company: Client): void {
     this.selectedCompanyId = String(company.clientId ?? '');
     this.selectedBulkTrainingId = '';
+    this.selectedBulkCityId = '';
     this.companySearch = company.clientName;
     this.bulkTrainingSearch = '';
+    this.bulkCitySearch = '';
     this.bulkTrainingName = '';
     this.bulkCoveredTopics = '';
     this.isCompanyDropdownOpen = false;
+    this.updateBulkTrainingList(this.allUserData);
+  }
+
+  toggleBulkCityDropdown(): void {
+    if (!this.selectedCompanyId || this.isBulkGenerating) return;
+    this.isBulkCityDropdownOpen = !this.isBulkCityDropdownOpen;
+    this.isCompanyDropdownOpen = false;
+    this.isBulkTrainingDropdownOpen = false;
+    if (this.isBulkCityDropdownOpen) this.bulkCitySearch = '';
+  }
+
+  selectBulkCity(city?: ClientCity): void {
+    this.selectedBulkCityId = String(city?.cityId ?? '');
+    this.selectedBulkTrainingId = '';
+    this.bulkCitySearch = city?.cityName || '';
+    this.bulkTrainingSearch = '';
+    this.bulkTrainingName = '';
+    this.bulkCoveredTopics = '';
+    this.isBulkCityDropdownOpen = false;
     this.updateBulkTrainingList(this.allUserData);
   }
 
@@ -459,6 +547,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   getBulkTrainingCertificateCount(training: Training): number {
     return this.allUserData.filter((record) =>
       String(record.location) === this.selectedCompanyId
+      && (!this.selectedBulkCityId || String(record.cityId ?? '') === this.selectedBulkCityId)
       && String(record.trainingId) === String(training.trainingId)
     ).length;
   }
@@ -560,7 +649,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
         user.issuedDate || user.date || user.certificationDate
       ),
       trainingHours: Number(user.days || 0) * 8,
-      location: user.location || '',
+      location: user.locationName || this.formatCertificateLocation(user.clientName || this.getClientName(user.location), user.cityName),
       trainerName: user.trainerName || '',
     };
     this.revokePreviewUrl();
@@ -573,8 +662,10 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
 
   clearBulkDownload(): void {
     this.selectedCompanyId = '';
+    this.selectedBulkCityId = '';
     this.selectedBulkTrainingId = '';
     this.companySearch = '';
+    this.bulkCitySearch = '';
     this.bulkTrainingSearch = '';
     this.bulkTrainingName = '';
     this.bulkCoveredTopics = '';
@@ -583,6 +674,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     this.bulkTotal = 0;
     this.bulkStatus = '';
     this.isCompanyDropdownOpen = false;
+    this.isBulkCityDropdownOpen = false;
     this.isBulkTrainingDropdownOpen = false;
   }
 
@@ -604,14 +696,17 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   }
   clearAll(): void {
     this.selectedCompanyId = '';
+    this.selectedBulkCityId = '';
     this.selectedBulkTrainingId = '';
     this.companySearch = '';
+    this.bulkCitySearch = '';
     this.bulkTrainingSearch = '';
     this.bulkTrainingList = [];
     this.bulkProcessed = 0;
     this.bulkTotal = 0;
     this.bulkStatus = '';
     this.isCompanyDropdownOpen = false;
+    this.isBulkCityDropdownOpen = false;
     this.isBulkTrainingDropdownOpen = false;
 
     this.emailCompanyId = '';
@@ -644,7 +739,12 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       this.revokePreviewUrl();
       this.previewObjectUrl = await this.pdfService.createPreviewUrl(this.certificate);
       this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.previewObjectUrl);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      requestAnimationFrame(() => {
+        document.getElementById('certificateLiveOutput')?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      });
     }, 'Certificate preview is ready.');
   }
 
@@ -895,6 +995,51 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     return `QLSS/${trainingCode}/${date.getFullYear()}/${sequence}`;
   }
 
+  selectCertificateName(record: CertificatePrintRecord): void {
+    this.currentCertificateName = String(record.userName || record.name || '').trim();
+    this.correctedCertificateName = '';
+    this.confirmNameCorrection = false;
+  }
+
+  async correctCertificateName(): Promise<void> {
+    if (!this.canCorrectCertificateName) return;
+
+    const currentName = this.currentCertificateName.trim();
+    const newName = this.correctedCertificateName.trim();
+    this.isCorrectingName = true;
+
+    try {
+      const result = await firstValueFrom(this.trainingService.correctCertificateName({
+        currentName,
+        newName
+      }));
+
+      if (!result.updatedCount) {
+        this.notifier.warningToastr('No matching records were found in Certifications_Data.');
+        return;
+      }
+
+      this.allUserData.forEach((record) => {
+        const recordName = String(record.userName || record.name || '').trim();
+        if (recordName.toLowerCase() === currentName.toLowerCase() && Number(record.trainingId) > 0) {
+          record.name = newName;
+          record.userName = newName;
+        }
+      });
+
+      this.getTrainingUsers();
+      this.currentCertificateName = newName;
+      this.correctedCertificateName = '';
+      this.confirmNameCorrection = false;
+      this.notifier.successToastr(`${result.updatedCount} certificate record(s) updated to ${newName}.`);
+    } catch (error) {
+      console.error('Certificate name correction failed.', error);
+      this.notifier.warningToastr('The certificate name could not be updated.', 'Update failed');
+    } finally {
+      this.isCorrectingName = false;
+    }
+  }
+
   private loadCertificateUsers(): void {
     // const reqHeader = new HttpHeaders({
     //   'Content-Type': 'application/json'
@@ -953,6 +1098,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     const trainingIds = new Set(
       records
         .filter((record) => String(record.location) === this.selectedCompanyId)
+        .filter((record) => !this.selectedBulkCityId || String(record.cityId ?? '') === this.selectedBulkCityId)
         .map((record) => String(record.trainingId))
     );
     this.bulkTrainingList = this.trainingList.filter(
@@ -963,6 +1109,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   private filterBulkRecords(records: CertificatePrintRecord[]): CertificatePrintRecord[] {
     return records.filter((record) =>
       String(record.location) === this.selectedCompanyId
+      && (!this.selectedBulkCityId || String(record.cityId ?? '') === this.selectedBulkCityId)
       && (!this.selectedBulkTrainingId || String(record.trainingId) === this.selectedBulkTrainingId)
       && !!String(record.certificationNumber || '').trim()
     );
@@ -991,12 +1138,23 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       trainingName,
       certificateNumber: record.certificationNumber,
       trainingHours: Number(record.days || 0) * 8,
-      location: record.location || '',
+      location: record.locationName || this.formatCertificateLocation(record.clientName || this.getClientName(record.location), record.cityName),
       trainerName: record.trainerName || '',
       dateOfIssue: this.toDateInputValue(record.issuedDate || record.date)
     };
   }
 
+  private getClientName(clientId: string | number | null | undefined): string {
+    const company = this.companies.find((item) => String(item.clientId) === String(clientId ?? ''));
+    return company?.clientName || String(clientId ?? '');
+  }
+
+  private formatCertificateLocation(clientName: string, cityName?: string): string {
+    return [clientName, cityName]
+      .map(value => String(value || '').trim())
+      .filter(Boolean)
+      .join(', ');
+  }
   private async chooseZipLocation(): Promise<SaveFileHandle | null> {
     const pickerWindow = window as FilePickerWindow;
     if (!pickerWindow.showSaveFilePicker) return null;

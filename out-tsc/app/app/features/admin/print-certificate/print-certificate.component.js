@@ -579,14 +579,16 @@ export class PrintCertificateComponent {
     }
     get completionPreview() {
         var _a, _b;
-        if (!this.selectedUser)
-            return 'Select a user to calculate the completion statement.';
-        if (this.certificate.completionType === 'attendance') {
-            return 'has successfully attended the training program on';
-        }
-        return ((_a = this.certificate.marks) !== null && _a !== void 0 ? _a : 0) >= ((_b = this.certificate.passingMarks) !== null && _b !== void 0 ? _b : 60)
-            ? 'has successfully attended and completed the assessment on'
-            : 'has successfully attended the training program on';
+        return 'has attended and successfully completed the assessment on';
+    
+        // if (!this.selectedUser)
+        //     return 'Select a user to calculate the completion statement.';
+        // if (this.certificate.completionType === 'attendance') {
+        //     return 'has successfully attended the training program on';
+        // }
+        // return ((_a = this.certificate.marks) !== null && _a !== void 0 ? _a : 0) >= ((_b = this.certificate.passingMarks) !== null && _b !== void 0 ? _b : 60)
+        //     ? 'has successfully attended and completed the assessment on'
+        //     : 'has successfully attended the training program on';
     }
     get bulkPercentage() {
         return this.bulkTotal ? Math.round((this.bulkProcessed / this.bulkTotal) * 100) : 0;

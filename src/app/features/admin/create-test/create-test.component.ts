@@ -36,8 +36,8 @@ export class CreateTestComponent implements OnInit, OnDestroy {
   questionTypes: CreateTestQuestionType[] = ['MCSA', 'MCMA', 'TRUE_FALSE', 'ESSAY'];
   difficulties: CreateTestDifficulty[] = ['Easy', 'Medium', 'Hard'];
   statuses: CreateTestStatus[] = ['Draft', 'Active', 'Inactive'];
-  testFileTypes: Array<'pre' | 'post' | 'assessment' | 'chalange'> = ['pre', 'post', 'assessment', 'chalange'];
-  testFileType: 'pre' | 'post' | 'assessment' | 'chalange' = 'assessment';
+  testFileTypes: Array<'pre' | 'post'> = ['pre', 'post'];
+  testFileType: 'pre' | 'post' = 'pre';
 
   testDetails: CreateTestDetails = this.createEmptyTestDetails();
   trainingList: Training[] = [];
@@ -959,7 +959,7 @@ export class CreateTestComponent implements OnInit, OnDestroy {
   private clearCreateTestForm(): void {
     this.clearTestSelection();
     this.clearQuestionForm();
-    this.testFileType = 'assessment';
+    this.testFileType = 'pre';
     this.showPreview = false;
     this.detailSubmitted = false;
     this.detailErrors = [];
@@ -980,9 +980,9 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     return `assets/test/${this.testFileType}`;
   }
 
-  private normalizeTestFileType(value: unknown): 'pre' | 'post' | 'assessment' | 'chalange' {
+  private normalizeTestFileType(value: unknown): 'pre' | 'post' {
     const normalized = String(value || '').trim().toLowerCase();
-    return normalized === 'pre' || normalized === 'post' || normalized === 'chalange' ? normalized : 'assessment';
+    return normalized === 'post' ? 'post' : 'pre';
   }
   buildPayload(): CreateTestPayload {
     const testTitle = this.getTrimmedValue(this.testDetails.testTitle);
@@ -1129,10 +1129,9 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       errors.push('Map at least 1 question to the test.');
     }
 
-    if (this.testFileType !== 'assessment') {
-      if (!this.testDetails.trainingId) {
-        errors.push('Training is required for Pre, Post, and Chalange tests.');
-      } else {
+    if (!this.testDetails.trainingId) {
+      errors.push('Training is required for Pre and Post tests.');
+    } else {
         const training = this.trainingList.find((item) =>
           String(item.trainingId ?? '') === String(this.testDetails.trainingId)
         );
@@ -1141,7 +1140,6 @@ export class CreateTestComponent implements OnInit, OnDestroy {
         if (linkedTestId && linkedTestId !== editingTestId) {
           errors.push(`This training already has a ${this.testFileType} test (Test ID: ${linkedTestId}).`);
         }
-      }
     }
 
     if (this.testDetails.totalQuestions && this.testDetails.totalQuestions < this.questions.length) {

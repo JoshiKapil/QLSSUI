@@ -489,3 +489,6 @@
 }
 
 
+
+.training-feedback-cta { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; margin-top: 26px; padding: 11px 22px; border-color: #075eff; border-radius: 10px; background: #075eff; color: #fff; font-weight: 800; box-shadow: 0 12px 24px rgba(7,94,255,.2); }
+.training-feedback-cta:hover { transform: translateY(-2px); background: #064fd6; color: #fff; }

@@ -92,7 +92,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let record of records; trackBy: trackByRecordId">
+          <tr *ngFor="let record of paginatedRecords; trackBy: trackByRecordId">
             <td>{{ record.trainingId }}</td>
             <td>{{ getTrainingLabel(record) }}</td>
             <td>{{ record.trainingDesc }}</td>
@@ -107,6 +107,26 @@
       <ng-template #emptyState>
         <div class="admin-loading">No records found.</div>
       </ng-template>
+      <nav class="training-pagination" *ngIf="records.length" aria-label="Training table pagination">
+        <div class="training-pagination__summary">
+          <span class="training-pagination__dot"></span>
+          Showing <strong>{{ firstVisibleRecord }}&ndash;{{ lastVisibleRecord }}</strong> of
+          <strong>{{ records.length }}</strong> trainings
+        </div>
+        <div class="training-pagination__pages" aria-label="Page numbers">
+          <button class="training-pagination__arrow" type="button" aria-label="Previous page" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
+          <button class="training-pagination__page" type="button" *ngFor="let page of pageNumbers" [class.training-pagination__page--active]="page === currentPage" [attr.aria-current]="page === currentPage ? 'page' : null" (click)="goToPage(page)">{{ page }}</button>
+          <button class="training-pagination__arrow" type="button" aria-label="Next page" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)"><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
+        </div>
+        <div class="training-pagination__tools">
+          <label>Rows <select [ngModel]="pageSize" (ngModelChange)="changePageSize($event)"><option [ngValue]="5">5</option><option [ngValue]="10">10</option><option [ngValue]="20">20</option><option [ngValue]="50">50</option></select></label>
+          <form class="training-pagination__jump" (ngSubmit)="submitGoToPage()">
+            <label for="trainingGoToPage">Go to</label>
+            <input id="trainingGoToPage" type="number" min="1" [max]="totalPages" [(ngModel)]="goToPageValue" name="goToPageValue" />
+            <button type="submit">Go</button>
+          </form>
+        </div>
+      </nav>
     </div>
   </div>
 </section>

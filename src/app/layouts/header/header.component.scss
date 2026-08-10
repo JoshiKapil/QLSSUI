@@ -111,6 +111,7 @@
     width: 100%;
     margin-left: 0;
     margin-top: 0.4rem;
+    max-width: 360px;
   }
 
   .account-nav-item {
@@ -118,6 +119,7 @@
   }
 
   .account-nav-item__link {
+    box-sizing: border-box;
     width: 100%;
     justify-content: space-between;
     padding: 0.75rem 0.2rem;
@@ -142,7 +144,97 @@
   }
 
   .account-nav-item__dropdown a {
-    padding: 0.7rem 0.85rem;
+    box-sizing: border-box;
+    max-width: none;
+    padding: 0.65rem 0.85rem;
+    width: 100%;
     color: #1f2937;
+  }
+}
+
+@media (max-width: 575px) {
+  .navbar-account,
+  .account-nav-item,
+  .account-nav-item__link {
+    width: 100%;
+  }
+
+  .account-nav-item__dropdown {
+    padding-left: 0;
+  }
+}
+
+/* Shared responsive navigation refinements */
+nav { min-width: 0; flex: 1 1 auto; }
+@media (min-width: 869px) {
+  .navbar-account { flex: 0 1 auto; }
+  .account-nav-item__link { font-size: clamp(13px, 1vw, 16px); white-space: nowrap; }
+}
+
+/* Match the logged-out header edge alignment without adding another capsule. */
+.navbar--logged-in .navbar-wrapper {
+  max-width: 1580px;
+}
+
+/* Center the complete signed-in navigation and scale spacing by viewport. */
+@media (min-width: 1181px) {
+  .navbar--logged-in .navbar-wrapper > nav {
+    display: flex;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .navbar--logged-in .navbar-menu {
+    width: auto;
+    max-width: 100%;
+    justify-content: center;
+    gap: clamp(10px, 0.8vw, 18px);
+    padding-left: clamp(22px, 1.8vw, 34px);
+    padding-right: clamp(22px, 1.8vw, 34px);
+  }
+
+  .navbar--logged-in .navbar-menu > a {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .navbar--logged-in .navbar-account {
+    gap: clamp(6px, 0.55vw, 11px);
+    margin-left: 2px;
+  }
+
+  .navbar--logged-in .account-nav-item__link {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+}
+
+@media (min-width: 869px) and (max-width: 1180px) {
+  .navbar--logged-in .navbar-wrapper > nav {
+    display: flex;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .navbar--logged-in .navbar-menu {
+    width: auto;
+    max-width: 100%;
+    justify-content: center;
+    gap: 3px;
+  }
+
+  .navbar--logged-in .navbar-account {
+    gap: 2px;
+  }
+}
+
+@media (max-width: 868px) {
+  .navbar--logged-in .navbar-wrapper {
+    max-width: 100%;
+  }
+
+  .navbar--logged-in .navbar-menu {
+    width: 100%;
+    max-width: none;
   }
 }

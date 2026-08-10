@@ -23,10 +23,10 @@ export const CERTIFICATE_PDF_LAYOUT = {
     metadataMuted: rgb(0.28, 0.31, 0.38)
   },
   verticalFlow: {
-    completionY: 225,
+    completionY: 232,
     trainingNameY: 198,
     detailValueY: 137,
-    dateValueY: 82
+    dateValueY: 78
   },
   userName: { centerX: 433, y: 258, fontSize: 44, maxWidth: 410 },
   completion: {
@@ -52,7 +52,7 @@ export const CERTIFICATE_PDF_LAYOUT = {
     fontReductionPerItem: 0.15,
     separatorStartX: 657,
     separatorEndX: 795,
-    separatorThickness: 0,
+    separatorThickness: 0.8,
     separatorDash: [1.2, 1.8],
     maxItems: 8,
     maxLinesPerItem: 2,
@@ -78,7 +78,8 @@ export const CERTIFICATE_PDF_LAYOUT = {
     location: { label: 'LOCATION', centerX: 518.25, maxWidth: 137, fontSize: 10.4, minimumFontSize: 8.2, maxLines: 2, lineHeight: 10, weight: 'bold' as const },
     trainerName: { label: 'TRAINER NAME', centerX: 680.75, maxWidth: 137, fontSize: 10.4, minimumFontSize: 8.2, maxLines: 2, lineHeight: 10, weight: 'bold' as const }
   },
-  dateOfIssue: { centerX: 220, fontSize: 9.4, minimumFontSize: 8, maxWidth: 93, maxLines: 1, lineHeight: 9, weight: 'regular' as const },
+  qrCode: { x: 625, y: 57, size: 50, originalQrMask: { x: 620, y: 53, width: 62, height: 57 }, urlBase: 'https://www.qlssconsulting.com/verify', labelCenterX: 650, labelY: 46, labelFontSize: 5.8 },
+  dateOfIssue: { centerX: 214, fontSize: 9.4, minimumFontSize: 8, maxWidth: 93, maxLines: 1, lineHeight: 9, weight: 'regular' as const },
   fileName: { fallback: 'training-certificate', maxSlugLength: 60 }
 } as const;
 

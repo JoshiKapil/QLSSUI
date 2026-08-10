@@ -1,0 +1,5 @@
+@import '../workspace.shared.scss';
+.enquiry-form{max-width:1180px}.attachment-zone{padding-top:2px}.quotation-choice{max-width:760px}.outcome-select{height:32px;max-width:170px;border:1px solid #d1deea;border-radius:9px;padding:5px 8px;background:#fff;color:#425d77;font-size:10px}.pm-file small{display:block;margin-top:2px}.pm-table td:nth-child(2){max-width:320px}.pm-table td:nth-child(4){max-width:220px}
+@media(max-width:640px){.enquiry-form,.quotation-choice{max-width:none}.outcome-select{max-width:none;flex:1}}
+.employee-assignment .pm-chip-grid { margin-top: 9px; }
+.selected-employee-summary { margin-top: 8px; padding: 9px 11px; border: 1px solid #cce5df; border-radius: 10px; background: #f0faf7; color: #315e55; font-size: 11px; }

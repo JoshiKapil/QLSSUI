@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PagedResult, Training } from '../models/training.model';
 import { ApiClientService } from './api-client.service';
-import { CertificatePrintRecord } from '../models/certificate-data.model';
+import { CertificateNameCorrectionRequest, CertificateNameCorrectionResponse, CertificatePrintRecord } from '../models/certificate-data.model';
 
 @Injectable({ providedIn: 'root' })
 export class TrainingManagementService {
@@ -16,7 +16,7 @@ export class TrainingManagementService {
   ) { }
 
   getAll(): Observable<Training[]> {
-    return this.getPaged(1, 500).pipe(map((response) => response.items || []));
+    return this.getPaged(1, 100).pipe(map((response) => response.items || []));
   }
 
   search(query: string): Observable<Training[]> {
@@ -44,5 +44,9 @@ export class TrainingManagementService {
 
   getCertificationData(): Observable<CertificatePrintRecord[]> {
     return this.apiClient.get<CertificatePrintRecord[]>(`/CertificationData`);
+  }
+
+  correctCertificateName(request: CertificateNameCorrectionRequest): Observable<CertificateNameCorrectionResponse> {
+    return this.apiClient.put<CertificateNameCorrectionResponse>('/CertificationData/correct-name', request);
   }
 }

@@ -44,9 +44,12 @@ export class LoginComponent {
         rememberMe: !!value.rememberMe
       })
       .subscribe({
-        next: () => {
+        next: (response) => {
           this.notifier.successToastr('Logged in successfully.');
-          this.router.navigate(['/']);
+          const role = (response.user?.role || '').trim().toLowerCase();
+          // Future: const workspaceRoles = ['admin', 'superadmin', 'employee', 'manager'];
+          const workspaceRoles = ['superadmin', 'employee', 'manager'];
+          this.router.navigate(workspaceRoles.includes(role) ? ['/workspace/dashboard'] : ['/']);
         },
         error: (error) => {
           this.errorMessage = 'Invalid email or password.';

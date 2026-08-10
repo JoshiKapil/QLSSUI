@@ -11,6 +11,7 @@ export class HeaderComponent implements OnDestroy {
   menuOpen = false;
   isLoggedIn = false;
   isAdmin = false;
+  hasWorkspaceAccess = false;
   userMenuOpen = false;
   adminMenuOpen = false;
   userName = 'User';
@@ -19,7 +20,8 @@ export class HeaderComponent implements OnDestroy {
   constructor(private authService: AuthService) {
     this.authService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
       this.isLoggedIn = this.authService.isLoggedIn();
-      this.isAdmin = (user?.role || '').toLowerCase() === 'admin';
+      this.isAdmin = this.authService.isAdmin();
+      this.hasWorkspaceAccess = this.authService.hasWorkspaceAccess();
       this.userName = user?.name || user?.email || 'User';
     });
   }

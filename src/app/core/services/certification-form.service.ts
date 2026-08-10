@@ -31,10 +31,11 @@ export class CertificationFormService {
     return this.api.get<CertificationForm>('certification-data/by-user-training', { email, trainingId });
   }
 
-  approve(certificationDataIds: number[], location = ''): Observable<CertificateApprovalResult> {
+  approve(certificationDataIds: number[], location = '', cityId: number | null = null): Observable<CertificateApprovalResult> {
     return this.api.post<CertificateApprovalResult>('certification-data/approve', {
       certificationDataIds,
-      location
+      location,
+      cityId
     });
   }
 

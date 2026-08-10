@@ -105,14 +105,15 @@ export class CertificatePdfService {
         });
     }
     getCompletionSentence(data) {
-        var _a;
-        if (data.completionType === 'attendance') {
-            return 'has successfully attended the training program on';
-        }
-        if (data.marks !== null && data.marks !== undefined && data.marks < ((_a = data.passingMarks) !== null && _a !== void 0 ? _a : 60)) {
-            return 'has successfully attended the training program on';
-        }
-        return 'has successfully attended and completed the assessment on';
+        var _a;        
+       return 'has attended and successfully completed the assessment on';
+        // if (data.completionType === 'attendance') {
+        //     return 'has successfully attended the training program on';
+        // }
+        // if (data.marks !== null && data.marks !== undefined && data.marks < ((_a = data.passingMarks) !== null && _a !== void 0 ? _a : 60)) {
+        //     return 'has successfully attended the training program on';
+        // }
+        // return 'has successfully attended and completed the assessment on';
     }
     drawTopics(page, sourceTopics, font) {
         const layout = CERTIFICATE_PDF_LAYOUT.topics;

@@ -1,0 +1,108 @@
+<div class="pm-page">
+  <header class="pm-head">
+    <div>
+      <div class="pm-head__eyebrow">Project command center</div>
+      <h1>{{ isSuperAdmin ? 'Business delivery at a glance' : 'Your project workspace' }}</h1>
+      <p>Enquiries, quotation approvals, delivery health, follow-ups and closure actions in one role-aware view.</p>
+    </div>
+    <div class="pm-actions">
+      <a class="pm-btn pm-btn--ghost" routerLink="/workspace/enquiries"><i class="fas fa-plus"></i> New enquiry</a>
+      <a *ngIf="isSuperAdmin" class="pm-btn pm-btn--soft" routerLink="/workspace/approvals"><i class="fas fa-shield-check"></i> Approval queue</a>
+      <button class="pm-btn pm-btn--primary" (click)="load()"><i class="fas fa-rotate"></i> Refresh</button>
+    </div>
+  </header>
+
+  <p *ngIf="error" class="pm-error">{{ error }}</p>
+  <section *ngIf="loading" class="pm-card dashboard-loading"><i class="fas fa-circle-notch fa-spin"></i> Loading project intelligence...</section>
+
+  <ng-container *ngIf="data && !loading">
+    <div class="metric-group">
+      <div class="metric-group__title"><span>Lead & quotation pipeline</span><small>From enquiry receipt to customer communication</small></div>
+      <div class="pm-kpis">
+        <a class="pm-kpi" routerLink="/workspace/enquiries"><span>New enquiries</span><strong>{{ data.summary.newEnquiries }}</strong><small>Action / allocation needed</small></a>
+        <a class="pm-kpi pm-kpi--teal" routerLink="/workspace/quotations"><span>Quotations in preparation</span><strong>{{ data.summary.quotationsUnderPreparation }}</strong><small>Draft or returned</small></a>
+        <a class="pm-kpi pm-kpi--warn" routerLink="/workspace/approvals"><span>Approval pending</span><strong>{{ data.summary.quotationsPendingApproval }}</strong><small>SuperAdmin action</small></a>
+        <a class="pm-kpi pm-kpi--teal" routerLink="/workspace/quotations"><span>Quotations sent</span><strong>{{ data.summary.quotationsSent }}</strong><small>Customer communication</small></a>
+      </div>
+    </div>
+
+    <div class="metric-group">
+      <div class="metric-group__title"><span>Delivery health</span><small>Assignment, timelines and activity execution</small></div>
+      <div class="pm-kpis">
+        <a class="pm-kpi pm-kpi--teal" routerLink="/workspace/projects"><span>Confirmed projects</span><strong>{{ data.summary.projectsConfirmed }}</strong><small>Ready / recently created</small></a>
+        <a class="pm-kpi pm-kpi--warn" routerLink="/workspace/projects"><span>Yet to assign</span><strong>{{ data.summary.projectsUnassigned }}</strong><small>Project leader missing</small></a>
+        <a class="pm-kpi" routerLink="/workspace/projects"><span>Active projects</span><strong>{{ data.summary.activeProjects }}</strong><small>Open delivery portfolio</small></a>
+        <a class="pm-kpi pm-kpi--danger" routerLink="/workspace/projects"><span>Delayed projects</span><strong>{{ data.summary.delayedProjects }}</strong><small>Past target date</small></a>
+      </div>
+    </div>
+
+    <div class="metric-group">
+      <div class="metric-group__title"><span>Pending activity control</span><small>Daily operational priorities</small></div>
+      <div class="pm-kpis">
+        <div class="pm-kpi pm-kpi--warn"><span>Due today</span><strong>{{ data.summary.activitiesDueToday }}</strong><small>Complete today</small></div>
+        <div class="pm-kpi"><span>Upcoming · 5 days</span><strong>{{ data.summary.activitiesUpcoming }}</strong><small>Prepare in advance</small></div>
+        <div class="pm-kpi pm-kpi--danger"><span>Overdue activities</span><strong>{{ data.summary.activitiesOverdue }}</strong><small>Immediate attention</small></div>
+        <div class="pm-kpi pm-kpi--teal"><span>Completed activities</span><strong>{{ data.summary.activitiesCompleted }}</strong><small>Recorded completion</small></div>
+      </div>
+    </div>
+
+    <div class="metric-group">
+      <div class="metric-group__title"><span>Closure & value</span><small>Completion, acknowledgment and portfolio value</small></div>
+      <div class="pm-kpis closure-kpis">
+        <div class="pm-kpi pm-kpi--warn"><span>Follow-ups due</span><strong>{{ data.summary.followUpsDue }}</strong><small>Quotation follow-up</small></div>
+        <div class="pm-kpi"><span>Near completion</span><strong>{{ data.summary.projectsNearCompletion }}</strong><small>Due within 5 days</small></div>
+        <div class="pm-kpi pm-kpi--warn"><span>Closure pending</span><strong>{{ data.summary.projectsPendingClosure }}</strong><small>Review / approval</small></div>
+        <div class="pm-kpi pm-kpi--warn"><span>Acknowledgment pending</span><strong>{{ data.summary.customerAcknowledgementPending }}</strong><small>Customer signed copy</small></div>
+        <div class="pm-kpi pm-kpi--teal"><span>Closed projects</span><strong>{{ data.summary.closedProjects }}</strong><small>Final closure complete</small></div>
+        <div class="pm-kpi value-kpi"><span>Active project value</span><strong>{{ data.summary.activeProjectValue | number:'1.0-0' }}</strong><small>Current open portfolio</small></div>
+      </div>
+    </div>
+
+    <div class="pm-grid dashboard-sections">
+      <section class="pm-card dashboard-sections__projects">
+        <div class="pm-section-head">
+          <div><h2>Projects requiring attention</h2><p>Target dates, delivery status and completion progress.</p></div>
+          <a class="pm-link" routerLink="/workspace/projects">View all projects</a>
+        </div>
+        <div class="pm-table-wrap">
+          <table class="pm-table">
+            <thead><tr><th>Project</th><th>Customer</th><th>Status</th><th>Progress</th><th>Next Activity</th><th>Pending</th><th>Target</th><th>Days</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let p of data.projects">
+                <td><strong>{{ p.projectNo }}</strong><br><small>{{ p.projectTitle }}</small></td>
+                <td>{{ p.customerName }}</td>
+                <td><span [class]="badge(p.status)">{{ p.status }}</span></td>
+                <td><strong>{{ p.completionPercent }}%</strong><div class="pm-progress"><i [style.width.%]="p.completionPercent"></i></div></td>
+                <td>{{ p.nextActivity || '—' }}</td>
+                <td><strong>{{ p.pendingActivities }}</strong></td>
+                <td>{{ p.targetCompletionDate | date:'dd-MM-yyyy' }}</td>
+                <td><span [class.pm-days--late]="p.daysRemaining < 0">{{ p.daysRemaining }}</span></td>
+              </tr>
+              <tr *ngIf="!data.projects.length"><td colspan="8" class="pm-empty">No project currently requires attention.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="pm-card dashboard-sections__actions">
+        <div class="pm-section-head"><div><h2>Activity priority</h2><p>Sorted by the nearest target date.</p></div></div>
+        <div *ngFor="let a of data.activities" [class]="activityClass(a)">
+          <div class="activity-card__icon"><i class="fas fa-list-check"></i></div>
+          <div><strong>{{ a.activityName }}</strong><small>{{ a.projectNo }} · {{ a.responsiblePerson || 'Unassigned' }}</small><small>{{ a.plannedCompletionDate | date:'dd-MM-yyyy' }}</small></div>
+          <span [class]="badge(a.status)">{{ a.status }}</span>
+        </div>
+        <div *ngIf="!data.activities.length" class="pm-empty">No pending activities.</div>
+      </section>
+
+      <section class="pm-card dashboard-sections__follow">
+        <div class="pm-section-head"><div><h2>Quotation follow-ups</h2><p>Customer follow-up schedule.</p></div><a class="pm-link" routerLink="/workspace/quotations">Open quotations</a></div>
+        <div class="follow-card" *ngFor="let f of data.followUps">
+          <div><strong>{{ f.quotationNo }}</strong><span>{{ f.customerName }}</span></div>
+          <div><small>Due</small><strong>{{ f.dueOnUtc | date:'dd-MM-yyyy HH:mm' }}</strong></div>
+          <span class="pm-badge pm-badge--warn">{{ f.status }}</span>
+        </div>
+        <div *ngIf="!data.followUps.length" class="pm-empty">No quotation follow-ups due.</div>
+      </section>
+    </div>
+  </ng-container>
+</div>

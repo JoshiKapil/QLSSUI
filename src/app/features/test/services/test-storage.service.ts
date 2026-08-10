@@ -882,7 +882,19 @@ export class TestStorageService {
       .set('email', email.trim())
       .set('trainingId', trainingId.trim());
     const response = await this.apiGet<any>('certification-data/validate-test-access', params);
-    return response?.isValid === true;
+    if (response?.isValid !== true) {
+      return false;
+    }
+
+    try {
+      const preSubmission = await this.loadSubmissionFileFromServer('pre', trainingId, email);
+      if (!preSubmission?.submittedAt) {
+        return false;
+      }
+      return new Date(preSubmission.submittedAt).getUTCFullYear() === new Date().getUTCFullYear();
+    } catch {
+      return false;
+    }
   }
 
   async exportTestDefinition(testName: string): Promise<Blob> {
@@ -1361,6 +1373,14 @@ export class TestStorageService {
 
   private mapApiTest(value: any): TestDefinition {
     const source = value?.test || value?.testDefinition || value || {};
+    let metadata: any = source.metadata || {};
+    if (source.metadataJson) {
+      try {
+        metadata = { ...metadata, ...JSON.parse(String(source.metadataJson)) };
+      } catch {
+        // Keep any structured metadata returned by the API when legacy JSON is invalid.
+      }
+    }
     const rawQuestionIds = this.pickArray(source, ['mappedQuestionIds', 'questionOrder', 'questionIds']);
     const questions = this.pickArray(source, ['questions', 'mappedQuestions', 'testQuestions']).map((question, index) => this.mapApiQuestion(question, index));
     const mappedQuestionIds = rawQuestionIds.length ? rawQuestionIds.map((id) => String(id)) : questions.map((question) => this.getQuestionKey(question));
@@ -1382,6 +1402,7 @@ export class TestStorageService {
       passingPercentage: Number(source.passingPercentage || source.passPercentage || 60),
       instructions: source.instructions || '',
       status: source.status || 'Active',
+      testFileType: source.testFileType || source.testType || metadata.testFileType || metadata.testType,
       mappedQuestionIds,
       questionOrder: mappedQuestionIds,
       totalQuestions: Number(source.totalQuestions || mappedQuestionIds.length || questions.length),

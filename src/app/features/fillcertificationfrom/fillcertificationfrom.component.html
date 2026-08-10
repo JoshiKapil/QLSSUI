@@ -1,4 +1,4 @@
-<section class="certification-form-page">
+﻿<section class="certification-form-page">
   <div class="container certification-form-shell">
     <div class="certification-form-header">
       <span class="auth-eyebrow">Assessment</span>
@@ -112,6 +112,27 @@
         </label>
 
 
+        <label class="form-field training-search-field">City (optional)
+          <div class="training-search-control">
+            <button class="btn btn-outline btn-small training-dropdown-toggle" type="button"
+              (click)="toggleCityDropdown()" [disabled]="!selectedCompanyId || !selectedCompanyCities.length"
+              [attr.aria-expanded]="isCityDropdownOpen">
+              {{ selectedCompanyCities.length ? getSelectedCityLabel() : (selectedCompanyId ? "No cities configured" : "Select company first") }}
+              <span class="dropdown-icon">&#9662;</span>
+            </button>
+            <div class="training-search-menu" *ngIf="isCityDropdownOpen">
+              <input type="text" [(ngModel)]="citySearch" [ngModelOptions]="{ standalone: true }"
+                placeholder="Search city" autocomplete="off" />
+              <button class="training-search-option" type="button"
+                *ngFor="let city of filteredCities" (mousedown)="selectCity(city)">
+                {{ city.cityName }}
+              </button>
+              <div class="training-search-empty" *ngIf="!filteredCities.length">No city found</div>
+            </div>
+          </div>
+          <small>{{ fieldError("cityId", "City") }}</small>
+        </label>
+
         <label class="form-field"
           >Days
           <input type="number" formControlName="days" min="1" />
@@ -124,15 +145,6 @@
           <small>{{ fieldError("certificationDate", "Date") }}</small>
         </label>
 
-        <label class="checkbox-field">
-          <input type="checkbox" formControlName="isComplete" />
-          IsComplete
-        </label>
-
-        <label class="checkbox-field">
-          <input type="checkbox" formControlName="isPaid" />
-          IsPaid
-        </label>
       </div>
 
       <div class="form-actions">

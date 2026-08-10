@@ -109,7 +109,17 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
-    return (this.currentUserSubject.value?.role || '').trim().toLowerCase() === 'admin';
+    return this.hasRole('Admin', 'SuperAdmin');
+  }
+
+  hasRole(...roles: string[]): boolean {
+    const currentRole = (this.currentUserSubject.value?.role || '').trim().toLowerCase();
+    return roles.some((role) => role.toLowerCase() === currentRole);
+  }
+
+  hasWorkspaceAccess(): boolean {
+    // Future: return this.hasRole('SuperAdmin', 'Admin', 'Manager', 'Employee');
+    return this.hasRole('SuperAdmin', 'Manager', 'Employee');
   }
 
   getToken(): string | null {

@@ -1,4 +1,7 @@
-<header class="navbar">
+<header
+  class="navbar"
+  [class.navbar--public]="!isLoggedIn"
+  [class.navbar--logged-in]="isLoggedIn">
   <div class="container navbar-wrapper">
     <!-- LEFT: Logo -->
     <div class="navbar-logo">
@@ -13,7 +16,6 @@
           <img src="assets/logos/logo.png" alt="QLSS Logo" />
           <!-- <span>Business Consulting</span> -->
         </div>
-
         <!-- <a (click)="closeMenu()" routerLink="/">Home</a> -->
         <a (click)="closeMenu()" routerLink="/training" routerLinkActive="active-link">Training</a>
         <a (click)="closeMenu()" routerLink="/expertise" routerLinkActive="active-link">Expertise</a>
@@ -24,10 +26,16 @@
 
         <div *ngIf="isLoggedIn" class="navbar-account">          
 
+          <div *ngIf="hasWorkspaceAccess" class="account-nav-item">
+            <a class="account-nav-item__link account-nav-item__link--secondary" (click)="closeMenu()" routerLink="/workspace/dashboard" routerLinkActive="active-link">
+              <i class="fas fa-chart-pie account-nav-item__icon"></i><span>Workspace</span>
+            </a>
+          </div>
+
           <div *ngIf="isAdmin" class="account-nav-item account-nav-item--admin" [class.account-nav-item--open]="adminMenuOpen" (mouseenter)="adminMenuOpen = true" (mouseleave)="adminMenuOpen = false">
             <a class="account-nav-item__link account-nav-item__link--secondary" (click)="toggleAdminMenu($event)" href="javascript:void(0)">
               <span>Admin</span>
-              <span class="account-nav-item__caret">▾</span>
+              <span class="account-nav-item__caret">&#9662;</span>
             </a>
             <div class="account-nav-item__dropdown account-nav-item__dropdown--admin">
               <a (click)="closeMenu()" routerLink="/admin/trainings" routerLinkActive="active-link"><i class="fas fa-book"></i> Trainings</a>
@@ -47,7 +55,7 @@
             <a class="account-nav-item__link" (click)="toggleUserMenu($event)" href="javascript:void(0)">
               <i class="fas fa-user-circle account-nav-item__icon"></i>
               <span>{{ truncatedUserName }}</span>
-              <span class="account-nav-item__caret">▾</span>
+              <span class="account-nav-item__caret">&#9662;</span>
             </a>
 
             <div class="account-nav-item__dropdown">
@@ -68,7 +76,8 @@
     <!-- RIGHT: Button + Hamburger -->
     <div class="navbar-right">
       <a (click)="closeMenu()" routerLink="/verify" routerLinkActive="active-link" class="btn btn-primary navbar-btn vrfbtn">
-        Verify Certificate
+        <i *ngIf="isLoggedIn" class="fas fa-certificate" aria-hidden="true"></i>
+        <span>Verify Certificate</span>
       </a>
 
       <button type="button" class="navbar-toggle" [class.active]="menuOpen" (click)="toggleMenu()" aria-label="Toggle navigation">
@@ -79,5 +88,3 @@
     </div>
   </div>
 </header>
-
-

@@ -1,0 +1,67 @@
+<div class="pm-page">
+  <header class="pm-head">
+    <div><div class="pm-head__eyebrow">Lead intake</div><h1>Enquiry Management</h1><p>Capture the complete customer requirement, allocate the QLSS team, keep source documents and move the enquiry through quotation outcomes.</p></div>
+    <div class="pm-actions"><button class="pm-btn pm-btn--primary" (click)="newEnquiry()"><i class="fas fa-plus"></i> New enquiry</button></div>
+  </header>
+
+  <p *ngIf="error" class="pm-error">{{ error }}</p>
+  <p *ngIf="success" class="pm-success">{{ success }}</p>
+
+  <section *ngIf="showForm" class="pm-panel enquiry-form">
+    <div class="pm-panel__head">
+      <div><h2>{{ editing ? 'Edit enquiry · ' + editing.enquiryNo : 'Register new enquiry' }}</h2><p class="pm-subtle">Fields from the approved QLSS Project Management workflow are kept together here.</p></div>
+      <button class="pm-btn pm-btn--ghost" (click)="showForm=false">Close</button>
+    </div>
+    <div class="pm-panel__body">
+      <div class="pm-form">
+        <div class="pm-field"><label>Existing customer <small>optional</small></label><pm-search-select [(ngModel)]="form.clientId" (ngModelChange)="onClientChange()" [options]="lookups?.clients || []" placeholder="New / not linked"></pm-search-select></div>
+        <div class="pm-field"><label>Customer name *</label><input [(ngModel)]="form.customerName" maxlength="250"></div>
+        <div class="pm-field"><label>Contact person</label><input [(ngModel)]="form.contactPerson"></div>
+        <div class="pm-field"><label>Email ID</label><input type="email" [(ngModel)]="form.emailId"></div>
+        <div class="pm-field"><label>Contact number</label><input [(ngModel)]="form.contactNumber"></div>
+        <div class="pm-field"><label>Enquiry date</label><input type="date" [(ngModel)]="form.enquiryDate"></div>
+        <div class="pm-field"><label>Enquiry category *</label><pm-search-select [(ngModel)]="form.categoryId" [options]="lookups?.categories || []" placeholder="Select service"></pm-search-select></div>
+        <div class="pm-field"><label>Expected timeline</label><input [(ngModel)]="form.expectedTimeline" placeholder="e.g. 6 weeks / Q3 2026"></div>
+        <div class="pm-field"><label>Expected start</label><input type="date" [(ngModel)]="form.expectedStartDate"></div>
+        <div class="pm-field"><label>Expected completion</label><input type="date" [(ngModel)]="form.expectedCompletionDate"></div>
+        <div class="pm-field pm-field--full"><label>Requirement / scope *</label><textarea [(ngModel)]="form.requirementScope" placeholder="Customer requirement, standard, site, deliverables and agreed scope..."></textarea></div>
+        <div class="pm-field pm-field--full employee-assignment">
+  <label>Assign to employee(s) <small>Select one or more people. Accounts with the User role are excluded.</small></label>
+  <pm-search-select
+    [(ngModel)]="form.assigneeUserIds"
+    [options]="assignableEmployees"
+    [multiple]="true"
+    labelKey="name"
+    detailKey="email"
+    placeholder="Select employee(s)">
+  </pm-search-select>
+  <div class="selected-employee-summary" *ngIf="selectedEmployeeNames"><strong>Assigned to:</strong> {{ selectedEmployeeNames }}</div>
+</div>
+        <div class="pm-field pm-field--full"><label>Remarks</label><textarea [(ngModel)]="form.remarks"></textarea></div>
+        <div class="pm-field pm-field--full" *ngIf="!editing"><label>Initial attachment <small>optional · max 10 MB</small></label><div class="pm-upload"><i class="fas fa-paperclip"></i><input type="file" (change)="fileSelected($event)"><span *ngIf="pendingFile">{{ pendingFile.name }}</span></div></div>
+      </div>
+
+      <div *ngIf="editing" class="pm-divider"></div>
+      <div *ngIf="editing" class="attachment-zone">
+        <div class="pm-section-head"><div><h3>Enquiry attachments</h3><p>Customer mail, requirement sheet, scope documents or supporting files.</p></div></div>
+        <div class="pm-upload"><i class="fas fa-cloud-arrow-up"></i><input type="file" (change)="uploadToEditing($event)"></div>
+        <div class="pm-file-list"><div class="pm-file" *ngFor="let f of attachments"><div><strong>{{ f.originalFileName }}</strong><small>{{ f.fileSizeBytes / 1024 | number:'1.0-0' }} KB · {{ f.uploadedOnUtc | date:'dd-MM-yyyy HH:mm' }}</small></div><button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="downloadAttachment(f)">Download</button></div><div *ngIf="!attachments.length" class="pm-subtle">No attachment uploaded.</div></div>
+      </div>
+    </div>
+    <div class="pm-panel__foot"><button class="pm-btn pm-btn--ghost" (click)="showForm=false">Cancel</button><button class="pm-btn pm-btn--primary" [disabled]="saving" (click)="save()"><i class="fas fa-floppy-disk"></i> {{ saving ? 'Saving...' : 'Save enquiry' }}</button></div>
+  </section>
+
+  <section *ngIf="quoteFor" class="pm-panel quotation-choice">
+    <div class="pm-panel__head"><div><h3>Create quotation · {{ quoteFor.enquiryNo }}</h3><p class="pm-subtle">Choose the ready template that best matches {{ quoteFor.categoryName }}.</p></div><button class="pm-btn pm-btn--ghost" (click)="quoteFor=undefined">Close</button></div>
+    <div class="pm-panel__body"><div class="pm-form"><div class="pm-field pm-field--full"><label>Quotation template</label><pm-search-select [(ngModel)]="quotationTemplateId" [options]="lookups?.quotationTemplates || []" placeholder="No template · use enquiry scope"></pm-search-select></div></div></div>
+    <div class="pm-panel__foot"><button class="pm-btn pm-btn--primary" (click)="makeQuote()"><i class="fas fa-file-invoice-dollar"></i> Create draft quotation</button></div>
+  </section>
+
+  <section class="pm-card">
+    <div class="pm-filterbar"><input class="pm-filterbar__grow" [(ngModel)]="search" placeholder="Search enquiry, customer, category or scope..."><select [(ngModel)]="statusFilter"><option value="">All statuses</option><option>Enquiry Received</option><option>Quotation Preparation Pending</option><option>Quotation Under Preparation</option><option>Quotation Sent</option><option>Follow-Up Pending</option><option>Quotation Under Discussion</option><option>Quotation Revised</option><option>Project Confirmed</option><option>Project Not Received</option><option>Lost / Closed</option></select><span class="pm-subtle">{{ filteredItems.length }} record(s)</span></div>
+    <div class="pm-table-wrap"><table class="pm-table"><thead><tr><th>Enquiry</th><th>Customer / scope</th><th>Category</th><th>Assigned team</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+      <tr *ngFor="let x of filteredItems"><td><strong>{{ x.enquiryNo }}</strong><br><small>{{ x.enquiryDate | date:'dd-MM-yyyy' }}</small></td><td><strong>{{ x.customerName }}</strong><br><small>{{ x.requirementScope }}</small></td><td>{{ x.categoryName }}</td><td><span *ngFor="let u of x.assignees; let last=last">{{ u.name }}<span *ngIf="!last">, </span></span><small *ngIf="!x.assignees?.length">Unassigned</small></td><td><span [class]="badge(x.status)">{{ x.status }}</span></td><td><div class="pm-actions"><button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="edit(x)">Edit</button><button class="pm-btn pm-btn--primary pm-btn--sm" (click)="chooseQuotation(x)" [disabled]="x.status==='Project Confirmed' || x.status==='Lost / Closed'">Quotation</button><select class="outcome-select" [ngModel]="''" (ngModelChange)="$event && updateOutcome(x,$event)"><option value="">Outcome...</option><option>Quotation Under Discussion</option><option>Project Not Received</option><option>Lost / Closed</option></select></div></td></tr>
+      <tr *ngIf="!filteredItems.length"><td colspan="6" class="pm-empty">No enquiries match the current filter.</td></tr>
+    </tbody></table></div>
+  </section>
+</div>

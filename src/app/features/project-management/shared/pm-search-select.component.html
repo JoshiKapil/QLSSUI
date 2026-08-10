@@ -1,0 +1,25 @@
+﻿<div class="pm-search-select" [class.is-open]="open">
+  <button class="pm-search-select__toggle" type="button" (click)="toggleDropdown()" [disabled]="disabled" [attr.aria-expanded]="open">
+    <span [class.placeholder]="!selectedOptions.length">{{ displayText }}</span>
+    <span class="pm-search-select__actions">
+      <span *ngIf="allowClear && selectedOptions.length" class="clear-selection" role="button" aria-label="Clear selection" (click)="clear($event)"><i class="fas fa-times"></i></span>
+      <i class="fas fa-chevron-down"></i>
+    </span>
+  </button>
+
+  <div class="pm-search-select__menu" *ngIf="open">
+    <label class="pm-search-select__search">
+      <i class="fas fa-search"></i>
+      <input [(ngModel)]="search" placeholder="Search..." autocomplete="off" (click)="$event.stopPropagation()">
+    </label>
+
+    <button class="pm-search-select__option" type="button" *ngFor="let option of filteredOptions" (click)="select(option)" [class.selected]="selected(option)">
+      <i *ngIf="multiple" class="selection-box fas" [ngClass]="selected(option) ? 'fa-check-square' : 'fa-square'"></i>
+      <span><strong>{{ label(option) }}</strong><small *ngIf="detail(option)">{{ detail(option) }}</small></span>
+      <i *ngIf="!multiple && selected(option)" class="fas fa-check"></i>
+    </button>
+
+    <p *ngIf="!filteredOptions.length">No matching option found.</p>
+  </div>
+</div>
+

@@ -1,10 +1,10 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer, Meta, SafeResourceUrl, Title } from '@angular/platform-browser';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+// import { HttpClient, HttpHeaders } from '@angular/common/http'; // Training.json path disabled.
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { SiteInteractionsService } from '../../core/services/site-interactions.service';
-import { DataService } from '../../core/services/data.service';
+// import { DataService } from '../../core/services/data.service'; // Training.json path disabled.
 import emailjs from '@emailjs/browser';
 import { NotifierService } from 'src/app/core/services/notifier.service';
 import { TrainingManagementService } from '../../core/services/training-management.service';
@@ -66,8 +66,8 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
     private interactions: SiteInteractionsService,
     private title: Title,
     private meta: Meta,
-    private _HttpClient: HttpClient,
-    private dataService: DataService,
+    // private _HttpClient: HttpClient, // Training.json path disabled.
+    // private dataService: DataService, // Training.json path disabled.
     private trainingService: TrainingManagementService,
     private notifierService: NotifierService,
     private sanitizer: DomSanitizer,
@@ -197,33 +197,35 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
   //       name: 'Dr. Aris Thorne',
   //       title: 'Title Science',
   //       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=100'
-  GetData(): void {
-    alert(1)
-    const reqHeader = new HttpHeaders({
-      ETag: 'f88dd058fe004909615a64f01be66a7',
-      'Content-Type': 'application/json'
-    });
-
-    this._HttpClient
-      .get('assets/Training.json', { headers: reqHeader, responseType: 'text' })
-      .pipe(takeUntil(this.Destroy$))
-      .subscribe({
-        next: (data: any) => {
-          const decrypted = this.dataService.decrypt(data);
-          this.TrainingList = decrypted?.Table || [];
-          this.TrainingList = this.TrainingList.sort((a, b) => Number(a.DisplayOrder) - Number(b.DisplayOrder));
-          this.filteredTrainings = [...this.TrainingList];
-          this.buildCategoryList();
-          this.isLoading = false;
-        },
-        error: () => {
-          this.TrainingList = [];
-          this.isLoading = false;
-        }
-      });
-  }
-
-  // Future API integration: uncomment this method and call it instead of GetData().
+  // Legacy Training.json reader retained as comments only.
+  // GetData(): void {
+  // alert(1)
+  // const reqHeader = new HttpHeaders({
+  // ETag: 'f88dd058fe004909615a64f01be66a7',
+  // 'Content-Type': 'application/json'
+  // });
+  //
+  // this._HttpClient
+  // .get('assets/Training.json', { headers: reqHeader, responseType: 'text' })
+  // .pipe(takeUntil(this.Destroy$))
+  // .subscribe({
+  // next: (data: any) => {
+  // const decrypted = this.dataService.decrypt(data);
+  // this.TrainingList = decrypted?.Table || [];
+  // this.TrainingList = this.TrainingList.sort((a, b) => Number(a.DisplayOrder) - Number(b.DisplayOrder));
+  // this.filteredTrainings = [...this.TrainingList];
+  // this.buildCategoryList();
+  // this.isLoading = false;
+  // },
+  // error: () => {
+  // this.TrainingList = [];
+  // this.isLoading = false;
+  // }
+  // });
+  // }
+  //
+  //
+  // Active path: database-backed API with server-side memory caching.
   GetDataFromApi(): void {
     this.isLoading = true;
     this.trainingService

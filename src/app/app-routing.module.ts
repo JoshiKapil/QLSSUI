@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { AdminGuard } from './core/guards/admin.guard';
 import { AuthGuard } from './core/guards/auth.guard';
+import { WorkspaceGuard } from './core/guards/workspace.guard';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { ForgotPasswordComponent } from './features/auth/forgot-password/forgot-password.component';
@@ -21,6 +22,7 @@ import { PrintCertificateComponent } from './features/admin/print-certificate/pr
 import { CreateTestQuestionsComponent } from './features/admin/create-test-questions/create-test-questions.component';
 import { DemoComponent } from './features/demo/demo.component';
 import { ApproveCertificateComponent } from './features/admin/approve-certificate/approve-certificate.component';
+import { PrintCertificationNewComponent } from './features/admin/print-certification-new/print-certification-new.component';
 
 const routes: Routes = [
   {
@@ -44,8 +46,11 @@ const routes: Routes = [
   { path: 'admin/create-test-questions', component: CreateTestQuestionsComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: 'admin/question-bank', component: CreateQuestionComponent , canActivate: [AuthGuard, AdminGuard] },
   { path: 'admin/print-certificate', component: PrintCertificateComponent },
+ // { path: 'admin/printcertificationnew', component: PrintCertificationNewComponent },
   { path: 'admin/approve-certificate', component: ApproveCertificateComponent, canActivate: [AuthGuard, AdminGuard] },
   //{ path: 'demo', component: DemoComponent },
+  // Future Admin access: hasWorkspaceAccess() contains the commented Admin role.
+  { path: 'workspace', canActivate: [AuthGuard, WorkspaceGuard], loadChildren: () => import('./features/project-management/project-management.module').then((m) => m.ProjectManagementModule) },
   { path: '', loadChildren: () => import('./features/home/home.module').then((m) => m.HomeModule) },
   { path: 'about', loadChildren: () => import('./features/about/about.module').then((m) => m.AboutModule) },
   { path: 'training', loadChildren: () => import('./features/training/training.module').then((m) => m.TrainingModule) },

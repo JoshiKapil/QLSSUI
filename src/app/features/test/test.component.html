@@ -79,7 +79,6 @@
           <select [(ngModel)]="testType" [disabled]="directEntryLoading">
             <option value="pre">Pre Test</option>
             <option value="post">Post Test</option>
-            <option value="assessment">Assessment</option>
           </select>
         </label>
       </div>
@@ -101,7 +100,7 @@
 
     <ng-container *ngIf="!isDirectEntry && !isAdmin && !isSubmitted && !isLoadingTest && questions.length;">
       <div class="test-layout">
-        <main class="test-panel">
+        <main class="test-panel" #questionPanel>
           <div class="question-top">
             <div class="question-heading">
               <span>Question {{ currentQuestion.questionNo }} of {{ questions.length }}</span>

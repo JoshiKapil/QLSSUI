@@ -11,6 +11,7 @@ import { CreateQuestionComponent } from './create-question/create-question.compo
 import { PrintCertificateComponent } from './print-certificate/print-certificate.component';
 import { CreateTestQuestionsComponent } from './create-test-questions/create-test-questions.component';
 import { ApproveCertificateComponent } from './approve-certificate/approve-certificate.component';
+import { PrintCertificationNewComponent } from './print-certification-new/print-certification-new.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { ApproveCertificateComponent } from './approve-certificate/approve-certi
     CreateQuestionComponent,
     PrintCertificateComponent,
     CreateTestQuestionsComponent,
-    ApproveCertificateComponent
+    ApproveCertificateComponent,
+    PrintCertificationNewComponent
   ],
   imports: [SharedModule],
   exports: [

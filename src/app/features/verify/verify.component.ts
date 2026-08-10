@@ -1,5 +1,6 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 import { Meta, Title } from '@angular/platform-browser';
 import { SiteInteractionsService } from '../../core/services/site-interactions.service';
 import { CertificationData } from '../../core/models/certification.model';
@@ -10,7 +11,7 @@ import { CertificationService } from '../../core/services/certification.service'
   templateUrl: './verify.component.html',
   styleUrls: ['./verify.component.scss']
 })
-export class VerifyComponent implements AfterViewInit {
+export class VerifyComponent implements OnInit, AfterViewInit {
   CertificateNo = '';
   UserData: any[] = [];
   Certificate = false;
@@ -20,7 +21,8 @@ export class VerifyComponent implements AfterViewInit {
     private interactions: SiteInteractionsService,
     private title: Title,
     private meta: Meta,
-    private certificationService: CertificationService
+    private certificationService: CertificationService,
+    private route: ActivatedRoute
   ) {
     this.title.setTitle('Verify Certificate - QLSS Consulting');
     this.meta.updateTag({
@@ -29,6 +31,13 @@ export class VerifyComponent implements AfterViewInit {
     });
   }
 
+  ngOnInit(): void {
+    const certificateNumber = this.route.snapshot.queryParamMap.get('certificate')?.trim();
+    if (certificateNumber) {
+      this.CertificateNo = certificateNumber;
+      this.ValidateFromApi();
+    }
+  }
   ngAfterViewInit(): void {
     this.interactions.initPage();
   }
@@ -45,8 +54,12 @@ export class VerifyComponent implements AfterViewInit {
       this.resultMessage = 'Please enter a certificate number.';
       return;
     }
+
+    // Certificates may be entered as either the complete value
+    // (for example QLSS/IATF/IA/23011) or only their numeric part.
+    const searchNumber = this.getCertificateSearchNumber(certificationNumber);
   
-    this.certificationService.getByNumber(certificationNumber).subscribe({
+    this.certificationService.getByNumber(searchNumber).subscribe({
       next: (item: CertificationData) => {
         const certificate = {
           ...item,
@@ -66,6 +79,15 @@ export class VerifyComponent implements AfterViewInit {
       }
     });
   }
+
+  private getCertificateSearchNumber(certificationNumber: string): string {
+    return certificationNumber
+      .split('/')
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .pop() ?? certificationNumber;
+  }
+
   formatIssuedDate(value: string | null | undefined): string {
   if (!value) {
     return '';

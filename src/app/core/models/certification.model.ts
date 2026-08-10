@@ -29,4 +29,8 @@ export interface CertificationData {
   contactNo: string;
   email: string;
   location: string;
+  cityId?: number | null;
+  cityName?: string;
+  clientName?: string;
+  locationName?: string;
 }

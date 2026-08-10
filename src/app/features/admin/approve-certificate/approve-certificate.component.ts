@@ -1,5 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { Client } from '../../../core/models/client.model';
+import { Client, ClientCity } from '../../../core/models/client.model';
 import { CertificationForm } from '../../../core/models/certification-form.model';
 import { ClientManagementService } from '../../../core/services/client-management.service';
 import { CertificationFormService } from '../../../core/services/certification-form.service';
@@ -22,20 +22,26 @@ export class ApproveCertificateComponent implements OnInit {
   trainings: Training[] = [];
   trainers: Trainer[] = [];
   importCompanyId = '';
+  importCityId = '';
   importTrainingId = '';
   importTrainerId = '';
   importTrainingSearch = '';
   importTrainerSearch = '';
   importCompanySearch = '';
+  importCitySearch = '';
   importTrainingDropdownOpen = false;
   importTrainerDropdownOpen = false;
   importCompanyDropdownOpen = false;
+  importCityDropdownOpen = false;
   selectedIds = new Set<number>();
   selectedCompanyId = '';
   selectedUserId = '';
   companySearch = '';
   userSearch = '';
   companyDropdownOpen = false;
+  cityDropdownOpen = false;
+  selectedCityId = '';
+  citySearch = '';
   userDropdownOpen = false;
   loading = false;
   approving = false;
@@ -66,7 +72,7 @@ export class ApproveCertificateComponent implements OnInit {
       error: () => this.notifier.warningToastr('Training dropdown could not be loaded.')
     });
     this.trainerService.getAll().subscribe(trainers => {
-      this.trainers = (trainers || []).filter(trainer => trainer.isActive !== false).sort((a, b) => a.name.localeCompare(b.name));
+      this.trainers = (trainers || []).filter(trainer => trainer.isActive !== false).sort((a, b) => Number(a.trainerId || 0) - Number(b.trainerId || 0));
     });
   }
 
@@ -109,6 +115,16 @@ export class ApproveCertificateComponent implements OnInit {
       !search || [company.clientName, company.clientId].join(' ').toLowerCase().includes(search));
   }
 
+  get selectedImportCompanyCities(): ClientCity[] {
+    return this.companies.find(company => String(company.clientId) === this.importCompanyId)?.cities
+      ?.filter(city => city.isActive !== false) || [];
+  }
+
+  get filteredImportCities(): ClientCity[] {
+    const search = this.importCitySearch.trim().toLowerCase();
+    return this.selectedImportCompanyCities.filter(city => !search || city.cityName.toLowerCase().includes(search));
+  }
+
   selectedImportTrainingLabel(): string {
     const selected = this.trainings.find(training => String(training.trainingId) === this.importTrainingId);
     return selected ? this.trainingLabel(selected) : 'Select training';
@@ -122,15 +138,22 @@ export class ApproveCertificateComponent implements OnInit {
     return this.companies.find(company => String(company.clientId) === this.importCompanyId)?.clientName || 'Select company';
   }
 
-  toggleImportDropdown(type: 'training' | 'trainer' | 'company'): void {
+  selectedImportCityLabel(): string {
+    return this.selectedImportCompanyCities.find(city => String(city.cityId) === this.importCityId)?.cityName || 'Select city';
+  }
+
+  toggleImportDropdown(type: 'training' | 'trainer' | 'company' | 'city'): void {
     this.companyDropdownOpen = false;
+    this.cityDropdownOpen = false;
     this.userDropdownOpen = false;
     this.importTrainingDropdownOpen = type === 'training' ? !this.importTrainingDropdownOpen : false;
     this.importTrainerDropdownOpen = type === 'trainer' ? !this.importTrainerDropdownOpen : false;
     this.importCompanyDropdownOpen = type === 'company' ? !this.importCompanyDropdownOpen : false;
+    this.importCityDropdownOpen = type === 'city' ? !this.importCityDropdownOpen : false;
     if (type === 'training') this.importTrainingSearch = '';
     if (type === 'trainer') this.importTrainerSearch = '';
     if (type === 'company') this.importCompanySearch = '';
+    if (type === 'city') this.importCitySearch = '';
   }
 
   selectImportTraining(training: Training): void {
@@ -148,6 +171,13 @@ export class ApproveCertificateComponent implements OnInit {
   selectImportCompany(company: Client): void {
     this.importCompanyId = String(company.clientId || '');
     this.importCompanyDropdownOpen = false;
+    this.importCityId = '';
+    this.clearImport();
+  }
+
+  selectImportCity(city: ClientCity): void {
+    this.importCityId = String(city.cityId || '');
+    this.importCityDropdownOpen = false;
     this.clearImport();
   }
 
@@ -161,7 +191,9 @@ export class ApproveCertificateComponent implements OnInit {
     this.importTrainingDropdownOpen = false;
     this.importTrainerDropdownOpen = false;
     this.importCompanyDropdownOpen = false;
+    this.importCityDropdownOpen = false;
     this.companyDropdownOpen = false;
+    this.cityDropdownOpen = false;
     this.userDropdownOpen = false;
   }
 
@@ -170,7 +202,9 @@ export class ApproveCertificateComponent implements OnInit {
     this.importTrainingDropdownOpen = false;
     this.importTrainerDropdownOpen = false;
     this.importCompanyDropdownOpen = false;
+    this.importCityDropdownOpen = false;
     this.companyDropdownOpen = false;
+    this.cityDropdownOpen = false;
     this.userDropdownOpen = false;
   }
 
@@ -179,6 +213,20 @@ export class ApproveCertificateComponent implements OnInit {
     return this.records.filter(record =>
       (!this.selectedCompanyId || String(record.location) === this.selectedCompanyId) &&
       (!search || record.name.toLowerCase().includes(search) || record.email.toLowerCase().includes(search)));
+  }
+
+  get selectedCompanyCities(): ClientCity[] {
+    return this.companies.find(company => String(company.clientId) === this.selectedCompanyId)?.cities
+      ?.filter(city => city.isActive !== false) || [];
+  }
+
+  get filteredCities(): ClientCity[] {
+    const search = this.citySearch.trim().toLowerCase();
+    return this.selectedCompanyCities.filter(city => !search || city.cityName.toLowerCase().includes(search));
+  }
+
+  selectedCityName(): string {
+    return this.selectedCompanyCities.find(city => String(city.cityId) === this.selectedCityId)?.cityName || 'Select city';
   }
 
   get visibleRecords(): CertificationForm[] {
@@ -221,7 +269,24 @@ export class ApproveCertificateComponent implements OnInit {
   selectCompany(companyId: string | number): void {
     this.selectedCompanyId = String(companyId);
     this.selectedUserId = '';
+    this.selectedCityId = '';
     this.companyDropdownOpen = false;
+  }
+
+  toggleCityDropdown(): void {
+    if (!this.selectedCompanyId) {
+      this.notifier.warningToastr('Select a company first.');
+      return;
+    }
+    this.cityDropdownOpen = !this.cityDropdownOpen;
+    this.companyDropdownOpen = false;
+    this.userDropdownOpen = false;
+    if (this.cityDropdownOpen) this.citySearch = '';
+  }
+
+  selectCity(city: ClientCity): void {
+    this.selectedCityId = String(city.cityId || '');
+    this.cityDropdownOpen = false;
   }
 
   toggleUserDropdown(): void {
@@ -270,7 +335,7 @@ export class ApproveCertificateComponent implements OnInit {
     const ids = this.selectedUserId
       ? [Number(this.selectedUserId)]
       : Array.from(this.selectedIds);
-    this.approve(ids, '');
+    this.approve(ids, this.selectedCompanyId);
   }
 
   approveCompany(): void {
@@ -311,8 +376,9 @@ export class ApproveCertificateComponent implements OnInit {
   }
 
   uploadImport(): void {
-    if (!this.importTrainingId || !this.importTrainerId || !this.importCompanyId) {
-      this.notifier.warningToastr('Training, trainer, and company are mandatory for upload.');
+    if (!this.importTrainingId || !this.importTrainerId || !this.importCompanyId ||
+        (this.selectedImportCompanyCities.length > 0 && !this.importCityId)) {
+      this.notifier.warningToastr('Training, trainer, company, and city are mandatory for upload.');
       return;
     }
     if (!this.importRecords.length || this.importErrors.length) {
@@ -325,7 +391,8 @@ export class ApproveCertificateComponent implements OnInit {
       ...record,
       trainingId: Number(this.importTrainingId),
       trainerId: Number(this.importTrainerId),
-      location: this.importCompanyId
+      location: this.importCompanyId,
+      cityId: this.importCityId ? Number(this.importCityId) : null
     }));
     this.certificationService.import(records).pipe(
       finalize(() => this.importing = false)
@@ -344,8 +411,9 @@ export class ApproveCertificateComponent implements OnInit {
 
   private readImportFile(file: File): void {
     this.clearImport();
-    if (!this.importTrainingId || !this.importTrainerId || !this.importCompanyId) {
-      this.importErrors = ['Select the training, trainer, and company before choosing the Excel file.'];
+    if (!this.importTrainingId || !this.importTrainerId || !this.importCompanyId ||
+        (this.selectedImportCompanyCities.length > 0 && !this.importCityId)) {
+      this.importErrors = ['Select the training, trainer, company, and city before choosing the Excel file.'];
       return;
     }
     this.importFileName = file.name;
@@ -416,6 +484,7 @@ export class ApproveCertificateComponent implements OnInit {
         contactNo: this.excelValue(row, 'ContactNo'),
         email,
         location: this.importCompanyId,
+        cityId: this.importCityId ? Number(this.importCityId) : null,
         days,
         totalPoints,
         trainerId,
@@ -452,8 +521,12 @@ export class ApproveCertificateComponent implements OnInit {
       this.notifier.warningToastr('Select one or more users.');
       return;
     }
+    if (this.selectedCompanyCities.length && !this.selectedCityId) {
+      this.notifier.warningToastr('Select a city for the company.');
+      return;
+    }
     this.approving = true;
-    this.certificationService.approve(ids, location).subscribe({
+    this.certificationService.approve(ids, location, this.selectedCityId ? Number(this.selectedCityId) : null).subscribe({
       next: result => {
         this.notifier.successToastr(`${result.approvedCount} certificate(s) approved.`);
         this.selectedIds.clear();

@@ -146,8 +146,21 @@ export class TestComponent implements OnInit, OnDestroy {
       this.loadResultDropdownData();
     }
     if (!this.isAdmin) {
-      this.loadTestForAttempt(String(startTestData?.testId || '').trim() || this.testName);
+      this.loadAuthorizedTestForAttempt(String(startTestData?.testId || '').trim() || this.testName);
     }
+  }
+
+  private async loadAuthorizedTestForAttempt(testIdentifier: string): Promise<void> {
+    if (this.testType === 'post') {
+      const isAllowed = await this.testStorage.validatePostTestAccess(this.username, this.startTrainingId);
+      if (!isAllowed) {
+        this.isLoadingTest = false;
+        this.testLoadWarning = 'Complete the Pre test for this training before starting the Post test.';
+        return;
+      }
+    }
+
+    this.loadTestForAttempt(testIdentifier);
   }
 
   private async loadDirectEntryData(): Promise<void> {
@@ -222,7 +235,7 @@ export class TestComponent implements OnInit, OnDestroy {
       if (this.testType === 'post') {
         const isAllowed = await this.testStorage.validatePostTestAccess(email, this.selectedTrainingId);
         if (!isAllowed) {
-          this.directEntryMessage = 'This email is not registered for the selected training.';
+          this.directEntryMessage = 'Complete the Pre test for this training before starting the Post test.';
           return;
         }
       }
@@ -762,7 +775,12 @@ export class TestComponent implements OnInit, OnDestroy {
     this.saveCurrentQuestionTime();
     this.currentQuestionIndex = index;
     this.startQuestionVisit();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    requestAnimationFrame(() => {
+      document.querySelector<HTMLElement>('.test-panel')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    });
   }
 
   goToQuestion(index: number): void {

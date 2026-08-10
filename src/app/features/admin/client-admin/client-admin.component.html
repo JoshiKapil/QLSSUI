@@ -112,6 +112,26 @@
           <input type="number" formControlName="displayOrder" />
           <small>{{ fieldError("displayOrder", "Display Order") }}</small>
         </label>
+        <div class="form-field city-manager">
+          <span>Cities</span>
+          <div class="city-manager__entry">
+            <input type="text" [(ngModel)]="cityName" [ngModelOptions]="{ standalone: true }"
+              placeholder="e.g. Pune" (keydown.enter)="$event.preventDefault(); saveCity()" />
+            <button class="btn btn-outline btn-small" type="button" (click)="saveCity()">
+              {{ editingCityIndex === null ? "Add City" : "Update City" }}
+            </button>
+          </div>
+          <div class="city-manager__list" *ngIf="cities.length">
+            <div class="city-manager__item" *ngFor="let city of cities; let index = index">
+              <span>{{ city.cityName }}</span>
+              <span>
+                <button class="table-link" type="button" (click)="editCity(index)">Edit</button>
+                <button class="table-link danger" type="button" (click)="removeCity(index)">Remove</button>
+              </span>
+            </div>
+          </div>
+          <small *ngIf="!cities.length">Add one or more cities for this company.</small>
+        </div>
         <div class="admin-actions">
           <button class="btn btn-primary" type="submit" [disabled]="isSaving">
             {{ isSaving ? "Saving..." : selectedRecord ? "Update" : "Save" }}
@@ -148,6 +168,7 @@
           <thead>
             <tr>
               <th>Company Name</th>
+              <th>Cities</th>
               <!-- <th>Description</th> -->
               <th>Image</th>
               <!-- <th>Display Order</th>
@@ -156,8 +177,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let record of records; trackBy: trackByRecordId">
+            <tr *ngFor="let record of paginatedRecords; trackBy: trackByRecordId">
               <td>{{ record.clientName }}</td>
+              <td>{{ getCityNames(record) }}</td>
               <!-- <td>{{ record.clientNameDesc }}</td> -->
               <td>
                 <img
@@ -206,10 +228,47 @@
         <ng-template #emptyState
           ><div class="admin-loading">No clients found.</div></ng-template
         >
+        <nav class="client-pagination" *ngIf="records.length" aria-label="Company table pagination">
+          <div class="client-pagination__summary">
+            <span class="client-pagination__dot"></span>
+            Showing <strong>{{ firstVisibleRecord }}–{{ lastVisibleRecord }}</strong> of
+            <strong>{{ records.length }}</strong> companies
+          </div>
+
+          <div class="client-pagination__pages" aria-label="Page numbers">
+            <button class="client-pagination__arrow" type="button" aria-label="Previous page"
+              [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+              <i class="fas fa-chevron-left" aria-hidden="true"></i>
+            </button>
+            <button class="client-pagination__page" type="button" *ngFor="let page of pageNumbers"
+              [class.client-pagination__page--active]="page === currentPage"
+              [attr.aria-current]="page === currentPage ? 'page' : null" (click)="goToPage(page)">
+              {{ page }}
+            </button>
+            <button class="client-pagination__arrow" type="button" aria-label="Next page"
+              [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+              <i class="fas fa-chevron-right" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <div class="client-pagination__tools">
+            <label>Rows
+              <select [ngModel]="pageSize" (ngModelChange)="changePageSize($event)">
+                <option [ngValue]="5">5</option>
+                <option [ngValue]="10">10</option>
+                <option [ngValue]="20">20</option>
+                <option [ngValue]="50">50</option>
+              </select>
+            </label>
+            <form class="client-pagination__jump" (ngSubmit)="submitGoToPage()">
+              <label for="clientGoToPage">Go to</label>
+              <input id="clientGoToPage" type="number" min="1" [max]="totalPages"
+                [(ngModel)]="goToPageValue" name="goToPageValue" />
+              <button type="submit">Go</button>
+            </form>
+          </div>
+        </nav>
       </div>
     </div>
   </div>
 </section>
-
-
-

@@ -30,8 +30,8 @@ export class ResultComponent implements OnInit {
   resultMessage = '';
   selectedUsername = '';
   selectedTraining = '';
-  selectedTestType: 'pre' | 'post' | 'assessment' | '' = '';
-  testTypes: Array<'pre' | 'post' | 'assessment'> = ['pre', 'post', 'assessment'];
+  selectedTestType: 'pre' | 'post' | '' = '';
+  testTypes: Array<'pre' | 'post'> = ['pre', 'post'];
   users: string[] = [];
   trainings: ResultTrainingOption[] = [];
 
@@ -116,6 +116,10 @@ export class ResultComponent implements OnInit {
   }
 
   async loadSelectedResult(): Promise<void> {
+    if (!this.selectedTestType) {
+      return;
+    }
+    const selectedTestType = this.selectedTestType;
     this.isLoadingResult = true;
     this.resultMessage = '';
 
@@ -126,7 +130,7 @@ export class ResultComponent implements OnInit {
       //   this.selectedTraining
       // );
       const submission = await this.testStorage.loadSubmissionFileFromServer(
-        this.selectedTestType as 'pre' | 'post' | 'assessment',
+        selectedTestType,
         this.selectedTraining,
         this.selectedUsername
       );

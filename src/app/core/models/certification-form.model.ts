@@ -14,6 +14,10 @@ export interface CertificationForm {
   contactNo: string;
   email: string;
   location: string;
+  cityId?: number | null;
+  cityName?: string;
+  clientName?: string;
+  locationName?: string;
   days: number;
   totalPoints?: number;
   trainerId: number;

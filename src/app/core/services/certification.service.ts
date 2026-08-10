@@ -49,8 +49,15 @@ export class CertificationService {
   }
 
   getByNumber(certificationNumber: string): Observable<CertificationData> {
+    const searchNumber = certificationNumber
+      .trim()
+      .split('/')
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .pop() ?? '';
+
     return this.apiClient.get<CertificationData>(
-      `${this.certificationDataEndpoint}/by-number/${encodeURIComponent(certificationNumber)}`
+      `${this.certificationDataEndpoint}/by-number/${encodeURIComponent(searchNumber)}`
     );
   }
 }

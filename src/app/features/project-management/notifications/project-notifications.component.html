@@ -1,0 +1,68 @@
+<div class="pm-page notifications-page">
+  <header class="pm-head">
+    <div>
+      <div class="pm-head__eyebrow">{{ isSuperAdmin ? 'SuperAdmin notification control' : 'Your action inbox' }}</div>
+      <h1>{{ isSuperAdmin ? 'All User Notifications' : 'My Notifications' }}</h1>
+      <p *ngIf="!isSuperAdmin">Only notifications assigned to your signed-in account are shown here.</p>
+      <p *ngIf="isSuperAdmin">Organization-wide view of every user's project notification and action status.</p>
+    </div>
+    <button class="pm-btn pm-btn--ghost" (click)="load()"><i class="fas fa-rotate"></i> Refresh</button>
+  </header>
+
+  <p *ngIf="error" class="pm-error">{{ error }}</p>
+
+  <div class="notification-access-note" [class.notification-access-note--admin]="isSuperAdmin">
+    <i class="fas" [ngClass]="isSuperAdmin ? 'fa-shield-halved' : 'fa-user-lock'"></i>
+    <div>
+      <strong>{{ isSuperAdmin ? 'SuperAdmin access' : 'Private notification view' }}</strong>
+      <span *ngIf="isSuperAdmin">You can view and open notifications for every workspace user.</span>
+      <span *ngIf="!isSuperAdmin">Your account cannot view or update another user's notifications.</span>
+    </div>
+  </div>
+
+  <div class="notification-summary">
+    <div><span>Notifications</span><strong>{{ items.length }}</strong></div>
+    <div><span>Unread / action required</span><strong>{{ unread }}</strong></div>
+    <div *ngIf="isSuperAdmin"><span>Users represented</span><strong>{{ recipientCount }}</strong></div>
+  </div>
+
+  <section class="pm-card notification-shell">
+    <div class="pm-filterbar">
+      <input
+        class="pm-filterbar__grow"
+        [(ngModel)]="search"
+        [placeholder]="isSuperAdmin ? 'Search notification, user or email...' : 'Search your notifications...'" />
+      <div class="pm-tabs">
+        <button class="pm-tab" [class.active]="filter === 'all'" (click)="filter = 'all'">All</button>
+        <button class="pm-tab" [class.active]="filter === 'unread'" (click)="filter = 'unread'">Unread {{ unread }}</button>
+      </div>
+    </div>
+
+    <div class="notification-list">
+      <button
+        *ngFor="let notification of filtered"
+        class="notification"
+        [class.notification--new]="!notification.isRead"
+        (click)="open(notification)">
+        <div class="notification__icon"><i class="fas" [ngClass]="icon(notification)"></i></div>
+        <div class="notification__content">
+          <div>
+            <strong>{{ notification.title }}</strong>
+            <span *ngIf="!notification.isRead">Action</span>
+          </div>
+          <p>{{ notification.message }}</p>
+          <div class="notification__meta">
+            <small>{{ notification.createdOnUtc | date:'dd-MM-yyyy HH:mm' }} · {{ notification.notificationType }}</small>
+            <small *ngIf="isSuperAdmin" class="notification__recipient">
+              <i class="fas fa-user"></i>
+              {{ notification.recipientName || notification.recipientEmail || ('User #' + notification.recipientUserId) }}
+            </small>
+          </div>
+        </div>
+        <i class="fas fa-chevron-right notification__go"></i>
+      </button>
+
+      <div *ngIf="!filtered.length" class="pm-empty">No notifications match this view.</div>
+    </div>
+  </section>
+</div>

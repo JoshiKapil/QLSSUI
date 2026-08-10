@@ -130,8 +130,7 @@
       width: 100%;
     }
   }
-
-  // â”€â”€ MOBILE FULLSCREEN OVERLAY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // MOBILE FULLSCREEN OVERLAY
   @include tablet {
     position: fixed;
     inset: 0;
@@ -223,7 +222,7 @@
   }
 }
 
-// â”€â”€ Mobile menu inner header (brand strip) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Mobile menu inner header (brand strip)
 
 .navbar-menu__header {
   display: none;
@@ -259,7 +258,7 @@
   }
 }
 
-// â”€â”€ Mobile-only CTA inside menu â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Mobile-only CTA inside menu
 
 .navbar-menu__cta {
   @include tablet {
@@ -407,4 +406,170 @@
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
 }
 
+/* Shared header finish */
+.navbar {
+  padding: 12px 0;
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid rgba(28, 86, 145, 0.08);
+  box-shadow: 0 8px 30px rgba(12, 47, 84, 0.08);
+  backdrop-filter: blur(18px);
+}
 
+.navbar-wrapper {
+  gap: clamp(10px, 1.5vw, 22px);
+}
+
+.navbar-logo {
+  flex: 0 0 auto;
+  padding: 4px;
+  box-shadow: 0 8px 24px rgba(15, 64, 112, 0.13);
+}
+
+.navbar-logo img {
+  height: 48px;
+}
+
+.navbar-menu {
+  align-items: center;
+  box-shadow: 0 8px 26px rgba(15, 64, 112, 0.12);
+}
+
+/* Public header: match the clean three-part website layout. */
+.navbar--public .navbar-wrapper {
+  max-width: 1580px;
+}
+
+.navbar--public .navbar-wrapper > nav {
+  flex: 0 1 795px;
+}
+
+.navbar--public .navbar-menu {
+  justify-content: center;
+  gap: clamp(18px, 2.2vw, 38px);
+  padding: 9px clamp(24px, 3vw, 54px);
+}
+
+.navbar--public .navbar-menu a {
+  padding: 8px 2px;
+  font-size: clamp(16px, 1.2vw, 18px);
+}
+
+/* Logged-in header stays compact for workspace and account controls. */
+.navbar--logged-in .navbar-menu {
+  gap: clamp(4px, 1vw, 16px);
+  padding: 9px clamp(14px, 1.8vw, 28px);
+}
+
+.navbar--logged-in .navbar-menu a {
+  padding: 8px 6px;
+  font-size: clamp(14px, 1.05vw, 17px);
+}
+
+.navbar-btn,
+.vrfbtn {
+  min-width: 172px;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 12px 20px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.15;
+  white-space: nowrap;
+  background: linear-gradient(135deg, #367ee3, #2769cf);
+  box-shadow: 0 9px 22px rgba(40, 109, 207, 0.28);
+}
+
+.navbar--public .navbar-btn {
+  min-width: 190px;
+}
+
+.navbar-btn i {
+  width: 27px;
+  height: 27px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 27px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.17);
+  font-size: 13px;
+}
+
+@media (max-width: 1180px) and (min-width: 869px) {
+  .navbar-wrapper {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .navbar-logo img {
+    height: 42px;
+    padding-left: 9px;
+    padding-right: 9px;
+  }
+
+  .navbar--logged-in .navbar-menu {
+    gap: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .navbar--logged-in .navbar-menu a {
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 13px;
+  }
+
+  .navbar--logged-in .navbar-btn {
+    min-width: 148px;
+    padding-left: 14px;
+    padding-right: 14px;
+    font-size: 13px;
+  }
+
+  .navbar--public .navbar-menu {
+    gap: clamp(10px, 1.8vw, 22px);
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+
+  .navbar--public .navbar-menu a {
+    font-size: 15px;
+  }
+
+  .navbar--public .navbar-btn {
+    min-width: 165px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+@media (max-width: 868px) {
+  .navbar {
+    padding: 9px 0;
+  }
+
+  .navbar-wrapper {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .navbar-menu {
+    justify-content: flex-start;
+    overflow-y: auto;
+    padding-top: max(70px, env(safe-area-inset-top));
+    padding-bottom: 30px;
+    padding-left: 18px;
+    padding-right: 18px;
+
+    > a,
+    .navbar-menu__header,
+    .navbar-account {
+      box-sizing: border-box;
+      max-width: 360px;
+      width: 100%;
+    }
+  }
+}

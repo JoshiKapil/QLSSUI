@@ -58,6 +58,22 @@
             </div>
           </div>
         </div>
+        <div class="import-field">
+          <div class="field-caption">City <span class="required-mark">*</span></div>
+          <div class="search-dropdown">
+            <button class="search-dropdown__toggle" type="button" (click)="toggleImportDropdown('city')"
+              [disabled]="!importCompanyId || !selectedImportCompanyCities.length">
+              <span>{{ selectedImportCompanyCities.length ? selectedImportCityLabel() : (importCompanyId ? 'No cities configured' : 'Select company first') }}</span><span aria-hidden="true">&#9662;</span>
+            </button>
+            <div class="search-dropdown__menu" *ngIf="importCityDropdownOpen">
+              <input type="search" [(ngModel)]="importCitySearch" placeholder="Search city" autocomplete="off" />
+              <button class="search-dropdown__option" type="button" *ngFor="let city of filteredImportCities" (mousedown)="selectImportCity(city)">
+                <strong>{{ city.cityName }}</strong>
+              </button>
+              <div class="search-dropdown__empty" *ngIf="!filteredImportCities.length">No city found</div>
+            </div>
+          </div>
+        </div>
       </div>
       <label class="file-drop" [class.file-drop--active]="draggingFile" (drop)="onFileDrop($event)" (dragover)="onDragOver($event)" (dragleave)="draggingFile = false">
         <input type="file" accept=".xlsx,.xls" (change)="onFileSelected($event)" />
@@ -66,7 +82,7 @@
       <div class="import-summary" *ngIf="importFileName">
         <span *ngIf="!importErrors.length">{{ importRecords.length }} row(s) ready to upload</span>
         <span class="import-summary__error" *ngIf="importErrors.length">{{ importErrors.length }} validation error(s)</span>
-        <button class="btn btn-primary" type="button" (click)="uploadImport()" [disabled]="importing || !importRecords.length || importErrors.length || !importTrainingId || !importTrainerId || !importCompanyId"><i class="fas fa-upload" aria-hidden="true"></i> {{ importing ? 'Uploading...' : 'Upload' }}</button>
+        <button class="btn btn-primary" type="button" (click)="uploadImport()" [disabled]="importing || !importRecords.length || importErrors.length || !importTrainingId || !importTrainerId || !importCompanyId || (selectedImportCompanyCities.length > 0 && !importCityId)"><i class="fas fa-upload" aria-hidden="true"></i> {{ importing ? 'Uploading...' : 'Upload' }}</button>
       </div>
       <ul class="import-errors" *ngIf="importErrors.length"><li *ngFor="let error of importErrors | slice:0:8">{{ error }}</li><li *ngIf="importErrors.length > 8">And {{ importErrors.length - 8 }} more.</li></ul>
     </section>
@@ -92,6 +108,21 @@
             <div class="search-dropdown__empty" *ngIf="!filteredCompanies.length">
               No company found
             </div>
+          </div>
+        </div>
+      </label>
+      <label>City
+        <div class="search-dropdown">
+          <button class="search-dropdown__toggle" type="button" (click)="toggleCityDropdown()"
+            [disabled]="!selectedCompanyId || !selectedCompanyCities.length" [attr.aria-expanded]="cityDropdownOpen">
+            <span>{{ selectedCompanyCities.length ? selectedCityName() : (selectedCompanyId ? 'No cities configured' : 'Select company first') }}</span><span aria-hidden="true">&#9662;</span>
+          </button>
+          <div class="search-dropdown__menu" *ngIf="cityDropdownOpen">
+            <input type="search" [(ngModel)]="citySearch" placeholder="Search city" autocomplete="off" />
+            <button class="search-dropdown__option" type="button" *ngFor="let city of filteredCities" (click)="selectCity(city)">
+              {{ city.cityName }}
+            </button>
+            <div class="search-dropdown__empty" *ngIf="!filteredCities.length">No city found</div>
           </div>
         </div>
       </label>
@@ -133,7 +164,7 @@
               (change)="toggle(record, $any($event.target).checked)" /></td>
             <td>{{ record.name }}</td><td>{{ record.email }}</td>
             <td>{{ record.trainingName || record.trainingId }}</td>
-            <td>{{ companyName(record.location) }}</td><td>{{ record.date }}</td>
+            <td>{{ record.locationName || companyName(record.location) }}</td><td>{{ record.date }}</td>
           </tr>
           <tr *ngIf="!loading && !visibleRecords.length"><td colspan="6">No pending certificate requests.</td></tr>
         </tbody>

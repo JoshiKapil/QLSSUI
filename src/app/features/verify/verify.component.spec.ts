@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { CertificationService } from '../../core/services/certification.service';
 import { SiteInteractionsService } from '../../core/services/site-interactions.service';
@@ -62,6 +63,27 @@ describe('VerifyComponent', () => {
     expect(component.Certificate).toBeTrue();
     expect(component.UserData[0].UserName).toBe('Learner');
     expect(component.resultMessage).toBe('Certificate Verified.');
+  });
+
+  [
+    ['QLSS/24477', '24477'],
+    ['QLSS/IATF/IA/23011', '23011']
+  ].forEach(([enteredNumber, expectedSearchNumber]) => {
+    it(`verifies the full certificate number ${enteredNumber}`, () => {
+      certificationService.getByNumber.and.returnValue(of({
+        certificationNumber: enteredNumber,
+        name: 'Learner',
+        date: '2026-01-01',
+        trainingId: 7,
+        trainingName: 'IATF'
+      } as any));
+      component.CertificateNo = enteredNumber;
+
+      component.Validate();
+
+      expect(certificationService.getByNumber).toHaveBeenCalledWith(expectedSearchNumber);
+      expect(component.Certificate).toBeTrue();
+    });
   });
 
   it('handles a missing certificate', () => {

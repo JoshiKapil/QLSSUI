@@ -5,4 +5,11 @@ export interface Client {
   image: string;
   displayOrder: number;
   isActive?: boolean;
+  cities?: ClientCity[];
+}
+
+export interface ClientCity {
+  cityId?: number;
+  cityName: string;
+  isActive?: boolean;
 }

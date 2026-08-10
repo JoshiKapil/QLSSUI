@@ -9,6 +9,85 @@
       <a class="btn btn-outline" routerLink="/admin/create-test">Create Test</a>
     </header>
 
+    <section class="name-correction-card" aria-labelledby="nameCorrectionHeading">
+      <div class="name-correction-heading">
+        <div class="name-correction-icon"><i class="fas fa-users-viewfinder" aria-hidden="true"></i></div>
+        <div>
+          <span class="eyebrow">Review participant data</span>
+          <h2 id="nameCorrectionHeading">Check or correct a participant name</h2>
+          <p>Search what the participant entered, review all certificates using that name, and correct it once.</p>
+        </div>
+      </div>
+
+      <div class="correction-impact">
+        <strong>One correction updates every certificate workflow</strong>
+        <span><i class="fas fa-file-arrow-down" aria-hidden="true"></i> Single download</span>
+        <span><i class="fas fa-file-zipper" aria-hidden="true"></i> Bulk download</span>
+        <span><i class="fas fa-envelope" aria-hidden="true"></i> Certificate email</span>
+      </div>
+
+      <ol class="correction-steps" aria-label="Name correction steps">
+        <li><span>1</span>Search and select the entered name</li>
+        <li><span>2</span>Review every matching certificate</li>
+        <li><span>3</span>Enter the correct name and update</li>
+      </ol>
+
+      <div class="name-correction-fields">
+        <label>
+          Search entered participant data
+          <input type="search" [(ngModel)]="currentCertificateName" (ngModelChange)="confirmNameCorrection = false" name="currentCertificateName" placeholder="Type name, email, or certificate number" autocomplete="off" />
+        </label>
+        <span class="name-change-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></span>
+        <label>
+          Correct name
+          <input type="text" [(ngModel)]="correctedCertificateName" (ngModelChange)="confirmNameCorrection = false" name="correctedCertificateName" placeholder="Available after selecting a name" [disabled]="!matchingNameRecords.length" autocomplete="off" />
+        </label>
+      </div>
+
+      <div class="name-suggestions" *ngIf="nameSearchSuggestions.length">
+        <p>Select the participant name you want to review:</p>
+        <button type="button" *ngFor="let record of nameSearchSuggestions; trackBy: trackByUserId" (click)="selectCertificateName(record)">
+          <span class="recipient-avatar">{{ (record.userName || record.name || '?').charAt(0) | uppercase }}</span>
+          <span><strong>{{ record.userName || record.name }}</strong><small>{{ record.email || record.certificationNumber || 'No contact reference' }}</small></span>
+          <i class="fas fa-chevron-right" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="name-match-summary" *ngIf="matchingNameRecords.length">
+        <i class="fas fa-circle-check" aria-hidden="true"></i>
+        <strong>{{ matchingNameRecords.length }}</strong>
+        <span>{{ matchingNameRecords.length === 1 ? 'certificate uses this exact name' : 'certificates use this exact name' }}</span>
+      </div>
+
+      <div class="name-match-list" *ngIf="matchingNameRecords.length">
+        <div class="name-match-row" *ngFor="let record of matchingNameRecords; trackBy: trackByUserId">
+          <span class="recipient-avatar">{{ (record.userName || record.name || '?').charAt(0) | uppercase }}</span>
+          <span>
+            <strong>{{ record.userName || record.name }}</strong>
+            <small>{{ record.trainingName || 'Training not available' }}</small>
+          </span>
+          <small>{{ record.certificationNumber || 'Not issued' }}</small>
+        </div>
+      </div>
+
+      <p class="name-search-help" *ngIf="currentCertificateName.trim().length === 1">
+        Type at least two characters to search participants.
+      </p>
+      <p class="name-no-match" *ngIf="currentCertificateName.trim().length > 1 && !matchingNameRecords.length && !nameSearchSuggestions.length">
+        No participant was found. Try part of the name, email, or certificate number.
+      </p>
+
+      <div class="name-correction-action" *ngIf="matchingNameRecords.length">
+        <label class="name-confirmation">
+          <input type="checkbox" [(ngModel)]="confirmNameCorrection" name="confirmNameCorrection" />
+          <span>I reviewed all {{ matchingNameRecords.length }} record(s) and want to replace <strong>{{ currentCertificateName }}</strong> everywhere.</span>
+        </label>
+        <button class="btn btn-primary" type="button" (click)="correctCertificateName()" [disabled]="!canCorrectCertificateName">
+          <i class="fas fa-check" aria-hidden="true"></i>
+          {{ isCorrectingName ? 'Updating...' : 'Correct name everywhere' }}
+        </button>
+      </div>
+    </section>
     <section class="operations-section" aria-labelledby="certificateOperationsHeading">
       <div class="operations-heading">
         <div>
@@ -18,7 +97,7 @@
         </div>
       </div>
       <div class="bulk-email-grid">
-        <section class="form-card bulk-card" [class.dropdown-open]="isCompanyDropdownOpen || isBulkTrainingDropdownOpen">
+        <section class="form-card bulk-card" [class.dropdown-open]="isCompanyDropdownOpen || isBulkCityDropdownOpen || isBulkTrainingDropdownOpen">
           <div class="section-heading">
             <div><span class="card-kicker">Bulk Export</span><h2>Bulk Certificate Download</h2><p>Download organized certificate batches by company and training.</p></div>
 <button class="card-clear" type="button" (click)="clearBulkDownload()" [disabled]="isBulkGenerating" aria-label="Clear bulk certificate download selections"><i class="fas fa-rotate-left" aria-hidden="true"></i> Clear</button>
@@ -36,6 +115,19 @@
                 <small>{{ getBulkCompanyCertificateCount(company) }} certificates</small>
               </button>
               <p class="empty-option" *ngIf="!filteredBulkCompanies.length">No company with certificate data found.</p>
+            </div>
+          </div>
+
+          <label class="field-label">City (optional)</label>
+          <div class="search-select">
+            <button class="select-toggle" type="button" (click)="toggleBulkCityDropdown()" [disabled]="!selectedCompanyId || isBulkGenerating" [attr.aria-expanded]="isBulkCityDropdownOpen">
+              <span>{{ selectedBulkCity ? selectedBulkCity.cityName : (selectedCompanyId ? 'All cities' : 'Select company first') }}</span><span aria-hidden="true">&#9662;</span>
+            </button>
+            <div class="select-menu" *ngIf="isBulkCityDropdownOpen" role="listbox">
+              <input type="search" [(ngModel)]="bulkCitySearch" name="bulkCitySearch" placeholder="Search city" autocomplete="off" />
+              <button type="button" (click)="selectBulkCity()"><strong>All cities</strong><small>Include every city for this company</small></button>
+              <button type="button" *ngFor="let city of filteredBulkCities" (click)="selectBulkCity(city)"><strong>{{ city.cityName }}</strong></button>
+              <p class="empty-option" *ngIf="!filteredBulkCities.length">No city with certificate data found.</p>
             </div>
           </div>
 
@@ -256,7 +348,7 @@
         </div>
       </form>
 
-      <aside class="preview-card">
+      <aside id="certificateLiveOutput" class="preview-card">
         <div class="preview-heading"><div><span>Live output</span><h2>PDF Preview</h2></div><span class="page-size">A4 Landscape</span></div>
         <iframe *ngIf="previewUrl; else previewPlaceholder" [src]="previewUrl" title="Certificate PDF preview"></iframe>
         <ng-template #previewPlaceholder>
