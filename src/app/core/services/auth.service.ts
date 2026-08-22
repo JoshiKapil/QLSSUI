@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+﻿import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
@@ -118,7 +118,6 @@ export class AuthService {
   }
 
   hasWorkspaceAccess(): boolean {
-    // Future: return this.hasRole('SuperAdmin', 'Admin', 'Manager', 'Employee');
     return this.hasRole('SuperAdmin', 'Manager', 'Employee');
   }
 
@@ -239,3 +238,4 @@ export class AuthService {
   }
 
 }
+

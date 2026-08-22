@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { PmAttachment, PmEnquiry, PmLookups } from '../models/project-management.models';
 import { ProjectManagementService } from '../services/project-management.service';
 
@@ -16,8 +17,6 @@ export class ProjectEnquiriesComponent implements OnInit {
   showForm = false;
   saving = false;
   editing?: PmEnquiry;
-  quoteFor?: PmEnquiry;
-  quotationTemplateId?: number;
   search = '';
   statusFilter = '';
   employeeSearch = '';
@@ -25,11 +24,46 @@ export class ProjectEnquiriesComponent implements OnInit {
 
   form: any = this.emptyForm();
 
-  constructor(private api: ProjectManagementService) {}
+  constructor(private api: ProjectManagementService, private router: Router) {}
 
   ngOnInit(): void {
     this.refresh();
     this.api.lookups().subscribe({ next: value => this.lookups = value, error: () => undefined });
+  }
+
+  get availableCategories() {
+    return (this.lookups?.categories || []).filter(x => (x.code || '').toUpperCase() !== 'CONSULTANCY');
+  }
+
+  get selectedCategory() {
+    return this.availableCategories.find(x => +x.id === +this.form.categoryId);
+  }
+
+  get isTrainingCategory(): boolean {
+    return (this.selectedCategory?.code || '').toUpperCase() === 'TRAINING';
+  }
+
+  get isOtherCategory(): boolean {
+    return (this.selectedCategory?.code || '').toUpperCase() === 'OTHER';
+  }
+
+  get scopeLabel(): string {
+    const value = (this.form.categoryValueName || '').trim();
+    return value ? `Requirement / Scope for ${value} *` : 'Requirement / Scope *';
+  }
+
+  onCategoryChange(): void {
+    this.form.categoryValueCode = '';
+    this.form.categoryValueName = '';
+  }
+
+  onTrainingChange(): void {
+    const training = (this.lookups?.trainings || []).find(x => +x.id === +this.form.categoryValueCode);
+    this.form.categoryValueName = training?.name || '';
+  }
+
+  openQuotations(): void {
+    this.router.navigate(['/workspace/quotations']);
   }
 
   get assignableEmployees() {
@@ -67,6 +101,7 @@ export class ProjectEnquiriesComponent implements OnInit {
   }
 
   newEnquiry(): void {
+    this.error = '';
     this.editing = undefined;
     this.attachments = [];
     this.pendingFile = undefined;
@@ -75,6 +110,7 @@ export class ProjectEnquiriesComponent implements OnInit {
   }
 
   edit(item: PmEnquiry): void {
+    this.error = '';
     this.editing = item;
     this.pendingFile = undefined;
     this.form = {
@@ -83,8 +119,11 @@ export class ProjectEnquiriesComponent implements OnInit {
       contactPerson: item.contactPerson,
       emailId: item.emailId,
       contactNumber: item.contactNumber,
+      customerAddress: item.customerAddress || '',
       enquiryDate: this.dateValue(item.enquiryDate),
       categoryId: item.categoryId,
+      categoryValueCode: item.categoryValueCode || '',
+      categoryValueName: item.categoryValueName || '',
       requirementScope: item.requirementScope,
       expectedTimeline: item.expectedTimeline,
       expectedStartDate: this.dateValue(item.expectedStartDate),
@@ -110,12 +149,20 @@ export class ProjectEnquiriesComponent implements OnInit {
   selected(id: number): boolean { return (this.form.assigneeUserIds || []).includes(id); }
 
   save(): void {
-    if (!this.form.customerName || !this.form.categoryId || !this.form.requirementScope) {
+    if (!this.form.customerName || !this.form.categoryId || !this.form.requirementScope?.trim()) {
       this.error = 'Customer name, category and requirement / scope are required.';
       return;
     }
-    if ((this.form.assigneeUserIds || []).length < 1) {
-      this.error = 'Assign at least one employee to the enquiry.';
+    if (this.isTrainingCategory && !this.form.categoryValueName?.trim()) {
+      this.error = 'Select the required training.';
+      return;
+    }
+    if (this.isOtherCategory && !this.form.categoryValueName?.trim()) {
+      this.error = 'Enter the other service / category.';
+      return;
+    }
+    if (new Set<number>(this.form.assigneeUserIds || []).size < 1) {
+      this.error = 'Assign at least one QLSS employee to the enquiry.';
       return;
     }
     this.saving = true;
@@ -137,23 +184,6 @@ export class ProjectEnquiriesComponent implements OnInit {
       },
       error: e => { this.error = e?.error?.message || 'Unable to save enquiry.'; this.saving = false; },
       complete: () => this.saving = false
-    });
-  }
-
-  chooseQuotation(item: PmEnquiry): void {
-    this.quoteFor = item;
-    this.quotationTemplateId = undefined;
-  }
-
-  makeQuote(): void {
-    if (!this.quoteFor) return;
-    this.api.createQuotation(this.quoteFor.enquiryId, this.quotationTemplateId).subscribe({
-      next: quote => {
-        this.success = `Quotation ${quote.quotationNo} created. Open Quotation Management to complete costing and submit.`;
-        this.quoteFor = undefined;
-        this.refresh();
-      },
-      error: e => this.error = e?.error?.message || 'Unable to create quotation.'
     });
   }
 
@@ -207,8 +237,11 @@ export class ProjectEnquiriesComponent implements OnInit {
       contactPerson: '',
       emailId: '',
       contactNumber: '',
+      customerAddress: '',
       enquiryDate: new Date().toISOString().substring(0, 10),
       categoryId: null,
+      categoryValueCode: '',
+      categoryValueName: '',
       requirementScope: '',
       expectedTimeline: '',
       expectedStartDate: null,

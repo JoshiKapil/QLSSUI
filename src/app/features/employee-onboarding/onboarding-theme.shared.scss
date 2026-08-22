@@ -1,0 +1,129 @@
+/*
+  Shared visual overrides for the three optional Employee Onboarding themes.
+  They activate only when OnboardingShellComponent has a feature-theme class.
+*/
+:host-context(.feature-theme--aurora),
+:host-context(.feature-theme--crystal),
+:host-context(.feature-theme--peach){color:var(--feature-text)}
+
+:host-context(.feature-theme--aurora) .page-head,
+:host-context(.feature-theme--aurora) .panel,
+:host-context(.feature-theme--aurora) .assign-card,
+:host-context(.feature-theme--aurora) .tracker,
+:host-context(.feature-theme--aurora) .master-list,
+:host-context(.feature-theme--aurora) .editor,
+:host-context(.feature-theme--aurora) .list,
+:host-context(.feature-theme--aurora) .review,
+:host-context(.feature-theme--aurora) .path-card,
+:host-context(.feature-theme--aurora) .content-card,
+:host-context(.feature-theme--aurora) .reminders,
+:host-context(.feature-theme--aurora) .summary-strip > *{
+  background:linear-gradient(145deg,#fff,#fbfaff);border-color:var(--feature-border);box-shadow:var(--feature-shadow)
+}
+:host-context(.feature-theme--aurora) .page-head{background:radial-gradient(circle at 92% 0,rgba(255,111,141,.09),transparent 26%),linear-gradient(130deg,#fff,#f6f4ff)}
+:host-context(.feature-theme--aurora) .eyebrow,
+:host-context(.feature-theme--aurora) header > span,
+:host-context(.feature-theme--aurora) .section-title small,
+:host-context(.feature-theme--aurora) .builder-head small,
+:host-context(.feature-theme--aurora) .tracker small,
+:host-context(.feature-theme--aurora) .panel small{color:var(--feature-secondary)!important}
+:host-context(.feature-theme--aurora) .hero{background:radial-gradient(circle at 88% 0,rgba(255,119,148,.28),transparent 29%),linear-gradient(130deg,#241b61,#5f4bd2 55%,#0ca99f);box-shadow:0 21px 55px rgba(61,47,145,.18)}
+:host-context(.feature-theme--aurora) .primary,
+:host-context(.feature-theme--aurora) .primary-btn,
+:host-context(.feature-theme--aurora) .assign-btn,
+:host-context(.feature-theme--aurora) .approve{background:linear-gradient(135deg,#6650db,#735fe4 52%,#0fb7aa)!important;border-color:transparent!important;color:#fff!important;box-shadow:0 9px 22px rgba(82,65,188,.2)}
+:host-context(.feature-theme--aurora) input,
+:host-context(.feature-theme--aurora) select,
+:host-context(.feature-theme--aurora) textarea{border-color:#ded9f1!important;background:#fefeff!important;color:#2b274b!important}
+:host-context(.feature-theme--aurora) table th{background:#f7f5fd!important;color:#6c6685!important}:host-context(.feature-theme--aurora) table td{border-color:#eeeaf8!important}
+:host-context(.feature-theme--aurora) .progress span,
+:host-context(.feature-theme--aurora) .bar span{background:linear-gradient(90deg,#6650db,#0fb7aa)!important}
+
+:host-context(.feature-theme--crystal) .page-head,
+:host-context(.feature-theme--crystal) .panel,
+:host-context(.feature-theme--crystal) .assign-card,
+:host-context(.feature-theme--crystal) .tracker,
+:host-context(.feature-theme--crystal) .master-list,
+:host-context(.feature-theme--crystal) .editor,
+:host-context(.feature-theme--crystal) .list,
+:host-context(.feature-theme--crystal) .review,
+:host-context(.feature-theme--crystal) .path-card,
+:host-context(.feature-theme--crystal) .content-card,
+:host-context(.feature-theme--crystal) .reminders,
+:host-context(.feature-theme--crystal) .summary-strip > *{
+  background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(246,252,255,.53));border-color:var(--feature-border);box-shadow:var(--feature-shadow),inset 0 1px 0 rgba(255,255,255,.74);backdrop-filter:blur(18px) saturate(135%)
+}
+:host-context(.feature-theme--crystal) .page-head{background:radial-gradient(circle at 92% 0,rgba(125,223,234,.2),transparent 28%),linear-gradient(130deg,rgba(255,255,255,.74),rgba(242,249,255,.54))}
+:host-context(.feature-theme--crystal) .eyebrow,
+:host-context(.feature-theme--crystal) header > span,
+:host-context(.feature-theme--crystal) .section-title small,
+:host-context(.feature-theme--crystal) .builder-head small,
+:host-context(.feature-theme--crystal) .tracker small,
+:host-context(.feature-theme--crystal) .panel small{color:var(--feature-secondary)!important}
+:host-context(.feature-theme--crystal) .hero{background:radial-gradient(circle at 88% 0,rgba(189,249,255,.23),transparent 29%),linear-gradient(130deg,rgba(18,55,96,.93),rgba(80,116,181,.81) 58%,rgba(44,170,183,.76));border:1px solid rgba(255,255,255,.45);box-shadow:0 22px 58px rgba(45,106,139,.19);backdrop-filter:blur(20px) saturate(135%)}
+:host-context(.feature-theme--crystal) .primary,
+:host-context(.feature-theme--crystal) .primary-btn,
+:host-context(.feature-theme--crystal) .assign-btn,
+:host-context(.feature-theme--crystal) .approve{background:linear-gradient(135deg,#607bd2,#638bd5 48%,#2db7c6)!important;border-color:rgba(255,255,255,.4)!important;color:#fff!important;box-shadow:0 10px 25px rgba(80,126,181,.22)}
+:host-context(.feature-theme--crystal) input,
+:host-context(.feature-theme--crystal) select,
+:host-context(.feature-theme--crystal) textarea{border-color:rgba(116,176,205,.34)!important;background:rgba(255,255,255,.68)!important;color:#17364e!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.72)}
+:host-context(.feature-theme--crystal) table{background:rgba(255,255,255,.36)}:host-context(.feature-theme--crystal) table th{background:rgba(238,249,252,.78)!important;color:#5e7689!important}:host-context(.feature-theme--crystal) table td{border-color:rgba(126,180,204,.18)!important}
+:host-context(.feature-theme--crystal) .progress span,
+:host-context(.feature-theme--crystal) .bar span{background:linear-gradient(90deg,#607bd2,#2db7c6)!important}
+
+:host-context(.feature-theme--peach) .page-head,
+:host-context(.feature-theme--peach) .panel,
+:host-context(.feature-theme--peach) .assign-card,
+:host-context(.feature-theme--peach) .tracker,
+:host-context(.feature-theme--peach) .master-list,
+:host-context(.feature-theme--peach) .editor,
+:host-context(.feature-theme--peach) .list,
+:host-context(.feature-theme--peach) .review,
+:host-context(.feature-theme--peach) .path-card,
+:host-context(.feature-theme--peach) .content-card,
+:host-context(.feature-theme--peach) .reminders,
+:host-context(.feature-theme--peach) .summary-strip > *{
+  background:linear-gradient(145deg,#fffdfb,#fff8f3);border-color:var(--feature-border);box-shadow:var(--feature-shadow)
+}
+:host-context(.feature-theme--peach) .page-head{background:radial-gradient(circle at 92% 0,rgba(231,121,95,.12),transparent 29%),linear-gradient(130deg,#fffdfb,#fff3eb)}
+:host-context(.feature-theme--peach) .eyebrow,
+:host-context(.feature-theme--peach) header > span,
+:host-context(.feature-theme--peach) .section-title small,
+:host-context(.feature-theme--peach) .builder-head small,
+:host-context(.feature-theme--peach) .tracker small,
+:host-context(.feature-theme--peach) .panel small{color:#bd6658!important}
+:host-context(.feature-theme--peach) .hero{background:radial-gradient(circle at 88% 0,rgba(255,205,175,.25),transparent 29%),linear-gradient(130deg,#5a2f3e,#a95654 57%,#df8269);box-shadow:0 20px 52px rgba(119,60,60,.17)}
+:host-context(.feature-theme--peach) .primary,
+:host-context(.feature-theme--peach) .primary-btn,
+:host-context(.feature-theme--peach) .assign-btn,
+:host-context(.feature-theme--peach) .approve{background:linear-gradient(135deg,#d96f5e,#e58a70 55%,#b95e61)!important;border-color:transparent!important;color:#fff!important;box-shadow:0 9px 22px rgba(180,91,75,.19)}
+:host-context(.feature-theme--peach) input,
+:host-context(.feature-theme--peach) select,
+:host-context(.feature-theme--peach) textarea{border-color:#ead3c8!important;background:#fffdfb!important;color:#4f2e35!important}
+:host-context(.feature-theme--peach) table th{background:#fff4ed!important;color:#80676a!important}:host-context(.feature-theme--peach) table td{border-color:#f2e1d8!important;color:#674a4f!important}
+:host-context(.feature-theme--peach) .progress span,
+:host-context(.feature-theme--peach) .bar span{background:linear-gradient(90deg,#dc725f,#e69a74)!important}
+
+/* KPI and list surfaces that use article/div cards in several onboarding screens. */
+:host-context(.feature-theme--aurora) .kpis article,
+:host-context(.feature-theme--crystal) .kpis article,
+:host-context(.feature-theme--peach) .kpis article,
+:host-context(.feature-theme--aurora) .cards > *,
+:host-context(.feature-theme--crystal) .cards > *,
+:host-context(.feature-theme--peach) .cards > *{background:var(--feature-surface)!important;border-color:var(--feature-border)!important;box-shadow:var(--feature-shadow)}
+
+:host-context(.feature-theme--aurora) .kpis i{background:#f0edff!important;color:#6650db!important}
+:host-context(.feature-theme--crystal) .kpis i{background:rgba(226,247,251,.72)!important;color:#4e7fc7!important}
+:host-context(.feature-theme--peach) .kpis i{background:#fff0e8!important;color:#d56f5d!important}
+
+/* Premium cards, controls and readable labels for every optional theme. */
+:host-context(.feature-theme--aurora) label,:host-context(.feature-theme--crystal) label,:host-context(.feature-theme--peach) label,:host-context(.feature-theme--aurora) .label,:host-context(.feature-theme--crystal) .label,:host-context(.feature-theme--peach) .label{color:var(--feature-text)!important;text-shadow:none}
+:host-context(.feature-theme--aurora) h2,:host-context(.feature-theme--aurora) h3,:host-context(.feature-theme--crystal) h2,:host-context(.feature-theme--crystal) h3,:host-context(.feature-theme--peach) h2,:host-context(.feature-theme--peach) h3{color:var(--feature-text)}
+:host-context(.feature-theme--aurora) .panel,:host-context(.feature-theme--aurora) .assign-card,:host-context(.feature-theme--aurora) .tracker,:host-context(.feature-theme--aurora) .master-list,:host-context(.feature-theme--aurora) .editor,:host-context(.feature-theme--aurora) .list,:host-context(.feature-theme--aurora) .review,:host-context(.feature-theme--aurora) .path-card,:host-context(.feature-theme--aurora) .content-card,:host-context(.feature-theme--aurora) .reminders{background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(232,248,251,.76));border-color:var(--feature-border);box-shadow:var(--feature-shadow);backdrop-filter:blur(18px) saturate(135%)}
+:host-context(.feature-theme--crystal) .panel,:host-context(.feature-theme--crystal) .assign-card,:host-context(.feature-theme--crystal) .tracker,:host-context(.feature-theme--crystal) .master-list,:host-context(.feature-theme--crystal) .editor,:host-context(.feature-theme--crystal) .list,:host-context(.feature-theme--crystal) .review,:host-context(.feature-theme--crystal) .path-card,:host-context(.feature-theme--crystal) .content-card,:host-context(.feature-theme--crystal) .reminders{background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(232,247,251,.68));border-color:var(--feature-border);box-shadow:var(--feature-shadow);backdrop-filter:blur(20px) saturate(140%)}
+:host-context(.feature-theme--peach) .panel,:host-context(.feature-theme--peach) .assign-card,:host-context(.feature-theme--peach) .tracker,:host-context(.feature-theme--peach) .master-list,:host-context(.feature-theme--peach) .editor,:host-context(.feature-theme--peach) .list,:host-context(.feature-theme--peach) .review,:host-context(.feature-theme--peach) .path-card,:host-context(.feature-theme--peach) .content-card,:host-context(.feature-theme--peach) .reminders{background:linear-gradient(145deg,#fff,#fff9f5 62%,#fff3ec);border-color:var(--feature-border);box-shadow:var(--feature-shadow)}
+:host-context(.feature-theme--aurora) input,:host-context(.feature-theme--aurora) select,:host-context(.feature-theme--aurora) textarea,:host-context(.feature-theme--crystal) input,:host-context(.feature-theme--crystal) select,:host-context(.feature-theme--crystal) textarea,:host-context(.feature-theme--peach) input,:host-context(.feature-theme--peach) select,:host-context(.feature-theme--peach) textarea{border:1px solid var(--feature-border)!important;border-radius:12px!important;background:linear-gradient(145deg,rgba(255,255,255,.98),var(--feature-surface-soft))!important;color:var(--feature-text)!important;box-shadow:inset 0 1px 2px rgba(25,57,78,.035),0 4px 12px rgba(35,85,110,.045)!important;transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease}
+:host-context(.feature-theme--aurora) input:focus,:host-context(.feature-theme--aurora) select:focus,:host-context(.feature-theme--aurora) textarea:focus,:host-context(.feature-theme--crystal) input:focus,:host-context(.feature-theme--crystal) select:focus,:host-context(.feature-theme--crystal) textarea:focus,:host-context(.feature-theme--peach) input:focus,:host-context(.feature-theme--peach) select:focus,:host-context(.feature-theme--peach) textarea:focus{outline:none;border-color:var(--feature-primary)!important;background:#fff!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--feature-primary) 15%,transparent),0 10px 24px rgba(37,86,111,.09)!important;transform:translateY(-1px)}
+:host-context(.feature-theme--aurora) button,:host-context(.feature-theme--crystal) button,:host-context(.feature-theme--peach) button{border-radius:11px;transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}
+:host-context(.feature-theme--aurora) button:hover:not(:disabled),:host-context(.feature-theme--crystal) button:hover:not(:disabled),:host-context(.feature-theme--peach) button:hover:not(:disabled){transform:translateY(-1px);filter:saturate(1.06)}

@@ -6,124 +6,144 @@
 
   <p *ngIf="error" class="pm-error">{{error}}</p><p *ngIf="success" class="pm-success">{{success}}</p>
 
-  <section class="pm-card project-browser">
-    <div class="pm-filterbar"><input class="pm-filterbar__grow" [(ngModel)]="search" placeholder="Search project, customer, category or status…"><select [(ngModel)]="statusFilter"><option value="">All statuses</option><option *ngFor="let s of statuses" [value]="s">{{s}}</option></select><span class="browser-count">{{filteredItems.length}} projects</span></div>
-    <div class="project-cards">
-      <button *ngFor="let p of filteredItems" class="project-card" [class.project-card--active]="selected?.projectId===p.projectId" (click)="open(p)">
-        <div class="project-card__head"><span>{{p.projectNo}}</span><span [class]="badge(p.status)">{{p.status}}</span></div>
-        <strong>{{p.customerName}}</strong><small>{{p.projectTitle}}</small>
-        <div class="project-card__progress"><div class="pm-progress"><i [style.width.%]="p.completionPercent"></i></div><b>{{p.completionPercent}}%</b></div>
-        <div class="project-card__foot"><span><i class="fas fa-user-tie"></i>{{p.projectLeaderName||'Unassigned'}}</span><span><i class="fas fa-calendar"></i>{{p.targetCompletionDate|date:'dd-MM-yyyy'}}</span></div>
-      </button>
-    </div><div *ngIf="!filteredItems.length" class="pm-empty">No projects match your filters.</div>
-  </section>
+  <!-- PM_SPLIT_WATERGLASS_V1 -->
+  <div class="pm-split-workspace pm-split-workspace--projects">
+    <aside class="pm-list-pane" aria-label="Project list">
+      <section class="pm-card project-browser">
+          <div class="pm-list-pane__title"><div><small>PROJECT LIST</small><strong>All Projects</strong></div><span>{{filteredItems.length}} / {{items.length}}</span></div>
+          <div class="pm-filterbar pm-filterbar--stacked"><input class="pm-filterbar__grow" [(ngModel)]="search" placeholder="Search project, customer, category or status…"><select [(ngModel)]="statusFilter"><option value="">All statuses</option><option *ngFor="let s of statuses" [value]="s">{{s}}</option></select></div>
+          <div class="project-cards">
+            <button *ngFor="let p of filteredItems" class="project-card" [class.project-card--active]="selected?.projectId===p.projectId" (click)="open(p)">
+              <div class="project-card__head"><span>{{p.projectNo}}</span><span [class]="badge(p.status)">{{p.status}}</span></div>
+              <strong>{{p.customerName}}</strong><small>{{p.projectTitle}}</small>
+              <div class="project-card__progress"><div class="pm-progress"><i [style.width.%]="p.completionPercent"></i></div><b>{{p.completionPercent}}%</b></div>
+              <div class="project-card__foot"><span><i class="fas fa-user-tie"></i>{{p.projectLeaderName||'Unassigned'}}</span><span><i class="fas fa-calendar"></i>{{p.targetCompletionDate|date:'dd-MM-yyyy'}}</span></div>
+            </button>
+          </div><div *ngIf="!filteredItems.length" class="pm-empty">No projects match your filters.</div>
+        </section>
+    </aside>
 
-  <ng-container *ngIf="selected">
-    <section class="project-hero">
-      <div class="project-hero__identity"><small>Active project record</small><h2>{{selected.projectNo}}</h2><strong>{{selected.customerName}}</strong><span>{{selected.projectTitle}}</span></div>
-      <div class="project-hero__ring" [style.--progress]="selected.completionPercent"><div><strong>{{selected.completionPercent}}%</strong><small>complete</small></div></div>
-      <div class="project-hero__metrics"><div><span>Leader</span><strong>{{selected.projectLeaderName||'Not assigned'}}</strong></div><div><span>Target date</span><strong>{{selected.targetCompletionDate|date:'dd-MM-yyyy'}}</strong></div><div><span>Project value</span><strong>{{money(selected.projectValue)}}</strong></div><div><span>Team</span><strong>{{selected.members?.length || 0}} members</strong></div></div>
-      <span [class]="badge(selected.status)">{{selected.status}}</span>
-    </section>
+    <main class="pm-detail-pane">
+      <ng-container *ngIf="selected">
+          <section class="project-hero">
+            <div class="project-hero__identity"><small>Active project record</small><h2>{{selected.projectNo}}</h2><strong>{{selected.customerName}}</strong><span>{{selected.projectTitle}}</span></div>
+            <div class="project-hero__ring" [style.--progress]="selected.completionPercent"><div><strong>{{selected.completionPercent}}%</strong><small>complete</small></div></div>
+            <div class="project-hero__metrics"><div><span>Leader</span><strong>{{selected.projectLeaderName||'Not assigned'}}</strong></div><div><span>Target date</span><strong>{{selected.targetCompletionDate|date:'dd-MM-yyyy'}}</strong></div><div><span>Project value</span><strong>{{money(selected.projectValue)}}</strong></div><div><span>Team</span><strong>{{selected.members?.length || 0}} members</strong></div></div>
+            <span [class]="badge(selected.status)">{{selected.status}}</span>
+          </section>
 
-    <div class="pm-tabs project-tabs">
-      <button class="pm-tab" [class.active]="activeTab==='overview'" (click)="activeTab='overview'">Overview & Team</button>
-      <button class="pm-tab" [class.active]="activeTab==='activities'" (click)="activeTab='activities'">Activity Timeline <b>{{activities.length}}</b></button>
-      <button class="pm-tab" [class.active]="activeTab==='documents'" (click)="activeTab='documents'">Documents <b>{{attachments.length}}</b></button>
-      <button class="pm-tab" [class.active]="activeTab==='acknowledgement'" (click)="activeTab='acknowledgement'">Closure & Acknowledgment</button>
-      <button class="pm-tab" [class.active]="activeTab==='integrations'" (click)="activeTab='integrations'">Connected Modules <b>{{links.length}}</b></button>
-    </div>
+          <div class="pm-tabs project-tabs">
+            <button class="pm-tab" [class.active]="activeTab==='overview'" (click)="activeTab='overview'">Overview & Team</button>
+            <button class="pm-tab" [class.active]="activeTab==='activities'" (click)="activeTab='activities'">Activity Timeline <b>{{activities.length}}</b></button>
+            <button class="pm-tab" [class.active]="activeTab==='documents'" (click)="activeTab='documents'">Documents <b>{{attachments.length}}</b></button>
+            <button class="pm-tab" [class.active]="activeTab==='acknowledgement'" (click)="activeTab='acknowledgement'">Closure & Acknowledgment</button>
+            <button class="pm-tab" [class.active]="activeTab==='integrations'" (click)="activeTab='integrations'">Connected Modules <b>{{links.length}}</b></button>
+          </div>
 
-    <section *ngIf="activeTab==='overview'" class="pm-grid project-overview">
-      <article class="pm-card project-master">
-        <div class="pm-section-head"><div><h2>Project Master</h2><p>Scope converted from the confirmed quotation. Manager/Admin may maintain delivery details without changing the original quotation.</p></div><span class="pm-badge">{{selected.categoryName}}</span></div>
-        <div class="pm-form">
-          <div class="pm-field pm-field--full"><label>Project Title / Scope</label><input [(ngModel)]="projectForm.projectTitle" [disabled]="!canManage"></div>
-          <div class="pm-field"><label>Project Start Date</label><input type="date" [(ngModel)]="projectForm.projectStartDate" [disabled]="!canManage"></div>
-          <div class="pm-field"><label>Target Completion Date</label><input type="date" [(ngModel)]="projectForm.targetCompletionDate" [disabled]="!canManage"></div>
-          <div class="pm-field"><label>Project Value</label><input type="number" min="0" [(ngModel)]="projectForm.projectValue" [disabled]="!canManage"></div>
-          <div class="pm-field"><label>Project Location</label><input [(ngModel)]="projectForm.projectLocation" [disabled]="!canManage"></div>
-          <div class="pm-field"><label>Customer Contact</label><input [(ngModel)]="projectForm.customerContactPerson" [disabled]="!canManage"></div>
-          <div class="pm-field"><label>Customer Email</label><input type="email" [(ngModel)]="projectForm.customerEmail" [disabled]="!canManage"></div>
-          <div class="pm-field"><label>PO / WO Reference</label><input [(ngModel)]="projectForm.poWoReference" [disabled]="!canManage"></div>
-          <div class="pm-field pm-field--full"><label>Project Remarks</label><textarea [(ngModel)]="projectForm.remarks" [disabled]="!canManage"></textarea></div>
-        </div>
-        <div *ngIf="canManage" class="pm-actions master-save"><button class="pm-btn pm-btn--primary" [disabled]="saving" (click)="saveProject()"><i class="fas fa-floppy-disk"></i> Save Project Master</button></div>
-      </article>
+          <section *ngIf="activeTab==='overview'" class="pm-grid project-overview">
+            <article class="pm-card project-master">
+              <div class="pm-section-head"><div><h2>Project Master</h2><p>Scope converted from the confirmed quotation. Manager/Admin may maintain delivery details without changing the original quotation.</p></div><span class="pm-badge">{{selected.categoryName}}</span></div>
+              <div class="pm-form">
+                <div class="pm-field pm-field--full"><label>Project Title / Scope</label><input [(ngModel)]="projectForm.projectTitle" [disabled]="!canManage"></div>
+                <div class="pm-field"><label>Project Start Date</label><input type="date" [(ngModel)]="projectForm.projectStartDate" [disabled]="!canManage"></div>
+                <div class="pm-field"><label>Target Completion Date</label><input type="date" [(ngModel)]="projectForm.targetCompletionDate" [disabled]="!canManage"></div>
+                <div class="pm-field"><label>Project Value</label><input type="number" min="0" [(ngModel)]="projectForm.projectValue" [disabled]="!canManage"></div>
+                <div class="pm-field"><label>Project Location</label><input [(ngModel)]="projectForm.projectLocation" [disabled]="!canManage"></div>
+                <div class="pm-field"><label>Customer Contact</label><input [(ngModel)]="projectForm.customerContactPerson" [disabled]="!canManage"></div>
+                <div class="pm-field"><label>Customer Email</label><input type="email" [(ngModel)]="projectForm.customerEmail" [disabled]="!canManage"></div>
+                <div class="pm-field"><label>PO / WO Reference</label><input [(ngModel)]="projectForm.poWoReference" [disabled]="!canManage"></div>
+                <div class="pm-field pm-field--full"><label>Project Remarks</label><textarea [(ngModel)]="projectForm.remarks" [disabled]="!canManage"></textarea></div>
+              </div>
+              <div *ngIf="canManage" class="pm-actions master-save"><button class="pm-btn pm-btn--primary" [disabled]="saving" (click)="saveProject()"><i class="fas fa-floppy-disk"></i> Save Project Master</button></div>
+            </article>
 
-      <article class="pm-card team-panel">
-        <div class="pm-section-head"><div><h2>Assigned QLSS Team</h2><p>SuperAdmin controls project leader and membership.</p></div><i class="fas fa-users-gear team-panel__icon"></i></div>
-        <div class="team-current"><div class="team-leader"><span>Project Leader</span><strong>{{selected.projectLeaderName||'Not assigned'}}</strong></div><div class="team-members"><span *ngFor="let m of selected.members"><i>{{m.name.charAt(0)}}</i><b>{{m.name}}</b><small>{{ m.email }}</small></span><p *ngIf="!selected.members?.length">No team assigned.</p></div></div>
-        <ng-container *ngIf="isSuperAdmin">
-          <div class="pm-field"><label>Project Leader *</label><pm-search-select [(ngModel)]="selectedLeader" [options]="lookups?.users || []" labelKey="name" detailKey="email" placeholder="Select project leader"></pm-search-select></div>
-          <div class="pm-field team-selector"><label>Team Members</label><pm-search-select [(ngModel)]="memberUserIds" [options]="lookups?.users || []" [multiple]="true" labelKey="name" detailKey="email" placeholder="Select team member(s)"></pm-search-select></div>
-          <button class="pm-btn pm-btn--primary team-save" [disabled]="!selectedLeader" (click)="saveAssignment()"><i class="fas fa-user-check"></i> Save Team Assignment</button>
+            <article class="pm-card team-panel">
+              <div class="pm-section-head"><div><h2>Assigned QLSS Team</h2><p>SuperAdmin controls project leader and membership.</p></div><i class="fas fa-users-gear team-panel__icon"></i></div>
+              <div class="team-current"><div class="team-leader"><span>Project Leader</span><strong>{{selected.projectLeaderName||'Not assigned'}}</strong></div><div class="team-members"><span *ngFor="let m of selected.members"><i>{{m.name.charAt(0)}}</i><b>{{m.name}}</b><small>{{ m.email }}</small></span><p *ngIf="!selected.members?.length">No team assigned.</p></div></div>
+              <ng-container *ngIf="isSuperAdmin">
+                <div class="pm-field"><label>Project Leader *</label><pm-search-select [(ngModel)]="selectedLeader" [options]="lookups?.users || []" labelKey="name" detailKey="email" placeholder="Select project leader"></pm-search-select></div>
+                <div class="pm-field team-selector"><label>Team Members</label><pm-search-select [(ngModel)]="memberUserIds" [options]="lookups?.users || []" [multiple]="true" labelKey="name" detailKey="email" placeholder="Select team member(s)"></pm-search-select></div>
+                <button class="pm-btn pm-btn--primary team-save" [disabled]="!selectedLeader" (click)="saveAssignment()"><i class="fas fa-user-check"></i> Save Team Assignment</button>
+              </ng-container>
+            </article>
+          </section>
+
+          <section *ngIf="activeTab==='activities'" class="pm-card activities-panel">
+            <div class="pm-section-head"><div><h2>Project Activity & Timeline</h2><p>Track planned vs actual dates, responsible person, status, remarks and applicability for every activity.</p></div><button class="pm-btn pm-btn--primary" (click)="addActivity()"><i class="fas fa-plus"></i> Add Activity</button></div>
+            <div *ngIf="showActivityForm" class="activity-editor pm-modal pm-modal--wide" role="dialog" aria-modal="true" aria-label="Project activity form">
+              <div class="activity-editor__title"><strong>{{editingActivityId ? 'Edit activity' : 'New activity'}}</strong><button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="showActivityForm=false">Close</button></div>
+              <div class="pm-form">
+                <div class="pm-field"><label>Sequence No.</label><input type="number" min="0" [(ngModel)]="activity.sequenceNo"></div>
+                <div class="pm-field"><label>Responsible Person</label><pm-search-select [(ngModel)]="activity.responsibleUserId" [options]="lookups?.users || []" labelKey="name" detailKey="email" placeholder="Unassigned"></pm-search-select></div>
+                <div class="pm-field pm-field--full"><label>Activity *</label><input [(ngModel)]="activity.activityName"></div>
+                <div class="pm-field pm-field--full"><label>Description</label><textarea [(ngModel)]="activity.description"></textarea></div>
+                <div class="pm-field"><label>Planned Start</label><input type="date" [(ngModel)]="activity.plannedStartDate"></div>
+                <div class="pm-field"><label>Planned Completion</label><input type="date" [(ngModel)]="activity.plannedCompletionDate"></div>
+                <div class="pm-field"><label>Actual Completion</label><input type="date" [(ngModel)]="activity.actualCompletionDate"></div>
+                <div class="pm-field"><label>Status</label><select [(ngModel)]="activity.status"><option>Not Started</option><option>In Progress</option><option>Completed</option><option>On Hold</option><option>Delayed</option><option>Not Applicable</option></select></div>
+                <div class="pm-field"><label>Weight % <small>optional</small></label><input type="number" min="0" max="100" [(ngModel)]="activity.weightPercent"></div>
+                <div class="pm-field"><label>Applicable</label><select [(ngModel)]="activity.isApplicable"><option [ngValue]="true">Yes</option><option [ngValue]="false">No</option></select></div>
+                <div class="pm-field pm-field--full"><label>Remarks</label><textarea [(ngModel)]="activity.remarks"></textarea></div>
+                <div class="pm-field pm-field--full activity-evidence">
+                  <label>Activity evidence <small>plans, checklists, reports or completion proof</small></label>
+                  <div *ngIf="editingActivityId" class="pm-upload"><i class="fas fa-paperclip"></i><input type="file" (change)="uploadActivityFile($event)"></div>
+                  <p *ngIf="!editingActivityId" class="pm-subtle">Save the activity first, then edit it to upload evidence.</p>
+                  <div class="pm-file-list" *ngIf="editingActivityId"><div class="pm-file" *ngFor="let file of activityAttachments"><div><strong>{{file.originalFileName}}</strong><small>{{file.fileSizeBytes/1024|number:'1.0-0'}} KB</small></div><button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="downloadAttachment(file)">Download</button></div><span *ngIf="!activityAttachments.length" class="pm-subtle">No activity evidence uploaded.</span></div>
+                </div>
+              </div><div class="pm-actions"><button class="pm-btn pm-btn--primary" (click)="saveActivity()">{{editingActivityId ? 'Update' : 'Save'}} Activity</button><button class="pm-btn pm-btn--ghost" (click)="showActivityForm=false">Cancel</button></div>
+            </div>
+            <div class="timeline-list">
+              <article *ngFor="let a of activities" [class]="activityDueClass(a)">
+                <div class="timeline-row__seq">{{a.sequenceNo}}</div><div class="timeline-row__main"><div><strong>{{a.activityName}}</strong><span>{{a.responsiblePerson||'Unassigned'}}</span></div><p>{{a.description||'No description'}}</p><small *ngIf="a.remarks">Remark: {{a.remarks}}</small></div>
+                <div class="timeline-row__dates"><span>Planned <b>{{a.plannedCompletionDate|date:'dd-MM-yyyy'}}</b></span><span>Actual <b>{{a.actualCompletionDate|date:'dd-MM-yyyy'}}</b></span></div>
+                <span [class]="badge(a.status)">{{a.status}}</span>
+                <div class="pm-actions"><button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="editActivity(a)">Edit</button><button *ngIf="a.status!=='Completed' && a.status!=='Not Applicable'" class="pm-btn pm-btn--soft pm-btn--sm" (click)="complete(a)">Complete</button><button class="pm-btn pm-btn--danger pm-btn--sm" (click)="deleteActivity(a)">Delete</button></div>
+              </article><div *ngIf="!activities.length" class="pm-empty">No activities. If a project template was selected, its standard activity plan appears here automatically.</div>
+            </div>
+          </section>
+
+          <section *ngIf="activeTab==='documents'" class="pm-card document-panel">
+            <div class="pm-section-head"><div><h2>Project Document Repository</h2><p>Keep project plans, customer inputs, audit evidence, training files, reports and closure records against the same project.</p></div><span class="pm-badge">{{attachments.length}} files</span></div>
+            <div class="pm-upload document-drop"><i class="fas fa-cloud-arrow-up"></i><div><strong>Upload project document</strong><small>Maximum 10 MB per file. Access follows project role permissions.</small></div><input type="file" (change)="uploadProjectFile($event)"></div>
+            <div class="document-grid"><button *ngFor="let f of attachments" class="document-card" (click)="downloadAttachment(f)"><i class="fas fa-file-lines"></i><div><strong>{{f.originalFileName}}</strong><span>{{(f.fileSizeBytes/1024)|number:'1.0-0'}} KB</span><small>{{f.uploadedOnUtc|date:'dd-MM-yyyy HH:mm'}}</small></div><i class="fas fa-download"></i></button></div>
+            <div *ngIf="!attachments.length" class="pm-empty">No project documents uploaded yet.</div>
+          </section>
+
+          <section *ngIf="activeTab==='acknowledgement'" class="closure-grid">
+            <article class="pm-card closure-card">
+              <div class="pm-section-head"><div><h2>Project Completion & Closure</h2><p>Closure is controlled: all applicable activities → request → SuperAdmin approval → customer acknowledgment → final close.</p></div><span [class]="badge(selected.status)">{{selected.status}}</span></div>
+              <div class="closure-flow"><span [class.done]="selected.completionPercent>=100">Activities complete</span><i></i><span [class.done]="selected.status==='Closure Pending'||selected.status==='Closure Approved'||selected.status==='PROJECT CLOSED'">Closure requested</span><i></i><span [class.done]="selected.status==='Closure Approved'||selected.status==='PROJECT CLOSED'">SuperAdmin approved</span><i></i><span [class.done]="ackForm.status==='Received'||selected.status==='PROJECT CLOSED'">Customer signed</span><i></i><span [class.done]="selected.status==='PROJECT CLOSED'">Project closed</span></div>
+              <div class="pm-field pm-field--full"><label>Closure remark</label><textarea [(ngModel)]="closureRemark" placeholder="Completion note or pending-activity reason…"></textarea></div>
+              <div class="pm-actions closure-actions"><button *ngIf="selected.completionPercent>=100 && selected.status!=='Closure Pending' && selected.status!=='Closure Approved' && selected.status!=='PROJECT CLOSED'" class="pm-btn pm-btn--primary" (click)="requestClosure()">Request Project Closure</button><ng-container *ngIf="isSuperAdmin && selected.status==='Closure Pending'"><button class="pm-btn pm-btn--primary" (click)="closureDecision('Approve')">Approve Closure</button><button class="pm-btn pm-btn--ghost" (click)="closureDecision('Return')">Return for Pending Activities</button></ng-container></div>
+            </article>
+
+            <article class="pm-card ack-card">
+              <div class="pm-section-head"><div><h2>Customer Acknowledgment / Letter of Conformance</h2><p>Generate, send, receive signed copy, then allow SuperAdmin final closure.</p></div><span [class]="badge(ackForm.status)">{{ackForm.status||'Pending'}}</span></div>
+              <div class="pm-form">
+                <div class="pm-field"><label>Customer Name</label><input [(ngModel)]="ackForm.customerName"></div><div class="pm-field"><label>Customer Designation</label><input [(ngModel)]="ackForm.customerDesignation"></div>
+                <div class="pm-field pm-field--full"><label>Remarks</label><textarea [(ngModel)]="ackForm.remarks"></textarea></div>
+                <div class="pm-field"><label>CC for acknowledgment email</label><input [(ngModel)]="ackSend.cc"></div><div class="pm-field"><label>Status</label><select [(ngModel)]="ackForm.status"><option>Pending</option><option>Sent</option><option>Received</option></select></div>
+                <div class="pm-field pm-field--full"><label>Email message <small>optional</small></label><textarea [(ngModel)]="ackSend.message" placeholder="Project completion / conformance message…"></textarea></div>
+              </div>
+              <div class="ack-actions"><button class="pm-btn pm-btn--ghost" (click)="downloadAcknowledgementPdf()"><i class="fas fa-file-pdf"></i> Generate PDF</button><button *ngIf="canManage && selected.status==='Closure Approved'" class="pm-btn pm-btn--primary" (click)="sendAcknowledgement()"><i class="fas fa-envelope"></i> Send to Customer</button><button *ngIf="canManage" class="pm-btn pm-btn--ghost" (click)="saveAcknowledgement()">Save Details</button></div>
+              <div class="signed-upload"><div><strong>Customer-signed copy</strong><span>{{ackForm.signedFileName || 'Not received yet'}}</span></div><input *ngIf="canManage" type="file" (change)="uploadSignedAcknowledgement($event)"></div>
+              <button *ngIf="isSuperAdmin && selected.status==='Closure Approved'" class="pm-btn pm-btn--primary final-close" [disabled]="ackForm.status!=='Received'" (click)="finalClose()"><i class="fas fa-lock"></i> Final Close · PROJECT CLOSED</button>
+            </article>
+          </section>
+
+          <section *ngIf="activeTab==='integrations'" class="pm-card integrations-panel">
+            <div class="pm-section-head"><div><h2>Connected Existing Modules</h2><p>Reference existing Training, Test, Certification, Client, Competency, DMS or Audit records without duplicating their data.</p></div></div>
+            <div class="integration-grid"><article *ngFor="let l of links"><i class="fas fa-link"></i><div><span>{{l.moduleCode}}</span><strong>{{l.recordReference||l.recordId}}</strong><small>{{l.remarks}}</small></div></article></div>
+            <div class="link-editor"><select [(ngModel)]="link.moduleCode"><option>Training</option><option>Test</option><option>Certification</option><option>Client</option><option>Competency</option><option>DMS</option><option>Audit</option><option>Other</option></select><input [(ngModel)]="link.recordId" placeholder="Existing Record ID"><input [(ngModel)]="link.recordReference" placeholder="Reference / display name"><input [(ngModel)]="link.remarks" placeholder="Remark"><button class="pm-btn pm-btn--primary" (click)="addLink()">Link Record</button></div>
+            <div *ngIf="!links.length" class="pm-empty">No existing module records linked to this project.</div>
+          </section>
         </ng-container>
-      </article>
-    </section>
 
-    <section *ngIf="activeTab==='activities'" class="pm-card activities-panel">
-      <div class="pm-section-head"><div><h2>Project Activity & Timeline</h2><p>Track planned vs actual dates, responsible person, status, remarks and applicability for every activity.</p></div><button class="pm-btn pm-btn--primary" (click)="addActivity()"><i class="fas fa-plus"></i> Add Activity</button></div>
-      <div *ngIf="showActivityForm" class="activity-editor">
-        <div class="activity-editor__title"><strong>{{editingActivityId ? 'Edit activity' : 'New activity'}}</strong><button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="showActivityForm=false">Close</button></div>
-        <div class="pm-form">
-          <div class="pm-field"><label>Sequence No.</label><input type="number" min="0" [(ngModel)]="activity.sequenceNo"></div>
-          <div class="pm-field"><label>Responsible Person</label><pm-search-select [(ngModel)]="activity.responsibleUserId" [options]="lookups?.users || []" labelKey="name" detailKey="email" placeholder="Unassigned"></pm-search-select></div>
-          <div class="pm-field pm-field--full"><label>Activity *</label><input [(ngModel)]="activity.activityName"></div>
-          <div class="pm-field pm-field--full"><label>Description</label><textarea [(ngModel)]="activity.description"></textarea></div>
-          <div class="pm-field"><label>Planned Start</label><input type="date" [(ngModel)]="activity.plannedStartDate"></div>
-          <div class="pm-field"><label>Planned Completion</label><input type="date" [(ngModel)]="activity.plannedCompletionDate"></div>
-          <div class="pm-field"><label>Actual Completion</label><input type="date" [(ngModel)]="activity.actualCompletionDate"></div>
-          <div class="pm-field"><label>Status</label><select [(ngModel)]="activity.status"><option>Not Started</option><option>In Progress</option><option>Completed</option><option>On Hold</option><option>Delayed</option><option>Not Applicable</option></select></div>
-          <div class="pm-field"><label>Weight % <small>optional</small></label><input type="number" min="0" max="100" [(ngModel)]="activity.weightPercent"></div>
-          <div class="pm-field"><label>Applicable</label><select [(ngModel)]="activity.isApplicable"><option [ngValue]="true">Yes</option><option [ngValue]="false">No</option></select></div>
-          <div class="pm-field pm-field--full"><label>Remarks</label><textarea [(ngModel)]="activity.remarks"></textarea></div>
-        </div><div class="pm-actions"><button class="pm-btn pm-btn--primary" (click)="saveActivity()">{{editingActivityId ? 'Update' : 'Save'}} Activity</button><button class="pm-btn pm-btn--ghost" (click)="showActivityForm=false">Cancel</button></div>
-      </div>
-      <div class="timeline-list">
-        <article *ngFor="let a of activities" [class]="activityDueClass(a)">
-          <div class="timeline-row__seq">{{a.sequenceNo}}</div><div class="timeline-row__main"><div><strong>{{a.activityName}}</strong><span>{{a.responsiblePerson||'Unassigned'}}</span></div><p>{{a.description||'No description'}}</p><small *ngIf="a.remarks">Remark: {{a.remarks}}</small></div>
-          <div class="timeline-row__dates"><span>Planned <b>{{a.plannedCompletionDate|date:'dd-MM-yyyy'}}</b></span><span>Actual <b>{{a.actualCompletionDate|date:'dd-MM-yyyy'}}</b></span></div>
-          <span [class]="badge(a.status)">{{a.status}}</span>
-          <div class="pm-actions"><button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="editActivity(a)">Edit</button><button *ngIf="a.status!=='Completed' && a.status!=='Not Applicable'" class="pm-btn pm-btn--soft pm-btn--sm" (click)="complete(a)">Complete</button><button class="pm-btn pm-btn--danger pm-btn--sm" (click)="deleteActivity(a)">Delete</button></div>
-        </article><div *ngIf="!activities.length" class="pm-empty">No activities. If a project template was selected, its standard activity plan appears here automatically.</div>
-      </div>
-    </section>
-
-    <section *ngIf="activeTab==='documents'" class="pm-card document-panel">
-      <div class="pm-section-head"><div><h2>Project Document Repository</h2><p>Keep project plans, customer inputs, audit evidence, training files, reports and closure records against the same project.</p></div><span class="pm-badge">{{attachments.length}} files</span></div>
-      <div class="pm-upload document-drop"><i class="fas fa-cloud-arrow-up"></i><div><strong>Upload project document</strong><small>Maximum 10 MB per file. Access follows project role permissions.</small></div><input type="file" (change)="uploadProjectFile($event)"></div>
-      <div class="document-grid"><button *ngFor="let f of attachments" class="document-card" (click)="downloadAttachment(f)"><i class="fas fa-file-lines"></i><div><strong>{{f.originalFileName}}</strong><span>{{(f.fileSizeBytes/1024)|number:'1.0-0'}} KB</span><small>{{f.uploadedOnUtc|date:'dd-MM-yyyy HH:mm'}}</small></div><i class="fas fa-download"></i></button></div>
-      <div *ngIf="!attachments.length" class="pm-empty">No project documents uploaded yet.</div>
-    </section>
-
-    <section *ngIf="activeTab==='acknowledgement'" class="closure-grid">
-      <article class="pm-card closure-card">
-        <div class="pm-section-head"><div><h2>Project Completion & Closure</h2><p>Closure is controlled: all applicable activities → request → SuperAdmin approval → customer acknowledgment → final close.</p></div><span [class]="badge(selected.status)">{{selected.status}}</span></div>
-        <div class="closure-flow"><span [class.done]="selected.completionPercent>=100">Activities complete</span><i></i><span [class.done]="selected.status==='Closure Pending'||selected.status==='Closure Approved'||selected.status==='PROJECT CLOSED'">Closure requested</span><i></i><span [class.done]="selected.status==='Closure Approved'||selected.status==='PROJECT CLOSED'">SuperAdmin approved</span><i></i><span [class.done]="ackForm.status==='Received'||selected.status==='PROJECT CLOSED'">Customer signed</span><i></i><span [class.done]="selected.status==='PROJECT CLOSED'">Project closed</span></div>
-        <div class="pm-field pm-field--full"><label>Closure remark</label><textarea [(ngModel)]="closureRemark" placeholder="Completion note or pending-activity reason…"></textarea></div>
-        <div class="pm-actions closure-actions"><button *ngIf="selected.completionPercent>=100 && selected.status!=='Closure Pending' && selected.status!=='Closure Approved' && selected.status!=='PROJECT CLOSED'" class="pm-btn pm-btn--primary" (click)="requestClosure()">Request Project Closure</button><ng-container *ngIf="isSuperAdmin && selected.status==='Closure Pending'"><button class="pm-btn pm-btn--primary" (click)="closureDecision('Approve')">Approve Closure</button><button class="pm-btn pm-btn--ghost" (click)="closureDecision('Return')">Return for Pending Activities</button></ng-container></div>
-      </article>
-
-      <article class="pm-card ack-card">
-        <div class="pm-section-head"><div><h2>Customer Acknowledgment / Letter of Conformance</h2><p>Generate, send, receive signed copy, then allow SuperAdmin final closure.</p></div><span [class]="badge(ackForm.status)">{{ackForm.status||'Pending'}}</span></div>
-        <div class="pm-form">
-          <div class="pm-field"><label>Customer Name</label><input [(ngModel)]="ackForm.customerName"></div><div class="pm-field"><label>Customer Designation</label><input [(ngModel)]="ackForm.customerDesignation"></div>
-          <div class="pm-field pm-field--full"><label>Remarks</label><textarea [(ngModel)]="ackForm.remarks"></textarea></div>
-          <div class="pm-field"><label>CC for acknowledgment email</label><input [(ngModel)]="ackSend.cc"></div><div class="pm-field"><label>Status</label><select [(ngModel)]="ackForm.status"><option>Pending</option><option>Sent</option><option>Received</option></select></div>
-          <div class="pm-field pm-field--full"><label>Email message <small>optional</small></label><textarea [(ngModel)]="ackSend.message" placeholder="Project completion / conformance message…"></textarea></div>
-        </div>
-        <div class="ack-actions"><button class="pm-btn pm-btn--ghost" (click)="downloadAcknowledgementPdf()"><i class="fas fa-file-pdf"></i> Generate PDF</button><button *ngIf="canManage && selected.status==='Closure Approved'" class="pm-btn pm-btn--primary" (click)="sendAcknowledgement()"><i class="fas fa-envelope"></i> Send to Customer</button><button *ngIf="canManage" class="pm-btn pm-btn--ghost" (click)="saveAcknowledgement()">Save Details</button></div>
-        <div class="signed-upload"><div><strong>Customer-signed copy</strong><span>{{ackForm.signedFileName || 'Not received yet'}}</span></div><input *ngIf="canManage" type="file" (change)="uploadSignedAcknowledgement($event)"></div>
-        <button *ngIf="isSuperAdmin && selected.status==='Closure Approved'" class="pm-btn pm-btn--primary final-close" [disabled]="ackForm.status!=='Received'" (click)="finalClose()"><i class="fas fa-lock"></i> Final Close · PROJECT CLOSED</button>
-      </article>
-    </section>
-
-    <section *ngIf="activeTab==='integrations'" class="pm-card integrations-panel">
-      <div class="pm-section-head"><div><h2>Connected Existing Modules</h2><p>Reference existing Training, Test, Certification, Client, Competency, DMS or Audit records without duplicating their data.</p></div></div>
-      <div class="integration-grid"><article *ngFor="let l of links"><i class="fas fa-link"></i><div><span>{{l.moduleCode}}</span><strong>{{l.recordReference||l.recordId}}</strong><small>{{l.remarks}}</small></div></article></div>
-      <div class="link-editor"><select [(ngModel)]="link.moduleCode"><option>Training</option><option>Test</option><option>Certification</option><option>Client</option><option>Competency</option><option>DMS</option><option>Audit</option><option>Other</option></select><input [(ngModel)]="link.recordId" placeholder="Existing Record ID"><input [(ngModel)]="link.recordReference" placeholder="Reference / display name"><input [(ngModel)]="link.remarks" placeholder="Remark"><button class="pm-btn pm-btn--primary" (click)="addLink()">Link Record</button></div>
-      <div *ngIf="!links.length" class="pm-empty">No existing module records linked to this project.</div>
-    </section>
-  </ng-container>
+      <section *ngIf="!selected" class="pm-card pm-select-placeholder">
+        <div class="pm-select-placeholder__drop"><i class="fas fa-droplet"></i></div>
+        <h2>Select a project</h2>
+        <p>Use the searchable Project List on the left. The selected project opens here without pushing the details below the list.</p>
+      </section>
+    </main>
+  </div>
 </div>

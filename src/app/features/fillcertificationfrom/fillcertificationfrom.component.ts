@@ -21,6 +21,8 @@ import { Router } from "@angular/router";
 export class FillcertificationfromComponent implements OnInit {
   form!: FormGroup;
   trainers: Trainer[] = [];
+  trainerSearch = "";
+  isTrainerDropdownOpen = false;
   companies: Client[] = [];
   isLoadingTrainers = false;
   isLoadingCompanies = false;
@@ -67,7 +69,7 @@ export class FillcertificationfromComponent implements OnInit {
       trainerId: ["", Validators.required],
       location: ["", Validators.required],
       cityId: [""],
-      certificationDate: ["", Validators.required],
+      certificationDate: [{ value: this.today(), disabled: true }, Validators.required],
       isComplete: [{ value: false, disabled: true }],
       isPaid: [{ value: false, disabled: true }],
     });
@@ -198,10 +200,45 @@ export class FillcertificationfromComponent implements OnInit {
 
   toggleTrainingDropdown(): void {
     this.isTrainingDropdownOpen = !this.isTrainingDropdownOpen;
+    this.isTrainerDropdownOpen = false;
+    this.isCompanyDropdownOpen = false;
+    this.isCityDropdownOpen = false;
 
     if (this.isTrainingDropdownOpen) {
       this.trainingSearch = "";
     }
+  }
+
+  get filteredTrainers(): Trainer[] {
+    const search = this.trainerSearch.trim().toLowerCase();
+    return !search
+      ? this.trainers
+      : this.trainers.filter(trainer =>
+          String(trainer.name || "").toLowerCase().includes(search) ||
+          String(trainer.email || "").toLowerCase().includes(search) ||
+          String(trainer.mobile || "").toLowerCase().includes(search));
+  }
+
+  getSelectedTrainerLabel(): string {
+    if (this.isLoadingTrainers) return "Loading trainers...";
+    const trainerId = String(this.form.controls["trainerId"].value || "");
+    return this.trainers.find(trainer => String(trainer.trainerId ?? "") === trainerId)?.name || "Select Trainer";
+  }
+
+  toggleTrainerDropdown(): void {
+    this.isTrainerDropdownOpen = !this.isTrainerDropdownOpen;
+    this.isTrainingDropdownOpen = false;
+    this.isCompanyDropdownOpen = false;
+    this.isCityDropdownOpen = false;
+    if (this.isTrainerDropdownOpen) this.trainerSearch = "";
+  }
+
+  selectTrainer(trainer: Trainer): void {
+    const trainerId = String(trainer.trainerId ?? "");
+    this.form.controls["trainerId"].setValue(trainerId);
+    this.form.controls["trainerId"].markAsTouched();
+    this.trainerSearch = trainer.name;
+    this.isTrainerDropdownOpen = false;
   }
 
   get filteredCompanies(): Client[] {
@@ -234,6 +271,8 @@ export class FillcertificationfromComponent implements OnInit {
 
   toggleCompanyDropdown(): void {
     this.isCompanyDropdownOpen = !this.isCompanyDropdownOpen;
+    this.isTrainingDropdownOpen = false;
+    this.isTrainerDropdownOpen = false;
     this.isCityDropdownOpen = false;
     if (this.isCompanyDropdownOpen) this.companySearch = "";
   }
@@ -251,6 +290,8 @@ export class FillcertificationfromComponent implements OnInit {
   toggleCityDropdown(): void {
     if (!this.selectedCompanyId || !this.selectedCompanyCities.length) return;
     this.isCityDropdownOpen = !this.isCityDropdownOpen;
+    this.isTrainingDropdownOpen = false;
+    this.isTrainerDropdownOpen = false;
     this.isCompanyDropdownOpen = false;
     if (this.isCityDropdownOpen) this.citySearch = "";
   }
@@ -279,13 +320,20 @@ export class FillcertificationfromComponent implements OnInit {
           trainerId: String(record.trainerId),
           location: String(record.location),
           cityId: record.cityId == null ? "" : String(record.cityId),
-          certificationDate: record.date || record.certificationDate
+          certificationDate: this.today()
         });
         this.selectedCompanyId = String(record.location || "");
         this.selectedCityId = record.cityId == null ? "" : String(record.cityId);
         this.notifier.successToastr("Your existing exam form has been loaded.");
       },
-      error: () => this.existingRecordId = undefined
+      error: (error) => {
+        this.existingRecordId = undefined;
+        if (error?.status === 404) {
+          this.notifier.warningToastr("No saved details were found for this training and email.");
+          return;
+        }
+        this.notifier.warningToastr("Saved details could not be retrieved. Please try again.");
+      }
     });
   }
 
@@ -322,8 +370,6 @@ export class FillcertificationfromComponent implements OnInit {
       paymentDate: "",
       trainingId: Number(raw.trainingId),
     };
-
-    console.log(payload);
     this.certificationFormService.save(payload).subscribe({
       next: (saved) => {
         this.notifier.successToastr(
@@ -332,6 +378,7 @@ export class FillcertificationfromComponent implements OnInit {
         sessionStorage.setItem("qlss-exam-form-selection", JSON.stringify({
           username: saved.email || payload.email,
           trainingId: String(saved.trainingId || payload.trainingId),
+          trainerId: String(saved.trainerId || payload.trainerId),
           name: saved.name || payload.name,
           contact: saved.contactNo || payload.contactNo
         }));
@@ -421,13 +468,15 @@ export class FillcertificationfromComponent implements OnInit {
       trainerId: "",
       location: "",
       cityId: "",
-      certificationDate: "",
+      certificationDate: this.today(),
       isComplete: false,
       isPaid: false,
     });
     this.selectedTrainingId = "";
     this.trainingSearch = "";
     this.trainingName = "";
+    this.trainerSearch = "";
+    this.isTrainerDropdownOpen = false;
     this.selectedCompanyId = "";
     this.selectedCityId = "";
     this.citySearch = "";
@@ -440,6 +489,11 @@ export class FillcertificationfromComponent implements OnInit {
     this.form.get("isPaid")?.disable();
   }
 
+  private today(): string {
+    const now = new Date();
+    const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+    return local.toISOString().slice(0, 10);
+  }
   fieldError(key: string, label: string): string {
     const control = this.form.get(key);
     if (!control?.touched || !control.errors) {
@@ -495,3 +549,4 @@ export class FillcertificationfromComponent implements OnInit {
     payment.open();
   }
 }
+

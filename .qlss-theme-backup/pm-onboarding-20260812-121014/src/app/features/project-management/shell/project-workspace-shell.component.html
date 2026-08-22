@@ -1,0 +1,56 @@
+<section class="workspace">
+  <button class="workspace__scrim" *ngIf="menuOpen" aria-label="Close workspace menu" (click)="closeMenu()"></button>
+
+  <aside class="workspace__rail" [class.workspace__rail--open]="menuOpen">
+    <div class="workspace__brand">
+      <div class="workspace__brand-mark"><span>Q</span></div>
+      <div class="workspace__brand-copy">
+        <strong>QLSS Projects</strong>
+        <small>Enquiry → Closure</small>
+      </div>
+      <button class="workspace__rail-close" aria-label="Close menu" (click)="closeMenu()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="workspace__identity">
+      <div class="workspace__avatar">{{ name.charAt(0) || 'Q' }}</div>
+      <div><strong>{{ name }}</strong><span>{{ role || 'User' }}</span></div>
+    </div>
+
+    <nav>
+      <small class="workspace__nav-label">Workspace</small>
+      <a routerLink="dashboard" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+      <a routerLink="enquiries" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-inbox"></i><span>Enquiries</span></a>
+      <a routerLink="quotations" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-file-invoice-dollar"></i><span>Quotations</span></a>
+      <a routerLink="projects" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-diagram-project"></i><span>Projects</span></a>
+
+      <small class="workspace__nav-label">Control</small>
+      <a *ngIf="isSuperAdmin" routerLink="approvals" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-shield-check"></i><span>Approvals</span><b>SA</b></a>
+      <a routerLink="documents" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-folder-open"></i><span>Documents</span></a>
+      <a routerLink="notifications" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-bell"></i><span>Notifications</span></a>
+
+      <small class="workspace__nav-label">People & learning</small>
+      <a [routerLink]="isAdminLike ? '/onboarding/dashboard' : '/onboarding/my-learning'" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-graduation-cap"></i><span>Employee Onboarding</span></a>
+
+      <small class="workspace__nav-label">Insights</small>
+      <a routerLink="reports" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-chart-column"></i><span>Reports</span></a>
+      <a *ngIf="isAdminLike" routerLink="management" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-sliders"></i><span>Management</span></a>
+      <a *ngIf="isAdminLike" routerLink="operations" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-gears"></i><span>Operations</span></a>
+    </nav>
+
+    <div class="workspace__role">
+      <div class="workspace__role-icon"><i class="fas fa-lock"></i></div>
+      <div>
+        <span>{{ isSuperAdmin ? 'SuperAdmin Control' : 'Role Based Access' }}</span>
+        <small>{{ isSuperAdmin ? 'Approvals · assignment · final closure' : 'Only permitted project records are shown' }}</small>
+      </div>
+    </div>
+  </aside>
+
+  <main class="workspace__main">
+    <div class="workspace__mobilebar">
+      <button class="workspace__mobile" (click)="menuOpen = !menuOpen"><i class="fas fa-bars"></i><span>Project workspace</span></button>
+      <span class="workspace__mobile-role">{{ role }}</span>
+    </div>
+    <router-outlet></router-outlet>
+  </main>
+</section>

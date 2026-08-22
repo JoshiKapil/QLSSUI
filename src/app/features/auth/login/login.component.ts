@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+﻿import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -47,15 +47,36 @@ export class LoginComponent {
         next: (response) => {
           this.notifier.successToastr('Logged in successfully.');
           const role = (response.user?.role || '').trim().toLowerCase();
-          // Future: const workspaceRoles = ['admin', 'superadmin', 'employee', 'manager'];
+
+          if (role === 'employee' && response.onboardingRequired && (response.onboardingStatus || '').toLowerCase() !== 'completed') {
+            this.router.navigate(['/onboarding/my-learning']);
+            return;
+          }
+
+          // PM Workspace access: SuperAdmin, Employee and Manager. Admin remains on Home temporarily.
           const workspaceRoles = ['superadmin', 'employee', 'manager'];
           this.router.navigate(workspaceRoles.includes(role) ? ['/workspace/dashboard'] : ['/']);
         },
         error: (error) => {
-          this.errorMessage = 'Invalid email or password.';
+          if (error?.status === 423) {
+            const email = value.email || '';
+            const details = error?.error?.errors || {};
+            sessionStorage.setItem('qlss_onboarding_blocked_email', email);
+            this.isSubmitting = false;
+            this.router.navigate(['/onboarding/access-request'], {
+              queryParams: {
+                email,
+                pending: details.hasPendingAccessRequest ? '1' : undefined
+              }
+            });
+            return;
+          }
+
+          this.errorMessage = error?.error?.message || 'Invalid email or password.';
           this.isSubmitting = false;
         },
         complete: () => (this.isSubmitting = false)
       });
   }
 }
+

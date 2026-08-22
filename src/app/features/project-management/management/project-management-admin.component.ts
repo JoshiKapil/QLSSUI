@@ -19,8 +19,10 @@ export class ProjectManagementAdminComponent implements OnInit {
 
   quoteId: number | null = null;
   quoteForm: any = this.blankQuoteTemplate();
+  showQuoteEditor = false;
   projectId: number | null = null;
   projectForm: any = this.blankProjectTemplate();
+  showProjectEditor = false;
 
   constructor(private api: ProjectManagementService, public auth: AuthService) {}
   ngOnInit(): void { this.load(); }
@@ -35,8 +37,9 @@ export class ProjectManagementAdminComponent implements OnInit {
     this.api.users().subscribe({ next: v => this.users = v, error: e => this.error = e?.error?.message || 'Unable to load users.' });
   }
 
-  newQuote(): void { this.quoteId = null; this.quoteForm = this.blankQuoteTemplate(); }
-  editQuote(t: PmQuotationTemplate): void { this.quoteId = t.quotationTemplateId; this.quoteForm = { ...t }; }
+  newQuote(): void { this.quoteId = null; this.quoteForm = this.blankQuoteTemplate(); this.showQuoteEditor = true; }
+  editQuote(t: PmQuotationTemplate): void { this.quoteId = t.quotationTemplateId; this.quoteForm = { ...t }; this.showQuoteEditor = true; }
+  closeQuoteEditor(): void { this.showQuoteEditor = false; }
   saveQuote(): void {
     if (!this.quoteForm.templateCode?.trim() || !this.quoteForm.templateName?.trim()) { this.error = 'Template code and name are required.'; return; }
     this.clearMessage();
@@ -46,11 +49,12 @@ export class ProjectManagementAdminComponent implements OnInit {
       scopeTemplate: this.quoteForm.scopeTemplate || '', paymentTerms: this.quoteForm.paymentTerms || '',
       specialConditions: this.quoteForm.specialConditions || '', defaultTaxPercent: +this.quoteForm.defaultTaxPercent || 0,
       defaultValidityDays: +this.quoteForm.defaultValidityDays || 30, isActive: !!this.quoteForm.isActive
-    }).subscribe({ next: () => { this.success = 'Quotation template saved.'; this.newQuote(); this.load(); }, error: e => this.error = e?.error?.message || 'Unable to save quotation template.' });
+    }).subscribe({ next: () => { this.success = 'Quotation template saved.'; this.showQuoteEditor = false; this.quoteId = null; this.quoteForm = this.blankQuoteTemplate(); this.load(); }, error: e => this.error = e?.error?.message || 'Unable to save quotation template.' });
   }
 
-  newProjectTemplate(): void { this.projectId = null; this.projectForm = this.blankProjectTemplate(); }
-  editProjectTemplate(t: PmProjectTemplate): void { this.projectId = t.projectTemplateId; this.projectForm = { ...t, activities: (t.activities || []).map(x => ({ ...x })) }; }
+  newProjectTemplate(): void { this.projectId = null; this.projectForm = this.blankProjectTemplate(); this.showProjectEditor = true; }
+  editProjectTemplate(t: PmProjectTemplate): void { this.projectId = t.projectTemplateId; this.projectForm = { ...t, activities: (t.activities || []).map(x => ({ ...x })) }; this.showProjectEditor = true; }
+  closeProjectEditor(): void { this.showProjectEditor = false; }
   addTemplateActivity(): void { this.projectForm.activities.push({ sequenceNo: (this.projectForm.activities.length + 1) * 10, activityName: '', description: '', defaultDurationDays: null, isRequired: true, isActive: true }); }
   removeTemplateActivity(index: number): void { this.projectForm.activities.splice(index, 1); }
   saveProjectTemplate(): void {
@@ -61,7 +65,7 @@ export class ProjectManagementAdminComponent implements OnInit {
       templateCode: this.projectForm.templateCode.trim(), templateName: this.projectForm.templateName.trim(),
       categoryId: this.projectForm.categoryId || null, description: this.projectForm.description || '', isActive: !!this.projectForm.isActive,
       activities: (this.projectForm.activities || []).map((x: any, i: number) => ({ sequenceNo: +x.sequenceNo || ((i + 1) * 10), activityName: x.activityName.trim(), description: x.description || '', defaultDurationDays: x.defaultDurationDays || null, isRequired: !!x.isRequired, isActive: !!x.isActive }))
-    }).subscribe({ next: () => { this.success = 'Project activity template saved.'; this.newProjectTemplate(); this.load(); }, error: e => this.error = e?.error?.message || 'Unable to save project template.' });
+    }).subscribe({ next: () => { this.success = 'Project activity template saved.'; this.showProjectEditor = false; this.projectId = null; this.projectForm = this.blankProjectTemplate(); this.load(); }, error: e => this.error = e?.error?.message || 'Unable to save project template.' });
   }
 
   roleChanged(u: PmUser, role: string): void {

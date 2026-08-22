@@ -35,3 +35,190 @@
   .workspace nav a { min-height: 40px; padding-top: 8px; padding-bottom: 8px; }
   .workspace__nav-label { padding-top: 9px; }
 }
+
+/* --------------------------------------------------------------------------
+   Project Management local theme switcher.
+   These selectors are scoped to .workspace, so the main QLSS site is unchanged.
+   -------------------------------------------------------------------------- */
+.workspace__theme{position:relative;z-index:1;margin:10px 4px 2px;padding:11px;border:1px solid rgba(255,255,255,.11);border-radius:15px;background:rgba(255,255,255,.055)}
+.workspace__theme-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.workspace__theme-head small,.workspace__theme-head strong{display:block}.workspace__theme-head small{color:rgba(255,255,255,.48);font-size:8px;font-weight:900;letter-spacing:1.1px;text-transform:uppercase}.workspace__theme-head strong{margin-top:3px;color:#fff;font-size:11px}.workspace__theme-head i{color:#9ff4ed;font-size:13px}
+.workspace__theme-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:9px}.workspace__theme-options button{min-width:0;border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:7px 6px;background:rgba(255,255,255,.035);color:rgba(255,255,255,.68);cursor:pointer;display:flex;align-items:center;gap:6px;text-align:left;transition:.18s ease}.workspace__theme-options button:hover{background:rgba(255,255,255,.08);color:#fff;transform:translateY(-1px)}.workspace__theme-options button.active{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.28);color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.12)}.workspace__theme-option-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:8px;font-weight:800}.workspace__theme-swatch{width:18px;height:18px;flex:0 0 auto;border-radius:6px;border:1px solid rgba(255,255,255,.45);box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)}.workspace__theme-swatch--classic{background:linear-gradient(135deg,#2b7de9 0 50%,#0f9f9a 50%)}.workspace__theme-swatch--aurora{background:linear-gradient(135deg,#5e4bd8 0 36%,#10b9b0 36% 70%,#ff6e8a 70%)}.workspace__theme-swatch--crystal{background:linear-gradient(135deg,rgba(255,255,255,.95),#8eddf0 45%,#6688df 100%)}.workspace__theme-swatch--peach{background:linear-gradient(135deg,#ffd3bd 0 42%,#e77b68 42% 72%,#633044 72%)}
+
+/* 1. Aurora Nav — unique indigo/aqua/coral navigation combination. */
+.workspace.feature-theme--aurora{--pm-navy:#111336;--pm-navy-2:#302266;--pm-teal:#12bdb3;--pm-sky:#6e5ae9;--pm-cyan:#ff7892;background:radial-gradient(circle at 86% 2%,rgba(255,104,140,.11),transparent 24%),radial-gradient(circle at 62% 0,rgba(18,189,179,.12),transparent 29%),linear-gradient(140deg,#f6f6ff 0%,#f4fbfb 55%,#fff8fb 100%)}
+.workspace.feature-theme--aurora .workspace__rail{background:radial-gradient(circle at 108% 4%,rgba(255,111,143,.3),transparent 28%),radial-gradient(circle at 5% 58%,rgba(22,214,198,.2),transparent 31%),linear-gradient(165deg,#111331 0%,#32236d 51%,#136d76 118%);box-shadow:16px 0 45px rgba(27,20,72,.22)}
+.workspace.feature-theme--aurora .workspace__brand-mark{background:linear-gradient(145deg,#fff,#9ef4e8 48%,#ff9fb1)}.workspace.feature-theme--aurora .workspace__brand-mark span{background:linear-gradient(145deg,#fff,#f1edff);color:#4a35b5}.workspace.feature-theme--aurora .workspace__avatar{background:linear-gradient(145deg,#ff708d,#7358e8 52%,#17c9ba)}
+.workspace.feature-theme--aurora nav a.active{background:linear-gradient(90deg,rgba(111,88,232,.42),rgba(17,201,187,.2),rgba(255,112,141,.1));border-color:rgba(159,238,232,.24)}.workspace.feature-theme--aurora nav a.active:before{background:linear-gradient(#ff7d98,#36e1d3)}.workspace.feature-theme--aurora nav a i{color:#a7e9e3}.workspace.feature-theme--aurora .workspace__role{background:linear-gradient(135deg,rgba(111,88,232,.27),rgba(18,189,179,.17),rgba(255,110,138,.12))}.workspace.feature-theme--aurora .workspace__mobilebar{background:rgba(249,248,255,.94);border-color:rgba(94,75,216,.14)}
+
+/* 2. Crystal Glass — frosted panels and crystal highlights. */
+.workspace.feature-theme--crystal{--pm-navy:#102849;--pm-navy-2:#174a70;--pm-teal:#36bfd0;--pm-sky:#6684da;--pm-cyan:#9debf5;background:radial-gradient(circle at 15% 0,rgba(125,211,239,.25),transparent 34%),radial-gradient(circle at 85% 10%,rgba(132,151,228,.2),transparent 28%),linear-gradient(145deg,#eef8fc 0%,#f4f7ff 50%,#eef9fb 100%)}
+.workspace.feature-theme--crystal .workspace__rail{background:linear-gradient(165deg,rgba(12,34,67,.91),rgba(19,70,103,.78) 55%,rgba(28,115,127,.72));border-right:1px solid rgba(255,255,255,.38);backdrop-filter:blur(24px) saturate(135%);box-shadow:18px 0 55px rgba(33,84,116,.18)}
+.workspace.feature-theme--crystal .workspace__rail:before{background:radial-gradient(circle,rgba(194,248,255,.38),transparent 68%)}.workspace.feature-theme--crystal .workspace__identity,.workspace.feature-theme--crystal .workspace__theme,.workspace.feature-theme--crystal .workspace__role{background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.055));border-color:rgba(255,255,255,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.15)}
+.workspace.feature-theme--crystal .workspace__brand-mark{background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(160,232,244,.86),rgba(137,157,226,.78));box-shadow:0 8px 28px rgba(103,197,217,.24)}.workspace.feature-theme--crystal .workspace__brand-mark span{background:rgba(246,253,255,.8);color:#176b85}.workspace.feature-theme--crystal .workspace__avatar{background:linear-gradient(145deg,#70d8e5,#7e8fdf);box-shadow:0 8px 24px rgba(116,204,224,.26)}
+.workspace.feature-theme--crystal nav a:hover,.workspace.feature-theme--crystal nav a.active{background:linear-gradient(110deg,rgba(255,255,255,.16),rgba(132,229,239,.11));border-color:rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 9px 24px rgba(4,35,58,.12)}.workspace.feature-theme--crystal nav a.active:before{background:#9df5f4}.workspace.feature-theme--crystal .workspace__mobilebar{background:rgba(245,252,255,.72);border-color:rgba(125,184,210,.25);backdrop-filter:blur(18px) saturate(140%)}
+
+/* 3. Peach Bloom — warm peach/coral with a deep plum navigation rail. */
+.workspace.feature-theme--peach{--pm-navy:#3b2230;--pm-navy-2:#67313c;--pm-teal:#dd866e;--pm-sky:#e57662;--pm-cyan:#ffd0b8;background:radial-gradient(circle at 88% 2%,rgba(233,125,96,.14),transparent 28%),radial-gradient(circle at 48% 0,rgba(255,196,161,.18),transparent 31%),linear-gradient(145deg,#fff9f5 0%,#fff4ee 52%,#fffaf7 100%)}
+.workspace.feature-theme--peach .workspace__rail{background:radial-gradient(circle at 105% 8%,rgba(255,181,143,.25),transparent 29%),linear-gradient(165deg,#34212d 0%,#66333f 56%,#9b584d 118%);box-shadow:16px 0 44px rgba(87,42,48,.18)}
+.workspace.feature-theme--peach .workspace__brand-mark{background:linear-gradient(145deg,#fff7f1,#ffcbb1 54%,#df7b67)}.workspace.feature-theme--peach .workspace__brand-mark span{background:#fff8f3;color:#9f4c43}.workspace.feature-theme--peach .workspace__avatar{background:linear-gradient(145deg,#f39a7b,#d46562 54%,#7d3e52)}
+.workspace.feature-theme--peach nav a i{color:#ffd4c2}.workspace.feature-theme--peach nav a:hover{background:rgba(255,219,200,.09)}.workspace.feature-theme--peach nav a.active{background:linear-gradient(90deg,rgba(239,148,119,.28),rgba(255,207,181,.12));border-color:rgba(255,220,203,.2)}.workspace.feature-theme--peach nav a.active:before{background:#ffc9ad}.workspace.feature-theme--peach .workspace__role{background:linear-gradient(135deg,rgba(240,145,117,.22),rgba(255,207,182,.08))}.workspace.feature-theme--peach .workspace__mobilebar{background:rgba(255,249,245,.95);border-color:rgba(192,108,88,.14)}.workspace.feature-theme--peach .workspace__mobile{border-color:#efd5c8;color:#7b3f48}.workspace.feature-theme--peach .workspace__mobile-role{background:#fff0e8;color:#a14f46}
+
+@media(max-width:1120px){.workspace__theme-option-name{font-size:7.5px}.workspace__theme-options{grid-template-columns:1fr}}
+
+/* Premium navigation finish; Aurora Nav uses an Arctic Glass colour combination. */
+.workspace__theme-swatch--aurora{background:linear-gradient(135deg,#e8fdff 0 27%,#59c4d5 27% 59%,#557fca 59% 81%,#baf2ec 81%)}
+.workspace__theme-swatch--peach{background:linear-gradient(135deg,#fff3e9 0 38%,#f4b79b 38% 72%,#ce8177 72%)}
+.workspace.feature-theme--aurora{--pm-navy:#102f51;--pm-navy-2:#245f86;--pm-teal:#51cfcd;--pm-sky:#72a8df;--pm-cyan:#b5f1f4;background:radial-gradient(circle at 15% 2%,rgba(111,217,233,.27),transparent 31%),radial-gradient(circle at 87% 4%,rgba(120,156,222,.2),transparent 28%),linear-gradient(145deg,#eaf8fc,#f8fbff 52%,#eaf7f7)}
+.workspace.feature-theme--aurora .workspace__rail{background:radial-gradient(circle at 108% 4%,rgba(175,245,246,.27),transparent 29%),radial-gradient(circle at 2% 62%,rgba(84,203,205,.18),transparent 31%),linear-gradient(165deg,#102e50,#245e85 53%,#167d86 118%);box-shadow:18px 0 52px rgba(21,70,99,.24)}
+.workspace.feature-theme--aurora .workspace__brand-mark{background:linear-gradient(145deg,#f4feff,#79dce8 48%,#7998db)}.workspace.feature-theme--aurora .workspace__brand-mark span{background:linear-gradient(145deg,#fff,#e7f9fc);color:#226a99}.workspace.feature-theme--aurora .workspace__avatar{background:linear-gradient(145deg,#8ce9ee,#5b9bd6 55%,#3cbdb4)}
+.workspace.feature-theme--aurora nav a:hover,.workspace.feature-theme--aurora nav a.active{background:linear-gradient(90deg,rgba(119,218,232,.27),rgba(125,158,222,.16));border-color:rgba(211,250,252,.2)}.workspace.feature-theme--aurora nav a.active:before{background:linear-gradient(#c4fbff,#72a7df)}.workspace.feature-theme--aurora nav a i{color:#bceff1}
+.workspace.feature-theme--crystal .workspace__brand-copy small,.workspace.feature-theme--crystal .workspace__identity span,.workspace.feature-theme--crystal .workspace__role small,.workspace.feature-theme--aurora .workspace__brand-copy small,.workspace.feature-theme--aurora .workspace__identity span,.workspace.feature-theme--aurora .workspace__role small{color:rgba(238,253,255,.78)}
+.workspace.feature-theme--crystal .workspace__nav-label,.workspace.feature-theme--aurora .workspace__nav-label{color:rgba(226,249,252,.68)}
+.workspace.feature-theme--crystal nav a,.workspace.feature-theme--aurora nav a{color:rgba(247,254,255,.9);text-shadow:0 1px 2px rgba(3,30,49,.18)}
+.workspace.feature-theme--peach{--pm-navy:#70454d;--pm-navy-2:#a96562;--pm-teal:#e8a085;--pm-sky:#dc8b78;--pm-cyan:#ffe0cf;background:radial-gradient(circle at 88% 2%,rgba(255,202,178,.18),transparent 29%),radial-gradient(circle at 18% 3%,rgba(255,227,209,.3),transparent 32%),linear-gradient(145deg,#fffdfb,#fff7f2 54%,#fffaf7)}
+.workspace.feature-theme--peach .workspace__rail{background:radial-gradient(circle at 105% 7%,rgba(255,226,208,.24),transparent 29%),linear-gradient(165deg,#70454d,#a96562 57%,#d68b73 118%);box-shadow:17px 0 48px rgba(112,66,65,.2)}
+.workspace.feature-theme--peach .workspace__identity,.workspace.feature-theme--peach .workspace__theme,.workspace.feature-theme--peach .workspace__role{background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,235,224,.06));border-color:rgba(255,244,237,.19);box-shadow:inset 0 1px 0 rgba(255,255,255,.13)}
+.workspace__theme-options button{box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}.workspace__theme-options button.active{box-shadow:0 9px 22px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.16)}
+
+/* PM_CLASSIC_SIGNATURE_V2
+   QLSS Classic only: professional Midnight Petrol / Glacier / Aqua / Pearl palette.
+   Aurora, Crystal and Peach themes remain unchanged. */
+.workspace.feature-theme--classic{
+  --pm-navy:#08283d;
+  --pm-navy-2:#0c4e63;
+  --pm-teal:#21b6aa;
+  --pm-sky:#2d82bd;
+  --pm-cyan:#91e6e2;
+  background:
+    radial-gradient(circle at 13% 2%,rgba(91,205,217,.18),transparent 31%),
+    radial-gradient(circle at 88% 4%,rgba(75,137,196,.13),transparent 29%),
+    linear-gradient(145deg,#f2f9fc 0%,#f9fcfe 50%,#f1faf9 100%);
+}
+.workspace.feature-theme--classic .workspace__rail{
+  background:
+    radial-gradient(circle at 112% 6%,rgba(123,226,221,.24),transparent 30%),
+    radial-gradient(circle at -8% 72%,rgba(48,134,181,.20),transparent 33%),
+    linear-gradient(166deg,#08243a 0%,#0d3d59 54%,#0b6870 118%);
+  border-right:1px solid rgba(161,235,231,.13);
+  box-shadow:16px 0 44px rgba(7,43,61,.20),inset -1px 0 0 rgba(255,255,255,.04);
+}
+.workspace.feature-theme--classic .workspace__brand-mark{
+  background:linear-gradient(145deg,#fff,#a6ece8 50%,#73a9d4);
+  box-shadow:0 9px 23px rgba(4,35,51,.20);
+}
+.workspace.feature-theme--classic .workspace__brand-mark span{
+  background:linear-gradient(145deg,#ffffff,#eaf9f9);
+  color:#147b83;
+}
+.workspace.feature-theme--classic .workspace__avatar{
+  background:linear-gradient(145deg,#58d0c6,#2c88bd 62%,#266b9e);
+  box-shadow:0 8px 20px rgba(4,42,59,.20);
+}
+.workspace.feature-theme--classic .workspace__identity,
+.workspace.feature-theme--classic .workspace__theme,
+.workspace.feature-theme--classic .workspace__role{
+  border-color:rgba(188,242,239,.15);
+  background:linear-gradient(135deg,rgba(255,255,255,.095),rgba(95,211,207,.045));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
+}
+.workspace.feature-theme--classic nav a{color:rgba(245,253,254,.84)}
+.workspace.feature-theme--classic nav a i{color:#a7e7e4}
+.workspace.feature-theme--classic nav a:hover{
+  color:#fff;
+  background:linear-gradient(90deg,rgba(52,139,184,.18),rgba(42,183,173,.10));
+  border-color:rgba(153,231,226,.11);
+}
+.workspace.feature-theme--classic nav a.active{
+  color:#fff;
+  background:linear-gradient(90deg,rgba(45,132,188,.36),rgba(31,183,170,.20));
+  border-color:rgba(156,238,233,.22);
+  box-shadow:0 10px 24px rgba(2,38,54,.18),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.workspace.feature-theme--classic nav a.active:before{background:linear-gradient(#7ce3de,#55a7db)}
+.workspace.feature-theme--classic .workspace__nav-label{color:rgba(215,245,245,.55)}
+.workspace.feature-theme--classic .workspace__theme-swatch--classic{
+  background:linear-gradient(135deg,#0c405b 0 34%,#2c85bd 34% 65%,#31b9ae 65% 84%,#eefbfb 84%);
+}
+.workspace.feature-theme--classic .workspace__mobilebar{
+  background:rgba(247,252,253,.95);
+  border-color:rgba(39,126,157,.16);
+  box-shadow:0 7px 20px rgba(29,77,100,.07);
+}
+
+
+
+/* ==========================================================================\n   PM_CLASSIC_SKY_GLASS_V3 - Shell\n   One consistent sky-blue glassmorphism identity for QLSS Classic.\n   ========================================================================== */
+.workspace.feature-theme--classic{
+  --pm-navy:#1d6fa1;
+  --pm-navy-2:#2b8fbe;
+  --pm-teal:#5bc8d8;
+  --pm-sky:#52aede;
+  --pm-cyan:#b8edf4;
+  background:
+    radial-gradient(circle at 12% 2%,rgba(104,205,234,.28),transparent 31%),
+    radial-gradient(circle at 88% 3%,rgba(170,230,242,.28),transparent 30%),
+    linear-gradient(150deg,#eaf7fe 0%,#f8fcff 52%,#eefaff 100%)!important;
+}
+.workspace.feature-theme--classic .workspace__rail{
+  background:
+    radial-gradient(circle at 110% 3%,rgba(230,251,255,.38),transparent 30%),
+    radial-gradient(circle at -12% 74%,rgba(185,236,248,.27),transparent 34%),
+    linear-gradient(165deg,rgba(29,111,161,.96),rgba(42,143,190,.94) 55%,rgba(79,190,211,.91) 118%)!important;
+  border-right:1px solid rgba(255,255,255,.38)!important;
+  box-shadow:15px 0 38px rgba(41,119,158,.18),inset -1px 0 0 rgba(255,255,255,.18)!important;
+  backdrop-filter:blur(22px) saturate(135%);
+}
+.workspace.feature-theme--classic .workspace__brand-mark{
+  background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(210,244,252,.92),rgba(141,211,235,.90))!important;
+  box-shadow:0 8px 21px rgba(36,108,145,.18)!important;
+}
+.workspace.feature-theme--classic .workspace__brand-mark span{
+  color:#2781ac!important;
+  background:rgba(249,254,255,.92)!important;
+}
+.workspace.feature-theme--classic .workspace__avatar{
+  background:linear-gradient(145deg,#6bcce3,#4ca7d6 58%,#55c7d6)!important;
+  box-shadow:0 8px 20px rgba(37,111,147,.18)!important;
+}
+.workspace.feature-theme--classic .workspace__identity,
+.workspace.feature-theme--classic .workspace__theme,
+.workspace.feature-theme--classic .workspace__role{
+  background:linear-gradient(135deg,rgba(255,255,255,.19),rgba(224,249,253,.09))!important;
+  border-color:rgba(255,255,255,.30)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24)!important;
+  backdrop-filter:blur(16px) saturate(135%);
+}
+.workspace.feature-theme--classic .workspace__brand-copy small,
+.workspace.feature-theme--classic .workspace__identity span,
+.workspace.feature-theme--classic .workspace__role small{color:rgba(243,253,255,.82)!important}
+.workspace.feature-theme--classic .workspace__nav-label{color:rgba(236,251,255,.72)!important}
+.workspace.feature-theme--classic nav a{color:rgba(250,254,255,.92)!important;text-shadow:0 1px 2px rgba(32,93,124,.15)}
+.workspace.feature-theme--classic nav a i{color:#e1fbff!important}
+.workspace.feature-theme--classic nav a:hover{
+  background:linear-gradient(90deg,rgba(255,255,255,.17),rgba(222,248,253,.10))!important;
+  border-color:rgba(255,255,255,.22)!important;
+}
+.workspace.feature-theme--classic nav a.active{
+  background:linear-gradient(90deg,rgba(255,255,255,.26),rgba(218,247,253,.15))!important;
+  border-color:rgba(255,255,255,.34)!important;
+  box-shadow:0 9px 22px rgba(35,105,139,.14),inset 0 1px 0 rgba(255,255,255,.20)!important;
+}
+.workspace.feature-theme--classic nav a.active:before{background:linear-gradient(#eefeff,#9ce5f1)!important}
+.workspace.feature-theme--classic .workspace__theme-swatch--classic{
+  background:linear-gradient(135deg,#2d8fc4 0 35%,#61c4df 35% 68%,#bcecf4 68% 84%,#fff 84%)!important;
+}
+.workspace.feature-theme--classic .workspace__mobilebar{
+  background:rgba(241,251,255,.88)!important;
+  border-color:rgba(76,158,196,.24)!important;
+  box-shadow:0 7px 20px rgba(48,124,162,.08)!important;
+  backdrop-filter:blur(18px) saturate(140%);
+}
+.workspace.feature-theme--classic .workspace__mobile{
+  color:#277aa5!important;
+  border-color:rgba(78,160,199,.26)!important;
+  background:rgba(255,255,255,.78)!important;
+}
+.workspace.feature-theme--classic .workspace__mobile-role{
+  color:#24799f!important;
+  background:rgba(221,246,253,.90)!important;
+}

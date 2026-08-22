@@ -1,0 +1,67 @@
+@use "../workspace.shared.scss";
+.operations-page {
+  max-width: 1500px;
+}
+.compact-card {
+  max-width: 1050px;
+}
+.pm-search {
+  min-width: 210px;
+  height: 34px;
+  border: 1px solid #d7e1eb;
+  border-radius: 9px;
+  padding: 0 10px;
+}
+.pm-table td small {
+  display: block;
+  max-width: 320px;
+  margin-top: 3px;
+  color: #718296;
+}
+.response-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.response-grid article {
+  border: 1px solid #dfe7ef;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+}
+.response-grid article > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.response-grid h3 {
+  font-size: 13px;
+  margin: 9px 0 5px;
+}
+.response-grid p {
+  font-size: 12px;
+  color: #50667c;
+  white-space: pre-wrap;
+}
+.response-grid small {
+  color: #8291a1;
+}
+@media (max-width: 1000px) {
+  .response-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 650px) {
+  .response-grid {
+    grid-template-columns: 1fr;
+  }
+  .pm-search {
+    min-width: 0;
+    width: 100%;
+  }
+  .pm-section-head > .pm-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+}

@@ -11,6 +11,7 @@ import { ProjectProjectsComponent } from './projects/project-projects.component'
 import { ProjectQuotationsComponent } from './quotations/project-quotations.component';
 import { ProjectReportsComponent } from './reports/project-reports.component';
 import { ProjectWorkspaceShellComponent } from './shell/project-workspace-shell.component';
+import { ProjectOperationsComponent } from './operations/project-operations.component';
 
 const routes: Routes = [{
   path: '', component: ProjectWorkspaceShellComponent, canActivate: [ProjectWorkspaceGuard], children: [
@@ -23,6 +24,7 @@ const routes: Routes = [{
     { path: 'notifications', component: ProjectNotificationsComponent },
     { path: 'reports', component: ProjectReportsComponent },
     { path: 'management', component: ProjectManagementAdminComponent },
+    { path: 'operations', component: ProjectOperationsComponent },
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     { path: '**', redirectTo: 'dashboard' }
   ]

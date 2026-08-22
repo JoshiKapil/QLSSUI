@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { AuthService } from './auth.service';
+import { normalizeApiError } from './api-error.util';
 
 @Injectable()
 export class AuthTokenInterceptor implements HttpInterceptor {
@@ -20,14 +21,14 @@ export class AuthTokenInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
         const isAuthRequest = /\/Auth\/(login|register|refresh)$/i.test(request.url);
         if (error.status !== 401 || !isApiRequest || isAuthRequest) {
-          return throwError(() => error);
+          return throwError(() => normalizeApiError(error));
         }
 
         return this.auth.refreshAccessToken().pipe(
           switchMap((newToken) => next.handle(this.withBearerToken(request, newToken))),
           catchError((refreshError) => {
             this.auth.logout();
-            return throwError(() => refreshError);
+            return throwError(() => normalizeApiError(refreshError));
           })
         );
       })

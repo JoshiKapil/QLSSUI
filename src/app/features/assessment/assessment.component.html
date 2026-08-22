@@ -1,0 +1,142 @@
+﻿<section class="assessment-page">
+  <section class="assessment-coming-soon" aria-labelledby="assessmentComingSoonTitle">
+    <div class="assessment-coming-soon__icon"><i class="fa-solid fa-clipboard-check"></i></div>
+    <span>QLSS Assessment Centre</span>
+    <h1 id="assessmentComingSoonTitle">Professional assessments are coming soon</h1>
+    <p>We are preparing a guided workspace for quality, safety, maintenance, family reviews, and continuous improvement.</p>
+    <div class="assessment-coming-soon__features"><span><i class="fa-solid fa-list-check"></i> 7 guided reviews</span><span><i class="fa-solid fa-chart-line"></i> Progress tracking</span><span><i class="fa-solid fa-file-pdf"></i> Professional PDF records</span></div>
+    <a routerLink="/training" class="assessment-coming-soon__button"><i class="fa-solid fa-arrow-left"></i> Explore Training</a>
+  </section>
+  <ng-container *ngIf="false">
+  <section class="assessment-hero" aria-labelledby="assessment-hero-title">
+    <div class="assessment-hero__blob assessment-hero__blob--a"></div>
+    <div class="assessment-hero__blob assessment-hero__blob--b"></div>
+    <div class="assessment-hero__content">
+      <div class="assessment-hero__copy">
+        <div class="assessment-hero__eyebrow"><span></span>Professional Assessment<span></span></div>
+        <h1 id="assessment-hero-title">Build Better Habits.<br />Elevate <em>Excellence</em></h1>
+        <p class="assessment-hero__sub">Turn quality, safety, maintenance, and continuous improvement into practical habits for everyday family life.</p>
+        <div class="assessment-hero__features" aria-label="Assessment highlights">
+          <div class="assessment-hero__feature"><i class="fa-solid fa-list-check"></i><div><strong>7 Guided Forms</strong><span>One Simple Workspace</span></div></div>
+          <div class="assessment-hero__feature"><i class="fa-solid fa-shield-halved"></i><div><strong>Practical Reviews</strong><span>Real-world Improvement</span></div></div>
+          <div class="assessment-hero__feature"><i class="fa-solid fa-file-pdf"></i><div><strong>Professional Records</strong><span>Save &amp; Download PDF</span></div></div>
+          <div class="assessment-hero__feature"><i class="fa-solid fa-chart-line"></i><div><strong>Track Progress</strong><span>Build Better Habits</span></div></div>
+        </div>
+      </div>
+      <div class="assessment-hero__visual" aria-label="Assessment overview">
+        <div class="assessment-visual-card">
+          <div class="assessment-visual-card__head"><span><i class="fa-solid fa-clipboard-check"></i> Assessment Overview</span><b>Ghar 9001</b></div>
+          <div class="assessment-visual-card__score"><div><strong>7</strong><span>Guided forms</span></div><div class="assessment-score-ring"><span>360°</span></div></div>
+          <div class="assessment-visual-card__rows">
+            <div><i class="fa-solid fa-check"></i><span>Quality &amp; 5S Review</span><b>Ready</b></div>
+            <div><i class="fa-solid fa-shield-halved"></i><span>Safety &amp; EHS</span><b>Track</b></div>
+            <div><i class="fa-solid fa-chart-line"></i><span>Monthly KPI</span><b>Improve</b></div>
+          </div>
+        </div>
+        <div class="assessment-visual-note"><i class="fa-solid fa-file-pdf"></i><div><strong>Professional records</strong><span>Save and export every review</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="tab-rail" role="tablist">
+    <button type="button" *ngFor="let tab of tabs; let i = index" class="tab-button" [class.active]="activeTab === tab.code" (click)="selectTab(tab.code)">
+      <span class="tab-number">{{ i + 1 }}</span><i class="fas" [ngClass]="tab.icon"></i><span>{{ tab.shortTitle }}</span>
+    </button>
+  </div>
+
+  <div class="assessment-shell">
+    <header class="form-header">
+      <div><span class="form-step">Current assessment</span><h2 *ngFor="let tab of tabs" [hidden]="tab.code !== activeTab">{{ tab.title }}</h2></div>
+      <div class="save-state" *ngIf="lastSavedEntryNo"><i class="fas fa-circle-check"></i><span>Saved as <strong>{{ lastSavedEntryNo }}</strong></span></div>
+    </header>
+
+    <div *ngIf="activeTab === 'WEEKLY_5S'" class="form-body">
+      <div class="section-card accent-blue">
+        <div class="section-title"><span>01</span><div><h3>Audit Details</h3><p>Capture the area, auditor and owner for this weekly 5S patrol.</p></div></div>
+        <div class="form-grid four-col">
+          <label><span>Date</span><input type="date" [(ngModel)]="tab1.date" /></label>
+          <label><span>Area Audited</span><input [(ngModel)]="tab1.areaAudited" placeholder="e.g., Kitchen, Living Room, Study" /></label>
+          <label><span>Lead Auditor</span><input [(ngModel)]="tab1.leadAuditor" placeholder="e.g., Son / Daughter" /></label>
+          <label><span>Area Owner</span><input [(ngModel)]="tab1.areaOwner" placeholder="e.g., Anuja / Pravin" /></label>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-title"><span>02</span><div><h3>Assessment Criteria</h3><p>1 = Needs Major Improvement · 5 = World Class</p></div></div>
+        <div class="responsive-table"><table class="assessment-table five-s-table">
+          <thead><tr><th>5S Pillar</th><th>Checkpoint</th><th>Score (1–5)</th><th>Remarks & Action Required</th></tr></thead>
+          <tbody><tr *ngFor="let row of tab1.criteria"><td><strong>{{ row.pillar }}</strong></td><td>{{ row.checkpoint }}</td><td><div class="star-rating"><button type="button" *ngFor="let star of ratingStars" [class.active]="star <= row.score" (click)="setRating(row, star)">★</button></div><small>{{ row.score }} / 5</small></td><td><textarea rows="3" [(ngModel)]="row.remarks" placeholder="Remarks or action required"></textarea></td></tr></tbody>
+        </table></div>
+      </div>
+      <div class="section-card accent-teal">
+        <div class="section-title"><span>03</span><div><h3>Continuous Improvement (Kaizen)</h3><p>Turn today’s biggest issue into a permanent improvement.</p></div></div>
+        <div class="form-grid two-col"><label><span>Top issue found today</span><input [(ngModel)]="tab1.topIssue" /></label><label><span>Proposed solution (How do we fix the root cause permanently?)</span><textarea rows="3" [(ngModel)]="tab1.proposedSolution"></textarea></label></div>
+      </div>
+    </div>
+
+    <div *ngIf="activeTab === 'PM_MATRIX'" class="form-body">
+      <div class="info-banner"><i class="fas fa-bullseye"></i><div><strong>Objective</strong><span>{{ tab2.objective }}</span></div></div>
+      <div class="section-card"><div class="form-grid two-col compact-grid"><label><span>Year</span><input type="number" [(ngModel)]="tab2.year" /></label><label><span>Family PM Lead</span><input [(ngModel)]="tab2.familyPmLead" /></label></div></div>
+      <div class="section-card">
+        <div class="section-title"><span>PM</span><div><h3>Household Preventive Maintenance Matrix</h3><p>Plan recurring checks before breakdowns or accidents happen.</p></div></div>
+        <div class="responsive-table"><table class="assessment-table pm-table"><thead><tr><th>Category</th><th>Equipment / System</th><th>Action Required (Standard)</th><th>Frequency</th><th>Last Checked</th><th>Next Due</th><th>Responsibility Required</th></tr></thead><tbody>
+          <tr *ngFor="let row of tab2.rows"><td><span class="category-chip">{{ row.category }}</span></td><td><strong>{{ row.equipment }}</strong></td><td>{{ row.actionRequired }}</td><td><select [(ngModel)]="row.frequency"><option *ngFor="let option of frequencyOptions" [value]="option">{{ option }}</option></select></td><td><input type="date" [(ngModel)]="row.lastChecked" /></td><td><input type="date" [(ngModel)]="row.nextDue" /></td><td><textarea rows="2" [(ngModel)]="row.responsibility"></textarea></td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="guideline-card"><h3>TPM Action Guidelines</h3><p><strong>Red Tag:</strong> If an item is defective or nearing breakdown, schedule an immediate repair (Kaizen event).</p><p><strong>Cross-Training:</strong> At least two family members should know the main water and electrical shut-off points.</p></div>
+    </div>
+
+    <div *ngIf="activeTab === 'FMR'" class="form-body">
+      <div class="section-card accent-blue">
+        <div class="section-title"><span>01</span><div><h3>Meeting Details</h3><p>Set the date, place, chairperson and attendees.</p></div></div>
+        <div class="form-grid three-col"><label><span>Date & Time</span><input type="datetime-local" [(ngModel)]="tab3.dateTime" /></label><label><span>Location</span><input [(ngModel)]="tab3.location" placeholder="e.g., Living Room / Dining Table" /></label><label><span>Chairperson</span><input [(ngModel)]="tab3.chairperson" placeholder="Rotating role" /></label></div>
+        <label class="attendee-field"><span>Attendees</span><input [(ngModel)]="tab3.attendees" placeholder="Enter attendee names" /><small>Separate multiple names with commas.</small></label>
+      </div>
+      <div class="section-card"><div class="section-title"><span>02</span><div><h3>Part 1 · Review Inputs</h3><p>Where are we now?</p></div></div><div class="question-stack">
+        <div class="question-card"><h4>1. Status of Actions from Previous FMR</h4><p>Did we complete the tasks agreed upon last month?</p><div class="choice-row"><label><input type="radio" name="previousActions" value="Yes" [(ngModel)]="tab3.previousActionsCompleted" /> Yes</label><label><input type="radio" name="previousActions" value="No" [(ngModel)]="tab3.previousActionsCompleted" /> No</label></div><label><span>Pending Items</span><textarea rows="2" [(ngModel)]="tab3.pendingItems"></textarea></label></div>
+        <div class="question-card"><h4>2. Changes in the Family Context</h4><p>Upcoming changes in work schedules, school exams, or external commitments?</p><label><span>Notes</span><textarea rows="2" [(ngModel)]="tab3.contextChanges"></textarea></label></div>
+        <div class="question-card"><h4>3. Household Performance & Quality Objectives</h4><label><span>Financial Health · Are we on track with the household budget? Any major upcoming expenses?</span><textarea rows="2" [(ngModel)]="tab3.financialHealthNotes"></textarea></label><label><span>Health & Wellness · How is everyone’s physical and mental health? Are we eating well and exercising?</span><textarea rows="2" [(ngModel)]="tab3.healthWellnessNotes"></textarea></label><label><span>Operations & 5S · How did weekly 5S patrols and chores go? Any recurring breakdowns?</span><textarea rows="2" [(ngModel)]="tab3.operations5sNotes"></textarea></label></div>
+        <div class="question-card"><h4>4. Resource Adequacy</h4><p>Do we need anything new to run the house or support our goals?</p><label><span>Notes</span><textarea rows="2" [(ngModel)]="tab3.resourceAdequacyNotes"></textarea></label></div>
+        <div class="question-card"><h4>5. Family Satisfaction (Customer Feedback)</h4><p>Is anything frustrating you at home? What is working well?</p><label><span>Notes</span><textarea rows="2" [(ngModel)]="tab3.familySatisfactionNotes"></textarea></label></div>
+      </div></div>
+      <div class="section-card accent-teal"><div class="section-title"><span>03</span><div><h3>Part 2 · Review Outputs</h3><p>Continuous Improvement · Kaizen</p></div></div><div class="form-grid two-col"><label><span>Opportunity for Improvement</span><textarea rows="3" [(ngModel)]="tab3.kaizenIdea" placeholder="One process to make better, faster, or safer"></textarea></label><label><span>Upcoming Plans & Projects</span><textarea rows="3" [(ngModel)]="tab3.upcomingPlan" placeholder="Travel, outing or household project"></textarea></label></div></div>
+      <div class="section-card"><div class="section-title"><span>04</span><div><h3>Part 3 · Action Item Tracker</h3><p>Who does what by when?</p></div></div><div class="example-strip"><strong>Example</strong><span>Remove old medicines · Pravin · Pending</span><span>Fix wardrobe hinge · Anuja / Kids · Pending</span></div><div class="responsive-table"><table class="assessment-table action-table"><thead><tr><th>Action Item (What)</th><th>Responsibility (Who)</th><th>Target Date (When)</th><th>Status</th><th></th></tr></thead><tbody><tr *ngFor="let row of tab3.actionItems; let i=index"><td><textarea rows="2" [(ngModel)]="row.actionItem"></textarea></td><td><input [(ngModel)]="row.responsibility" /></td><td><input type="date" [(ngModel)]="row.targetDate" /></td><td><select [(ngModel)]="row.status"><option *ngFor="let status of actionStatuses" [value]="status">{{ status }}</option></select></td><td><button type="button" class="icon-btn danger" (click)="removeFmrAction(i)" [disabled]="tab3.actionItems.length === 1"><i class="fas fa-trash"></i></button></td></tr></tbody></table></div><button type="button" class="mini-btn add-row" (click)="addFmrAction()"><i class="fas fa-plus"></i> Add action item</button><div class="form-grid two-col signatures"><label><span>Chairperson / Alignment</span><input [(ngModel)]="tab3.signatureChairperson" /></label><label><span>Family Members / Commitment</span><input [(ngModel)]="tab3.signatureFamilyMembers" /></label></div></div>
+    </div>
+
+    <div *ngIf="activeTab === 'CAPA_FMEA'" class="form-body">
+      <div class="info-banner warning"><i class="fas fa-rotate"></i><div><strong>Quick-Response Corrective Action</strong><span>{{ tab4.objective }}</span><small>Use when a problem repeats more than twice, causes significant stress, costs money, or poses a safety risk.</small></div></div>
+      <div class="section-card"><div class="form-grid two-col compact-grid"><label><span>Date</span><input type="date" [(ngModel)]="tab4.date" /></label><label><span>Facilitator</span><input [(ngModel)]="tab4.facilitator" /></label></div></div>
+      <div class="section-card"><div class="section-title"><span>EX</span><div><h3>Examples before you start</h3><p>Guidance from the provided form.</p></div></div><div class="example-grid four"><article><strong>What went wrong?</strong><p>Morning routine bottleneck.</p><p>High electricity bill.</p><p>Misplaced property documents.</p></article><article><strong>Root Cause</strong><p>Shoes/uniform not prepared.</p><p>AC running in empty rooms; worn fridge gasket.</p><p>No designated home for paperwork.</p></article><article><strong>Impact</strong><p>Stress and late school drop-off.</p><p>Wasted energy and budget impact.</p><p>Panic, wasted time, loss risk.</p></article><article><strong>Preventive Action</strong><p>5S shoe rack and evening uniform routine.</p><p>Reminder + replace fridge gasket.</p><p>Fireproof folder + digital copies.</p></article></div></div>
+      <div class="section-card"><div class="section-title"><span>CA</span><div><h3>Corrective Action / FMEA Table</h3><p>Problem → root cause → impact → permanent prevention.</p></div></div><div class="responsive-table"><table class="assessment-table capa-table"><thead><tr><th>What went wrong?</th><th>Root Cause (Ask Why?)</th><th>Impact</th><th>Preventive Action</th><th></th></tr></thead><tbody><tr *ngFor="let row of tab4.rows; let i=index"><td><textarea rows="5" [(ngModel)]="row.failureMode"></textarea></td><td><textarea rows="5" [(ngModel)]="row.rootCause"></textarea></td><td><textarea rows="5" [(ngModel)]="row.impact"></textarea></td><td><textarea rows="5" [(ngModel)]="row.preventiveAction"></textarea></td><td><button type="button" class="icon-btn danger" (click)="removeCapaRow(i)" [disabled]="tab4.rows.length===1"><i class="fas fa-trash"></i></button></td></tr></tbody></table></div><button type="button" class="mini-btn add-row" (click)="addCapaRow()"><i class="fas fa-plus"></i> Add another problem</button></div>
+      <div class="guideline-card five-whys"><h3>The “5 Whys” Quick Check</h3><ul><li><strong>Symptom:</strong> The TV remote is broken.</li><li><strong>Why?</strong> It fell off the sofa and shattered.</li><li><strong>Why?</strong> It was left balancing on the armrest.</li><li><strong>Why?</strong> It does not have a designated storage spot.</li><li><strong>Root Cause:</strong> Lack of 5S (Set in Order) for living room electronics.</li><li><strong>Preventive Action:</strong> Buy a small remote organizer basket for the coffee table.</li></ul></div>
+    </div>
+
+    <div *ngIf="activeTab === 'EHS'" class="form-body">
+      <div class="info-banner success"><i class="fas fa-shield-heart"></i><div><strong>Household EHS (Environment, Health, and Safety) & HIRA Audit</strong><span><b>Purpose:</b> Proactively identify hazards, assess risks and apply controls before an accident or environmental waste occurs.</span><small><b>Format:</b> A zone-by-zone safety sweep with specific checkpoints. <b>Application:</b> Use as a monthly weekend walkthrough to keep the home’s safety controls effective.</small></div></div>
+      <div class="section-card"><div class="form-grid two-col compact-grid"><label><span>Date</span><input type="date" [(ngModel)]="tab5.date" /></label><label><span>Safety Officer (Auditor)</span><input [(ngModel)]="tab5.safetyOfficer" /></label></div></div>
+      <div class="section-card"><div class="responsive-table"><table class="assessment-table ehs-table"><thead><tr><th>Zone & Potential Hazard</th><th>HIRA Checkpoint</th><th>Risk Level</th><th>Status / Action Required (Control)</th></tr></thead><tbody><tr *ngFor="let row of tab5.rows"><td><span class="category-chip">{{ row.zone }}</span><strong>{{ row.hazard }}</strong></td><td>{{ row.checkpoint }}</td><td><select [(ngModel)]="row.riskLevel"><option *ngFor="let risk of riskLevels" [value]="risk">{{ risk }}</option></select></td><td><textarea rows="3" [(ngModel)]="row.control"></textarea></td></tr></tbody></table></div></div>
+    </div>
+
+    <div *ngIf="activeTab === 'MUDA'" class="form-body">
+      <div class="info-banner purple"><i class="fas fa-recycle"></i><div><strong>Lean “8 Wastes” (MUDA) Household Assessment</strong><span><b>Purpose:</b> Identify Non-Value-Adding (NVA) activities in daily household routines using the Lean acronym DOWNTIME.</span><small><b>Format:</b> A diagnostic checklist to spot time traps and inefficiencies. <b>Application:</b> Use when a specific routine feels stressful, chaotic, or takes too long—ideal for a simple Value Stream Mapping review.</small></div></div>
+      <div class="section-card"><label class="wide-label"><span>Process Being Assessed</span><input [(ngModel)]="tab6.processBeingAssessed" placeholder="e.g., Morning School Prep, Sunday Cleaning, Grocery Shopping" /></label></div>
+      <div class="section-card"><div class="responsive-table"><table class="assessment-table muda-table"><thead><tr><th>Lean Waste (MUDA)</th><th>Household Translation</th><th>Observed Waste</th><th>Kaizen (Improvement Idea)</th><th>Risk Level</th></tr></thead><tbody><tr *ngFor="let row of tab6.rows"><td><strong>{{ row.waste }}</strong></td><td>{{ row.translation }}</td><td><textarea rows="3" [(ngModel)]="row.observedWaste"></textarea></td><td><textarea rows="3" [(ngModel)]="row.kaizenIdea"></textarea></td><td><select [(ngModel)]="row.riskLevel"><option *ngFor="let risk of riskLevels" [value]="risk">{{ risk }}</option></select></td></tr></tbody></table></div></div>
+    </div>
+
+    <div *ngIf="activeTab === 'KPI'" class="form-body">
+      <div class="info-banner kpi"><i class="fas fa-chart-column"></i><div><strong>Monthly Family KPI Dashboard</strong><span>Measure household health, happiness and operational efficiency.</span><small>Use misses for Kaizen, not punishment.</small></div></div>
+      <div class="section-card"><div class="form-grid two-col compact-grid"><label><span>Month & Year</span><input type="month" [(ngModel)]="tab7.monthYear" /></label><label><span>Reviewed By (Lead Auditor)</span><input [(ngModel)]="tab7.reviewedBy" /></label></div></div>
+      <div class="section-card kpi-matrix-card"><div class="section-title"><span>KPI</span><div><h3>KPI Tracking Matrix</h3><p>Set the monthly target and enter Actual values for JAN–DEC.</p></div></div><div class="kpi-list">
+        <article class="kpi-row" *ngFor="let row of tab7.rows"><div class="kpi-row-head"><div><span class="category-chip">{{ row.category }}</span><h4>{{ row.indicator }}</h4><small>{{ row.targetStandard }}</small></div><div class="target-editor"><label><span>Rule</span><select [(ngModel)]="row.comparison" (ngModelChange)="updateAllKpiStatuses(row)"><option value="<">Actual &lt; Target</option><option value=">">Actual &gt; Target</option></select></label><label><span>Monthly Target (Standard)</span><input type="number" step="0.01" [(ngModel)]="row.targetValue" (ngModelChange)="updateAllKpiStatuses(row)" /></label></div></div><div class="month-grid"><div class="month-cell" *ngFor="let month of months; let mi=index"><span>{{ month }}</span><input type="number" step="0.01" [(ngModel)]="row.actual[mi]" (ngModelChange)="updateKpiStatus(row,mi)" placeholder="Actual" /><b class="status-pill" [ngClass]="statusClass(row.status[mi])">{{ row.status[mi] || '—' }}</b></div></div><label class="corrective-action" [class.enabled]="hasKpiCorrectiveAction(row)"><span>Corrective Action (If Yellow / Red)</span><textarea rows="2" [(ngModel)]="row.correctiveAction" [disabled]="!hasKpiCorrectiveAction(row)"></textarea></label></article>
+      </div></div>
+      <div class="guideline-card"><h3>Why monitor these specific KPIs?</h3><p><strong>1. Financial Health:</strong> expenses and utilities show budget control; tracking electricity units or gas cylinders also supports EHS awareness, while impulse purchases expose Overproduction / Inventory waste.</p><p><strong>2. Guests Visited (Social Capital):</strong> keeps the household connected and hospitable rather than operating only like a strict factory.</p><p><strong>3. Health Issues & Safety Incidents:</strong> sick days, minor cuts, burns or near-misses reveal patterns that may need root-cause analysis.</p><p><strong>4. Equipment Breakdowns (TPM):</strong> unexpected washing-machine, AC, geyser or appliance failures indicate preventive-maintenance gaps; the target should move toward zero breakdowns.</p><p><strong>5. Kaizen Ideas Submitted:</strong> turns improvement into a family habit and encourages children to propose solutions instead of only reporting problems.</p></div>
+    </div>
+
+    <div class="form-actions-sticky"><div class="action-note"><i class="fas fa-database"></i><span><strong>Save</strong> stores this tab. <strong>Save & Download</strong> stores it first and then downloads a static PDF.</span></div><div class="action-buttons"><button type="button" class="btn-save secondary" (click)="saveCurrent(false)" [disabled]="isSaving"><i class="fas fa-floppy-disk"></i>{{ isSaving ? 'Saving...' : 'Save' }}</button><button type="button" class="btn-save primary" (click)="saveCurrent(true)" [disabled]="isSaving"><i class="fas fa-file-pdf"></i>{{ isSaving ? 'Saving...' : 'Save & Download PDF' }}</button></div></div>
+  </div>
+  </ng-container>
+</section>
+
+
+
+
+

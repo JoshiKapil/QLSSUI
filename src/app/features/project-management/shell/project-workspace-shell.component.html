@@ -1,4 +1,4 @@
-<section class="workspace">
+<section class="workspace" [ngClass]="themeClass">
   <button class="workspace__scrim" *ngIf="menuOpen" aria-label="Close workspace menu" (click)="closeMenu()"></button>
 
   <aside class="workspace__rail" [class.workspace__rail--open]="menuOpen">
@@ -16,6 +16,25 @@
       <div><strong>{{ name }}</strong><span>{{ role || 'User' }}</span></div>
     </div>
 
+    <section class="workspace__theme" aria-label="Project workspace theme">
+      <div class="workspace__theme-head">
+        <div><small>Workspace theme</small><strong>{{ themeName }}</strong></div>
+        <i class="fas fa-palette" aria-hidden="true"></i>
+      </div>
+      <div class="workspace__theme-options">
+        <button
+          type="button"
+          *ngFor="let option of themeOptions"
+          [class.active]="theme === option.id"
+          [attr.aria-pressed]="theme === option.id"
+          [attr.title]="option.name + ' - ' + option.description"
+          (click)="setTheme(option.id)">
+          <span class="workspace__theme-swatch" [ngClass]="'workspace__theme-swatch--' + option.id"></span>
+          <span class="workspace__theme-option-name">{{ option.name }}</span>
+        </button>
+      </div>
+    </section>
+
     <nav>
       <small class="workspace__nav-label">Workspace</small>
       <a routerLink="dashboard" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
@@ -28,9 +47,13 @@
       <a routerLink="documents" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-folder-open"></i><span>Documents</span></a>
       <a routerLink="notifications" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-bell"></i><span>Notifications</span></a>
 
+      <small class="workspace__nav-label">People & learning</small>
+      <a [routerLink]="isAdminLike ? '/onboarding/dashboard' : '/onboarding/my-learning'" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-graduation-cap"></i><span>Employee Onboarding</span></a>
+
       <small class="workspace__nav-label">Insights</small>
       <a routerLink="reports" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-chart-column"></i><span>Reports</span></a>
       <a *ngIf="isAdminLike" routerLink="management" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-sliders"></i><span>Management</span></a>
+      <a *ngIf="isAdminLike" routerLink="operations" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-gears"></i><span>Operations</span></a>
     </nav>
 
     <div class="workspace__role">

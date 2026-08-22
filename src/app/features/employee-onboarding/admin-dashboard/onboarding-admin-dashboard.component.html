@@ -1,0 +1,15 @@
+<div class="admin-page">
+  <header class="page-head"><div><span class="eyebrow">EMPLOYEE READINESS</span><h1>Onboarding command center</h1><p>One view for induction progress, approaching deadlines, grace cases and blocked employees.</p></div><button (click)="reload()"><i class="fas fa-rotate"></i> Refresh</button></header>
+  <section class="kpis">
+    <article><i class="fas fa-users"></i><div><span>Active onboarding</span><strong>{{ dashboard.activeEmployees }}</strong></div></article>
+    <article><i class="fas fa-clock"></i><div><span>Due in 2 days</span><strong>{{ dashboard.dueSoon }}</strong></div></article>
+    <article class="amber"><i class="fas fa-hourglass-end"></i><div><span>1-day grace</span><strong>{{ dashboard.grace }}</strong></div></article>
+    <article class="red"><i class="fas fa-user-lock"></i><div><span>Login blocked</span><strong>{{ dashboard.blocked }}</strong></div></article>
+    <article class="green"><i class="fas fa-award"></i><div><span>Completed</span><strong>{{ dashboard.completed }}</strong></div></article>
+    <article class="purple"><i class="fas fa-user-check"></i><div><span>Approval pending</span><strong>{{ dashboard.pendingAccessRequests }}</strong></div></article>
+  </section>
+  <section class="panel">
+    <div class="panel__head"><div><small>LIVE STATUS</small><h2>Employee induction tracker</h2></div><a routerLink="/onboarding/employees">Assign employee <i class="fas fa-arrow-right"></i></a></div>
+    <div class="table-wrap"><table><thead><tr><th>Employee</th><th>Department</th><th>Progress</th><th>Deadline</th><th>Modules</th><th>Status</th></tr></thead><tbody><tr *ngFor="let row of enrollments"><td><strong>{{ row.employeeName }}</strong><span>{{ row.employeeEmail }}</span></td><td>{{ row.departmentName || 'Default only' }}</td><td><div class="progress"><span [style.width.%]="row.completionPercent"></span></div><b>{{ row.completionPercent | number:'1.0-0' }}%</b></td><td>{{ row.dueOnUtc | date:'dd MMM yyyy' }}</td><td>{{ row.completedItems }}/{{ row.totalItems }}</td><td><span class="badge" [ngClass]="statusClass(row.status)">{{ row.status }}</span></td></tr><tr *ngIf="!loading && !enrollments.length"><td colspan="6" class="empty">No onboarding enrollments yet.</td></tr></tbody></table></div>
+  </section>
+</div>

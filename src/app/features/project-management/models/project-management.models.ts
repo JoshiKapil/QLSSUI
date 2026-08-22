@@ -26,8 +26,17 @@ export interface PmDashboard {
   followUps: PmFollowUp[];
 }
 
-export interface PmUser { id: number; name: string; email: string; role: string; }
-export interface PmLookup { id: number; code: string; name: string; }
+export interface PmUser {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+}
+export interface PmLookup {
+  id: number;
+  code: string;
+  name: string;
+}
 export interface PmLookups {
   categories: PmLookup[];
   users: PmUser[];
@@ -45,9 +54,12 @@ export interface PmEnquiry {
   contactPerson: string;
   emailId: string;
   contactNumber: string;
+  customerAddress: string;
   enquiryDate: string;
   categoryId: number;
   categoryName: string;
+  categoryValueCode: string;
+  categoryValueName: string;
   requirementScope: string;
   expectedTimeline: string;
   expectedStartDate?: string;
@@ -64,9 +76,14 @@ export interface PmQuotation {
   quotationId: number;
   quotationNo: string;
   enquiryId: number;
+  categoryId: number;
   quotationTemplateId?: number;
   customerName: string;
   customerEmail: string;
+  customerAddress: string;
+  contactPerson: string;
+  categoryCode: string;
+  categoryValueName: string;
   serviceType: string;
   scope: string;
   consultingDays?: number;
@@ -157,8 +174,15 @@ export interface PmFollowUp {
 }
 
 export interface PmQuotationApprovalHistory {
-  approvalHistoryId: number; quotationId: number; action: string; fromStatus: string; toStatus: string;
-  remark: string; actionByUserId: number; actionByName: string; actionOnUtc: string;
+  approvalHistoryId: number;
+  quotationId: number;
+  action: string;
+  fromStatus: string;
+  toStatus: string;
+  remark: string;
+  actionByUserId: number;
+  actionByName: string;
+  actionOnUtc: string;
 }
 
 export interface PmEmailLog {
@@ -174,6 +198,28 @@ export interface PmEmailLog {
   sentOnUtc?: string;
   deliveryStatus: string;
   errorMessage: string;
+  retryCount: number;
+  lastRetryOnUtc?: string;
+}
+
+export interface PmSetting {
+  settingKey: string;
+  settingValue: string;
+  description: string;
+  updatedOnUtc: string;
+}
+export interface PmCustomerResponse {
+  customerResponseId: number;
+  entityType: string;
+  entityId: number;
+  entityReference: string;
+  channel: string;
+  responseStatus: string;
+  receivedFrom: string;
+  subject: string;
+  responseText: string;
+  receivedOnUtc: string;
+  recordedByName: string;
 }
 
 export interface PmNotification {

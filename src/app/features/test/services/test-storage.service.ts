@@ -390,15 +390,16 @@ export class TestStorageService {
     await this.apiPost(`Test/${encodeURIComponent(serverTestId)}/questions`, cleanedQuestionIds);
   }
 
-  private async deleteTestDefinitionFromServer(testName: string): Promise<void> {
+  private async deleteTestDefinitionFromServer(testName: string, testId?: string): Promise<void> {
     try {
-      const test = await this.resolveServerTest(testName);
-      const serverTestId = normalizeServerId(test?.testId);
+      const test = testId ? null : await this.resolveServerTest(testName);
+      const serverTestId = normalizeServerId(testId || test?.testId);
       if (serverTestId) {
         await this.apiDelete(`Test/${encodeURIComponent(serverTestId)}`);
       }
     } catch (error) {
       this.logApiFallback('Delete assessment', error);
+      throw error;
     }
   }
 
@@ -687,8 +688,8 @@ export class TestStorageService {
     return tests;
   }
 
-  async deleteTestDefinition(testName: string): Promise<void> {
-    await this.deleteTestDefinitionFromServer(testName);
+  async deleteTestDefinition(testName: string, testId?: string): Promise<void> {
+    await this.deleteTestDefinitionFromServer(testName, testId);
     await this.removeStoredValue(this.getAssessmentKey(testName));
     await this.removeStoredValue(`${this.legacyTestPrefix}${this.normalizeFileName(testName)}`);
   }
@@ -882,19 +883,10 @@ export class TestStorageService {
       .set('email', email.trim())
       .set('trainingId', trainingId.trim());
     const response = await this.apiGet<any>('certification-data/validate-test-access', params);
-    if (response?.isValid !== true) {
-      return false;
-    }
-
-    try {
-      const preSubmission = await this.loadSubmissionFileFromServer('pre', trainingId, email);
-      if (!preSubmission?.submittedAt) {
-        return false;
-      }
-      return new Date(preSubmission.submittedAt).getUTCFullYear() === new Date().getUTCFullYear();
-    } catch {
-      return false;
-    }
+    // The API verifies the current-year certification and matching pre-test
+    // submission. Result JSON files are optional audit/export artifacts and may
+    // be absent for mobile attempts, so they must not block post-test access.
+    return response?.isValid === true;
   }
 
   async exportTestDefinition(testName: string): Promise<Blob> {

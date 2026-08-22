@@ -1,0 +1,296 @@
+<div class="pm-page operations-page">
+  <header class="pm-head">
+    <div>
+      <div class="pm-head__eyebrow">Operational control</div>
+      <h1>PM Operations</h1>
+      <p>
+        Configure reminders, monitor outbound email and capture customer
+        responses in one place.
+      </p>
+    </div>
+    <button class="pm-btn pm-btn--ghost" (click)="load()">Refresh</button>
+  </header>
+  <p *ngIf="error" class="pm-error">{{ error }}</p>
+  <p *ngIf="success" class="pm-success">{{ success }}</p>
+  <div class="pm-tabs">
+    <button
+      class="pm-tab"
+      [class.active]="tab === 'settings'"
+      (click)="tab = 'settings'"
+    >
+      SLA & Reminders</button
+    ><button
+      class="pm-tab"
+      [class.active]="tab === 'delivery'"
+      (click)="tab = 'delivery'"
+    >
+      Email Delivery <b>{{ deliveries.length }}</b></button
+    ><button
+      class="pm-tab"
+      [class.active]="tab === 'responses'"
+      (click)="tab = 'responses'"
+    >
+      Customer Responses <b>{{ responses.length }}</b>
+    </button>
+  </div>
+  <section *ngIf="tab === 'settings'" class="pm-card compact-card">
+    <div class="pm-section-head">
+      <div>
+        <h2>Operating Settings</h2>
+        <p>SuperAdmin-controlled defaults. Existing records are not changed.</p>
+      </div>
+    </div>
+    <div class="pm-form">
+      <div class="pm-field">
+        <label>Quotation follow-up days</label
+        ><input
+          type="number"
+          min="1"
+          max="30"
+          [(ngModel)]="settings.quotationFollowUpDays"
+        />
+      </div>
+      <div class="pm-field">
+        <label>Upcoming activity window</label
+        ><input
+          type="number"
+          min="1"
+          max="30"
+          [(ngModel)]="settings.activityUpcomingDays"
+        />
+      </div>
+      <div class="pm-field">
+        <label>Email retry limit</label
+        ><input
+          type="number"
+          min="1"
+          max="10"
+          [(ngModel)]="settings.emailRetryLimit"
+        />
+      </div>
+      <div class="pm-field">
+        <label>Reminder scan interval (minutes)</label
+        ><input
+          type="number"
+          min="5"
+          max="1440"
+          [(ngModel)]="settings.reminderWorkerMinutes"
+        />
+      </div>
+    </div>
+    <div class="pm-actions">
+      <button
+        *ngIf="isSuperAdmin"
+        class="pm-btn pm-btn--primary"
+        (click)="saveSettings()"
+      >
+        Save Settings</button
+      ><span *ngIf="!isSuperAdmin" class="pm-subtle"
+        >Only SuperAdmin can change these settings.</span
+      >
+    </div>
+  </section>
+  <section *ngIf="tab === 'delivery'" class="pm-card">
+    <div class="pm-section-head">
+      <div>
+        <h2>Email Delivery Monitor</h2>
+        <p>
+          Latest 500 PM emails. Failed quotation and project emails can be
+          resent safely.
+        </p>
+      </div>
+      <div class="pm-actions">
+        <input
+          class="pm-search"
+          [(ngModel)]="deliveryFilter"
+          placeholder="Search delivery..."
+        /><button
+          class="pm-btn pm-btn--ghost pm-btn--sm"
+          (click)="exportDeliveries()"
+        >
+          Export CSV
+        </button>
+      </div>
+    </div>
+    <div class="pm-table-wrap">
+      <table class="pm-table">
+        <thead>
+          <tr>
+            <th>Record</th>
+            <th>Email</th>
+            <th>Recipient</th>
+            <th>Sent</th>
+            <th>Status</th>
+            <th>Retry</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let x of filteredDeliveries">
+            <td>
+              <strong>{{ x.entityType }} #{{ x.entityId }}</strong
+              ><small>{{ x.subject }}</small>
+            </td>
+            <td>{{ x.emailType }}</td>
+            <td>{{ x.recipientEmail }}</td>
+            <td>{{ x.sentOnUtc | date: "dd-MM-yyyy HH:mm" }}</td>
+            <td>
+              <span
+                [class]="
+                  x.deliveryStatus === 'Sent'
+                    ? 'pm-badge pm-badge--ok'
+                    : 'pm-badge pm-badge--danger'
+                "
+                >{{ x.deliveryStatus }}</span
+              ><small *ngIf="x.errorMessage">{{ x.errorMessage }}</small>
+            </td>
+            <td>
+              <button
+                *ngIf="x.deliveryStatus !== 'Sent'"
+                class="pm-btn pm-btn--ghost pm-btn--sm"
+                [disabled]="busy"
+                (click)="retry(x)"
+              >
+                Retry ({{ x.retryCount || 0 }})
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="!filteredDeliveries.length">
+            <td colspan="6" class="pm-empty">
+              No matching email delivery records.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section *ngIf="tab === 'responses'" class="pm-card">
+    <div class="pm-section-head">
+      <div>
+        <h2>Customer Response Register</h2>
+        <p>
+          Capture replies received by email, phone, meeting or portal against
+          the correct record.
+        </p>
+      </div>
+      <div class="pm-actions">
+        <input
+          class="pm-search"
+          [(ngModel)]="responseFilter"
+          placeholder="Search responses..."
+        /><button
+          class="pm-btn pm-btn--ghost pm-btn--sm"
+          (click)="exportResponses()"
+        >
+          Export CSV</button
+        ><button
+          class="pm-btn pm-btn--primary pm-btn--sm"
+          (click)="newResponse()"
+        >
+          + Record Response
+        </button>
+      </div>
+    </div>
+    <div class="response-grid">
+      <article *ngFor="let x of filteredResponses">
+        <div>
+          <strong>{{
+            x.entityReference || x.entityType + " #" + x.entityId
+          }}</strong
+          ><span class="pm-badge">{{ x.channel }}</span>
+        </div>
+        <h3>{{ x.subject || "Customer response" }}</h3>
+        <p>{{ x.responseText }}</p>
+        <small
+          >{{ x.receivedFrom || "Customer" }} ·
+          {{ x.receivedOnUtc | date: "dd-MM-yyyy HH:mm" }} ·
+          {{ x.recordedByName }}</small
+        >
+      </article>
+      <div *ngIf="!filteredResponses.length" class="pm-empty">
+        No customer responses recorded.
+      </div>
+    </div>
+  </section>
+  <section
+    *ngIf="showResponse"
+    class="pm-card pm-modal pm-modal--compact"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="pm-section-head">
+      <div>
+        <h2>Record Customer Response</h2>
+        <p>Link the communication to its PM record.</p>
+      </div>
+      <button
+        class="pm-btn pm-btn--ghost pm-btn--sm"
+        (click)="showResponse = false"
+      >
+        Close
+      </button>
+    </div>
+    <div class="pm-form">
+      <div class="pm-field">
+        <label>Record Type *</label
+        ><select
+          [(ngModel)]="response.entityType"
+          (ngModelChange)="response.entityId = null"
+        >
+          <option>Enquiry</option>
+          <option>Quotation</option>
+          <option>Project</option>
+        </select>
+      </div>
+      <div class="pm-field">
+        <label>Record *</label
+        ><pm-search-select
+          [(ngModel)]="response.entityId"
+          [options]="entityOptions"
+          placeholder="Select record"
+        ></pm-search-select>
+      </div>
+      <div class="pm-field">
+        <label>Channel</label
+        ><select [(ngModel)]="response.channel">
+          <option>Email</option>
+          <option>Phone</option>
+          <option>Meeting</option>
+          <option>Portal</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="pm-field">
+        <label>Status</label
+        ><select [(ngModel)]="response.responseStatus">
+          <option>Received</option>
+          <option>Clarification Required</option>
+          <option>Accepted</option>
+          <option>Rejected</option>
+          <option>On Hold</option>
+        </select>
+      </div>
+      <div class="pm-field">
+        <label>Received From</label
+        ><input [(ngModel)]="response.receivedFrom" />
+      </div>
+      <div class="pm-field">
+        <label>Received On</label
+        ><input type="datetime-local" [(ngModel)]="response.receivedOnUtc" />
+      </div>
+      <div class="pm-field pm-field--full">
+        <label>Subject</label><input [(ngModel)]="response.subject" />
+      </div>
+      <div class="pm-field pm-field--full">
+        <label>Response Details *</label
+        ><textarea [(ngModel)]="response.responseText"></textarea>
+      </div>
+    </div>
+    <div class="pm-actions">
+      <button class="pm-btn pm-btn--primary" (click)="saveResponse()">
+        Save Response</button
+      ><button class="pm-btn pm-btn--ghost" (click)="showResponse = false">
+        Cancel
+      </button>
+    </div>
+  </section>
+</div>

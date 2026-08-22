@@ -285,6 +285,7 @@ export interface QuestionTestImportRequestDto {
   trainingName: string;
   testType: string;
   testName: string;
+  durationMinutes: number;
   questions: QuestionDto[];
 }
 

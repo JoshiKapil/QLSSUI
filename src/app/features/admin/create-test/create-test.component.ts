@@ -69,9 +69,12 @@ export class CreateTestComponent implements OnInit, OnDestroy {
   mapQuestionPositions: { [questionId: number]: number | null } = {};
   availableTests: Array<TestDefinition & { assetFileName?: string; optionKey?: string }> = [];
   selectedTestKey = '';
+  testSearch = '';
   isTestDropdownOpen = false;
   highlightedTestIndex = -1;
   loadedTestDefinition: any | null = null;
+  deletingTest = false;
+  showDeleteTestModal = false;
   assessmentImportFileName = '';
   assessmentImportPreview: AssessmentImportPreview | null = null;
   assessmentImportResult: AssessmentImportResult | null = null;
@@ -381,6 +384,20 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     return selectedTest.displayName || selectedTest.testName || 'Select Test';
   }
 
+  get filteredAvailableTests(): Array<TestDefinition & { assetFileName?: string; optionKey?: string }> {
+    const search = this.testSearch.trim().toLowerCase();
+    if (!search) {
+      return this.availableTests;
+    }
+
+    return this.availableTests.filter((test) => [
+      test.displayName,
+      test.testName,
+      test.testTitle,
+      test.trainingName
+    ].some((value) => String(value || '').toLowerCase().includes(search)));
+  }
+
   get questionBankTotalPages(): number {
     return Math.max(1, Math.ceil(this.filteredQuestionBank.length / this.questionBankPageSize));
   }
@@ -487,8 +504,49 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     }
   }
 
+  deleteSelectedTest(): void {
+    const definition = this.loadedTestDefinition;
+    const testId = String(definition?.testId || '').trim();
+    if (!this.selectedTestKey || !testId || this.deletingTest) {
+      this.notifier.warningToastr('Select a saved test before deleting.');
+      return;
+    }
+    this.showDeleteTestModal = true;
+  }
+
+  closeDeleteTestModal(): void {
+    if (this.deletingTest) return;
+    this.showDeleteTestModal = false;
+  }
+
+  async confirmDeleteSelectedTest(): Promise<void> {
+    const definition = this.loadedTestDefinition;
+    const testId = String(definition?.testId || '').trim();
+    const testName = String(definition?.testName || definition?.displayName || '').trim();
+    if (!this.selectedTestKey || !testId || !testName || this.deletingTest) {
+      this.closeDeleteTestModal();
+      return;
+    }
+
+    this.deletingTest = true;
+    try {
+      await this.testStorage.deleteTestDefinition(testName, testId);
+      this.showDeleteTestModal = false;
+      this.clearTestSelection();
+      await Promise.all([this.loadAvailableTests(), this.loadStoredQuestionBank()]);
+      this.loadTrainingList();
+      this.notifier.successToastr('Test deleted. Training links and unshared questions were removed.');
+    } catch (error) {
+      console.error('[CreateTest] Test deletion failed.', error);
+      this.notifier.warningToastr('The test could not be deleted. No partial database changes were saved.');
+    } finally {
+      this.deletingTest = false;
+    }
+  }
+
   clearTestSelection(): void {
     this.selectedTestKey = '';
+    this.testSearch = '';
     this.isTestDropdownOpen = false;
     this.highlightedTestIndex = -1;
     this.testDetails = this.createEmptyTestDetails();
@@ -526,13 +584,14 @@ export class CreateTestComponent implements OnInit, OnDestroy {
   }
 
   get dropdownOptions(): string[] {
-    return ['', ...this.availableTests.map((test) => test.optionKey || '')];
+    return ['', ...this.filteredAvailableTests.map((test) => test.optionKey || '')];
   }
 
   toggleTestDropdown(): void {
     this.isTestDropdownOpen = !this.isTestDropdownOpen;
 
     if (this.isTestDropdownOpen) {
+      this.testSearch = '';
       const currentIndex = this.dropdownOptions.indexOf(this.selectedTestKey || '');
       this.highlightedTestIndex = currentIndex >= 0 ? currentIndex : 0;
     } else {
@@ -541,8 +600,13 @@ export class CreateTestComponent implements OnInit, OnDestroy {
   }
 
   selectTestKey(selectedKey: string): void {
+    this.testSearch = '';
     this.highlightedTestIndex = -1;
     this.onSelectTest(selectedKey);
+  }
+
+  onTestSearchChange(): void {
+    this.highlightedTestIndex = 0;
   }
 
   onDropdownKeydown(event: KeyboardEvent): void {

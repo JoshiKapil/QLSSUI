@@ -1,0 +1,50 @@
+<div class="employees-page">
+  <header><div><span>NEW EMPLOYEE SETUP</span><h1>Assign mandatory induction</h1><p>Default/common videos are automatically combined with the selected department plan. The sequence is frozen for the employee at assignment time.</p></div></header>
+  <section class="assign-card">
+    <div class="assign-card__title"><i class="fas fa-user-plus"></i><div><strong>New onboarding assignment</strong><span>Employee role users without an active onboarding plan are listed below.</span></div></div>
+    <div class="form-grid">
+      <label><span>Employee *</span><select [(ngModel)]="selectedUserId"><option [ngValue]="null">Select employee</option><option *ngFor="let user of employees" [ngValue]="user.id">{{ user.name }} — {{ user.email }}</option></select></label>
+      <label><span>Department</span><select [(ngModel)]="selectedDepartmentId" (change)="departmentChanged()"><option [ngValue]="null">Default/common videos only</option><option *ngFor="let department of departments" [ngValue]="department.departmentId">{{ department.departmentName }}</option></select><small>Department videos are added after common/default videos. Duplicate videos are automatically removed.</small></label>
+      <label><span>Completion period (days) *</span><input type="number" min="1" max="365" [(ngModel)]="completionDays"><small>D−2 and D−1 reminders + 1 day final grace are automatic.</small></label>
+    </div>
+
+    <section class="assignment-preview">
+      <div class="assignment-preview__head">
+        <div>
+          <small>PUBLISHED PATH PREVIEW</small>
+          <strong>{{ selectedEmployeeName }}</strong>
+          <span>{{ selectedDepartmentId ? 'Default/Common + selected department path' : 'Default/Common path' }}</span>
+        </div>
+        <b>{{ assignmentPreview.length }} video(s)</b>
+      </div>
+
+      <div class="assignment-preview__empty" *ngIf="!assignmentPreview.length">
+        <i class="fas fa-triangle-exclamation"></i>
+        <span>No published onboarding videos resolve for this selection. SuperAdmin must publish the required learning path first.</span>
+      </div>
+
+      <div class="assignment-preview__flow" *ngIf="assignmentPreview.length">
+        <ng-container *ngFor="let item of assignmentPreview; let i = index">
+          <article>
+            <b>{{ i + 1 }}</b>
+            <div>
+              <strong>{{ item.videoTitle }}</strong>
+              <span>{{ item.sourceScope }} · Watch {{ item.minimumWatchPercent }}% · Pass {{ item.passingPercent }}%</span>
+              <small>{{ item.mustPassAssignment ? 'Must pass assignment to unlock next video' : 'Assignment submission unlocks next video' }}</small>
+            </div>
+          </article>
+          <i *ngIf="i < assignmentPreview.length - 1" class="fas fa-arrow-down flow-arrow"></i>
+        </ng-container>
+      </div>
+    </section>
+
+    <button class="assign-btn" (click)="assign()" [disabled]="saving || !employees.length || !assignmentPreview.length"><i class="fas fa-paper-plane"></i>{{ saving ? 'Assigning...' : 'Assign onboarding' }}</button>
+    <p class="no-users" *ngIf="!employees.length"><i class="fas fa-circle-info"></i> No unassigned Employee-role users are available.</p>
+  </section>
+
+  <section class="tracker"><div class="tracker__head"><div><small>ASSIGNMENT HISTORY</small><h2>Current onboarding employees</h2></div><span>{{ enrollments.length }} enrollments</span></div>
+    <div class="cards"><article *ngFor="let row of enrollments" (click)="showDetail(row)" class="clickable"><div class="employee"><div class="avatar">{{ row.employeeName.charAt(0) }}</div><div><strong>{{ row.employeeName }}</strong><span>{{ row.employeeEmail }}</span></div><b>{{ row.status }}</b></div><div class="facts"><div><span>Department</span><strong>{{ row.departmentName || 'Common' }}</strong></div><div><span>Deadline</span><strong>{{ row.dueOnUtc | date:'dd MMM yyyy' }}</strong></div><div><span>Modules</span><strong>{{ row.completedItems }}/{{ row.totalItems }}</strong></div></div><div class="progress"><div><span [style.width.%]="row.completionPercent"></span></div><b>{{ row.completionPercent | number:'1.0-0' }}%</b></div></article></div>
+  </section>
+</div>
+
+<section class="detail-panel" *ngIf="detail?.enrollment as enrollment"><div class="detail-head"><div><small>EMPLOYEE DETAIL</small><h2>{{ enrollment.employeeName }}</h2><span>{{ enrollment.employeeEmail }} · {{ enrollment.completionPercent }}% complete</span></div><button (click)="closeDetail()"><i class="fas fa-times"></i></button></div><div class="detail-table"><table><thead><tr><th>#</th><th>Video</th><th>Status</th><th>Watch</th><th>Attempts</th><th>Latest score</th></tr></thead><tbody><tr *ngFor="let item of detail?.items"><td>{{ item.sequenceNo }}</td><td><strong>{{ item.videoTitle }}</strong><span>{{ item.sourceScope }}</span></td><td>{{ item.status }}</td><td>{{ item.videoDurationSeconds ? ((item.watchedSeconds * 100 / item.videoDurationSeconds) | number:'1.0-0') : 0 }}%</td><td>{{ item.assignmentAttemptCount }}</td><td>{{ item.assignmentPercentage !== undefined && item.assignmentPercentage !== null ? (item.assignmentPercentage + '%') : '—' }}</td></tr></tbody></table></div></section>

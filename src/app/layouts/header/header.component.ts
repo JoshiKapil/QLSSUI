@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+﻿import { Component, OnDestroy } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 
@@ -21,6 +21,7 @@ export class HeaderComponent implements OnDestroy {
     this.authService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
       this.isLoggedIn = this.authService.isLoggedIn();
       this.isAdmin = this.authService.isAdmin();
+      // Workspace visibility follows the dedicated role rule. Admin is excluded there temporarily.
       this.hasWorkspaceAccess = this.authService.hasWorkspaceAccess();
       this.userName = user?.name || user?.email || 'User';
     });
@@ -28,6 +29,7 @@ export class HeaderComponent implements OnDestroy {
 
   toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
+    document.body.style.overflow = this.menuOpen ? 'hidden' : '';
     if (!this.menuOpen) {
       this.closeUserMenu();
     }
@@ -69,7 +71,10 @@ export class HeaderComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    document.body.style.overflow = '';
     this.destroy$.next();
     this.destroy$.complete();
   }
 }
+
+

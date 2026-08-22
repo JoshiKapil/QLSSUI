@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
   CertificateApprovalResult,
@@ -23,6 +23,18 @@ export class CertificationFormService {
     return this.adminService.getById<CertificationForm>(this.endpoint, this.idKey, certificationFormId);
   }
 
+  saveLegacy(record: CertificationForm): Observable<number> {
+    return this.api.post<number>('CertificateOperation/save', {
+      certificationNumber: record.certificationNumber || '',
+      name: record.name || '',
+      topic: record.trainingName || '',
+      date: record.date || '',
+      batchNo: record.batchNo || '',
+      contactNo: record.contactNo || '',
+      email: record.email || '',
+      location: record.location || ''
+    });
+  }
   save(record: CertificationForm): Observable<CertificationForm> {
     return this.adminService.save<CertificationForm>(this.endpoint, this.idKey, record);
   }
@@ -43,3 +55,5 @@ export class CertificationFormService {
     return this.api.post<CertificationImportResult>('certification-data/import', { records });
   }
 }
+
+

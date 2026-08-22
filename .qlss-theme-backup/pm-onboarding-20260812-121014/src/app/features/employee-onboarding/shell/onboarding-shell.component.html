@@ -1,0 +1,29 @@
+<section class="onb-shell">
+  <button class="onb-scrim" *ngIf="menuOpen" (click)="close()" aria-label="Close menu"></button>
+  <aside class="onb-rail" [class.open]="menuOpen">
+    <div class="onb-brand">
+      <div class="onb-brand__mark"><i class="fas fa-user-graduate"></i></div>
+      <div><strong>QLSS Onboarding</strong><span>Learn · Validate · Ready</span></div>
+      <button class="onb-close" (click)="close()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="onb-person"><div class="onb-avatar">{{ name.charAt(0) }}</div><div><strong>{{ name }}</strong><span>{{ role }}</span></div></div>
+    <nav>
+      <small>MY INDUCTION</small>
+      <a routerLink="my-learning" routerLinkActive="active" (click)="close()"><i class="fas fa-circle-play"></i><span>My Learning Path</span></a>
+      <ng-container *ngIf="isAdmin">
+        <small>ADMIN CONTROL</small>
+        <a routerLink="dashboard" routerLinkActive="active" (click)="close()"><i class="fas fa-gauge-high"></i><span>Onboarding Dashboard</span></a>
+        <a routerLink="employees" routerLinkActive="active" (click)="close()"><i class="fas fa-users-gear"></i><span>Employee Assignment</span></a>
+        <a routerLink="configuration" routerLinkActive="active" (click)="close()"><i class="fas fa-layer-group"></i><span>Videos & Plans</span></a>
+      </ng-container>
+      <a *ngIf="isSuperAdmin" routerLink="access-requests" routerLinkActive="active" (click)="close()"><i class="fas fa-user-shield"></i><span>Login Approvals</span><b>SA</b></a>
+      <small>OTHER WORKSPACE</small>
+      <a routerLink="/workspace/dashboard" (click)="close()"><i class="fas fa-diagram-project"></i><span>Project Workspace</span></a>
+    </nav>
+    <div class="onb-rail-note"><i class="fas fa-shield-heart"></i><div><strong>Mandatory induction</strong><span>Progress and attempts are saved automatically.</span></div></div>
+  </aside>
+  <main class="onb-main">
+    <div class="onb-mobilebar"><button (click)="menuOpen = !menuOpen"><i class="fas fa-bars"></i> Employee Onboarding</button><span>{{ role }}</span></div>
+    <router-outlet></router-outlet>
+  </main>
+</section>

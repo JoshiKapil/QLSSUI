@@ -15,6 +15,30 @@
   <p *ngIf="error" class="pm-error">{{ error }}</p>
   <section *ngIf="loading" class="pm-card dashboard-loading"><i class="fas fa-circle-notch fa-spin"></i> Loading project intelligence...</section>
 
+  <section *ngIf="onboardingDashboard && isAdminLike" class="onboarding-alert">
+    <div class="onboarding-alert__icon"><i class="fas fa-graduation-cap"></i></div>
+    <div class="onboarding-alert__copy">
+      <small>EMPLOYEE ONBOARDING</small>
+      <strong>Induction attention center</strong>
+      <span>{{ onboardingDashboard.dueSoon }} due soon · {{ onboardingDashboard.blocked }} blocked · {{ onboardingDashboard.pendingAccessRequests }} approval pending</span>
+    </div>
+    <div class="onboarding-alert__metrics">
+      <span><b>{{ onboardingDashboard.activeEmployees }}</b> Active</span>
+      <span><b>{{ onboardingDashboard.completed }}</b> Completed</span>
+    </div>
+    <a class="onboarding-alert__action" routerLink="/onboarding/dashboard">Open onboarding <i class="fas fa-arrow-right"></i></a>
+  </section>
+
+  <section *ngIf="onboardingState && isEmployee && onboardingState.isRequired" class="onboarding-alert onboarding-alert--employee">
+    <div class="onboarding-alert__icon"><i class="fas fa-play-circle"></i></div>
+    <div class="onboarding-alert__copy">
+      <small>MANDATORY INDUCTION</small>
+      <strong>Continue your onboarding</strong>
+      <span>{{ onboardingState.completionPercent | number:'1.0-0' }}% completed<span *ngIf="onboardingState.dueOnUtc"> · Due {{ onboardingState.dueOnUtc | date:'dd MMM yyyy' }}</span></span>
+    </div>
+    <a class="onboarding-alert__action" routerLink="/onboarding/my-learning">Resume learning <i class="fas fa-arrow-right"></i></a>
+  </section>
+
   <ng-container *ngIf="data && !loading">
     <div class="metric-group">
       <div class="metric-group__title"><span>Lead & quotation pipeline</span><small>From enquiry receipt to customer communication</small></div>

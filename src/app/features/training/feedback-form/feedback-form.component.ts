@@ -7,6 +7,7 @@ import { Trainer } from '../../../core/models/trainer.model';
 import { Training } from '../../../core/models/training.model';
 import { TrainingFeedback } from '../../../core/models/training-feedback.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-feedback-form',
@@ -37,14 +38,29 @@ export class FeedbackFormComponent implements OnInit {
     private trainerService: TrainerService,
     private trainingService: TrainingManagementService,
     private feedbackService: TrainingFeedbackService,
-    private authService: AuthService
+    private authService: AuthService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.initForm();
+    this.applyPostTestSelection();
     this.loadTrainerList();
     this.loadTrainingList();
     this.loadFeedbackHistory();
+  }
+
+  private applyPostTestSelection(): void {
+    const params = this.route.snapshot.queryParamMap;
+    const trainingId = params.get('trainingId');
+    const trainerId = params.get('trainerId');
+    const userName = params.get('userName');
+
+    this.form.patchValue({
+      trainingId: trainingId || null,
+      trainerId: trainerId || null,
+      UserName: userName || null
+    });
   }
 
   private initForm(): void {

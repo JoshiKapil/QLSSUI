@@ -1,4 +1,4 @@
-﻿<section class="admin-section create-test-section">
+<section class="admin-section create-test-section">
   <div class="container admin-shell create-test-shell">
     <div class="admin-header">
       <div>
@@ -9,8 +9,10 @@
         <!-- <a class="btn btn-outline" routerLink="/admin/trainings">Trainings</a> -->
         <a class="btn btn-outline" routerLink="/admin/create-question">Question Bank</a>
         <a class="btn btn-outline" routerLink="/test">View Test Page</a>
-        <!-- <button class="btn btn-outline" type="button" (click)="downloadTestTemplate()">Download Test Template</button> -->
-        <label class="btn btn-outline import-bank-btn">Import Test From Excel<input type="file" accept=".xlsx,.xls,.csv" (change)="onAssessmentExcelSelected($event)" /></label>
+        <!-- <button class="btn btn-outline" type="button" (click)="downloadTestTemplate()">Download Test Template</button> 
+        <label class="btn btn-outline import-bank-btn">Import Test From Excel<input type="file" accept=".xlsx,.xls,.csv" (change)="onAssessmentExcelSelected($event)" /></label>-->
+        <button class="btn btn-outline" type="button" (click)="previewTest()">{{ showPreview ? 'Hide Preview' : 'Preview Test' }}</button>
+        <button class="btn btn-primary" type="button" (click)="saveDraft()">Save Encrypted Draft</button>
       </div>
     </div>
 
@@ -76,20 +78,28 @@
     <div class="create-test-layout">
       <section class="admin-form create-card">
         <div class="section-title-row">
-          <h2>Test Basic Details</h2>
+          <h2>Test Details</h2>
           <div class="test-selection-row test-dropdown">
-            <button class="btn btn-outline btn-small dropdown-toggle" type="button" (click)="toggleTestDropdown()" (keydown)="onDropdownKeydown($event)" aria-haspopup="listbox" [attr.aria-expanded]="isTestDropdownOpen">
-              {{ getSelectedTestLabel() }}
-              <span class="dropdown-icon">&#9662;</span>
-            </button>
-            <div class="dropdown-menu" *ngIf="isTestDropdownOpen" role="listbox">
-              <button class="dropdown-item" type="button" (click)="clearTestSelection()" [class.highlighted]="highlightedTestIndex === 0">
-                New Test
+            <div class="test-dropdown-control">
+              <button class="btn btn-outline btn-small dropdown-toggle" type="button" (click)="toggleTestDropdown()" (keydown)="onDropdownKeydown($event)" aria-haspopup="listbox" [attr.aria-expanded]="isTestDropdownOpen">
+                {{ getSelectedTestLabel() }}
+                <span class="dropdown-icon">&#9662;</span>
               </button>
-              <button class="dropdown-item" type="button" *ngFor="let t of availableTests; let idx = index" (click)="selectTestKey(t.optionKey || '')" [class.highlighted]="highlightedTestIndex === idx + 1">
-                {{ t.displayName || t.testName }}{{ t.assetFileName ? ' (asset)' : '' }}
-              </button>
+              <div class="dropdown-menu" *ngIf="isTestDropdownOpen" role="listbox">
+                <input class="test-search-input" type="text" [(ngModel)]="testSearch" name="testSearch" placeholder="Search test" autocomplete="off" (input)="onTestSearchChange()" (keydown)="$event.stopPropagation()" aria-label="Search tests" />
+                <button class="dropdown-item" type="button" (click)="clearTestSelection()" [class.highlighted]="highlightedTestIndex === 0">
+                  New Test
+                </button>
+                <button class="dropdown-item" type="button" *ngFor="let t of filteredAvailableTests; let idx = index" (click)="selectTestKey(t.optionKey || '')" [class.highlighted]="highlightedTestIndex === idx + 1">
+                  {{ t.displayName || t.testName }}{{ t.assetFileName ? ' (asset)' : '' }}
+                </button>
+                <div class="test-search-empty" *ngIf="!filteredAvailableTests.length">No test found</div>
+              </div>
             </div>
+            <button class="delete-test-btn" type="button" *ngIf="selectedTestKey" (click)="deleteSelectedTest()" [disabled]="deletingTest">
+              <i class="fas fa-trash-alt" aria-hidden="true"></i>
+              <span>{{ deletingTest ? 'Deleting...' : 'Delete Test' }}</span>
+            </button>
           </div>
         </div>
         
@@ -247,7 +257,7 @@
         <input type="number" [(ngModel)]="questionBankMarksFilter" name="questionBankMarksFilter" placeholder="Marks" />
         <div *ngIf="testDetails?.totalQuestions !== null && testDetails?.totalQuestions !== undefined" class="mapping-info">
           <span *ngIf="!isMappingFull">You can map up to {{ testDetails.totalQuestions }} questions. <strong>{{ remainingSlots }}</strong> slot(s) remaining.</span>
-          <span *ngIf="isMappingFull" class="mapping-warning">Mapping limit reached â€” unmap a question to add another.</span>
+          <span *ngIf="isMappingFull" class="mapping-warning">Mapping limit reached ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â unmap a question to add another.</span>
         </div>
       </div>
 
@@ -295,6 +305,24 @@
     <div class="admin-actions page-actions">
       <button class="btn btn-outline" type="button" (click)="previewTest()">{{ showPreview ? 'Hide Preview' : 'Preview Test' }}</button>
       <button class="btn btn-primary" type="button" (click)="saveDraft()">Save Encrypted Draft</button>
+    </div>
+
+    <div class="confirm-modal-backdrop" *ngIf="showDeleteTestModal" (click)="closeDeleteTestModal()">
+      <section class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="delete-test-modal-title" (click)="$event.stopPropagation()">
+        <div class="confirm-modal__icon"><i class="fas fa-trash-alt" aria-hidden="true"></i></div>
+        <div class="confirm-modal__content">
+          <span class="auth-eyebrow">Confirm deletion</span>
+          <h2 id="delete-test-modal-title">Delete {{ loadedTestDefinition?.displayName || loadedTestDefinition?.testName || 'selected test' }}?</h2>
+          <p>Questions used only by this test will be deleted. Questions shared with another test will remain available.</p>
+        </div>
+        <div class="confirm-modal__actions">
+          <button class="btn btn-outline" type="button" (click)="closeDeleteTestModal()" [disabled]="deletingTest">Cancel</button>
+          <button class="delete-test-btn delete-test-btn--confirm" type="button" (click)="confirmDeleteSelectedTest()" [disabled]="deletingTest">
+            <i class="fas fa-trash-alt" aria-hidden="true"></i>
+            <span>{{ deletingTest ? 'Deleting...' : 'Delete Test' }}</span>
+          </button>
+        </div>
+      </section>
     </div>
 
     <section class="admin-table-wrap preview-panel" *ngIf="showPreview">
@@ -349,9 +377,3 @@
     </section>
   </div>
 </section>
-
-
-
-
-
-

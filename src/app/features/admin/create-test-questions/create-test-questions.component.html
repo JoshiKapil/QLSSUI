@@ -1,4 +1,4 @@
-﻿<section class="import-page">
+<section class="import-page">
   <header>
     <p class="eyebrow">Question administration</p>
     <h1>Create Test Questions</h1>
@@ -30,6 +30,9 @@
     </label>
     <label>Test name
       <input [(ngModel)]="testName" [disabled]="busy" placeholder="Defaults to Word filename">
+    </label>
+    <label><span>Duration (minutes) <span class="required-mark" aria-hidden="true">*</span></span>
+      <input type="number" min="1" step="1" [(ngModel)]="durationMinutes" [disabled]="busy" required>
     </label>
     <label>Word file (.docx, maximum 10 MB)
       <input type="file" accept=".docx" (change)="selectFile($event)" [disabled]="busy">
@@ -78,7 +81,7 @@ Answer: B # D</pre>
         <p>{{ questions.length }} total | {{ validQuestions.length }} valid |
           {{ questions.length - validQuestions.length }} invalid</p>
       </div>
-      <button class="save-questions-btn" type="button" (click)="save()" [disabled]="busy || fileSaving || !validQuestions.length || !trainingId || !testType">
+      <button class="save-questions-btn" type="button" (click)="save()" [disabled]="busy || fileSaving || !validQuestions.length || !trainingId || !testType || !durationMinutes || durationMinutes <= 0">
         <span class="save-spinner" *ngIf="busy"></span>
         {{ (busy || fileSaving) ? 'Saving...' : 'Create Test & Map Questions' }}
       </button>

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+﻿import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Subject, takeUntil } from 'rxjs';
@@ -46,6 +46,8 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   trainingList: Training[] = [];
   selectedTrainingId = '';
   selectedUserId = '';
+  individualCompanyId = '';
+  individualDate = '';
   trainingSearch = '';
   userSearch = '';
   UserData: any[] = [];
@@ -171,12 +173,30 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   }
 
   get filteredTrainingList(): Training[] {
+    if (!this.individualCompanyId) return [];
+    const trainingIds = new Set(this.allUserData
+      .filter(record => String(record.location) === this.individualCompanyId)
+      .map(record => String(record.trainingId)));
     const search = this.trainingSearch.trim().toLowerCase();
-    if (!search) return this.trainingList;
     return this.trainingList.filter((training) => {
+      if (!trainingIds.has(String(training.trainingId))) return false;
       const searchable = `${this.getTrainingLabel(training)} ${training.trainingId || ''} ${training.topicCovered || ''}`.toLowerCase();
-      return searchable.includes(search);
+      return !search || searchable.includes(search);
     });
+  }
+
+  get individualCompanies(): Client[] {
+    const ids = new Set(this.allUserData.map(record => String(record.location || '')));
+    return this.companies.filter(company => ids.has(String(company.clientId)));
+  }
+
+  get individualDates(): string[] {
+    if (!this.individualCompanyId || !this.selectedTrainingId) return [];
+    return Array.from(new Set(this.allUserData
+      .filter(record => String(record.location) === this.individualCompanyId)
+      .filter(record => String(record.trainingId) === this.selectedTrainingId)
+      .map(record => this.toDateInputValue(record.issuedDate || record.date || record.certificationDate))
+      .filter(Boolean))).sort((a, b) => b.localeCompare(a));
   }
 
   get selectedTraining(): Training | undefined {
@@ -603,6 +623,22 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       this.isBulkGenerating = false;
     }
   }
+  selectIndividualCompany(companyId: string): void {
+    this.individualCompanyId = companyId;
+    this.selectedTrainingId = '';
+    this.individualDate = '';
+    this.selectedUserId = '';
+    this.UserData = [];
+    this.trainingSearch = '';
+    this.userSearch = '';
+  }
+
+  individualDateChanged(): void {
+    this.selectedUserId = '';
+    this.userSearch = '';
+    this.getTrainingUsers();
+  }
+
   toggleTrainingDropdown(): void {
     this.isTrainingDropdownOpen = !this.isTrainingDropdownOpen;
     this.isUserDropdownOpen = false;
@@ -1076,7 +1112,11 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
 
 
   private getTrainingUsers(): void {
-    this.UserData = this.allUserData.filter((user) => String(user.trainingId) === this.selectedTrainingId); 
+    this.UserData = this.allUserData.filter((user) =>
+      String(user.location) === this.individualCompanyId
+      && String(user.trainingId) === this.selectedTrainingId
+      && this.toDateInputValue(user.issuedDate || user.date || user.certificationDate) === this.individualDate
+   );
   }
 
   private loadCompanies(): void {
@@ -1272,3 +1312,4 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     this.previewUrl = null;
   }
 }
+

@@ -216,7 +216,6 @@ export class VectorCertificatePdfService extends CertificatePdfService {
   }
 
   private completionText(data: CertificateData): string {
-    alert(1)
     return 'has attended and successfully completed the assessment on';
     // if (data.completionType === 'attendance' || (data.marks ?? 100) < (data.passingMarks ?? 60)) {
     //   return 'has successfully attended the training program on';

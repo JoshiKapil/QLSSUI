@@ -16,6 +16,9 @@ export interface AuthResponse {
   refreshToken?: string;
   refreshTokenExpiresAtUtc?: string;
   user: User;
+  onboardingRequired?: boolean;
+  onboardingStatus?: string;
+  onboardingDueOnUtc?: string;
 }
 
 export interface LoginRequest {

@@ -1,0 +1,43 @@
+<div class="onb-page" *ngIf="!loading; else loadingTpl">
+  <section class="hero" *ngIf="data.enrollment as enrollment">
+    <div class="hero__copy"><span class="eyebrow"><i class="fas fa-sparkles"></i> Mandatory Employee Induction</span><h1>Your learning path</h1><p>Complete each video and its assignment in sequence. Your video position and scores are saved automatically.</p></div>
+    <div class="hero__progress"><div class="progress-ring" [style.--progress]="enrollment.completionPercent + '%'"><strong>{{ enrollment.completionPercent | number:'1.0-0' }}%</strong><span>complete</span></div><div class="deadline"><small>Complete by</small><strong>{{ enrollment.dueOnUtc | date:'dd MMM yyyy, h:mm a' }}</strong><span [class.danger]="enrollment.status === 'Grace' || enrollment.status === 'Blocked'">{{ enrollment.status }}</span></div></div>
+  </section>
+
+  <section class="empty-state" *ngIf="!data.enrollment"><div><i class="fas fa-clipboard-check"></i></div><h2>No mandatory onboarding assigned</h2><p>When an Admin assigns your induction plan, your videos and assignments will appear here.</p></section>
+
+  <ng-container *ngIf="data.enrollment">
+    <div class="summary-strip"><div><i class="fas fa-film"></i><span>Total modules</span><strong>{{ data.enrollment.totalItems }}</strong></div><div><i class="fas fa-circle-check"></i><span>Completed</span><strong>{{ data.enrollment.completedItems }}</strong></div><div><i class="fas fa-bell"></i><span>Unread reminders</span><strong>{{ data.unreadNotifications }}</strong></div><div><i class="fas fa-hourglass-half"></i><span>Grace until</span><strong>{{ data.enrollment.graceUntilUtc | date:'dd MMM' }}</strong></div></div>
+
+    <section class="reminders" *ngIf="notifications.length"><div class="reminders__head"><div><i class="fas fa-bell"></i><strong>Recent onboarding reminders</strong></div><span>{{ data.unreadNotifications }} unread</span></div><button *ngFor="let note of notifications" [class.unread]="!note.isRead" (click)="markRead(note)"><i class="fas fa-circle"></i><div><strong>{{ note.title }}</strong><span>{{ note.message }}</span></div><small>{{ note.createdOnUtc | date:'dd MMM, h:mm a' }}</small></button></section>
+
+    <div class="learning-grid">
+      <aside class="path-card"><div class="path-card__head"><div><small>YOUR SEQUENCE</small><h2>Induction modules</h2></div><span>{{ data.enrollment.completedItems }}/{{ data.enrollment.totalItems }}</span></div>
+        <button class="path-item" *ngFor="let item of data.items" [disabled]="item.status === 'Locked'" [class.selected]="selected?.enrollmentItemId === item.enrollmentItemId" [class.done]="item.status === 'Completed'" (click)="select(item)">
+          <div class="step"><i *ngIf="item.status === 'Completed'" class="fas fa-check"></i><i *ngIf="item.status === 'Locked'" class="fas fa-lock"></i><span *ngIf="item.status !== 'Completed' && item.status !== 'Locked'">{{ item.sequenceNo }}</span></div>
+          <div class="path-item__copy"><strong>{{ item.videoTitle }}</strong><span>{{ item.sourceScope }} · {{ item.status }}</span><small *ngIf="item.assignmentPercentage !== undefined && item.assignmentPercentage !== null">Assignment {{ item.assignmentPercentage }}%</small></div>
+          <i class="fas fa-chevron-right arrow"></i>
+        </button>
+      </aside>
+
+      <section class="content-card" *ngIf="selected as item">
+        <header><div><span class="module-no">MODULE {{ item.sequenceNo }}</span><h2>{{ item.videoTitle }}</h2><p>{{ item.videoDescription || 'Mandatory onboarding learning module' }}</p></div><span class="status" [ngClass]="statusClass(item.status)">{{ item.status }}</span></header>
+
+        <div class="video-wrap" *ngIf="item.status !== 'Completed'; else completedVideo">
+          <video #videoPlayer controls controlsList="nodownload" [src]="item.videoUrl" (loadedmetadata)="onLoadedMetadata()" (timeupdate)="onTimeUpdate()" (ended)="onEnded()"></video>
+          <div class="watch-meter"><div><span>Verified viewing progress</span><strong>{{ watchPercent(item) }}% / {{ item.minimumWatchPercent }}% required</strong></div><div class="bar"><span [style.width.%]="watchPercent(item)"></span></div><small>Skipping forward does not count as watched time. You can safely leave and resume later.</small></div>
+        </div>
+        <ng-template #completedVideo><div class="completed-banner"><i class="fas fa-circle-check"></i><div><strong>Module completed</strong><span>Video and assignment completed successfully.</span></div><b *ngIf="item.assignmentPercentage !== undefined && item.assignmentPercentage !== null">{{ item.assignmentPercentage }}%</b></div></ng-template>
+
+        <section class="assignment" *ngIf="item.status === 'AssignmentReady'">
+          <div class="assignment__head"><div><span>KNOWLEDGE CHECK</span><h3>{{ item.assignmentTitle || 'Assignment after this video' }}</h3><p>{{ item.assignmentInstructions || 'Answer all questions to continue.' }}</p><p>Pass requirement: {{ item.mustPassAssignment ? (item.passingPercent + '%') : 'Submission only' }} · Attempts: {{ item.assignmentAttemptCount }}<ng-container *ngIf="item.maxAttempts"> / {{ item.maxAttempts }}</ng-container></p></div><i class="fas fa-clipboard-question"></i></div>
+          <div class="question" *ngFor="let question of item.assignmentQuestions; let qi = index"><div class="question__title"><b>{{ qi + 1 }}</b><strong>{{ question.questionText }}</strong><span>{{ question.marks }} mark</span></div><label *ngFor="let option of question.options"><input type="radio" [name]="'q' + question.questionId" [value]="option.optionId" [(ngModel)]="answers[question.questionId]"><span>{{ option.optionText }}</span></label></div>
+          <div class="attempt-limit" *ngIf="item.maxAttempts && item.assignmentAttemptCount >= item.maxAttempts"><i class="fas fa-circle-exclamation"></i><span>Maximum attempts reached. Contact SuperAdmin for review.</span></div><button class="primary-btn" (click)="submitAssignment()" [disabled]="submitting || !!(item.maxAttempts && item.assignmentAttemptCount >= item.maxAttempts)"><i class="fas fa-paper-plane"></i>{{ submitting ? 'Submitting...' : 'Submit assignment & continue' }}</button>
+        </section>
+
+        <div class="locked-note" *ngIf="item.status === 'VideoInProgress' || item.status === 'Available'"><i class="fas fa-lock"></i><span>Complete the required video viewing percentage to unlock this module's assignment.</span></div>
+      </section>
+    </div>
+  </ng-container>
+</div>
+<ng-template #loadingTpl><div class="page-loader"><i class="fas fa-circle-notch fa-spin"></i><span>Loading your induction...</span></div></ng-template>

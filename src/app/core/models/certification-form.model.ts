@@ -1,5 +1,6 @@
-export interface CertificationForm {
+﻿export interface CertificationForm {
   certificationDataId?: number;
+  recordSource?: 'legacy' | 'data';
   certificationFormId?: number | string;
   trainerName?: string;
   trainingName?: string;
@@ -36,3 +37,4 @@ export interface CertificationImportResult {
   importedCount: number;
   records: CertificationForm[];
 }
+

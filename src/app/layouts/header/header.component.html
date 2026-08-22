@@ -1,4 +1,4 @@
-<header
+﻿<header
   class="navbar"
   [class.navbar--public]="!isLoggedIn"
   [class.navbar--logged-in]="isLoggedIn">
@@ -22,6 +22,8 @@
         <a (click)="closeMenu()" routerLink="/about" routerLinkActive="active-link">About Us</a>
         <a (click)="closeMenu()" routerLink="/teams" routerLinkActive="active-link">Our Team</a>
         <a (click)="closeMenu()" routerLink="/contact" routerLinkActive="active-link">Contact</a>
+        <a (click)="closeMenu()" routerLink="/test" routerLinkActive="active-link">Test</a>
+        <a (click)="closeMenu()" routerLink="/assessment" routerLinkActive="active-link">Assessment</a>
         <!-- <a (click)="closeMenu()" routerLink="/login" routerLink="/contact">Login</a> -->
 
         <div *ngIf="isLoggedIn" class="navbar-account">          
@@ -43,9 +45,12 @@
               <a (click)="closeMenu()" routerLink="/admin/clients" routerLinkActive="active-link"><i class="fa-solid fa-building-columns"></i> Company</a>
               <a (click)="closeMenu()" routerLink="/admin/create-test" routerLinkActive="active-link"><i class="fas fa-flask"></i> Test</a>
               <a (click)="closeMenu()" routerLink="/admin/create-test-questions" routerLinkActive="active-link"><i class="fas fa-list-check"></i> Test Questions</a>
+              <a (click)="closeMenu()" routerLink="/admin/test-training-lists" routerLinkActive="active-link"><i class="fas fa-link"></i> Test Training Lists</a>
               <a (click)="closeMenu()" routerLink="/admin/create-question" routerLinkActive="active-link"><i class="fas fa-question-circle"></i> Question</a>
+              <a (click)="closeMenu()" routerLink="/admin/certifications" routerLinkActive="active-link"><i class="fas fa-certificate"></i> Upload Certificates</a>
               <a (click)="closeMenu()" routerLink="/admin/print-certificate" routerLinkActive="active-link"><i class="fas fa-certificate"></i> Print Certificate</a>
               <a (click)="closeMenu()" routerLink="/admin/approve-certificate" routerLinkActive="active-link"><i class="fas fa-circle-check"></i> Approve Certificates</a>
+              <a (click)="closeMenu()" routerLink="/assessment/admin" routerLinkActive="active-link"><i class="fas fa-clipboard-list"></i> Ghar 9001 Entries</a>
               <a (click)="closeMenu()" routerLink="/test/result" routerLinkActive="active-link"><i class="fas fa-chart-line"></i> Result</a>
               <!-- <a (click)="closeMenu()" routerLink="/admin/linkedin-posts" routerLinkActive="active-link">LinkedIn Posts</a>
               <a (click)="closeMenu()" routerLink="/admin/linkedin-comments" routerLinkActive="active-link">LinkedIn Comments</a> -->
@@ -88,3 +93,6 @@
     </div>
   </div>
 </header>
+
+
+

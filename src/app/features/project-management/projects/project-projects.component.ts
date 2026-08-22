@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { PmAcknowledgement, PmActivity, PmAttachment, PmLookups, PmModuleLink, PmProject } from '../models/project-management.models';
 import { ProjectManagementService } from '../services/project-management.service';
@@ -12,6 +13,7 @@ export class ProjectProjectsComponent implements OnInit {
   items: PmProject[] = [];
   selected?: PmProject;
   activities: PmActivity[] = [];
+  activityAttachments: PmAttachment[] = [];
   links: PmModuleLink[] = [];
   attachments: PmAttachment[] = [];
   acknowledgement: PmAcknowledgement | null = null;
@@ -35,7 +37,7 @@ export class ProjectProjectsComponent implements OnInit {
   ackForm: any = { status: 'Pending', customerName: '', customerDesignation: '', signedFileName: '', signedRelativePath: '', remarks: '' };
   ackSend = { cc: '', message: '' };
 
-  constructor(private api: ProjectManagementService, public auth: AuthService) {}
+  constructor(private api: ProjectManagementService, private route: ActivatedRoute, public auth: AuthService) {}
 
   ngOnInit(): void {
     this.refresh();
@@ -48,10 +50,16 @@ export class ProjectProjectsComponent implements OnInit {
 
   get filteredItems(): PmProject[] {
     const q = this.search.trim().toLowerCase();
-    return this.items.filter(x =>
+    const filtered = this.items.filter(x =>
       (!this.statusFilter || x.status === this.statusFilter) &&
       (!q || `${x.projectNo} ${x.customerName} ${x.projectTitle} ${x.categoryName} ${x.status}`.toLowerCase().includes(q))
     );
+
+    // PM_SELECTED_FIRST_V3: selected record is rendered as the first card.
+    if (!this.selected) return filtered;
+    const selectedIndex = filtered.findIndex(x => x.projectId === this.selected?.projectId);
+    if (selectedIndex <= 0) return filtered;
+    return [filtered[selectedIndex], ...filtered.slice(0, selectedIndex), ...filtered.slice(selectedIndex + 1)];
   }
 
   get statuses(): string[] { return [...new Set(this.items.map(x => x.status).filter(Boolean))].sort(); }
@@ -63,16 +71,26 @@ export class ProjectProjectsComponent implements OnInit {
         this.items = v;
         if (this.selected) {
           const current = v.find(x => x.projectId === this.selected?.projectId);
-          if (current) this.open(current, false);
+          if (current) this.open(current, false, false);
+        } else {
+          const requestedId = +(this.route.snapshot.queryParamMap.get('projectId') || 0);
+          const requested = requestedId ? v.find(x => x.projectId === requestedId) : undefined;
+          const target = requested || v[0];
+          if (target) this.open(target, true, false);
         }
       },
       error: e => this.error = e?.error?.message || 'Unable to load projects.'
     });
   }
 
-  open(p: PmProject, resetTab = true): void {
+  open(p: PmProject, resetTab = true, focusSelection = true): void {
     this.selected = p;
-    this.projectForm = { ...p };
+    this.projectForm = {
+      ...p,
+      projectStartDate: this.dateInput(p.projectStartDate),
+      targetCompletionDate: this.dateInput(p.targetCompletionDate),
+      actualCompletionDate: this.dateInput(p.actualCompletionDate)
+    };
     this.selectedLeader = p.projectLeaderUserId || null;
     this.memberUserIds = (p.members || []).map(x => x.id);
     if (p.projectLeaderUserId && !this.memberUserIds.includes(p.projectLeaderUserId)) this.memberUserIds.push(p.projectLeaderUserId);
@@ -81,6 +99,16 @@ export class ProjectProjectsComponent implements OnInit {
     this.loadLinks();
     this.loadAttachments();
     this.loadAcknowledgement();
+    if (focusSelection) this.focusSelectedProject();
+  }
+
+  // PM_SELECTED_FIRST_V3: reorder the chosen record to the first card; do not scroll to its old LHS position.
+  private focusSelectedProject(): void {
+    setTimeout(() => {
+      const container = document.querySelector('.project-cards') as HTMLElement | null;
+      if (container) container.scrollTop = 0;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 0);
   }
 
   saveProject(): void {
@@ -98,7 +126,12 @@ export class ProjectProjectsComponent implements OnInit {
       poWoReference: this.projectForm.poWoReference || '',
       remarks: this.projectForm.remarks || ''
     }).subscribe({
-      next: p => { this.success = 'Project master updated.'; this.selected = p; this.projectForm = { ...p }; this.refresh(); },
+      next: p => { this.success = 'Project master updated.'; this.selected = p; this.projectForm = {
+        ...p,
+        projectStartDate: this.dateInput(p.projectStartDate),
+        targetCompletionDate: this.dateInput(p.targetCompletionDate),
+        actualCompletionDate: this.dateInput(p.actualCompletionDate)
+      }; this.refresh(); },
       error: e => { this.error = e?.error?.message || 'Unable to update project.'; this.saving = false; },
       complete: () => this.saving = false
     });
@@ -128,12 +161,14 @@ export class ProjectProjectsComponent implements OnInit {
 
   addActivity(): void {
     this.editingActivityId = null;
+    this.activityAttachments = [];
     this.activity = this.blankActivity();
     this.showActivityForm = true;
   }
 
   editActivity(a: PmActivity): void {
     this.editingActivityId = a.activityId;
+    this.loadActivityAttachments(a.activityId);
     this.activity = {
       sequenceNo: a.sequenceNo,
       activityName: a.activityName,
@@ -167,6 +202,24 @@ export class ProjectProjectsComponent implements OnInit {
         this.refresh();
       },
       error: e => this.error = e?.error?.message || 'Unable to save activity.'
+    });
+  }
+
+  loadActivityAttachments(activityId: number): void {
+    this.api.attachments('Activity', activityId).subscribe({
+      next: files => this.activityAttachments = files,
+      error: () => this.activityAttachments = []
+    });
+  }
+
+  uploadActivityFile(event: Event): void {
+    if (!this.editingActivityId) return;
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.api.uploadAttachment('Activity', this.editingActivityId, file).subscribe({
+      next: () => { this.success = 'Activity evidence uploaded.'; input.value = ''; this.loadActivityAttachments(this.editingActivityId!); },
+      error: e => this.error = e?.error?.message || 'Unable to upload activity evidence.'
     });
   }
 

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+﻿import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { AdminGuard } from './core/guards/admin.guard';
@@ -23,6 +23,7 @@ import { CreateTestQuestionsComponent } from './features/admin/create-test-quest
 import { DemoComponent } from './features/demo/demo.component';
 import { ApproveCertificateComponent } from './features/admin/approve-certificate/approve-certificate.component';
 import { PrintCertificationNewComponent } from './features/admin/print-certification-new/print-certification-new.component';
+import { TestTrainingListsComponent } from './features/admin/test-training-lists/test-training-lists.component';
 
 const routes: Routes = [
   {
@@ -44,17 +45,19 @@ const routes: Routes = [
   { path: 'admin/create-test', component: CreateTestComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: 'admin/create-question', component: CreateQuestionComponent , canActivate: [AuthGuard, AdminGuard] },
   { path: 'admin/create-test-questions', component: CreateTestQuestionsComponent, canActivate: [AuthGuard, AdminGuard] },
+  { path: 'admin/test-training-lists', component: TestTrainingListsComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: 'admin/question-bank', component: CreateQuestionComponent , canActivate: [AuthGuard, AdminGuard] },
   { path: 'admin/print-certificate', component: PrintCertificateComponent },
  // { path: 'admin/printcertificationnew', component: PrintCertificationNewComponent },
   { path: 'admin/approve-certificate', component: ApproveCertificateComponent, canActivate: [AuthGuard, AdminGuard] },
   //{ path: 'demo', component: DemoComponent },
-  // Future Admin access: hasWorkspaceAccess() contains the commented Admin role.
+  { path: 'onboarding', loadChildren: () => import('./features/employee-onboarding/employee-onboarding.module').then((m) => m.EmployeeOnboardingModule) },
   { path: 'workspace', canActivate: [AuthGuard, WorkspaceGuard], loadChildren: () => import('./features/project-management/project-management.module').then((m) => m.ProjectManagementModule) },
   { path: '', loadChildren: () => import('./features/home/home.module').then((m) => m.HomeModule) },
   { path: 'about', loadChildren: () => import('./features/about/about.module').then((m) => m.AboutModule) },
   { path: 'training', loadChildren: () => import('./features/training/training.module').then((m) => m.TrainingModule) },
   { path: 'test', loadChildren: () => import('./features/test/test.module').then((m) => m.TestModule) },
+  { path: 'assessment', loadChildren: () => import('./features/assessment/assessment.module').then((m) => m.AssessmentModule) },
   { path: 'expertise', loadChildren: () => import('./features/expertise/expertise.module').then((m) => m.ExpertiseModule) },
   { path: 'blogs', loadChildren: () => import('./features/blogs/blogs.module').then((m) => m.BlogsModule) },
   { path: 'management-system', loadChildren: () => import('./features/management-system/management-system.module').then((m) => m.ManagementSystemModule) },
@@ -82,3 +85,5 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule {}
+
+

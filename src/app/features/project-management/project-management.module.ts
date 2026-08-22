@@ -12,6 +12,7 @@ import { ProjectQuotationsComponent } from './quotations/project-quotations.comp
 import { ProjectReportsComponent } from './reports/project-reports.component';
 import { ProjectWorkspaceShellComponent } from './shell/project-workspace-shell.component';
 import { PmSearchSelectComponent } from './shared/pm-search-select.component';
+import { ProjectOperationsComponent } from './operations/project-operations.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { PmSearchSelectComponent } from './shared/pm-search-select.component';
     ProjectNotificationsComponent,
     ProjectReportsComponent,
     ProjectManagementAdminComponent,
-    PmSearchSelectComponent
+    PmSearchSelectComponent,
+    ProjectOperationsComponent
   ],
   imports: [SharedModule, ProjectManagementRoutingModule]
 })

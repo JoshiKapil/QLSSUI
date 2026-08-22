@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
+import { OnboardingDashboard, OnboardingLoginState } from '../../employee-onboarding/models/employee-onboarding.models';
+import { EmployeeOnboardingService } from '../../employee-onboarding/services/employee-onboarding.service';
 import { PmActivity, PmDashboard } from '../models/project-management.models';
 import { ProjectManagementService } from '../services/project-management.service';
 
@@ -12,12 +14,19 @@ export class ProjectDashboardComponent implements OnInit {
   data?: PmDashboard;
   loading = true;
   error = '';
+  onboardingDashboard?: OnboardingDashboard;
+  onboardingState?: OnboardingLoginState;
 
-  constructor(private api: ProjectManagementService, public auth: AuthService) {}
+  constructor(
+    private api: ProjectManagementService,
+    private onboardingApi: EmployeeOnboardingService,
+    public auth: AuthService
+  ) {}
 
   ngOnInit(): void { this.load(); }
 
   load(): void {
+    this.loadOnboardingSummary();
     this.loading = true;
     this.error = '';
     this.api.dashboard().subscribe({
@@ -29,6 +38,25 @@ export class ProjectDashboardComponent implements OnInit {
 
   get role(): string { return this.auth.getCurrentUser()?.role || ''; }
   get isSuperAdmin(): boolean { return this.role.toLowerCase() === 'superadmin'; }
+  get isAdminLike(): boolean { return ['admin', 'superadmin'].includes(this.role.toLowerCase()); }
+  get isEmployee(): boolean { return this.role.toLowerCase() === 'employee'; }
+
+  loadOnboardingSummary(): void {
+    if (this.isAdminLike) {
+      this.onboardingApi.dashboard().subscribe({
+        next: value => this.onboardingDashboard = value,
+        error: () => this.onboardingDashboard = undefined
+      });
+      return;
+    }
+
+    if (this.isEmployee) {
+      this.onboardingApi.loginState().subscribe({
+        next: value => this.onboardingState = value,
+        error: () => this.onboardingState = undefined
+      });
+    }
+  }
 
   badge(status: string): string {
     const value = (status || '').toLowerCase();

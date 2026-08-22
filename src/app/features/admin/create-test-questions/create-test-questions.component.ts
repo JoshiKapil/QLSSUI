@@ -1,5 +1,6 @@
-import { HttpClient, HttpEventType, HttpHeaders } from '@angular/common/http';
+﻿import { HttpClient, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { Training } from '../../../core/models/training.model';
 import { DataService } from '../../../core/services/data.service';
@@ -31,6 +32,7 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
   isTrainingDropdownOpen = false;
   testType = '';
   testName = '';
+  durationMinutes = 60;
   questions: PreviewQuestion[] = [];
   result: QuestionTestImportResultDto | null = null;
   progress = 0;
@@ -47,7 +49,8 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
     private readonly questionApi: QuestionApiService,
     private readonly testApi: TestApiService,
     private readonly testStorage: TestStorageService,
-    private readonly trainingService: TrainingManagementService
+    private readonly trainingService: TrainingManagementService,
+    private readonly route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -71,9 +74,9 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
   }
 
   get availableTestTypes(): string[] {
-    const training = this.trainings.find((item) => String(item.trainingId ?? '') === this.trainingId);
-    if (!training) return this.testTypes;
-    return this.testTypes.filter((type) => !this.getLinkedTestId(training, type));
+    // Existing assignments may be replaced. The API links the newly generated TestId
+    // to the selected Training field for this test type.
+    return this.testTypes;
   }
 
   //private loadTrainingList(): void {
@@ -101,9 +104,18 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.trainings = (response.items || [])
           .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
+        this.applyRouteSelection();
       },
       error: (error) => this.fail('Training dropdown could not be loaded.', error)
     });
+  }
+
+  private applyRouteSelection(): void {
+    const trainingId = String(this.route.snapshot.queryParamMap.get('trainingId') || '').trim();
+    const testType = String(this.route.snapshot.queryParamMap.get('testType') || '').trim().toLowerCase();
+    const training = this.trainings.find((item) => String(item.trainingId ?? '') === trainingId);
+    if (training) { this.trainingId = trainingId; this.trainingSearch = this.getTrainingLabel(training); }
+    if (['pre', 'post', 'chalange'].includes(testType)) this.testType = testType;
   }
 
   private mapTrainingFromAsset(training: any): Training {
@@ -156,7 +168,6 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
     this.trainingId = String(training.trainingId ?? '');
     this.trainingSearch = this.getTrainingLabel(training);
     this.isTrainingDropdownOpen = false;
-    if (this.testType && this.getLinkedTestId(training, this.testType)) this.testType = '';
   }
 
   private getLinkedTestId(training: Training, type: string): string {
@@ -222,6 +233,10 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
       this.fail('Select Pre, Post, or Chalange as the test type.', null);
       return;
     }
+    if (!Number.isInteger(this.durationMinutes) || this.durationMinutes <= 0) {
+      this.fail('Duration must be a whole number greater than zero.', null);
+      return;
+    }
     const training = this.trainings.find((item) => String(item.trainingId || '') === this.trainingId);
     if (!training) {
       this.fail('The selected training is no longer available. Please select it again.', null);
@@ -244,6 +259,7 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
       trainingName,
       testType: this.testType,
       testName: this.testName,
+      durationMinutes: this.durationMinutes,
       questions
     }).pipe(takeUntil(this.destroy$)).subscribe({
       next: (event) => {
@@ -326,7 +342,7 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
       testFileType: testType,
       subject: '',
       topic: '',
-      durationMinutes: 60,
+      durationMinutes: this.durationMinutes,
       passingPercentage: 50,
       instructions: this.testName,
       status: 'Active',
@@ -481,3 +497,7 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
     this.errorMessage = apiMessage ? `${message} ${apiMessage}` : message;
   }
 }
+
+
+
+

@@ -4,14 +4,14 @@
       <span class="auth-eyebrow">Assessment</span>
       <h1>Fill Exam Form</h1>
       <p>
-        Enter your details to continue to the test. Existing details are loaded
-        automatically for the same email and training.
+        Enter your details to continue to the test. If you have submitted this form before,
+        select the same training and use your email to retrieve your saved details.
       </p>
     </div>
 
     <form class="certification-form" [formGroup]="form" (ngSubmit)="submit()">
       <div class="form-grid">
-        <label class="form-field training-search-field">
+        <label class="form-field training-search-field" [class.dropdown-open]="isTrainingDropdownOpen">
           Training
           <div class="training-search-control">
             <button
@@ -68,30 +68,45 @@
           <small>{{ fieldError("mobile", "Mobile") }}</small>
         </label>
 
-        <label class="form-field"
-          >Email
-          <input type="email" formControlName="email" maxlength="200" />
-          <button class="inline-link" type="button" (click)="findExistingRecord()">Load existing details</button>
+        <div class="form-field email-field">
+          <label for="exam-form-email">Email</label>
+          <input id="exam-form-email" type="email" formControlName="email" maxlength="200" />
           <small>{{ fieldError("email", "Email") }}</small>
-        </label>
+        </div>
 
-        <label class="form-field"
-          >Trainer Name
-          <select formControlName="trainerId">
-            <option value="">
-              {{ isLoadingTrainers ? "Loading trainers..." : "Select Trainer" }}
-            </option>
-            <option
-              *ngFor="let trainer of trainers"
-              [value]="trainer.trainerId"
-            >
-              {{ trainer.name }}
-            </option>
-          </select>
+        <div class="returning-user-help">
+          <div class="returning-user-copy">
+            <strong>Already submitted this form?</strong>
+            <span>Select the same training, enter your email, and retrieve your saved details.</span>
+          </div>
+          <button class="saved-details-button" type="button" (click)="findExistingRecord()"
+            [disabled]="!form.controls['trainingId'].value || form.controls['email'].invalid">
+            Find My Saved Details
+          </button>
+        </div>
+
+        <label class="form-field training-search-field" [class.dropdown-open]="isTrainerDropdownOpen">Trainer Name
+          <div class="training-search-control">
+            <button class="btn btn-outline btn-small training-dropdown-toggle" type="button"
+              (click)="toggleTrainerDropdown()" [disabled]="isLoadingTrainers"
+              aria-haspopup="listbox" [attr.aria-expanded]="isTrainerDropdownOpen">
+              {{ getSelectedTrainerLabel() }}
+              <span class="dropdown-icon">&#9662;</span>
+            </button>
+            <div class="training-search-menu" *ngIf="isTrainerDropdownOpen" role="listbox">
+              <input type="text" [(ngModel)]="trainerSearch" [ngModelOptions]="{ standalone: true }"
+                placeholder="Search trainer by name, email, or mobile" autocomplete="off" />
+              <button class="training-search-option" type="button"
+                *ngFor="let trainer of filteredTrainers" (mousedown)="selectTrainer(trainer)">
+                {{ trainer.name }}
+              </button>
+              <div class="training-search-empty" *ngIf="!filteredTrainers.length">No trainer found</div>
+            </div>
+          </div>
           <small>{{ fieldError("trainerId", "Trainer Name") }}</small>
         </label>
 
-        <label class="form-field training-search-field">Company/Location
+        <label class="form-field training-search-field" [class.dropdown-open]="isCompanyDropdownOpen">Company/Location
           <div class="training-search-control">
             <button class="btn btn-outline btn-small training-dropdown-toggle" type="button"
               (click)="toggleCompanyDropdown()" [attr.aria-expanded]="isCompanyDropdownOpen">
@@ -112,7 +127,7 @@
         </label>
 
 
-        <label class="form-field training-search-field">City (optional)
+        <label class="form-field training-search-field" [class.dropdown-open]="isCityDropdownOpen">City (optional)
           <div class="training-search-control">
             <button class="btn btn-outline btn-small training-dropdown-toggle" type="button"
               (click)="toggleCityDropdown()" [disabled]="!selectedCompanyId || !selectedCompanyCities.length"
@@ -134,14 +149,14 @@
         </label>
 
         <label class="form-field"
-          >Days
+          >Total Training Days
           <input type="number" formControlName="days" min="1" />
           <small>{{ fieldError("days", "Days") }}</small>
         </label>
         
         <label class="form-field"
           >Date
-          <input type="date" formControlName="certificationDate" />
+          <input type="date" formControlName="certificationDate" disabled aria-readonly="true" />
           <small>{{ fieldError("certificationDate", "Date") }}</small>
         </label>
 
@@ -158,3 +173,4 @@
     </form>
   </div>
 </section>
+

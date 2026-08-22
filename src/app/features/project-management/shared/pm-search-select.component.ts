@@ -1,4 +1,4 @@
-import { Component, ElementRef, forwardRef, HostListener, Input } from '@angular/core';
+import { Component, ElementRef, forwardRef, HostBinding, HostListener, Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
@@ -21,6 +21,7 @@ export class PmSearchSelectComponent implements ControlValueAccessor {
   @Input() allowClear = true;
 
   open = false;
+  dropUp = false;
   search = '';
   disabled = false;
   value: any = null;
@@ -29,6 +30,12 @@ export class PmSearchSelectComponent implements ControlValueAccessor {
   private onTouched: () => void = () => undefined;
 
   constructor(private elementRef: ElementRef<HTMLElement>) {}
+
+  @HostBinding('class.dropdown-open')
+  get dropdownOpen(): boolean { return this.open; }
+
+  @HostBinding('class.drop-up')
+  get opensUpward(): boolean { return this.open && this.dropUp; }
 
   @HostListener('document:click', ['$event.target'])
   closeWhenClickingOutside(target: EventTarget | null): void {
@@ -72,7 +79,10 @@ export class PmSearchSelectComponent implements ControlValueAccessor {
   toggleDropdown(): void {
     if (this.disabled) return;
     this.open = !this.open;
-    if (this.open) this.search = '';
+    if (this.open) {
+      this.search = '';
+      this.dropUp = false;
+    }
     this.onTouched();
   }
 

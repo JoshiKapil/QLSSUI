@@ -1,0 +1,56 @@
+<section class="admin-assessment-page">
+  <div class="admin-hero">
+    <div><p>Admin · Ghar 9001</p><h1>Assessment Entries</h1><span>Review every saved form by assessment tab, date, family/auditor and reference.</span></div>
+    <a routerLink="/assessment"><i class="fas fa-arrow-left"></i> Open Assessment Forms</a>
+  </div>
+
+  <div class="summary-strip">
+    <div><span>Total saved entries</span><strong>{{ totalCount }}</strong></div>
+    <div><span>Current view</span><strong>{{ selectedTab ? tabName(selectedTab) : 'All tabs' }}</strong></div>
+    <div><span>PDF format</span><strong>Static / Non-editable</strong></div>
+  </div>
+
+  <nav class="admin-tabs">
+    <button type="button" [class.active]="selectedTab === ''" (click)="chooseTab('')">All</button>
+    <button type="button" *ngFor="let tab of tabs" [class.active]="selectedTab === tab.code" (click)="chooseTab(tab.code)"><i class="fas" [ngClass]="tab.icon"></i>{{ tab.shortTitle }}</button>
+  </nav>
+
+  <div class="filter-card">
+    <label class="search-field"><span>Search</span><div><i class="fas fa-search"></i><input [(ngModel)]="search" (keyup.enter)="applyFilters()" placeholder="Entry no., name, reference..." /></div></label>
+    <label><span>From Date</span><input type="date" [(ngModel)]="fromDate" /></label>
+    <label><span>To Date</span><input type="date" [(ngModel)]="toDate" /></label>
+    <div class="filter-actions"><button type="button" class="primary" (click)="applyFilters()"><i class="fas fa-filter"></i> Apply</button><button type="button" (click)="clearFilters()">Clear</button></div>
+  </div>
+
+  <div class="entries-card">
+    <div class="card-head"><div><h2>Saved Assessments</h2><p>Each row is one saved assessment tab. Re-saving in the same browser session creates a new revision of the same entry.</p></div><span *ngIf="isLoading"><i class="fas fa-spinner fa-spin"></i> Loading</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Entry</th><th>Assessment Tab</th><th>Form Date</th><th>Name / Lead</th><th>Reference</th><th>Saved</th><th>Rev.</th><th></th></tr></thead>
+        <tbody>
+          <tr *ngFor="let row of entries">
+            <td><strong class="entry-no">{{ row.entryNo }}</strong></td>
+            <td><span class="tab-pill">{{ tabName(row.tabCode) }}</span><small>{{ row.tabTitle }}</small></td>
+            <td>{{ row.formDate ? (row.formDate | date:'dd-MMM-yyyy') : '—' }}</td>
+            <td>{{ row.displayName || '—' }}<small *ngIf="row.createdByUserName">Saved by {{ row.createdByUserName }}</small></td>
+            <td>{{ row.referenceText || '—' }}</td>
+            <td>{{ row.updatedOnUtc | date:'dd-MMM-yyyy, h:mm a' }}</td>
+            <td><span class="revision">{{ row.revisionNo }}</span></td>
+            <td><button type="button" class="view-btn" (click)="view(row)"><i class="fas fa-eye"></i> View</button></td>
+          </tr>
+          <tr *ngIf="!isLoading && entries.length === 0"><td colspan="8" class="empty"><i class="fas fa-inbox"></i><strong>No entries found</strong><span>Change the tab/date/search filters or save an assessment first.</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <footer class="pager"><span>Page {{ page }} of {{ totalPages }} · {{ totalCount }} entries</span><div><button type="button" (click)="previous()" [disabled]="page <= 1"><i class="fas fa-chevron-left"></i> Previous</button><button type="button" (click)="next()" [disabled]="page >= totalPages">Next <i class="fas fa-chevron-right"></i></button></div></footer>
+  </div>
+
+  <div class="detail-backdrop" *ngIf="selectedEntry" (click)="closeDetail()">
+    <aside class="detail-panel" (click)="$event.stopPropagation()">
+      <header><div><p>{{ tabName(selectedEntry.tabCode) }}</p><h2>{{ selectedEntry.entryNo }}</h2><span>{{ selectedEntry.tabTitle }}</span></div><button type="button" (click)="closeDetail()"><i class="fas fa-times"></i></button></header>
+      <div class="detail-meta"><div><span>Form date</span><strong>{{ selectedEntry.formDate ? (selectedEntry.formDate | date:'dd-MMM-yyyy') : '—' }}</strong></div><div><span>Name / Lead</span><strong>{{ selectedEntry.displayName || '—' }}</strong></div><div><span>Reference</span><strong>{{ selectedEntry.referenceText || '—' }}</strong></div><div><span>Revision</span><strong>{{ selectedEntry.revisionNo }}</strong></div></div>
+      <div class="detail-content"><div class="detail-row" *ngFor="let row of detailRows"><span>{{ row.label }}</span><p>{{ row.value || '—' }}</p></div></div>
+      <footer><button type="button" class="download-btn" (click)="downloadSelected()"><i class="fas fa-file-pdf"></i> Download Complete PDF</button><button type="button" (click)="closeDetail()">Close</button></footer>
+    </aside>
+  </div>
+</section>

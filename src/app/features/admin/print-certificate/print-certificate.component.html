@@ -1,4 +1,4 @@
-<section class="certificate-page">
+﻿<section class="certificate-page">
   <div class="container certificate-shell">
     <header class="page-header">
       <div>
@@ -196,7 +196,12 @@
             </div>
 
             <div>
-              <label class="field-label">Training</label>
+              <label class="field-label">Company</label>
+          <select class="select-toggle native-flow-select" [ngModel]="individualCompanyId" (ngModelChange)="selectIndividualCompany($event)" name="individualCompanyId">
+            <option value="">Select Company</option>
+            <option *ngFor="let company of individualCompanies" [value]="company.clientId">{{ company.clientName }}</option>
+          </select>
+          <label class="field-label">Training</label>
               <div class="search-select">
                 <button class="select-toggle" type="button" (click)="toggleEmailTrainingDropdown()" [disabled]="!emailCompanyId || isBulkEmailSending" [attr.aria-expanded]="isEmailTrainingDropdownOpen">
                   <span>{{ selectedEmailTraining ? getTrainingLabel(selectedEmailTraining) : (emailCompanyId ? 'Select training' : 'Select company first') }}</span><span aria-hidden="true">&#9662;</span>
@@ -281,12 +286,17 @@
         <section class="form-card training-card" [class.dropdown-open]="isTrainingDropdownOpen || isUserDropdownOpen">
           <div class="section-heading">
             <span class="step-badge" aria-label="Step 1">1</span>
-            <div><h2>Training &amp; participant</h2><p>Topics are brought in automatically from the selected training.</p></div>
+            <div><h2>Training &amp; participant</h2><p>Select Company, Training, Date, then Participant.</p></div>
           </div>
 
+          <label class="field-label">Company</label>
+          <select class="select-toggle native-flow-select" [ngModel]="individualCompanyId" (ngModelChange)="selectIndividualCompany($event)" name="individualCompanyId">
+            <option value="">Select Company</option>
+            <option *ngFor="let company of individualCompanies" [value]="company.clientId">{{ company.clientName }}</option>
+          </select>
           <label class="field-label">Training</label>
           <div class="search-select">
-            <button class="select-toggle" type="button" (click)="toggleTrainingDropdown()" [attr.aria-expanded]="isTrainingDropdownOpen">
+            <button class="select-toggle" type="button" (click)="toggleTrainingDropdown()" [disabled]="!individualCompanyId" [attr.aria-expanded]="isTrainingDropdownOpen">
               <span>{{ selectedTraining ? getTrainingLabel(selectedTraining) : 'Select Training' }}</span><span aria-hidden="true">&#9662;</span>
             </button>
             <div class="select-menu" *ngIf="isTrainingDropdownOpen" role="listbox">
@@ -299,9 +309,14 @@
             </div>
           </div>
 
+          <label class="field-label">Date</label>
+          <select class="select-toggle native-flow-select" [(ngModel)]="individualDate" (ngModelChange)="individualDateChanged()" name="individualDate" [disabled]="!selectedTrainingId">
+            <option value="">{{ selectedTrainingId ? 'Select Date' : 'Select training first' }}</option>
+            <option *ngFor="let date of individualDates" [value]="date">{{ date | date:'dd MMM yyyy' }}</option>
+          </select>
           <label class="field-label">Participant</label>
           <div class="search-select">
-            <button class="select-toggle" type="button" (click)="toggleUserDropdown()" [disabled]="!selectedTrainingId" [attr.aria-expanded]="isUserDropdownOpen">
+            <button class="select-toggle" type="button" (click)="toggleUserDropdown()" [disabled]="!individualDate" [attr.aria-expanded]="isUserDropdownOpen">
               <span>{{ selectedUser ? getUserLabel(selectedUser) : (selectedTrainingId ? 'Select User' : 'Select training first') }}</span><span aria-hidden="true">&#9662;</span>
             </button>
             <div class="select-menu" *ngIf="isUserDropdownOpen" role="listbox">
@@ -362,3 +377,4 @@
     </div>
   </div>
 </section>
+

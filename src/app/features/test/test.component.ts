@@ -41,6 +41,9 @@ interface DirectTrainingOption {
   trainingId: string;
   trainingName: string;
   displayName: string;
+  preTestId?: string;
+  postTestId?: string;
+  chalangeTestId?: string;
 }
 
 @Component({
@@ -63,6 +66,8 @@ export class TestComponent implements OnInit, OnDestroy {
   testName = DEFAULT_TEST_NAME;
   testType: 'pre' | 'post' | 'assessment' | 'chalange' | 'NOR' = 'assessment';
   private startTrainingId = '';
+  private feedbackTrainerId = '';
+  private feedbackUserName = '';
   savedResultUsername = '';
   savedResultTestName = '';
   isResultTestDropdownOpen = false;
@@ -122,6 +127,8 @@ export class TestComponent implements OnInit, OnDestroy {
         const selection = JSON.parse(examFormSelection);
         this.directEmail = String(selection.username || '').trim();
         this.selectedTrainingId = String(selection.trainingId || '').trim();
+        this.feedbackTrainerId = String(selection.trainerId || '').trim();
+        this.feedbackUserName = String(selection.name || selection.username || '').trim();
       } catch {
         // The direct-entry validation below will request any missing data.
       }
@@ -132,7 +139,6 @@ export class TestComponent implements OnInit, OnDestroy {
     }
 
     const startTestData = this.getStartTestData();
-    console.log('Start Test Data:', startTestData); // Debugging line
     if (!startTestData) {
       this.router.navigate(['/fill-exam-form']);
       return;
@@ -141,6 +147,8 @@ export class TestComponent implements OnInit, OnDestroy {
     this.testType = startTestData?.testType || this.getTestType(this.testName);
     this.startTrainingId = String(startTestData?.trainingId || '').trim();
     this.username = this.sanitizeDisplayValue(startTestData?.username, this.username);
+    this.feedbackTrainerId = String(startTestData?.trainerId || '').trim();
+    this.feedbackUserName = String(startTestData?.name || startTestData?.username || '').trim();
     this.savedResults = this.getSavedResultList();
     if (this.isAdmin && !this.resultDropdownsLoaded) {
       this.loadResultDropdownData();
@@ -210,7 +218,10 @@ export class TestComponent implements OnInit, OnDestroy {
         .map((training): DirectTrainingOption => ({
           trainingId: String(training.trainingId ?? ''),
           trainingName: training.trainingName || '',
-          displayName: training.displayName || training.trainingName || ''
+          displayName: training.displayName || training.trainingName || '',
+          preTestId: String(training.preTestId ?? ''),
+          postTestId: String(training.postTestId ?? ''),
+          chalangeTestId: String(training.chalangeTestId ?? '')
         }))
         .filter((training) => training.trainingId && this.getDirectTrainingLabel(training))
         .sort((a, b) => this.getDirectTrainingLabel(a).localeCompare(this.getDirectTrainingLabel(b)));
@@ -240,10 +251,16 @@ export class TestComponent implements OnInit, OnDestroy {
         }
       }
 
-      const selectedTest = this.directTests.find((test) =>
-        String(test.trainingId || '') === this.selectedTrainingId &&
-        this.getDefinitionTestType(test) === this.testType
+      const selectedTraining = this.directTrainings.find(
+        (training) => training.trainingId === this.selectedTrainingId
       );
+      const linkedTestId = this.getLinkedTestId(selectedTraining);
+      const selectedTest = linkedTestId
+        ? this.directTests.find((test) => String(test.testId || '') === linkedTestId)
+        : [...this.directTests].reverse().find((test) =>
+            String(test.trainingId || '') === this.selectedTrainingId &&
+            this.getDefinitionTestType(test) === this.testType
+          );
       if (!selectedTest) {
         this.directEntryMessage = 'No test is available for the selected training and test type.';
         return;
@@ -293,6 +310,14 @@ export class TestComponent implements OnInit, OnDestroy {
     this.isTrainingDropdownOpen = false;
   }
 
+  private getLinkedTestId(training?: DirectTrainingOption): string {
+    if (!training) return '';
+    if (this.testType === 'pre') return training.preTestId || '';
+    if (this.testType === 'post') return training.postTestId || '';
+    if (this.testType === 'chalange') return training.chalangeTestId || '';
+    return '';
+  }
+
   private getDefinitionTestType(test: TestDefinition): 'pre' | 'post' | 'assessment' | 'chalange' | 'NOR' {
     if (test.testFileType) {
       return test.testFileType;
@@ -315,7 +340,7 @@ export class TestComponent implements OnInit, OnDestroy {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  private getStartTestData(): { testName: string; testId?: string; username: string; testType?: 'pre' | 'post' | 'assessment' | 'chalange' | 'NOR'; trainingId?: string; name?: string; contact?: string } | null {
+  private getStartTestData(): { testName: string; testId?: string; username: string; testType?: 'pre' | 'post' | 'assessment' | 'chalange' | 'NOR'; trainingId?: string; trainerId?: string; name?: string; contact?: string } | null {
     const savedData = sessionStorage.getItem(STORAGE_KEY_START_TEST);
     sessionStorage.removeItem(STORAGE_KEY_START_TEST);
 
@@ -869,6 +894,16 @@ export class TestComponent implements OnInit, OnDestroy {
   private completeSubmissionNavigation(submission: TestSubmission, warning: string): void {
     if (this.testType === 'pre') {
       this.openResultPage(submission, warning);
+      return;
+    }
+    if (this.testType === 'post') {
+      this.router.navigate(['/training/feedback'], {
+        queryParams: {
+          trainingId: this.startTrainingId || this.selectedTrainingId || this.activeTestDefinition?.trainingId || '',
+          trainerId: this.feedbackTrainerId,
+          userName: this.feedbackUserName || submission.username
+        }
+      });
       return;
     }
     this.router.navigate(['/training']);

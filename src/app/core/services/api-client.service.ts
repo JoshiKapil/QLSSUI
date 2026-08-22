@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { ApiResponse, unwrapApiResponse } from '../models/api-response.model';
+import { normalizeApiError } from './api-error.util';
 
 export type QueryParams = HttpParams | Record<string, string | number | boolean | null | undefined>;
 
@@ -110,10 +111,13 @@ export class ApiClientService {
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {
-    if (error?.error) {
-      console.error('[ApiClientService] API request failed.', error.error);
-    }
-    return throwError(() => error);
+    const normalized = normalizeApiError(error);
+    console.error('[ApiClientService] API request failed.', {
+      status: normalized.status,
+      message: normalized.error?.message,
+      traceId: normalized.error?.traceId
+    });
+    return throwError(() => normalized);
   }
 
   private throwApiError(error: unknown): never {
