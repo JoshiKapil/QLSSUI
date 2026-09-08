@@ -5,6 +5,6 @@ import { GalleryRoutingModule } from './gallery-routing.module';
 
 @NgModule({
   declarations: [GalleryComponent],
-  imports: [SharedModule, GalleryRoutingModule]
+  imports: [SharedModule, GalleryRoutingModule],
 })
 export class GalleryModule {}

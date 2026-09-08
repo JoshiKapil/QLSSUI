@@ -1,5 +1,65 @@
 <section class="workspace" [ngClass]="themeClass">
+  <!-- PM operation feedback stays above every PM screen. -->
+  <ng-container *ngIf="loaderState$ | async as loader">
+    <div class="pm-operation-loader" *ngIf="loader.active" role="status" aria-live="polite" aria-busy="true">
+      <div class="pm-operation-loader__glass">
+        <div class="pm-operation-loader__orb"><span></span></div>
+        <div class="pm-operation-loader__copy">
+          <strong>{{ loader.message }}</strong>
+          <small>QLSS Project Management</small>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
   <button class="workspace__scrim" *ngIf="menuOpen" aria-label="Close workspace menu" (click)="closeMenu()"></button>
+
+  <!-- SystemUI Aurora Nav behaviour: desktop sidebar becomes a clean top navigation. -->
+  <div class="workspace__aurora-bar" aria-label="Project workspace top navigation">
+    <div class="workspace__aurora-brand">
+      <span class="workspace__aurora-mark">Q</span>
+      <div>
+        <strong>QLSS Projects</strong>
+        <small>Enquiry → Closure</small>
+      </div>
+    </div>
+    <nav class="workspace__aurora-nav">
+      <a routerLink="dashboard" routerLinkActive="active">
+        <i class="fas fa-chart-pie"></i>
+        Dashboard
+      </a>
+      <a routerLink="enquiries" routerLinkActive="active">
+        <i class="fas fa-inbox"></i>
+        Enquiries
+      </a>
+      <a routerLink="quotations" routerLinkActive="active">
+        <i class="fas fa-file-invoice-dollar"></i>
+        Quotations
+      </a>
+      <a routerLink="projects" routerLinkActive="active">
+        <i class="fas fa-diagram-project"></i>
+        Projects
+      </a>
+      <a routerLink="invoices" routerLinkActive="active">
+        <i class="fas fa-receipt"></i>
+        Invoices
+      </a>
+      <a *ngIf="isSuperAdmin" routerLink="approvals" routerLinkActive="active">
+        <i class="fas fa-square-check"></i>
+        Approvals
+      </a>
+      <a routerLink="reports" routerLinkActive="active">
+        <i class="fas fa-chart-column"></i>
+        Reports
+      </a>
+    </nav>
+    <label class="workspace__aurora-theme">
+      <i class="fas fa-palette" aria-hidden="true"></i>
+      <select [ngModel]="theme" (ngModelChange)="setTheme($event)" aria-label="Workspace theme">
+        <option *ngFor="let option of themeOptions" [ngValue]="option.id">{{ option.name }}</option>
+      </select>
+    </label>
+  </div>
 
   <aside class="workspace__rail" [class.workspace__rail--open]="menuOpen">
     <div class="workspace__brand">
@@ -8,67 +68,116 @@
         <strong>QLSS Projects</strong>
         <small>Enquiry → Closure</small>
       </div>
-      <button class="workspace__rail-close" aria-label="Close menu" (click)="closeMenu()"><i class="fas fa-times"></i></button>
+      <button class="workspace__rail-close" aria-label="Close menu" (click)="closeMenu()">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
 
     <div class="workspace__identity">
       <div class="workspace__avatar">{{ name.charAt(0) || 'Q' }}</div>
-      <div><strong>{{ name }}</strong><span>{{ role || 'User' }}</span></div>
+      <div>
+        <strong>{{ name }}</strong>
+        <span>{{ role || 'User' }}</span>
+      </div>
     </div>
 
-    <section class="workspace__theme" aria-label="Project workspace theme">
-      <div class="workspace__theme-head">
-        <div><small>Workspace theme</small><strong>{{ themeName }}</strong></div>
-        <i class="fas fa-palette" aria-hidden="true"></i>
-      </div>
-      <div class="workspace__theme-options">
-        <button
-          type="button"
-          *ngFor="let option of themeOptions"
-          [class.active]="theme === option.id"
-          [attr.aria-pressed]="theme === option.id"
-          [attr.title]="option.name + ' - ' + option.description"
-          (click)="setTheme(option.id)">
-          <span class="workspace__theme-swatch" [ngClass]="'workspace__theme-swatch--' + option.id"></span>
-          <span class="workspace__theme-option-name">{{ option.name }}</span>
-        </button>
-      </div>
-    </section>
+    <!-- Compact picker: all SystemUI theme names stay readable and do not consume the rail. -->
+    <label class="workspace__theme" aria-label="Project workspace theme">
+      <span class="workspace__theme-icon"><i class="fas fa-palette" aria-hidden="true"></i></span>
+      <span class="workspace__theme-copy">
+        <small>Workspace theme</small>
+        <strong>{{ themeName }}</strong>
+      </span>
+      <select [ngModel]="theme" (ngModelChange)="setTheme($event)" aria-label="Select project workspace theme">
+        <option *ngFor="let option of themeOptions" [ngValue]="option.id">{{ option.name }}</option>
+      </select>
+    </label>
 
-    <nav>
+    <nav class="workspace__sidenav">
       <small class="workspace__nav-label">Workspace</small>
-      <a routerLink="dashboard" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
-      <a routerLink="enquiries" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-inbox"></i><span>Enquiries</span></a>
-      <a routerLink="quotations" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-file-invoice-dollar"></i><span>Quotations</span></a>
-      <a routerLink="projects" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-diagram-project"></i><span>Projects</span></a>
+      <a routerLink="dashboard" routerLinkActive="active" (click)="closeMenu()">
+        <i class="fas fa-chart-pie"></i>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="enquiries" routerLinkActive="active" (click)="closeMenu()">
+        <i class="fas fa-inbox"></i>
+        <span>Enquiries</span>
+      </a>
+      <a routerLink="quotations" routerLinkActive="active" (click)="closeMenu()">
+        <i class="fas fa-file-invoice-dollar"></i>
+        <span>Quotations</span>
+      </a>
+      <a routerLink="projects" routerLinkActive="active" (click)="closeMenu()">
+        <i class="fas fa-diagram-project"></i>
+        <span>Projects</span>
+      </a>
+      <a routerLink="invoices" routerLinkActive="active" (click)="closeMenu()">
+        <i class="fas fa-receipt"></i>
+        <span>Invoices</span>
+      </a>
 
       <small class="workspace__nav-label">Control</small>
-      <a *ngIf="isSuperAdmin" routerLink="approvals" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-shield-check"></i><span>Approvals</span><b>SA</b></a>
-      <a routerLink="documents" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-folder-open"></i><span>Documents</span></a>
-      <a routerLink="notifications" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-bell"></i><span>Notifications</span></a>
+      <a *ngIf="isSuperAdmin" routerLink="approvals" routerLinkActive="active" (click)="closeMenu()">
+        <i class="fa-solid fa-square-check"></i>
+        <span>Approvals</span>
+        <b>SA</b>
+      </a>
+      <a routerLink="documents" routerLinkActive="active" (click)="closeMenu()">
+        <i class="fas fa-folder-open"></i>
+        <span>Documents</span>
+      </a>
+      <a routerLink="notifications" routerLinkActive="active" (click)="closeMenu()">
+        <i class="fas fa-bell"></i>
+        <span>Notifications</span>
+      </a>
 
       <small class="workspace__nav-label">People & learning</small>
-      <a [routerLink]="isAdminLike ? '/onboarding/dashboard' : '/onboarding/my-learning'" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-graduation-cap"></i><span>Employee Onboarding</span></a>
+      <a
+        [routerLink]="isAdminLike ? '/onboarding/dashboard' : '/onboarding/my-learning'"
+        routerLinkActive="active"
+        (click)="closeMenu()"
+      >
+        <i class="fas fa-graduation-cap"></i>
+        <span>Employee Onboarding</span>
+      </a>
 
       <small class="workspace__nav-label">Insights</small>
-      <a routerLink="reports" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-chart-column"></i><span>Reports</span></a>
-      <a *ngIf="isAdminLike" routerLink="management" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-sliders"></i><span>Management</span></a>
-      <a *ngIf="isAdminLike" routerLink="operations" routerLinkActive="active" (click)="closeMenu()"><i class="fas fa-gears"></i><span>Operations</span></a>
+      <a routerLink="reports" routerLinkActive="active" (click)="closeMenu()">
+        <i class="fas fa-chart-column"></i>
+        <span>Reports</span>
+      </a>
+      <a *ngIf="isAdminLike" routerLink="management" routerLinkActive="active" (click)="closeMenu()">
+        <i class="fas fa-sliders"></i>
+        <span>Management</span>
+      </a>
+      <a *ngIf="isAdminLike" routerLink="operations" routerLinkActive="active" (click)="closeMenu()">
+        <i class="fas fa-gears"></i>
+        <span>Operations</span>
+      </a>
     </nav>
 
     <div class="workspace__role">
       <div class="workspace__role-icon"><i class="fas fa-lock"></i></div>
       <div>
         <span>{{ isSuperAdmin ? 'SuperAdmin Control' : 'Role Based Access' }}</span>
-        <small>{{ isSuperAdmin ? 'Approvals · assignment · final closure' : 'Only permitted project records are shown' }}</small>
+        <small>
+          {{ isSuperAdmin ? 'Approvals · assignment · final closure' : 'Only permitted project records are shown' }}
+        </small>
       </div>
     </div>
   </aside>
 
   <main class="workspace__main">
     <div class="workspace__mobilebar">
-      <button class="workspace__mobile" (click)="menuOpen = !menuOpen"><i class="fas fa-bars"></i><span>Project workspace</span></button>
-      <span class="workspace__mobile-role">{{ role }}</span>
+      <button class="workspace__mobile" (click)="menuOpen = !menuOpen">
+        <i class="fas fa-bars"></i>
+        <span>Project workspace</span>
+      </button>
+      <label class="workspace__mobile-theme">
+        <select [ngModel]="theme" (ngModelChange)="setTheme($event)" aria-label="Workspace theme">
+          <option *ngFor="let option of themeOptions" [ngValue]="option.id">{{ option.name }}</option>
+        </select>
+      </label>
     </div>
     <router-outlet></router-outlet>
   </main>

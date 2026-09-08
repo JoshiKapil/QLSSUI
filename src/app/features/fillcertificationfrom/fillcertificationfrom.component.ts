@@ -1,43 +1,43 @@
-﻿import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { CertificationForm } from "../../core/models/certification-form.model";
-import { Trainer } from "../../core/models/trainer.model";
-import { CertificationFormService } from "../../core/services/certification-form.service";
-import { NotifierService } from "../../core/services/notifier.service";
-import { TrainerService } from "../../core/services/trainer.service";
-import { Training } from "../../core/models/training.model";
-import { DataService } from "../../core/services/data.service";
-import { Client, ClientCity } from "../../core/models/client.model";
-import { ClientManagementService } from "../../core/services/client-management.service";
-import { TrainingManagementService } from "../../core/services/training-management.service";
-import { Router } from "@angular/router";
+﻿import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CertificationForm } from '../../core/models/certification-form.model';
+import { Trainer } from '../../core/models/trainer.model';
+import { CertificationFormService } from '../../core/services/certification-form.service';
+import { NotifierService } from '../../core/services/notifier.service';
+import { TrainerService } from '../../core/services/trainer.service';
+import { Training } from '../../core/models/training.model';
+import { DataService } from '../../core/services/data.service';
+import { Client, ClientCity } from '../../core/models/client.model';
+import { ClientManagementService } from '../../core/services/client-management.service';
+import { TrainingManagementService } from '../../core/services/training-management.service';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: "app-fillcertificationfrom",
-  templateUrl: "./fillcertificationfrom.component.html",
-  styleUrls: ["./fillcertificationfrom.component.scss"],
+  selector: 'app-fillcertificationfrom',
+  templateUrl: './fillcertificationfrom.component.html',
+  styleUrls: ['./fillcertificationfrom.component.scss'],
 })
 export class FillcertificationfromComponent implements OnInit {
   form!: FormGroup;
   trainers: Trainer[] = [];
-  trainerSearch = "";
+  trainerSearch = '';
   isTrainerDropdownOpen = false;
   companies: Client[] = [];
   isLoadingTrainers = false;
   isLoadingCompanies = false;
   isSubmitting = false;
   trainingList: Training[] = [];
-  trainingSearch = "";
+  trainingSearch = '';
   isTrainingDropdownOpen = false;
-  selectedTrainingId = "";
-  trainingName = "";
-  companySearch = "";
+  selectedTrainingId = '';
+  trainingName = '';
+  companySearch = '';
   isCompanyDropdownOpen = false;
-  selectedCompanyId = "";
-  citySearch = "";
+  selectedCompanyId = '';
+  citySearch = '';
   isCityDropdownOpen = false;
-  selectedCityId = "";
+  selectedCityId = '';
   existingRecordId?: number;
 
   constructor(
@@ -61,14 +61,14 @@ export class FillcertificationfromComponent implements OnInit {
 
   private initForm(): void {
     this.form = this.fb.group({
-      name: ["", [Validators.required, Validators.maxLength(200)]],
-      mobile: ["", [Validators.required, Validators.pattern("^[0-9]{10}$")]],
-      email: ["", [Validators.required, Validators.email]],
-      days: ["", [Validators.required, Validators.pattern("^[0-9]+$")]],
-      trainingId: ["", Validators.required],
-      trainerId: ["", Validators.required],
-      location: ["", Validators.required],
-      cityId: [""],
+      name: ['', [Validators.required, Validators.maxLength(200)]],
+      mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      email: ['', [Validators.required, Validators.email]],
+      days: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+      trainingId: ['', Validators.required],
+      trainerId: ['', Validators.required],
+      location: ['', Validators.required],
+      cityId: [''],
       certificationDate: [{ value: this.today(), disabled: true }, Validators.required],
       isComplete: [{ value: false, disabled: true }],
       isPaid: [{ value: false, disabled: true }],
@@ -80,13 +80,11 @@ export class FillcertificationfromComponent implements OnInit {
 
     this.clientService.getAll().subscribe({
       next: (clients) => {
-        this.companies = (clients || []).filter(
-          (client) => client.isActive !== false,
-        );
+        this.companies = (clients || []).filter((client) => client.isActive !== false);
       },
       error: () => {
         this.companies = [];
-        this.notifier.warningToastr("Companies could not be loaded.");
+        this.notifier.warningToastr('Companies could not be loaded.');
       },
       complete: () => (this.isLoadingCompanies = false),
     });
@@ -122,12 +120,13 @@ export class FillcertificationfromComponent implements OnInit {
   private loadTrainingList(): void {
     this.trainingService.getPaged(1, 100).subscribe({
       next: (response) => {
-        this.trainingList = (response.items || [])
-          .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
+        this.trainingList = (response.items || []).sort(
+          (a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0),
+        );
         this.syncSelectedTrainingFromDetails();
       },
       error: (error) => {
-        console.error("Failed to load training data.", { status: error.status });
+        console.error('Failed to load training data.', { status: error.status });
         this.trainingList = [];
         this.syncSelectedTrainingFromDetails();
       },
@@ -136,46 +135,25 @@ export class FillcertificationfromComponent implements OnInit {
 
   private mapTrainingFromAsset(training: any): Training {
     return {
-      trainingId:
-        training.trainingId ??
-        training.TrainingId ??
-        training.TrainingID ??
-        training.Id ??
-        training.id ??
-        "",
-      trainingName:
-        training.trainingName ?? training.TrainingName ?? training.Name ?? "",
-      trainingDesc:
-        training.trainingDesc ??
-        training.TrainingDesc ??
-        training.Description ??
-        "",
-      topicCovered:
-        training.topicCovered ??
-        training.TopicCovered ??
-        training.TopicCoveredName ??
-        "",
-      displayName:
-        training.displayName ??
-        training.DisplayName ??
-        training.TrainingName ??
-        "",
-      image: training.image ?? training.Image ?? "",
+      trainingId: training.trainingId ?? training.TrainingId ?? training.TrainingID ?? training.Id ?? training.id ?? '',
+      trainingName: training.trainingName ?? training.TrainingName ?? training.Name ?? '',
+      trainingDesc: training.trainingDesc ?? training.TrainingDesc ?? training.Description ?? '',
+      topicCovered: training.topicCovered ?? training.TopicCovered ?? training.TopicCoveredName ?? '',
+      displayName: training.displayName ?? training.DisplayName ?? training.TrainingName ?? '',
+      image: training.image ?? training.Image ?? '',
       displayOrder: Number(training.displayOrder ?? training.DisplayOrder ?? 0),
     };
   }
 
   private syncSelectedTrainingFromDetails(): void {
-    const trainingId = String(this.form.controls["trainingId"].value || "");
+    const trainingId = String(this.form.controls['trainingId'].value || '');
     this.selectedTrainingId = trainingId;
 
     if (!trainingId) {
       return;
     }
 
-    const selected = this.trainingList.find(
-      (training) => String(training.trainingId ?? "") === trainingId,
-    );
+    const selected = this.trainingList.find((training) => String(training.trainingId ?? '') === trainingId);
     if (selected) {
       this.trainingName = selected.trainingName;
       this.trainingSearch = this.getTrainingLabel(selected);
@@ -205,7 +183,7 @@ export class FillcertificationfromComponent implements OnInit {
     this.isCityDropdownOpen = false;
 
     if (this.isTrainingDropdownOpen) {
-      this.trainingSearch = "";
+      this.trainingSearch = '';
     }
   }
 
@@ -213,16 +191,24 @@ export class FillcertificationfromComponent implements OnInit {
     const search = this.trainerSearch.trim().toLowerCase();
     return !search
       ? this.trainers
-      : this.trainers.filter(trainer =>
-          String(trainer.name || "").toLowerCase().includes(search) ||
-          String(trainer.email || "").toLowerCase().includes(search) ||
-          String(trainer.mobile || "").toLowerCase().includes(search));
+      : this.trainers.filter(
+          (trainer) =>
+            String(trainer.name || '')
+              .toLowerCase()
+              .includes(search) ||
+            String(trainer.email || '')
+              .toLowerCase()
+              .includes(search) ||
+            String(trainer.mobile || '')
+              .toLowerCase()
+              .includes(search),
+        );
   }
 
   getSelectedTrainerLabel(): string {
-    if (this.isLoadingTrainers) return "Loading trainers...";
-    const trainerId = String(this.form.controls["trainerId"].value || "");
-    return this.trainers.find(trainer => String(trainer.trainerId ?? "") === trainerId)?.name || "Select Trainer";
+    if (this.isLoadingTrainers) return 'Loading trainers...';
+    const trainerId = String(this.form.controls['trainerId'].value || '');
+    return this.trainers.find((trainer) => String(trainer.trainerId ?? '') === trainerId)?.name || 'Select Trainer';
   }
 
   toggleTrainerDropdown(): void {
@@ -230,13 +216,13 @@ export class FillcertificationfromComponent implements OnInit {
     this.isTrainingDropdownOpen = false;
     this.isCompanyDropdownOpen = false;
     this.isCityDropdownOpen = false;
-    if (this.isTrainerDropdownOpen) this.trainerSearch = "";
+    if (this.isTrainerDropdownOpen) this.trainerSearch = '';
   }
 
   selectTrainer(trainer: Trainer): void {
-    const trainerId = String(trainer.trainerId ?? "");
-    this.form.controls["trainerId"].setValue(trainerId);
-    this.form.controls["trainerId"].markAsTouched();
+    const trainerId = String(trainer.trainerId ?? '');
+    this.form.controls['trainerId'].setValue(trainerId);
+    this.form.controls['trainerId'].markAsTouched();
     this.trainerSearch = trainer.name;
     this.isTrainerDropdownOpen = false;
   }
@@ -245,28 +231,33 @@ export class FillcertificationfromComponent implements OnInit {
     const search = this.companySearch.trim().toLowerCase();
     return !search
       ? this.companies
-      : this.companies.filter(company =>
-          company.clientName.toLowerCase().includes(search) ||
-          String(company.clientId).includes(search));
+      : this.companies.filter(
+          (company) => company.clientName.toLowerCase().includes(search) || String(company.clientId).includes(search),
+        );
   }
 
   getSelectedCompanyLabel(): string {
-    const selected = this.companies.find(company => String(company.clientId) === this.selectedCompanyId);
-    return selected?.clientName || "Select Company";
+    const selected = this.companies.find((company) => String(company.clientId) === this.selectedCompanyId);
+    return selected?.clientName || 'Select Company';
   }
 
   get selectedCompanyCities(): ClientCity[] {
-    return this.companies.find(company => String(company.clientId) === this.selectedCompanyId)?.cities
-      ?.filter(city => city.isActive !== false) || [];
+    return (
+      this.companies
+        .find((company) => String(company.clientId) === this.selectedCompanyId)
+        ?.cities?.filter((city) => city.isActive !== false) || []
+    );
   }
 
   get filteredCities(): ClientCity[] {
     const search = this.citySearch.trim().toLowerCase();
-    return this.selectedCompanyCities.filter(city => !search || city.cityName.toLowerCase().includes(search));
+    return this.selectedCompanyCities.filter((city) => !search || city.cityName.toLowerCase().includes(search));
   }
 
   getSelectedCityLabel(): string {
-    return this.selectedCompanyCities.find(city => String(city.cityId) === this.selectedCityId)?.cityName || "Select City";
+    return (
+      this.selectedCompanyCities.find((city) => String(city.cityId) === this.selectedCityId)?.cityName || 'Select City'
+    );
   }
 
   toggleCompanyDropdown(): void {
@@ -274,15 +265,15 @@ export class FillcertificationfromComponent implements OnInit {
     this.isTrainingDropdownOpen = false;
     this.isTrainerDropdownOpen = false;
     this.isCityDropdownOpen = false;
-    if (this.isCompanyDropdownOpen) this.companySearch = "";
+    if (this.isCompanyDropdownOpen) this.companySearch = '';
   }
 
   selectCompany(company: Client): void {
     this.selectedCompanyId = String(company.clientId);
-    this.form.controls["location"].setValue(this.selectedCompanyId);
-    this.form.controls["location"].markAsTouched();
-    this.selectedCityId = "";
-    this.form.controls["cityId"].setValue("");
+    this.form.controls['location'].setValue(this.selectedCompanyId);
+    this.form.controls['location'].markAsTouched();
+    this.selectedCityId = '';
+    this.form.controls['cityId'].setValue('');
     this.companySearch = company.clientName;
     this.isCompanyDropdownOpen = false;
   }
@@ -293,24 +284,24 @@ export class FillcertificationfromComponent implements OnInit {
     this.isTrainingDropdownOpen = false;
     this.isTrainerDropdownOpen = false;
     this.isCompanyDropdownOpen = false;
-    if (this.isCityDropdownOpen) this.citySearch = "";
+    if (this.isCityDropdownOpen) this.citySearch = '';
   }
 
   selectCity(city: ClientCity): void {
-    this.selectedCityId = String(city.cityId ?? "");
-    this.form.controls["cityId"].setValue(this.selectedCityId);
-    this.form.controls["cityId"].markAsTouched();
+    this.selectedCityId = String(city.cityId ?? '');
+    this.form.controls['cityId'].setValue(this.selectedCityId);
+    this.form.controls['cityId'].markAsTouched();
     this.citySearch = city.cityName;
     this.isCityDropdownOpen = false;
   }
 
   findExistingRecord(): void {
-    const email = String(this.form.controls["email"].value || "").trim();
-    const trainingId = Number(this.form.controls["trainingId"].value);
-    if (!email || !trainingId || this.form.controls["email"].invalid) return;
+    const email = String(this.form.controls['email'].value || '').trim();
+    const trainingId = Number(this.form.controls['trainingId'].value);
+    if (!email || !trainingId || this.form.controls['email'].invalid) return;
 
     this.certificationFormService.getByUserTraining(email, trainingId).subscribe({
-      next: record => {
+      next: (record) => {
         this.existingRecordId = record.certificationDataId;
         this.form.patchValue({
           name: record.name,
@@ -319,21 +310,21 @@ export class FillcertificationfromComponent implements OnInit {
           days: record.days,
           trainerId: String(record.trainerId),
           location: String(record.location),
-          cityId: record.cityId == null ? "" : String(record.cityId),
-          certificationDate: this.today()
+          cityId: record.cityId == null ? '' : String(record.cityId),
+          certificationDate: this.today(),
         });
-        this.selectedCompanyId = String(record.location || "");
-        this.selectedCityId = record.cityId == null ? "" : String(record.cityId);
-        this.notifier.successToastr("Your existing exam form has been loaded.");
+        this.selectedCompanyId = String(record.location || '');
+        this.selectedCityId = record.cityId == null ? '' : String(record.cityId);
+        this.notifier.successToastr('Your existing exam form has been loaded.');
       },
       error: (error) => {
         this.existingRecordId = undefined;
         if (error?.status === 404) {
-          this.notifier.warningToastr("No saved details were found for this training and email.");
+          this.notifier.warningToastr('No saved details were found for this training and email.');
           return;
         }
-        this.notifier.warningToastr("Saved details could not be retrieved. Please try again.");
-      }
+        this.notifier.warningToastr('Saved details could not be retrieved. Please try again.');
+      },
     });
   }
 
@@ -345,49 +336,46 @@ export class FillcertificationfromComponent implements OnInit {
 
     this.isSubmitting = true;
     const raw = this.form.getRawValue();
-    const selectedTrainer = this.trainers.find(
-      (trainer) => String(trainer.trainerId || "") === String(raw.trainerId),
-    );
+    const selectedTrainer = this.trainers.find((trainer) => String(trainer.trainerId || '') === String(raw.trainerId));
     const payload: CertificationForm = {
-      certificationNumber: "",
+      certificationNumber: '',
       name: raw.name,
       contactNo: raw.mobile,
       email: raw.email,
       days: Number(raw.days),
       trainerId: raw.trainerId,
-      trainerName: selectedTrainer?.name || "",
+      trainerName: selectedTrainer?.name || '',
       certificationDate: raw.certificationDate,
       isComplete: false,
       isPaid: false,
-      paymentId: "",
-      razorpayOrderId: "",
-      razorpaySignature: "",
-      certificationFormId: "",
-      batchNo: "",
+      paymentId: '',
+      razorpayOrderId: '',
+      razorpaySignature: '',
+      certificationFormId: '',
+      batchNo: '',
       date: raw.certificationDate,
       location: raw.location,
       cityId: raw.cityId ? Number(raw.cityId) : null,
-      paymentDate: "",
+      paymentDate: '',
       trainingId: Number(raw.trainingId),
     };
     this.certificationFormService.save(payload).subscribe({
       next: (saved) => {
-        this.notifier.successToastr(
-          "Exam form submitted successfully.",
+        this.notifier.successToastr('Exam form submitted successfully.');
+        sessionStorage.setItem(
+          'qlss-exam-form-selection',
+          JSON.stringify({
+            username: saved.email || payload.email,
+            trainingId: String(saved.trainingId || payload.trainingId),
+            trainerId: String(saved.trainerId || payload.trainerId),
+            name: saved.name || payload.name,
+            contact: saved.contactNo || payload.contactNo,
+          }),
         );
-        sessionStorage.setItem("qlss-exam-form-selection", JSON.stringify({
-          username: saved.email || payload.email,
-          trainingId: String(saved.trainingId || payload.trainingId),
-          trainerId: String(saved.trainerId || payload.trainerId),
-          name: saved.name || payload.name,
-          contact: saved.contactNo || payload.contactNo
-        }));
-        this.router.navigate(["/test"]);
+        this.router.navigate(['/test']);
       },
       error: () => {
-        this.notifier.warningToastr(
-          "Certification form could not be submitted.",
-        );
+        this.notifier.warningToastr('Certification form could not be submitted.');
         this.isSubmitting = false;
       },
       complete: () => (this.isSubmitting = false),
@@ -396,14 +384,13 @@ export class FillcertificationfromComponent implements OnInit {
 
   getSelectedTrainingLabel(): string {
     if (!this.selectedTrainingId) {
-      return "Select Training";
+      return 'Select Training';
     }
 
     const selected = this.trainingList.find(
-      (training) =>
-        String(training.trainingId ?? "") === String(this.selectedTrainingId),
+      (training) => String(training.trainingId ?? '') === String(this.selectedTrainingId),
     );
-    return selected ? this.getTrainingLabel(selected) : "Select Training";
+    return selected ? this.getTrainingLabel(selected) : 'Select Training';
   }
 
   get filteredTrainingList(): Training[] {
@@ -415,22 +402,14 @@ export class FillcertificationfromComponent implements OnInit {
 
     return this.trainingList.filter((training) => {
       const label = this.getTrainingLabel(training).toLowerCase();
-      const id = String(training.trainingId || "").toLowerCase();
-      const topicCovered = (training.topicCovered || "").toLowerCase();
-      return (
-        label.includes(search) ||
-        id.includes(search) ||
-        topicCovered.includes(search)
-      );
+      const id = String(training.trainingId || '').toLowerCase();
+      const topicCovered = (training.topicCovered || '').toLowerCase();
+      return label.includes(search) || id.includes(search) || topicCovered.includes(search);
     });
   }
 
   getTrainingLabel(training: Training): string {
-    return (
-      training.displayName ||
-      training.trainingName ||
-      String(training.trainingId || "Training")
-    );
+    return training.displayName || training.trainingName || String(training.trainingId || 'Training');
   }
 
   openTrainingDropdown(): void {
@@ -441,18 +420,16 @@ export class FillcertificationfromComponent implements OnInit {
     this.isTrainingDropdownOpen = true;
   }
   onTrainingSelected(trainingId: string): void {
-    const selected = this.trainingList.find(
-      (training) => String(training.trainingId ?? "") === String(trainingId),
-    );
+    const selected = this.trainingList.find((training) => String(training.trainingId ?? '') === String(trainingId));
     this.selectedTrainingId = trainingId;
-    this.form.controls["trainingId"].setValue(selected ? trainingId : "");
-    this.form.controls["trainingId"].markAsTouched();
-    this.trainingName = selected?.trainingName || "";
-    this.trainingSearch = selected ? this.getTrainingLabel(selected) : "";
+    this.form.controls['trainingId'].setValue(selected ? trainingId : '');
+    this.form.controls['trainingId'].markAsTouched();
+    this.trainingName = selected?.trainingName || '';
+    this.trainingSearch = selected ? this.getTrainingLabel(selected) : '';
   }
 
   selectTrainingFromDropdown(training: Training): void {
-    const trainingId = String(training.trainingId ?? "");
+    const trainingId = String(training.trainingId ?? '');
     this.onTrainingSelected(trainingId);
     this.trainingSearch = this.getTrainingLabel(training);
     this.isTrainingDropdownOpen = false;
@@ -460,33 +437,33 @@ export class FillcertificationfromComponent implements OnInit {
 
   reset(): void {
     this.form.reset({
-      name: "",
-      mobile: "",
-      email: "",
-      days: "",
-      trainingId: "",
-      trainerId: "",
-      location: "",
-      cityId: "",
+      name: '',
+      mobile: '',
+      email: '',
+      days: '',
+      trainingId: '',
+      trainerId: '',
+      location: '',
+      cityId: '',
       certificationDate: this.today(),
       isComplete: false,
       isPaid: false,
     });
-    this.selectedTrainingId = "";
-    this.trainingSearch = "";
-    this.trainingName = "";
-    this.trainerSearch = "";
+    this.selectedTrainingId = '';
+    this.trainingSearch = '';
+    this.trainingName = '';
+    this.trainerSearch = '';
     this.isTrainerDropdownOpen = false;
-    this.selectedCompanyId = "";
-    this.selectedCityId = "";
-    this.citySearch = "";
+    this.selectedCompanyId = '';
+    this.selectedCityId = '';
+    this.citySearch = '';
     this.isCityDropdownOpen = false;
-    this.companySearch = "";
+    this.companySearch = '';
     this.isCompanyDropdownOpen = false;
     this.existingRecordId = undefined;
     this.isTrainingDropdownOpen = false;
-    this.form.get("isComplete")?.disable();
-    this.form.get("isPaid")?.disable();
+    this.form.get('isComplete')?.disable();
+    this.form.get('isPaid')?.disable();
   }
 
   private today(): string {
@@ -497,22 +474,22 @@ export class FillcertificationfromComponent implements OnInit {
   fieldError(key: string, label: string): string {
     const control = this.form.get(key);
     if (!control?.touched || !control.errors) {
-      return "";
+      return '';
     }
 
-    if (control.errors["required"]) {
-      return label + " is required.";
+    if (control.errors['required']) {
+      return label + ' is required.';
     }
 
-    if (control.errors["maxlength"]) {
-      return label + " is too long.";
+    if (control.errors['maxlength']) {
+      return label + ' is too long.';
     }
 
-    return label + " is invalid.";
+    return label + ' is invalid.';
   }
 
   private loadFallbackTrainers(): void {
-    this.http.get<Trainer[]>("assets/trainers.json").subscribe({
+    this.http.get<Trainer[]>('assets/trainers.json').subscribe({
       next: (trainers) => {
         this.trainers = trainers || [];
         this.isLoadingTrainers = false;
@@ -526,22 +503,20 @@ export class FillcertificationfromComponent implements OnInit {
 
   private startDummyPayment(): void {
     const options = {
-      key: "RAZORPAY_KEY_HERE",
+      key: 'RAZORPAY_KEY_HERE',
       amount: 0,
-      currency: "INR",
-      name: "QLSS Certification",
-      description: "Certification Payment",
+      currency: 'INR',
+      name: 'QLSS Certification',
+      description: 'Certification Payment',
       handler: () => {
-        this.notifier.successToastr("Payment completed.");
+        this.notifier.successToastr('Payment completed.');
       },
     };
 
     const razorpay = (window as any).Razorpay;
 
     if (!razorpay) {
-      this.notifier.warningToastr(
-        "Razorpay script not loaded. Dummy payment skipped.",
-      );
+      this.notifier.warningToastr('Razorpay script not loaded. Dummy payment skipped.');
       return;
     }
 
@@ -549,4 +524,3 @@ export class FillcertificationfromComponent implements OnInit {
     payment.open();
   }
 }
-

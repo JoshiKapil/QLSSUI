@@ -7,7 +7,10 @@
           Assessment
           <span class="ey-line"></span>
         </div>
-        <h1 class="hero-title">Online Assessment <em>Engine</em></h1>
+        <h1 class="hero-title">
+          Online Assessment
+          <em>Engine</em>
+        </h1>
         <p>Answer mixed question types, review your progress, and submit when ready.</p>
       </div>
 
@@ -45,12 +48,7 @@
             </button>
 
             <div class="direct-training-menu" *ngIf="isTrainingDropdownOpen">
-              <input
-                type="text"
-                [(ngModel)]="trainingSearch"
-                placeholder="Search training"
-                autocomplete="off"
-              />
+              <input type="text" [(ngModel)]="trainingSearch" placeholder="Search training" autocomplete="off" />
               <button
                 type="button"
                 class="direct-training-option"
@@ -84,28 +82,42 @@
       </div>
 
       <p class="direct-test-message" *ngIf="directEntryMessage">{{ directEntryMessage }}</p>
-      <button type="button" class="test-btn test-btn--primary" (click)="startDirectTest()" [disabled]="directEntryLoading">
+      <button
+        type="button"
+        class="test-btn test-btn--primary"
+        (click)="startDirectTest()"
+        [disabled]="directEntryLoading"
+      >
         {{ directEntryLoading ? 'Please wait...' : 'Load Test' }}
       </button>
     </section>
 
-
-    <section class="test-load-state" *ngIf="!isDirectEntry && !isAdmin && !isSubmitted && (isLoadingTest || testLoadWarning || !questions.length)">
+    <section
+      class="test-load-state"
+      *ngIf="!isDirectEntry && !isAdmin && !isSubmitted && (isLoadingTest || testLoadWarning || !questions.length)"
+    >
       <span class="test-kicker">Assessment Loader</span>
       <h2>{{ isLoadingTest ? 'Loading Assessment' : 'Assessment Not Ready' }}</h2>
       <p *ngIf="isLoadingTest">Loading encrypted assessment and question bank...</p>
       <p *ngIf="!isLoadingTest && testLoadWarning">{{ testLoadWarning }}</p>
-      <button type="button" class="test-btn test-btn--primary" (click)="loadTestForAttempt(testName)" [disabled]="isLoadingTest">Reload Test</button>
+      <button
+        type="button"
+        class="test-btn test-btn--primary"
+        (click)="loadTestForAttempt(testName)"
+        [disabled]="isLoadingTest"
+      >
+        Reload Test
+      </button>
     </section>
 
-    <ng-container *ngIf="!isDirectEntry && !isAdmin && !isSubmitted && !isLoadingTest && questions.length;">
+    <ng-container *ngIf="!isDirectEntry && !isAdmin && !isSubmitted && !isLoadingTest && questions.length">
       <div class="test-layout">
         <main class="test-panel" #questionPanel>
           <div class="question-top">
             <div class="question-heading">
               <span>Question {{ currentQuestion.questionNo }} of {{ questions.length }}</span>
               <!-- <strong>{{ getQuestionStatus(currentQuestionIndex) }}</strong> -->
-               <strong>{{ testName }}</strong>
+              <strong>{{ testName }}</strong>
             </div>
             <button type="button" class="test-btn test-btn--submit question-submit" (click)="openSubmitModal()">
               <i class="fa-solid fa-check"></i>
@@ -117,7 +129,9 @@
             <span>{{ getQuestionTypeLabel(currentQuestion.questionType) }}</span>
             <!-- <span>{{ currentQuestion.subject }}</span>
             <span>{{ currentQuestion.topic }}</span> -->
-            <span class="difficulty-badge" [ngClass]="'difficulty--' + currentQuestion.difficulty.toLowerCase()">{{ currentQuestion.difficulty }}</span>
+            <span class="difficulty-badge" [ngClass]="'difficulty--' + currentQuestion.difficulty.toLowerCase()">
+              {{ currentQuestion.difficulty }}
+            </span>
             <span>{{ getQuestionMarks(currentQuestion) }} marks</span>
             <span>{{ getQuestionNegativeMarks(currentQuestion) }} negative</span>
             <span>{{ currentQuestion.estimatedTimeSeconds }}s estimated</span>
@@ -133,11 +147,24 @@
               (error)="markBrokenMedia(currentQuestion.questionImageUrl)"
             />
 
-            <audio *ngIf="isMediaAvailable(currentQuestion.audioUrl)" controls preload="none" aria-label="Question audio" (error)="markBrokenMedia(currentQuestion.audioUrl)">
+            <audio
+              *ngIf="isMediaAvailable(currentQuestion.audioUrl)"
+              controls
+              preload="none"
+              aria-label="Question audio"
+              (error)="markBrokenMedia(currentQuestion.audioUrl)"
+            >
               <source [src]="currentQuestion.audioUrl" type="audio/wav" />
             </audio>
 
-            <video *ngIf="isMediaAvailable(currentQuestion.videoUrl)" controls preload="metadata" playsinline aria-label="Question video" (error)="markBrokenMedia(currentQuestion.videoUrl)">
+            <video
+              *ngIf="isMediaAvailable(currentQuestion.videoUrl)"
+              controls
+              preload="metadata"
+              playsinline
+              aria-label="Question video"
+              (error)="markBrokenMedia(currentQuestion.videoUrl)"
+            >
               <source [src]="currentQuestion.videoUrl" type="video/mp4" />
             </video>
 
@@ -190,7 +217,12 @@
           </div>
 
           <div class="test-actions">
-            <button type="button" class="test-btn test-btn--light" (click)="clearCurrentAnswer()" [disabled]="!hasCurrentAnswer()">
+            <button
+              type="button"
+              class="test-btn test-btn--light"
+              (click)="clearCurrentAnswer()"
+              [disabled]="!hasCurrentAnswer()"
+            >
               <i class="fa-solid fa-eraser"></i>
               Clear
             </button>
@@ -198,7 +230,12 @@
               <i class="fa-solid fa-forward"></i>
               Skip
             </button>
-            <button type="button" class="test-btn test-btn--light" (click)="previousQuestion()" [disabled]="currentQuestionIndex === 0">
+            <button
+              type="button"
+              class="test-btn test-btn--light"
+              (click)="previousQuestion()"
+              [disabled]="currentQuestionIndex === 0"
+            >
               <i class="fa-solid fa-arrow-left"></i>
               Previous
             </button>
@@ -213,9 +250,18 @@
           <h3>Question Summary</h3>
 
           <div class="summary-counts">
-            <div><strong>{{ answeredCount }}</strong><span>Answered</span></div>
-            <div><strong>{{ notAnsweredCount }}</strong><span>Not Answered</span></div>
-            <div><strong>{{ skippedCount }}</strong><span>Skipped</span></div>
+            <div>
+              <strong>{{ answeredCount }}</strong>
+              <span>Answered</span>
+            </div>
+            <div>
+              <strong>{{ notAnsweredCount }}</strong>
+              <span>Not Answered</span>
+            </div>
+            <div>
+              <strong>{{ skippedCount }}</strong>
+              <span>Skipped</span>
+            </div>
           </div>
 
           <div class="question-map">
@@ -234,33 +280,72 @@
           </div>
 
           <div class="summary-legend">
-            <span><i class="legend-dot legend-dot--answered"></i>Answered</span>
-            <span><i class="legend-dot legend-dot--pending"></i>Not Answered</span>
-            <span><i class="legend-dot legend-dot--skipped"></i>Skipped</span>
-            <span><i class="legend-dot legend-dot--current"></i>Current</span>
+            <span>
+              <i class="legend-dot legend-dot--answered"></i>
+              Answered
+            </span>
+            <span>
+              <i class="legend-dot legend-dot--pending"></i>
+              Not Answered
+            </span>
+            <span>
+              <i class="legend-dot legend-dot--skipped"></i>
+              Skipped
+            </span>
+            <span>
+              <i class="legend-dot legend-dot--current"></i>
+              Current
+            </span>
           </div>
         </aside>
       </div>
     </ng-container>
-
   </div>
 </section>
 
-<div class="custom-modal" [class.active]="isSubmitModalOpen" role="dialog" aria-modal="true" aria-labelledby="submitTestTitle">
+<div
+  class="custom-modal"
+  [class.active]="isSubmitModalOpen"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="submitTestTitle"
+>
   <div class="custom-modal__overlay" (click)="closeSubmitModal()"></div>
   <div class="custom-modal__box custom-modal__box--submit">
-    <button type="button" class="custom-modal__close" aria-label="Close submit confirmation" (click)="closeSubmitModal()">&times;</button>
+    <button
+      type="button"
+      class="custom-modal__close"
+      aria-label="Close submit confirmation"
+      (click)="closeSubmitModal()"
+    >
+      &times;
+    </button>
     <div class="custom-modal__header">
       <h2 id="submitTestTitle">Submit Test?</h2>
       <p>Are you sure you want to submit your test? Once submitted, you cannot change your answers.</p>
     </div>
 
     <div class="submit-summary">
-      <div><span>Total Questions</span><strong>{{ questions.length }}</strong></div>
-      <div><span>Answered</span><strong>{{ answeredCount }}</strong></div>
-      <div><span>Skipped</span><strong>{{ skippedCount }}</strong></div>
-      <div><span>Not Answered</span><strong>{{ notAnsweredCount }}</strong></div>
-      <div><span>Time Remaining</span><strong>{{ timerText }}</strong></div>
+      <div>
+        <span>Total Questions</span>
+        <strong>{{ questions.length }}</strong>
+      </div>
+      <div>
+        <span>Answered</span>
+        <strong>{{ answeredCount }}</strong>
+      </div>
+      <div>
+        <span>Skipped</span>
+        <strong>{{ skippedCount }}</strong>
+      </div>
+      <div>
+        <span>Not Answered</span>
+        <strong>{{ notAnsweredCount }}</strong>
+      </div>
+      <div>
+        <span>Time Remaining</span>
+        <strong>{{ timerText }}</strong>
+      </div>
     </div>
 
     <div class="custom-modal__actions">

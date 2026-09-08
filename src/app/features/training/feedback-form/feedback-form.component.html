@@ -10,46 +10,133 @@
     <div class="form-grid form-grid3">
       <label class="form-field">
         Enter Your Name
-        <input
-                type="text"
-                formControlName="UserName" 
-                placeholder="Search Company name"
-                autocomplete="off"
-              />
+        <input type="text" formControlName="UserName" placeholder="Search Company name" autocomplete="off" />
         <small *ngIf="form.get('UserName')?.touched && form.get('UserName')?.invalid">Enter Your Name.</small>
       </label>
 
       <label class="form-field">
         Trainer's Name
-        <div class="search-picker"><button class="picker-toggle" type="button" (click)="toggleTrainerDropdown()">{{ getSelectedTrainerLabel() }} <i class="fa-solid fa-chevron-down"></i></button><div class="picker-menu" *ngIf="trainerDropdownOpen"><input [(ngModel)]="trainerSearch" [ngModelOptions]="{ standalone: true }" placeholder="Search trainer" autocomplete="off" /><button class="picker-option" type="button" *ngFor="let trainer of filteredTrainers; trackBy: trackById" (mousedown)="selectTrainer(trainer)">{{ trainer.name }}</button><div class="picker-empty" *ngIf="!filteredTrainers.length">No trainer found</div></div></div>
+        <div class="search-picker">
+          <button class="picker-toggle" type="button" (click)="toggleTrainerDropdown()">
+            {{ getSelectedTrainerLabel() }}
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div class="picker-menu" *ngIf="trainerDropdownOpen">
+            <input
+              [(ngModel)]="trainerSearch"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="Search trainer"
+              autocomplete="off"
+            />
+            <button
+              class="picker-option"
+              type="button"
+              *ngFor="let trainer of filteredTrainers; trackBy: trackById"
+              (mousedown)="selectTrainer(trainer)"
+            >
+              {{ trainer.name }}
+            </button>
+            <div class="picker-empty" *ngIf="!filteredTrainers.length">No trainer found</div>
+          </div>
+        </div>
         <small *ngIf="form.get('trainerId')?.touched && form.get('trainerId')?.invalid">Trainer is required.</small>
       </label>
 
       <label class="form-field">
         Training
-        <div class="search-picker"><button class="picker-toggle" type="button" (click)="toggleTrainingDropdown()">{{ getSelectedTrainingLabel() }} <i class="fa-solid fa-chevron-down"></i></button><div class="picker-menu" *ngIf="trainingDropdownOpen"><input [(ngModel)]="trainingSearch" [ngModelOptions]="{ standalone: true }" placeholder="Search training" autocomplete="off" /><button class="picker-option" type="button" *ngFor="let training of filteredTrainings; trackBy: trackById" (mousedown)="selectTraining(training)">{{ getTrainingLabel(training) }}</button><div class="picker-empty" *ngIf="!filteredTrainings.length">No training found</div></div></div>
+        <div class="search-picker">
+          <button class="picker-toggle" type="button" (click)="toggleTrainingDropdown()">
+            {{ getSelectedTrainingLabel() }}
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div class="picker-menu" *ngIf="trainingDropdownOpen">
+            <input
+              [(ngModel)]="trainingSearch"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="Search training"
+              autocomplete="off"
+            />
+            <button
+              class="picker-option"
+              type="button"
+              *ngFor="let training of filteredTrainings; trackBy: trackById"
+              (mousedown)="selectTraining(training)"
+            >
+              {{ getTrainingLabel(training) }}
+            </button>
+            <div class="picker-empty" *ngIf="!filteredTrainings.length">No training found</div>
+          </div>
+        </div>
         <small *ngIf="form.get('trainingId')?.touched && form.get('trainingId')?.invalid">Training is required.</small>
       </label>
-  </div>
-  <div class="form-grid">
+    </div>
+    <div class="form-grid">
       <div class="form-field rating-field">
         <span>1. How would you rate your overall experience with the training program?</span>
-        <div class="star-rating" role="radiogroup"><button type="button" *ngFor="let rating of ratingOptions" (click)="setRating('overallExperience', rating)" [class.active]="rating <= form.value.overallExperience" [attr.aria-label]="rating + ' stars'" role="radio"><i class="fa-solid fa-star"></i></button><span>{{ form.value.overallExperience }}/5</span></div>
+        <div class="star-rating" role="radiogroup">
+          <button
+            type="button"
+            *ngFor="let rating of ratingOptions"
+            (click)="setRating('overallExperience', rating)"
+            [class.active]="rating <= form.value.overallExperience"
+            [attr.aria-label]="rating + ' stars'"
+            role="radio"
+          >
+            <i class="fa-solid fa-star"></i>
+          </button>
+          <span>{{ form.value.overallExperience }}/5</span>
+        </div>
       </div>
 
       <div class="form-field rating-field">
         <span>2. How would you rate the trainer's knowledge and skills?</span>
-        <div class="star-rating" role="radiogroup"><button type="button" *ngFor="let rating of ratingOptions" (click)="setRating('trainerKnowledge', rating)" [class.active]="rating <= form.value.trainerKnowledge" [attr.aria-label]="rating + ' stars'" role="radio"><i class="fa-solid fa-star"></i></button><span>{{ form.value.trainerKnowledge }}/5</span></div>
+        <div class="star-rating" role="radiogroup">
+          <button
+            type="button"
+            *ngFor="let rating of ratingOptions"
+            (click)="setRating('trainerKnowledge', rating)"
+            [class.active]="rating <= form.value.trainerKnowledge"
+            [attr.aria-label]="rating + ' stars'"
+            role="radio"
+          >
+            <i class="fa-solid fa-star"></i>
+          </button>
+          <span>{{ form.value.trainerKnowledge }}/5</span>
+        </div>
       </div>
 
       <div class="form-field rating-field">
         <span>3. How would you rate the training content and presentation?</span>
-        <div class="star-rating" role="radiogroup"><button type="button" *ngFor="let rating of ratingOptions" (click)="setRating('contentPresentation', rating)" [class.active]="rating <= form.value.contentPresentation" [attr.aria-label]="rating + ' stars'" role="radio"><i class="fa-solid fa-star"></i></button><span>{{ form.value.contentPresentation }}/5</span></div>
+        <div class="star-rating" role="radiogroup">
+          <button
+            type="button"
+            *ngFor="let rating of ratingOptions"
+            (click)="setRating('contentPresentation', rating)"
+            [class.active]="rating <= form.value.contentPresentation"
+            [attr.aria-label]="rating + ' stars'"
+            role="radio"
+          >
+            <i class="fa-solid fa-star"></i>
+          </button>
+          <span>{{ form.value.contentPresentation }}/5</span>
+        </div>
       </div>
 
       <div class="form-field rating-field">
         <span>4. How satisfied are you with the overall training program?</span>
-        <div class="star-rating" role="radiogroup"><button type="button" *ngFor="let rating of ratingOptions" (click)="setRating('satisfaction', rating)" [class.active]="rating <= form.value.satisfaction" [attr.aria-label]="rating + ' stars'" role="radio"><i class="fa-solid fa-star"></i></button><span>{{ form.value.satisfaction }}/5</span></div>
+        <div class="star-rating" role="radiogroup">
+          <button
+            type="button"
+            *ngFor="let rating of ratingOptions"
+            (click)="setRating('satisfaction', rating)"
+            [class.active]="rating <= form.value.satisfaction"
+            [attr.aria-label]="rating + ' stars'"
+            role="radio"
+          >
+            <i class="fa-solid fa-star"></i>
+          </button>
+          <span>{{ form.value.satisfaction }}/5</span>
+        </div>
       </div>
     </div>
 
@@ -63,20 +150,30 @@
       <label class="form-field">
         6. What suggestions do you have to improve the training program?
         <textarea rows="4" formControlName="suggestions" placeholder="Enter your answer"></textarea>
-        <small *ngIf="form.get('suggestions')?.touched && form.get('suggestions')?.invalid">This answer is required.</small>
+        <small *ngIf="form.get('suggestions')?.touched && form.get('suggestions')?.invalid">
+          This answer is required.
+        </small>
       </label>
 
       <label class="form-field">
         7. How useful was the training in improving your day-to-day work?
         <textarea rows="4" formControlName="usefulness" placeholder="Enter your answer"></textarea>
-        <small *ngIf="form.get('usefulness')?.touched && form.get('usefulness')?.invalid">This answer is required.</small>
+        <small *ngIf="form.get('usefulness')?.touched && form.get('usefulness')?.invalid">
+          This answer is required.
+        </small>
       </label>
 
       <label class="form-field radio-field">
         8. Would you recommend this training program to others?
         <div class="radio-row">
-          <label><input type="radio" formControlName="recommend" [value]="true" /> Yes</label>
-          <label><input type="radio" formControlName="recommend" [value]="false" /> No</label>
+          <label>
+            <input type="radio" formControlName="recommend" [value]="true" />
+            Yes
+          </label>
+          <label>
+            <input type="radio" formControlName="recommend" [value]="false" />
+            No
+          </label>
         </div>
       </label>
     </div>
@@ -87,27 +184,60 @@
     </div>
 
     <div class="form-actions">
-      <button class="btn btn-outline" type="submit" [disabled]="submitting">{{ submitting ? 'Submitting...' : 'Submit Feedback' }}</button>
+      <button class="btn btn-outline" type="submit" [disabled]="submitting">
+        {{ submitting ? 'Submitting...' : 'Submit Feedback' }}
+      </button>
     </div>
   </form>
 
   <section class="feedback-history" aria-labelledby="feedback-history-title">
-    <div class="history-header"><div><p class="section-label">Previous Feedback</p><h2 id="feedback-history-title">What learners have shared</h2></div><span class="history-count">{{ feedbacks.length }} entries</span></div>
+    <div class="history-header">
+      <div>
+        <p class="section-label">Previous Feedback</p>
+        <h2 id="feedback-history-title">What learners have shared</h2>
+      </div>
+      <span class="history-count">{{ feedbacks.length }} entries</span>
+    </div>
     <p class="history-state" *ngIf="historyLoading">Loading previous feedback...</p>
     <p class="history-state error-message" *ngIf="!historyLoading && historyError">{{ historyError }}</p>
-    <p class="history-state" *ngIf="!historyLoading && !historyError && !feedbacks.length">No feedback has been submitted yet.</p>
+    <p class="history-state" *ngIf="!historyLoading && !historyError && !feedbacks.length">
+      No feedback has been submitted yet.
+    </p>
     <div class="history-list" *ngIf="!historyLoading && pagedFeedbacks.length">
       <article class="history-card" *ngFor="let feedback of pagedFeedbacks">
-        <div class="history-card__top"><div><strong>{{ feedback.userName || 'User' }}</strong><span>{{ feedback.trainingName || 'Training' }}</span></div><time *ngIf="getFeedbackDate(feedback) as date">{{ date | date:'dd-MM-yyyy, h:mm a' }}</time></div>
-        <div class="history-rating"><i class="fa-solid fa-star" *ngFor="let rating of ratingOptions" [class.muted]="rating > getAverageRating(feedback)"></i><span>{{ getAverageRating(feedback) }}/5</span></div>
+        <div class="history-card__top">
+          <div>
+            <strong>{{ feedback.userName || 'User' }}</strong>
+            <span>{{ feedback.trainingName || 'Training' }}</span>
+          </div>
+          <time *ngIf="getFeedbackDate(feedback) as date">{{ date | date: 'dd-MM-yyyy, h:mm a' }}</time>
+        </div>
+        <div class="history-rating">
+          <i
+            class="fa-solid fa-star"
+            *ngFor="let rating of ratingOptions"
+            [class.muted]="rating > getAverageRating(feedback)"
+          ></i>
+          <span>{{ getAverageRating(feedback) }}/5</span>
+        </div>
         <p>{{ feedback.likedMost }}</p>
       </article>
     </div>
     <nav class="history-pagination" *ngIf="feedbacks.length > pageSize" aria-label="Feedback pagination">
-      <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"><i class="fa-solid fa-chevron-left"></i></button>
-      <button type="button" *ngFor="let page of pageNumbers" (click)="goToPage(page)" [class.active]="page === currentPage">{{ page }}</button>
-      <button type="button" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"><i class="fa-solid fa-chevron-right"></i></button>
+      <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <button
+        type="button"
+        *ngFor="let page of pageNumbers"
+        (click)="goToPage(page)"
+        [class.active]="page === currentPage"
+      >
+        {{ page }}
+      </button>
+      <button type="button" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
     </nav>
   </section>
 </section>
-

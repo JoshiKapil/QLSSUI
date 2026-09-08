@@ -1,50 +1,199 @@
 <div class="employees-page">
-  <header><div><span>NEW EMPLOYEE SETUP</span><h1>Assign mandatory induction</h1><p>Default/common videos are automatically combined with the selected department plan. The sequence is frozen for the employee at assignment time.</p></div></header>
-  <section class="assign-card">
-    <div class="assign-card__title"><i class="fas fa-user-plus"></i><div><strong>New onboarding assignment</strong><span>Employee role users without an active onboarding plan are listed below.</span></div></div>
-    <div class="form-grid">
-      <label><span>Employee *</span><select [(ngModel)]="selectedUserId"><option [ngValue]="null">Select employee</option><option *ngFor="let user of employees" [ngValue]="user.id">{{ user.name }} — {{ user.email }}</option></select></label>
-      <label><span>Department</span><select [(ngModel)]="selectedDepartmentId" (change)="departmentChanged()"><option [ngValue]="null">Default/common videos only</option><option *ngFor="let department of departments" [ngValue]="department.departmentId">{{ department.departmentName }}</option></select><small>Department videos are added after common/default videos. Duplicate videos are automatically removed.</small></label>
-      <label><span>Completion period (days) *</span><input type="number" min="1" max="365" [(ngModel)]="completionDays"><small>D−2 and D−1 reminders + 1 day final grace are automatic.</small></label>
+  <header>
+    <div>
+      <span>NEW EMPLOYEE SETUP</span>
+      <h1>Assign mandatory induction</h1>
+      <p>
+        Select employee, optional Training, and optional Department. Published Common content is automatically included
+        and the final sequence is frozen at assignment time.
+      </p>
     </div>
-
+  </header>
+<app-list-pager [page]="trainingsPage" (changed)="load()"></app-list-pager>
+<app-list-pager [page]="eligibleEmployeesPage" (changed)="reloadeligibleEmployeesPage()"></app-list-pager>
+<app-list-pager [page]="departmentsPage" (changed)="reloaddepartmentsPage()"></app-list-pager>
+<app-list-pager [page]="enrollmentsPage" (changed)="reloadenrollmentsPage()"></app-list-pager>
+  <section class="assign-card" *ngIf="employees.length; else noEligible">
+    <div class="assign-card__title">
+      <i class="fas fa-user-plus"></i>
+      <div>
+        <strong>New onboarding assignment</strong>
+        <span>Training and Department are optional. Leave both empty for Common / All-employee induction.</span>
+      </div>
+    </div>
+    <div class="form-grid form-grid--4">
+      <label>
+        <span>Employee *</span>
+        <select [(ngModel)]="selectedUserId">
+          <option [ngValue]="null">Select employee</option>
+          <option *ngFor="let u of employees" [ngValue]="u.id">{{ u.name }} — {{ u.email }}</option>
+        </select>
+      </label>
+      <label>
+        <span>
+          Training
+          <small>(optional)</small>
+        </span>
+        <select [(ngModel)]="selectedTrainingId" (change)="scopeChanged()">
+          <option [ngValue]="null">No training / Common</option>
+          <option *ngFor="let t of trainings" [ngValue]="trainingValue(t)">
+            {{ t.trainingName }}
+          </option>
+        </select>
+        <small class="field-help">Uses your existing Training Master.</small>
+      </label>
+      <label>
+        <span>
+          Department
+          <small>(optional)</small>
+        </span>
+        <select [(ngModel)]="selectedDepartmentId" (change)="scopeChanged()">
+          <option [ngValue]="null">All departments / Common</option>
+          <option *ngFor="let d of departments" [ngValue]="d.departmentId">{{ d.departmentName }}</option>
+        </select>
+        <small class="field-help">Leave empty for content applicable to all departments.</small>
+      </label>
+      <label>
+        <span>Completion days *</span>
+        <input type="number" min="1" max="365" [(ngModel)]="completionDays" />
+      </label>
+    </div>
     <section class="assignment-preview">
       <div class="assignment-preview__head">
         <div>
-          <small>PUBLISHED PATH PREVIEW</small>
+          <small>RESOLVED CONTENT PREVIEW</small>
           <strong>{{ selectedEmployeeName }}</strong>
-          <span>{{ selectedDepartmentId ? 'Default/Common + selected department path' : 'Default/Common path' }}</span>
+          <span>{{ selectionScope }}</span>
         </div>
-        <b>{{ assignmentPreview.length }} video(s)</b>
+        <b>{{ preview.length }} video(s)</b>
       </div>
-
-      <div class="assignment-preview__empty" *ngIf="!assignmentPreview.length">
+      <div class="assignment-preview__empty" *ngIf="!preview.length">
         <i class="fas fa-triangle-exclamation"></i>
-        <span>No published onboarding videos resolve for this selection. SuperAdmin must publish the required learning path first.</span>
+        <span>
+          No published content resolves for this Training/Department selection. SuperAdmin can publish it from Master
+          Setup & Mapping.
+        </span>
       </div>
-
-      <div class="assignment-preview__flow" *ngIf="assignmentPreview.length">
-        <ng-container *ngFor="let item of assignmentPreview; let i = index">
+      <div class="assignment-preview__flow" *ngIf="preview.length">
+        <ng-container *ngFor="let item of preview; let i = index">
           <article>
             <b>{{ i + 1 }}</b>
             <div>
               <strong>{{ item.videoTitle }}</strong>
-              <span>{{ item.sourceScope }} · Watch {{ item.minimumWatchPercent }}% · Pass {{ item.passingPercent }}%</span>
-              <small>{{ item.mustPassAssignment ? 'Must pass assignment to unlock next video' : 'Assignment submission unlocks next video' }}</small>
+              <span>
+                {{ item.sourceScope }} · Watch {{ item.minimumWatchPercent }}% · Pass {{ item.passingPercent }}%
+              </span>
+              <small>
+                {{ item.questions?.length || 0 }} question(s) ·
+                {{ item.mustPassAssignment ? 'Must pass to unlock next' : 'Submission unlocks next' }}
+              </small>
             </div>
           </article>
-          <i *ngIf="i < assignmentPreview.length - 1" class="fas fa-arrow-down flow-arrow"></i>
+          <i *ngIf="i < preview.length - 1" class="fas fa-arrow-down flow-arrow"></i>
         </ng-container>
       </div>
     </section>
-
-    <button class="assign-btn" (click)="assign()" [disabled]="saving || !employees.length || !assignmentPreview.length"><i class="fas fa-paper-plane"></i>{{ saving ? 'Assigning...' : 'Assign onboarding' }}</button>
-    <p class="no-users" *ngIf="!employees.length"><i class="fas fa-circle-info"></i> No unassigned Employee-role users are available.</p>
+    <button class="assign-btn" (click)="assign()" [disabled]="saving || !preview.length">
+      <i class="fas fa-paper-plane"></i>
+      {{ saving ? 'Assigning...' : 'Assign onboarding' }}
+    </button>
   </section>
-
-  <section class="tracker"><div class="tracker__head"><div><small>ASSIGNMENT HISTORY</small><h2>Current onboarding employees</h2></div><span>{{ enrollments.length }} enrollments</span></div>
-    <div class="cards"><article *ngFor="let row of enrollments" (click)="showDetail(row)" class="clickable"><div class="employee"><div class="avatar">{{ row.employeeName.charAt(0) }}</div><div><strong>{{ row.employeeName }}</strong><span>{{ row.employeeEmail }}</span></div><b>{{ row.status }}</b></div><div class="facts"><div><span>Department</span><strong>{{ row.departmentName || 'Common' }}</strong></div><div><span>Deadline</span><strong>{{ row.dueOnUtc | date:'dd MMM yyyy' }}</strong></div><div><span>Modules</span><strong>{{ row.completedItems }}/{{ row.totalItems }}</strong></div></div><div class="progress"><div><span [style.width.%]="row.completionPercent"></span></div><b>{{ row.completionPercent | number:'1.0-0' }}%</b></div></article></div>
+  <ng-template #noEligible>
+    <section class="assign-card empty-assignment">
+      <i class="fas fa-circle-check"></i>
+      <h3>No employee is waiting for onboarding assignment</h3>
+      <p>
+        All Employee-role users currently have an active onboarding enrollment. Assignment controls will appear
+        automatically when an eligible employee is available.
+      </p>
+    </section>
+  </ng-template>
+  <section class="tracker">
+    <div class="tracker__head">
+      <div>
+        <small>ASSIGNMENT HISTORY</small>
+        <h2>Current onboarding employees</h2>
+      </div>
+      <span>{{ enrollments.length }} enrollments</span>
+    </div>
+    <div class="cards">
+      <article *ngFor="let row of enrollments" (click)="showDetail(row)" class="clickable">
+        <div class="employee">
+          <div class="avatar">{{ row.employeeName.charAt(0) }}</div>
+          <div>
+            <strong>{{ row.employeeName }}</strong>
+            <span>{{ row.employeeEmail }}</span>
+          </div>
+          <b>{{ row.status }}</b>
+        </div>
+        <div class="facts">
+          <div>
+            <span>Department</span>
+            <strong>{{ row.departmentName || 'Common' }}</strong>
+          </div>
+          <div>
+            <span>Deadline</span>
+            <strong>{{ row.dueOnUtc | date: 'dd MMM yyyy' }}</strong>
+          </div>
+          <div>
+            <span>Modules</span>
+            <strong>{{ row.completedItems }}/{{ row.totalItems }}</strong>
+          </div>
+        </div>
+        <div class="progress">
+          <div><span [style.width.%]="row.completionPercent"></span></div>
+          <b>{{ row.completionPercent | number: '1.0-0' }}%</b>
+        </div>
+      </article>
+    </div>
   </section>
 </div>
-
-<section class="detail-panel" *ngIf="detail?.enrollment as enrollment"><div class="detail-head"><div><small>EMPLOYEE DETAIL</small><h2>{{ enrollment.employeeName }}</h2><span>{{ enrollment.employeeEmail }} · {{ enrollment.completionPercent }}% complete</span></div><button (click)="closeDetail()"><i class="fas fa-times"></i></button></div><div class="detail-table"><table><thead><tr><th>#</th><th>Video</th><th>Status</th><th>Watch</th><th>Attempts</th><th>Latest score</th></tr></thead><tbody><tr *ngFor="let item of detail?.items"><td>{{ item.sequenceNo }}</td><td><strong>{{ item.videoTitle }}</strong><span>{{ item.sourceScope }}</span></td><td>{{ item.status }}</td><td>{{ item.videoDurationSeconds ? ((item.watchedSeconds * 100 / item.videoDurationSeconds) | number:'1.0-0') : 0 }}%</td><td>{{ item.assignmentAttemptCount }}</td><td>{{ item.assignmentPercentage !== undefined && item.assignmentPercentage !== null ? (item.assignmentPercentage + '%') : '—' }}</td></tr></tbody></table></div></section>
+<section class="detail-panel" *ngIf="detail?.enrollment as enrollment">
+  <div class="detail-head">
+    <div>
+      <small>EMPLOYEE DETAIL</small>
+      <h2>{{ enrollment.employeeName }}</h2>
+      <span>{{ enrollment.employeeEmail }} · {{ enrollment.completionPercent }}% complete</span>
+    </div>
+    <button (click)="closeDetail()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="detail-table">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Video</th>
+          <th>Status</th>
+          <th>Watch</th>
+          <th>Attempts</th>
+          <th>Latest score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of detail?.items">
+          <td>{{ item.sequenceNo }}</td>
+          <td>
+            <strong>{{ item.videoTitle }}</strong>
+            <span>{{ item.sourceScope }}</span>
+          </td>
+          <td>{{ item.status }}</td>
+          <td>
+            {{
+              item.videoDurationSeconds
+                ? ((item.watchedSeconds * 100) / item.videoDurationSeconds | number: '1.0-0')
+                : 0
+            }}%
+          </td>
+          <td>{{ item.assignmentAttemptCount }}</td>
+          <td>
+            {{
+              item.assignmentPercentage !== undefined && item.assignmentPercentage !== null
+                ? item.assignmentPercentage + '%'
+                : '—'
+            }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

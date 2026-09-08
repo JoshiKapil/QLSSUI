@@ -25,7 +25,7 @@ import { TrainingManagementService } from '../../core/services/training-manageme
 @Component({
   selector: 'app-training',
   templateUrl: './training.component.html',
-  styleUrls: ['./training.component.scss']
+  styleUrls: ['./training.component.scss'],
 })
 export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('categoryTagsScroller') categoryTagsScroller?: ElementRef<HTMLDivElement>;
@@ -45,7 +45,8 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
   private Destroy$ = new Subject<void>();
   private pdfObjectUrl: string | null = null;
   ismainLoading: boolean = false;
-  isLoggedIn: boolean = false; name = '';
+  isLoggedIn: boolean = false;
+  name = '';
   email = '';
   TrainingName = '';
   mobile = '';
@@ -56,7 +57,7 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
   CategoryList: any[] = [];
   selectedCategoryId: number = 0;
   searchText: string = '';
-  filteredTrainings: any = [];  // Displayed data
+  filteredTrainings: any = []; // Displayed data
 
   private readonly SERVICE_ID = 'service_duh8g6f';
   private readonly TEMPLATE_ID = 'template_f53kvve';
@@ -71,12 +72,12 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
     private trainingService: TrainingManagementService,
     private notifierService: NotifierService,
     private sanitizer: DomSanitizer,
-    private router: Router
+    private router: Router,
   ) {
     this.title.setTitle('Training - QLSS Consulting');
     this.meta.updateTag({
       name: 'description',
-      content: 'QLSS Business Consulting services, training, operational excellence and business transformation.'
+      content: 'QLSS Business Consulting services, training, operational excellence and business transformation.',
     });
   }
 
@@ -94,7 +95,6 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
     this.Destroy$.complete();
   }
 
-
   scrollCategoryTags(direction: 'left' | 'right'): void {
     const scroller = this.categoryTagsScroller?.nativeElement;
 
@@ -105,7 +105,7 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
     const scrollAmount = Math.max(220, Math.round(scroller.clientWidth * 0.65));
     scroller.scrollBy({
       left: direction === 'left' ? -scrollAmount : scrollAmount,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
   }
 
@@ -113,9 +113,7 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
     if (CategoryId === 0) {
       return this.TrainingList.length;
     }
-    return this.TrainingList.filter(
-      x => Number(x.CategoryId) === Number(CategoryId)
-    ).length;
+    return this.TrainingList.filter((x) => Number(x.CategoryId) === Number(CategoryId)).length;
   }
 
   // trainings: TrainingCard[] = [
@@ -232,7 +230,7 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
       .getPaged(1, 100)
       .pipe(takeUntil(this.Destroy$))
       .subscribe({
-        next: (response:any) => {
+        next: (response: any) => {
           this.TrainingList = (response.items || []).map((item: any) => ({
             ...item,
             TrainingId: item.trainingId,
@@ -247,7 +245,7 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
             TopicCovered: item.topicCovered,
             PreTestId: item.preTestId ?? null,
             PostTestId: item.postTestId ?? null,
-            ChalangeTestId: item.chalangeTestId ?? null
+            ChalangeTestId: item.chalangeTestId ?? null,
           }));
           this.TrainingList.sort((a, b) => Number(a.DisplayOrder) - Number(b.DisplayOrder));
           this.filteredTrainings = [...this.TrainingList];
@@ -255,12 +253,12 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
           this.CategoryList = [{ CategoryId: 0, CategoryName: 'All' }];
           this.isLoading = false;
         },
-        error: (error:any) => {
+        error: (error: any) => {
           console.error('Failed to load training data.', { status: error.status });
           this.TrainingList = [];
           this.filteredTrainings = [];
           this.isLoading = false;
-        }
+        },
       });
   }
 
@@ -268,14 +266,14 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
   buildCategoryList(): void {
     const map = new Map<number, any>();
 
-    this.TrainingList.forEach(x => {
+    this.TrainingList.forEach((x) => {
       const categoryId = Number(x.CategoryId || 0);
       const categoryName = (x.CategoryName || '').trim();
 
       if (categoryId > 0 && categoryName && !map.has(categoryId)) {
         map.set(categoryId, {
           CategoryId: categoryId,
-          CategoryName: categoryName
+          CategoryName: categoryName,
         });
       }
     });
@@ -284,7 +282,7 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this.CategoryList.unshift({
       CategoryId: 0,
-      CategoryName: 'All'
+      CategoryName: 'All',
     });
   }
 
@@ -298,11 +296,8 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
       return;
     }
 
-    this.filteredTrainings = this.TrainingList.filter(x =>
-      Number(x.CategoryId) === this.selectedCategoryId
-    );
+    this.filteredTrainings = this.TrainingList.filter((x) => Number(x.CategoryId) === this.selectedCategoryId);
   }
-
 
   /* Search filter */
   onSearch(): void {
@@ -315,7 +310,7 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
       return;
     }
 
-    this.filteredTrainings = this.TrainingList.filter(x => {
+    this.filteredTrainings = this.TrainingList.filter((x) => {
       const trainingName = (x.TrainingName ?? '').toLowerCase();
       const displayName = (x.DisplayName ?? '').toLowerCase();
 
@@ -332,7 +327,6 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
   //       error: () => {
 
   public onViewPdf(item: any): void {
-
     this.selectedTrainingItem = item;
     this.Name = item.DisplayName || item.TrainingName || '';
     this.CId = item.TrainingId ?? null;
@@ -353,43 +347,31 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
     // Future API integration: comment the request above and uncomment the service request below.
     const pdfRequest$ = this.trainingService.getDocument(this.CId!);
 
-    pdfRequest$
-      .pipe(takeUntil(this.Destroy$))
-      .subscribe({
-        next: (res) => {
-          const isPdf =
-            res.body &&
-            res.body.type &&
-            res.body.type.toLowerCase().includes('pdf');
+    pdfRequest$.pipe(takeUntil(this.Destroy$)).subscribe({
+      next: (res) => {
+        const isPdf = res.body && res.body.type && res.body.type.toLowerCase().includes('pdf');
 
-          if (res.status === 200 && isPdf) {
-            this.releasePdfObjectUrl();
-            this.pdfObjectUrl = URL.createObjectURL(res.body!);
-            // Previous viewer URL fetched the same PDF a second time:
-            // const viewerUrl = `${encodeURI(this.pdfSrc)}#toolbar=0&navpanes=0&scrollbar=1&download=0&print=0`;
-            const viewerUrl = `${this.pdfObjectUrl}#toolbar=0&navpanes=0&scrollbar=1&download=0&print=0`;
+        if (res.status === 200 && isPdf) {
+          this.releasePdfObjectUrl();
+          this.pdfObjectUrl = URL.createObjectURL(res.body!);
+          // Previous viewer URL fetched the same PDF a second time:
+          // const viewerUrl = `${encodeURI(this.pdfSrc)}#toolbar=0&navpanes=0&scrollbar=1&download=0&print=0`;
+          const viewerUrl = `${this.pdfObjectUrl}#toolbar=0&navpanes=0&scrollbar=1&download=0&print=0`;
 
-            this.selectedPdfUrl =
-              this.sanitizer.bypassSecurityTrustResourceUrl(viewerUrl);
-
-          } else {
-
-
-            this.pdfErrorMessage =
-              'PDF file is not available.';
-
-          }
-
-          this.isPdfLoading = false;
-        },
-        error: (err) => {
-          console.error('Failed to load training PDF.', { status: err.status });
-          this.pdfErrorMessage =
-            'PDF file is not available.';
-
-          this.isPdfLoading = false;
+          this.selectedPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(viewerUrl);
+        } else {
+          this.pdfErrorMessage = 'PDF file is not available.';
         }
-      });
+
+        this.isPdfLoading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load training PDF.', { status: err.status });
+        this.pdfErrorMessage = 'PDF file is not available.';
+
+        this.isPdfLoading = false;
+      },
+    });
   }
 
   openModal(): void {
@@ -458,10 +440,18 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   submitTakeTestForm(): void {
-    const testName = this.TrainingName || this.selectedTrainingItem?.DisplayName || this.selectedTrainingItem?.TrainingName || 'Test 1';
+    const testName =
+      this.TrainingName ||
+      this.selectedTrainingItem?.DisplayName ||
+      this.selectedTrainingItem?.TrainingName ||
+      'Test 1';
     const username = this.testUserEmail.trim();
-    const trainingId = String(this.selectedTrainingItem?.TrainingId ?? this.selectedTrainingItem?.trainingId ?? '').trim();
-    const testId = String(this.selectedTrainingItem?.ChalangeTestId ?? this.selectedTrainingItem?.chalangeTestId ?? '').trim();
+    const trainingId = String(
+      this.selectedTrainingItem?.TrainingId ?? this.selectedTrainingItem?.trainingId ?? '',
+    ).trim();
+    const testId = String(
+      this.selectedTrainingItem?.ChalangeTestId ?? this.selectedTrainingItem?.chalangeTestId ?? '',
+    ).trim();
     const testType: 'chalange' = 'chalange';
     if (!this.testUserName.trim() || !username || !this.testUserMobile.trim()) {
       this.notifierService.warningToastr('Please fill name, email and contact number.', 'Warning!');
@@ -472,15 +462,18 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
       return;
     }
 
-    sessionStorage.setItem('qlss-start-test', JSON.stringify({
-      testName,
-      testId,
-      testType,
-      trainingId,
-      username,
-      name: this.testUserName.trim(),
-      contact: this.testUserMobile.trim()
-    }));
+    sessionStorage.setItem(
+      'qlss-start-test',
+      JSON.stringify({
+        testName,
+        testId,
+        testType,
+        trainingId,
+        username,
+        name: this.testUserName.trim(),
+        contact: this.testUserMobile.trim(),
+      }),
+    );
 
     this.isTakeTestModalOpen = false;
     this.router.navigate(['/test']);
@@ -490,9 +483,7 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
     this.Send();
   }
 
-
   async Send() {
-
     const templateParams = {
       from_name: this.name,
       user_email: this.email,
@@ -501,14 +492,9 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
       subject_line: `I am instrested in  ${this.TrainingName}`,
     };
     try {
-      await emailjs.send(
-        this.SERVICE_ID,
-        this.TEMPLATE_ID,
-        templateParams,
-        this.PUBLIC_KEY
-      );
+      await emailjs.send(this.SERVICE_ID, this.TEMPLATE_ID, templateParams, this.PUBLIC_KEY);
 
-      this.ismainLoading = false
+      this.ismainLoading = false;
       this.closeInterestedModal();
       this.notifierService.successToastr('Thank you for your interest. We will get back to you soon.', 'Success!');
       this.name = '';
@@ -516,9 +502,8 @@ export class TrainingComponent implements AfterViewInit, OnInit, OnDestroy {
       this.mobile = '';
       this.messages = '';
       this.TrainingName = '';
-
     } catch (err) {
-      this.notifierService.warningToastr('Failed to send message. Please try again.', 'Warning!')
+      this.notifierService.warningToastr('Failed to send message. Please try again.', 'Warning!');
     }
   }
 }

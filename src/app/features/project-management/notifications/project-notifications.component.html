@@ -6,8 +6,12 @@
       <p *ngIf="!isSuperAdmin">Only notifications assigned to your signed-in account are shown here.</p>
       <p *ngIf="isSuperAdmin">Organization-wide view of every user's project notification and action status.</p>
     </div>
-    <button class="pm-btn pm-btn--ghost" (click)="load()"><i class="fas fa-rotate"></i> Refresh</button>
+    <button class="pm-btn pm-btn--ghost" (click)="load()">
+      <i class="fas fa-rotate"></i>
+      Refresh
+    </button>
   </header>
+<app-list-pager [page]="notificationsPage" (changed)="reloadnotificationsPage()"></app-list-pager>
 
   <p *ngIf="error" class="pm-error">{{ error }}</p>
 
@@ -21,9 +25,18 @@
   </div>
 
   <div class="notification-summary">
-    <div><span>Notifications</span><strong>{{ items.length }}</strong></div>
-    <div><span>Unread / action required</span><strong>{{ unread }}</strong></div>
-    <div *ngIf="isSuperAdmin"><span>Users represented</span><strong>{{ recipientCount }}</strong></div>
+    <div>
+      <span>Notifications</span>
+      <strong>{{ items.length }}</strong>
+    </div>
+    <div>
+      <span>Unread / action required</span>
+      <strong>{{ unread }}</strong>
+    </div>
+    <div *ngIf="isSuperAdmin">
+      <span>Users represented</span>
+      <strong>{{ recipientCount }}</strong>
+    </div>
   </div>
 
   <section class="pm-card notification-shell">
@@ -31,10 +44,13 @@
       <input
         class="pm-filterbar__grow"
         [(ngModel)]="search"
-        [placeholder]="isSuperAdmin ? 'Search notification, user or email...' : 'Search your notifications...'" />
+        [placeholder]="isSuperAdmin ? 'Search notification, user or email...' : 'Search your notifications...'"
+      />
       <div class="pm-tabs">
         <button class="pm-tab" [class.active]="filter === 'all'" (click)="filter = 'all'">All</button>
-        <button class="pm-tab" [class.active]="filter === 'unread'" (click)="filter = 'unread'">Unread {{ unread }}</button>
+        <button class="pm-tab" [class.active]="filter === 'unread'" (click)="filter = 'unread'">
+          Unread {{ unread }}
+        </button>
       </div>
     </div>
 
@@ -43,7 +59,8 @@
         *ngFor="let notification of filtered"
         class="notification"
         [class.notification--new]="!notification.isRead"
-        (click)="open(notification)">
+        (click)="open(notification)"
+      >
         <div class="notification__icon"><i class="fas" [ngClass]="icon(notification)"></i></div>
         <div class="notification__content">
           <div>
@@ -52,10 +69,12 @@
           </div>
           <p>{{ notification.message }}</p>
           <div class="notification__meta">
-            <small>{{ notification.createdOnUtc | date:'dd-MM-yyyy HH:mm' }} · {{ notification.notificationType }}</small>
+            <small>
+              {{ notification.createdOnUtc | date: 'dd-MM-yyyy HH:mm' }} · {{ notification.notificationType }}
+            </small>
             <small *ngIf="isSuperAdmin" class="notification__recipient">
               <i class="fas fa-user"></i>
-              {{ notification.recipientName || notification.recipientEmail || ('User #' + notification.recipientUserId) }}
+              {{ notification.recipientName || notification.recipientEmail || 'User #' + notification.recipientUserId }}
             </small>
           </div>
         </div>

@@ -230,11 +230,23 @@
   padding: 7px 12px;
 }
 
-.evaluation--correct { background: #ecfdf3; color: #166534; }
-.evaluation--wrong { background: #fef2f2; color: #991b1b; }
-.evaluation--skipped { background: #fff7ed; color: #9a3412; }
+.evaluation--correct {
+  background: #ecfdf3;
+  color: #166534;
+}
+.evaluation--wrong {
+  background: #fef2f2;
+  color: #991b1b;
+}
+.evaluation--skipped {
+  background: #fff7ed;
+  color: #9a3412;
+}
 .evaluation--manualReview,
-.evaluation--notAnswered { background: #eef2f7; color: #64748b; }
+.evaluation--notAnswered {
+  background: #eef2f7;
+  color: #64748b;
+}
 
 .result-option-list {
   display: grid;
@@ -307,7 +319,7 @@
 .result-option__control--radio.result-option__control--checked::after {
   background: #ffffff;
   border-radius: 50%;
-  content: "";
+  content: '';
   height: 7px;
   margin: 5px;
   width: 7px;
@@ -316,7 +328,7 @@
 .result-option__control--checkbox.result-option__control--checked::after {
   border-bottom: 2px solid #ffffff;
   border-left: 2px solid #ffffff;
-  content: "";
+  content: '';
   height: 5px;
   margin: 4px 0 0 3px;
   transform: rotate(-45deg);
@@ -384,17 +396,32 @@
 }
 
 @media (max-width: 991px) {
-  .result-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .result-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .result-search,
-  .result-summary { align-items: stretch; flex-direction: column; }
-  .result-summary__actions { justify-content: flex-start; }
+  .result-summary {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .result-summary__actions {
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 575px) {
-  .result-page { padding-top: 28px; }
-  .result-panel { padding: 18px; }
+  .result-page {
+    padding-top: 28px;
+  }
+  .result-panel {
+    padding: 18px;
+  }
   .result-grid,
-  .breakdown-grid { grid-template-columns: 1fr; }
+  .breakdown-grid {
+    grid-template-columns: 1fr;
+  }
   .result-search__controls,
-  .result-search select { width: 100%; }
+  .result-search select {
+    width: 100%;
+  }
 }

@@ -46,6 +46,37 @@ export interface PmLookups {
   trainings: PmLookup[];
 }
 
+export interface PmEnquiryCategoryMetadata {
+  categoryId: number;
+  categoryCode: string;
+  categoryName: string;
+  valueSource: 'NONE' | 'LIST' | 'TRAINING' | 'FREE_TEXT';
+  valueLabel: string;
+  defaultRequirementScope: string;
+  allowScopeEdit: boolean;
+  displayOrder: number;
+  isActive: boolean;
+}
+
+export interface PmEnquiryCategoryValue {
+  categoryValueId: number;
+  categoryId: number;
+  sourceType: 'CUSTOM' | 'TRAINING';
+  sourceRefId?: number;
+  code: string;
+  name: string;
+  defaultRequirementScope: string;
+  quotationTemplateId?: number;
+  projectTemplateId?: number;
+  displayOrder: number;
+  isActive: boolean;
+}
+
+export interface PmEnquiryMetadata {
+  categories: PmEnquiryCategoryMetadata[];
+  values: PmEnquiryCategoryValue[];
+}
+
 export interface PmEnquiry {
   enquiryId: number;
   enquiryNo: string;
@@ -303,4 +334,59 @@ export interface PmProjectTemplate {
   description: string;
   isActive: boolean;
   activities: PmProjectTemplateActivity[];
+}
+
+export interface PmProjectBilling {
+  projectId: number;
+  projectNo: string;
+  customerName: string;
+  customerEmail: string;
+  customerAddress: string;
+  projectTitle: string;
+  poWoReference: string;
+  projectValue: number;
+  taxableProjectValue: number;
+  completionPercent: number;
+  projectStatus: string;
+  paymentPlan: 'FULL' | 'SPLIT_50_50';
+  clientGstin: string;
+  hsnCode: string;
+  taxMode: 'INTRA_STATE' | 'INTER_STATE';
+  taxPercent: number;
+  serviceDate?: string;
+  isLocked: boolean;
+}
+
+export interface PmProjectInvoice {
+  invoiceId: number;
+  projectId: number;
+  projectNo: string;
+  projectTitle: string;
+  customerName: string;
+  customerEmail: string;
+  customerAddress: string;
+  clientGstin: string;
+  poWoReference: string;
+  documentType: 'PROFORMA' | 'TAX';
+  invoiceNo: string;
+  financialYear: string;
+  invoiceDate: string;
+  serviceDate: string;
+  hsnCode: string;
+  installmentNo: number;
+  paymentPlan: 'FULL' | 'SPLIT_50_50';
+  paymentLabel: string;
+  baseAmount: number;
+  taxPercent: number;
+  sgstPercent: number;
+  cgstPercent: number;
+  igstPercent: number;
+  sgstAmount: number;
+  cgstAmount: number;
+  igstAmount: number;
+  totalAmount: number;
+  status: 'Draft' | 'Sent';
+  cashReceivedOnUtc?: string;
+  sentOnUtc?: string;
+  createdOnUtc: string;
 }

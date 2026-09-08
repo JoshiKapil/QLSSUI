@@ -4,7 +4,7 @@
 //  Breakpoints: utilities/_breakpoints.scss
 // ================================================================
 
-@use "../utilities/breakpoints" as *;
+@use '../utilities/breakpoints' as *;
 
 // ================================================================
 // KEYFRAMES
@@ -103,7 +103,6 @@
 }
 
 @keyframes heroPulse {
-
   0%,
   100% {
     box-shadow: 0 0 0 0 rgba(87, 144, 225, 0.4);
@@ -156,7 +155,7 @@
 
 // Eyebrow pill  unified, prominent style
 .lp-eyebrow {
-  display: inline-block; 
+  display: inline-block;
   font-weight: 800;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -373,10 +372,12 @@
 .hero-slide__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(140deg,
-      rgba(11, 29, 57, 0.78) 0%,
-      rgba(11, 29, 57, 0.55) 50%,
-      rgba(87, 144, 225, 0.2) 100%);
+  background: linear-gradient(
+    140deg,
+    rgba(11, 29, 57, 0.78) 0%,
+    rgba(11, 29, 57, 0.55) 50%,
+    rgba(87, 144, 225, 0.2) 100%
+  );
 }
 
 // Content  z-index above overlay, padded for fixed navbar
@@ -540,7 +541,6 @@
 // â”€â”€ subHero  Transformation Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @keyframes floatSlow {
-
   0%,
   100% {
     transform: translateY(0) rotate(0deg);
@@ -552,7 +552,6 @@
 }
 
 @keyframes floatMedium {
-
   0%,
   100% {
     transform: translateY(0) rotate(0deg);
@@ -564,7 +563,6 @@
 }
 
 @keyframes floatFast {
-
   0%,
   100% {
     transform: translateY(0) rotate(0deg);
@@ -618,7 +616,6 @@
 }
 
 @keyframes pulseGlow {
-
   0%,
   100% {
     box-shadow: 0 0 20px rgba(34, 211, 238, 0.15);
@@ -647,17 +644,13 @@
 
   // Subtle top accent line  premium corporate touch
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg,
-        transparent 0%,
-        var(--primary) 30%,
-        var(--secondary) 70%,
-        transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, var(--primary) 30%, var(--secondary) 70%, transparent 100%);
     opacity: 0.85;
   }
 
@@ -669,9 +662,7 @@
     width: 720px;
     height: 720px;
     transform: translate(-50%, -50%);
-    background: radial-gradient(circle,
-        rgba(47, 124, 232, 0.06) 0%,
-        transparent 60%);
+    background: radial-gradient(circle, rgba(47, 124, 232, 0.06) 0%, transparent 60%);
     pointer-events: none;
     z-index: 0;
 
@@ -864,14 +855,11 @@
   }
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0 0 auto 0;
     height: 4px;
-    background: linear-gradient(90deg,
-        var(--primary),
-        var(--secondary),
-        var(--accent));
+    background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
     background-size: 200% auto;
     animation: shimmer 3s linear infinite;
   }
@@ -919,7 +907,7 @@
   }
 
   &:not(:last-child)::after {
-    content: "";
+    content: '';
     position: absolute;
     right: 0;
     top: 50%;
@@ -1026,16 +1014,14 @@
   }
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: -120px;
     left: -120px;
     width: 500px;
     height: 500px;
     border-radius: 50%;
-    background: radial-gradient(circle,
-        rgba(87, 144, 225, 0.06) 0%,
-        transparent 70%);
+    background: radial-gradient(circle, rgba(87, 144, 225, 0.06) 0%, transparent 70%);
     pointer-events: none;
   }
 }
@@ -1066,7 +1052,7 @@
 
   &::before,
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -1086,7 +1072,6 @@
   }
 
   @include tablet {
-
     &::before,
     &::after {
       display: none;
@@ -1099,7 +1084,6 @@
     letter-spacing: 1.6px;
   }
 }
-
 
 .why-eyebrow-nb {
   display: inline-block;
@@ -1116,11 +1100,11 @@
   position: relative;
   line-height: 1;
 
-  &::before{
+  &::before {
     display: none;
   }
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -1140,7 +1124,6 @@
   }
 
   @include tablet {
-
     &::before,
     &::after {
       display: none;
@@ -1153,7 +1136,6 @@
     letter-spacing: 1.6px;
   }
 }
-
 
 .why-title {
   font-size: clamp(1.9rem, 4vw, 2.6rem);
@@ -1276,8 +1258,8 @@
 }
 
 .feature-desc {
- font-size: 0.9rem;
-   //font-size: 1rem;
+  font-size: 0.9rem;
+  //font-size: 1rem;
   line-height: 1.75;
   color: #666;
   text-align: justify;
@@ -1314,7 +1296,7 @@
   }
 
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     border-radius: var(--radius-lg);
@@ -1415,7 +1397,7 @@
 
   // Accent top bar that slides in on hover
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
@@ -1565,16 +1547,8 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  mask-image: linear-gradient(to right,
-      transparent 0%,
-      black 10%,
-      black 90%,
-      transparent 100%);
-  -webkit-mask-image: linear-gradient(to right,
-      transparent 0%,
-      black 10%,
-      black 90%,
-      transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
 }
 
 // Each row is a clipping viewport
@@ -2218,24 +2192,20 @@
     z-index: 0;
 
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       inset: 0;
-      background-image: radial-gradient(circle,
-          rgba(255, 255, 255, 0.04) 1px,
-          transparent 1px);
+      background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
       background-size: 24px 24px;
     }
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       width: 700px;
       height: 700px;
       border-radius: 50%;
-      background: radial-gradient(circle,
-          rgba(206, 225, 252, 0.08),
-          transparent 70%);
+      background: radial-gradient(circle, rgba(206, 225, 252, 0.08), transparent 70%);
       right: -200px;
       top: -300px;
     }
@@ -2550,7 +2520,6 @@
 }
 
 @keyframes wfRingPulse {
-
   0%,
   100% {
     opacity: 0.45;
@@ -2581,12 +2550,10 @@
   position: relative;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 80% 50%,
-        rgba(20, 20, 20, 0.03) 0%,
-        transparent 65%);
+    background: radial-gradient(ellipse at 80% 50%, rgba(20, 20, 20, 0.03) 0%, transparent 65%);
     pointer-events: none;
   }
 }
@@ -2629,7 +2596,7 @@
   color: var(--primary);
 
   &::after {
-    content: "";
+    content: '';
     display: block;
     width: 64px;
     height: 4px;
@@ -2698,7 +2665,7 @@
 
   &::before,
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     bottom: 0;
@@ -2857,7 +2824,6 @@
 // â”€â”€ Floating popup card animation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @keyframes wspFloat {
-
   0%,
   100% {
     transform: translateY(0px);

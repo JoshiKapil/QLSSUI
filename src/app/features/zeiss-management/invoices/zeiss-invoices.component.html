@@ -1,0 +1,329 @@
+<section class="page">
+  <header>
+    <div>
+      <small>SALES / PI &amp; TAX INVOICE</small>
+      <h1>Billing &amp; Invoices</h1>
+      <p>Select a confirmed sale to manage billing, invoices, payment and delivery.</p>
+    </div>
+  </header>
+
+
+  <div class="billing-layout">
+    <aside class="panel sale-list">
+      <app-list-pager [compact]="true" [page]="lifecyclesPage" (changed)="reloadlifecyclesPage()"></app-list-pager>
+      <button
+        class="sale-row"
+        *ngFor="let x of filteredSales"
+        [class.active]="selected?.lifecycleId === x.lifecycleId"
+        (click)="select(x)"
+      >
+        <div>
+          <strong>{{ x.enquiryNo }}</strong>
+          <span>{{ x.customerName }}</span>
+        </div>
+        <small>{{ x.quotationNo }}</small>
+        <span class="stage">{{ x.currentStage }}</span>
+      </button>
+      <p class="empty-copy" *ngIf="!filteredSales.length">Client-confirmed quotations will appear here.</p>
+    </aside>
+
+    <main *ngIf="selected as sale" class="billing-main">
+      <section class="panel overview">
+        <div class="overview-head">
+          <div>
+            <small>{{ sale.enquiryNo }} · {{ sale.quotationNo }}</small>
+            <h2>{{ sale.customerName }}</h2>
+            <p>
+              Client PO:
+              <b>{{ sale.clientPoNo || 'Pending' }}</b>
+              · Vendor ID:
+              <b>{{ sale.vendorCode || 'Pending' }}</b>
+            </p>
+          </div>
+          <span class="stage">{{ sale.currentStage }}</span>
+        </div>
+
+        <div class="flow-cards">
+          <article [class.done]="!!sale.clientPoNo">
+            <span>1</span>
+            <div>
+              <small>Client PO</small>
+              <strong>{{ sale.clientPoNo || 'Required' }}</strong>
+            </div>
+          </article>
+          <article [class.done]="!!pi">
+            <span>2</span>
+            <div>
+              <small>Proforma Invoice</small>
+              <strong>{{ pi?.invoiceNo || 'Pending' }}</strong>
+            </div>
+          </article>
+          <article [class.done]="!!sale.paymentReceivedDate">
+            <span>3</span>
+            <div>
+              <small>Payment</small>
+              <strong>
+                {{ sale.paymentReceivedDate ? (sale.paymentReceivedDate | date: 'dd-MMM-yyyy') : 'Pending' }}
+              </strong>
+            </div>
+          </article>
+          <article [class.done]="!!sale.deliveryDate">
+            <span>4</span>
+            <div>
+              <small>Delivery</small>
+              <strong>{{ sale.deliveryDate ? (sale.deliveryDate | date: 'dd-MMM-yyyy') : 'Pending' }}</strong>
+            </div>
+          </article>
+          <article [class.done]="sale.acknowledgementReceived">
+            <span>5</span>
+            <div>
+              <small>Acknowledgement</small>
+              <strong>{{ sale.acknowledgementReceived ? 'Received' : 'Pending' }}</strong>
+            </div>
+          </article>
+          <article [class.done]="!!ti">
+            <span>6</span>
+            <div>
+              <small>Tax Invoice</small>
+              <strong>{{ ti?.invoiceNo || 'Pending' }}</strong>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="two-col" *ngIf="billing as b">
+        <article class="panel">
+          <div class="section-head">
+            <div>
+              <small>BILLING PROFILE</small>
+              <h3>Invoice Details</h3>
+            </div>
+            <span *ngIf="b.isLocked" class="lock">
+              <i class="fas fa-lock"></i>
+              Locked after PI
+            </span>
+          </div>
+          <div class="form billing-form">
+            <label class="span4">
+              Billing Address
+              <textarea rows="3" [(ngModel)]="form.customerAddress" [disabled]="b.isLocked"></textarea>
+            </label>
+            <label class="span2">
+              Client GSTIN
+              <input [(ngModel)]="form.clientGstin" [disabled]="b.isLocked" />
+            </label>
+            <label>
+              HSN Code
+              <input [(ngModel)]="form.hsnCode" [disabled]="b.isLocked" />
+            </label>
+            <label>
+              Tax %
+              <input type="number" [(ngModel)]="form.taxPercent" [disabled]="b.isLocked" />
+            </label>
+            <label class="span2">
+              Tax Mode
+              <select [(ngModel)]="form.taxMode" [disabled]="b.isLocked">
+                <option value="INTRA_STATE">Intra State (CGST + SGST)</option>
+                <option value="INTER_STATE">Inter State (IGST)</option>
+              </select>
+            </label>
+            <label class="span2">
+              Taxable Value
+              <input [value]="b.taxableValue | number: '1.2-2'" disabled />
+            </label>
+          </div>
+          <div class="actions" *ngIf="!b.isLocked">
+            <button [disabled]="saving" class="btn secondary" (click)="saveBilling()">
+              <i class="fas fa-save"></i>
+              Save Billing Details
+            </button>
+          </div>
+        </article>
+
+        <article class="panel next-action">
+          <small>NEXT ACTION</small>
+          <ng-container *ngIf="!sale.vendorCode || !sale.clientPoNo">
+            <h3>Vendor ID and Client PO required</h3>
+            <p>Update them in Sales Lifecycle before PI generation.</p>
+            <a class="btn secondary" routerLink="/zeiss/sales-lifecycle">Open Sales Lifecycle</a>
+          </ng-container>
+          <ng-container *ngIf="sale.vendorCode && sale.clientPoNo && !pi">
+            <h3>Generate Proforma Invoice</h3>
+            <p>
+              PI is created from the confirmed Zeiss item quantities and quotation values. It is not emailed
+              automatically.
+            </p>
+            <button class="btn primary" (click)="generatePi()" [disabled]="saving || !canGeneratePi">
+              <i class="fas fa-file-pdf"></i>
+              Generate PI
+            </button>
+          </ng-container>
+          <ng-container *ngIf="pi && !sale.paymentReceivedDate">
+            <h3>PI ready - payment pending</h3>
+            <p>
+              Preview/send the PI below. After payment is received, update Payment Received Date in Sales Lifecycle.
+            </p>
+            <button class="btn secondary" (click)="viewPdf(pi)">
+              <i class="fas fa-eye"></i>
+              View PI
+            </button>
+          </ng-container>
+          <ng-container *ngIf="sale.paymentReceivedDate && !sale.deliveryDate">
+            <h3>Payment received - delivery pending</h3>
+            <p>Post delivery from Sales Lifecycle. Stock will be deducted once only.</p>
+            <a class="btn primary" routerLink="/zeiss/sales-lifecycle">Post Delivery</a>
+          </ng-container>
+          <ng-container *ngIf="sale.deliveryDate && !sale.acknowledgementReceived">
+            <h3>Client acknowledgement required</h3>
+            <p>Tax Invoice remains blocked until the client acknowledgement is recorded.</p>
+            <a class="btn primary" routerLink="/zeiss/sales-lifecycle">Record Acknowledgement</a>
+          </ng-container>
+          <ng-container *ngIf="sale.acknowledgementReceived && !ti">
+            <h3>Generate final Tax Invoice</h3>
+            <p>Acknowledgement is received. The final TI is now unlocked.</p>
+            <button class="btn success" (click)="generateTi()" [disabled]="saving || !canGenerateTi">
+              <i class="fas fa-file-invoice"></i>
+              Generate Tax Invoice
+            </button>
+          </ng-container>
+          <ng-container *ngIf="ti">
+            <h3>Billing complete</h3>
+            <p>
+              Tax Invoice is generated. Send it to the client from Invoice History below. After the TI is sent, close
+              the sale.
+            </p>
+            <div class="actions">
+              <button class="btn secondary" (click)="viewPdf(ti)">
+                <i class="fas fa-eye"></i>
+                View Tax Invoice
+              </button>
+              <button
+                [disabled]="saving"
+                *ngIf="ti.status === 'Sent' && sale.currentStage !== '8 - Closed/Completed'"
+                class="btn success"
+                (click)="closeSale()"
+              >
+                <i class="fas fa-check-circle"></i>
+                Close Sale
+              </button>
+            </div>
+          </ng-container>
+        </article>
+      </section>
+
+      <section class="panel history">
+        <div class="section-head">
+          <div>
+            <small>DOCUMENT HISTORY</small>
+            <h3>PI / Tax Invoice</h3>
+          </div>
+          <span>{{ invoices.length }} document{{ invoices.length === 1 ? '' : 's' }}</span>
+        </div>
+        <div class="table" *ngIf="invoices.length; else noDocs">
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>No.</th>
+                <th>Date</th>
+                <th>Taxable</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let x of invoices">
+                <td>
+                  <b>{{ x.documentType === 'PI' ? 'Proforma Invoice' : 'Tax Invoice' }}</b>
+                </td>
+                <td>{{ x.invoiceNo }}</td>
+                <td>{{ x.invoiceDate | date: 'dd-MM-yyyy' }}</td>
+                <td>₹ {{ x.subtotalAmount | number: '1.2-2' }}</td>
+                <td>₹ {{ x.totalAmount | number: '1.2-2' }}</td>
+                <td>
+                  <span class="stage">{{ x.status }}</span>
+                </td>
+                <td class="doc-actions">
+                  <button class="eye" (click)="viewPdf(x)" title="View PDF"><i class="fas fa-eye"></i></button>
+                  <button class="eye" (click)="downloadPdf(x)" title="Download PDF">
+                    <i class="fas fa-download"></i>
+                  </button>
+                  <button class="btn primary" (click)="openSend(x)">
+                    <i class="fas fa-paper-plane"></i>
+                    {{ x.status === 'Sent' ? 'Send Again' : 'Send' }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ng-template #noDocs>
+          <div class="empty-doc">
+            <i class="fas fa-file-invoice"></i>
+            <strong>No PI/TI generated yet.</strong>
+            <span>Complete Vendor ID and Client PO, then generate the PI.</span>
+          </div>
+        </ng-template>
+      </section>
+    </main>
+
+    <article class="panel select-hint" *ngIf="!selected">
+      <i class="fas fa-hand-pointer"></i>
+      <h3>Select a confirmed sale</h3>
+      <p>Client-confirmed quotations become Zeiss Sales Lifecycle records and are billed here.</p>
+    </article>
+  </div>
+</section>
+
+<div class="modal" *ngIf="sendInvoice as doc" (click)="sendInvoice = undefined">
+  <div class="dialog send-dialog" (click)="$event.stopPropagation()">
+    <header>
+      <div>
+        <small>CLIENT EMAIL</small>
+        <h2>Send {{ doc.documentType === 'PI' ? 'Proforma Invoice' : 'Tax Invoice' }}</h2>
+        <p>{{ doc.invoiceNo }} · {{ doc.enquiryNo }}</p>
+      </div>
+      <button class="btn secondary" (click)="sendInvoice = undefined">Close</button>
+    </header>
+    <div class="attachment">
+      <i class="fas fa-file-pdf"></i>
+      <div>
+        <strong>Zeiss_{{ doc.documentType }}_{{ doc.invoiceNo }}_{{ doc.enquiryNo }}.pdf</strong>
+        <span>PDF is attached automatically.</span>
+      </div>
+      <button class="eye" (click)="viewPdf(doc)">
+        <i class="fas fa-eye"></i>
+        Preview
+      </button>
+    </div>
+    <div class="form">
+      <label class="span2">
+        To *
+        <input type="email" [(ngModel)]="sendForm.to" />
+      </label>
+      <label class="span2">
+        CC
+        <input [(ngModel)]="sendForm.cc" />
+      </label>
+      <label class="span4">
+        Subject
+        <input [(ngModel)]="sendForm.subject" />
+      </label>
+      <label class="span4">
+        Message
+        <textarea rows="7" [(ngModel)]="sendForm.message"></textarea>
+      </label>
+    </div>
+    <div class="actions">
+      <button class="btn secondary" (click)="viewPdf(doc)">
+        <i class="fas fa-eye"></i>
+        Preview PDF
+      </button>
+      <button class="btn primary" (click)="sendCurrent()" [disabled]="saving || !sendForm.to.trim()">
+        <i class="fas fa-paper-plane"></i>
+        Send Email
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<section class="page">
+  <header>
+    <div>
+      <small>MASTER</small>
+      <h1>Instrument List</h1>
+      <p>Imported from Order list for QLSS_19_08_2026. Quantity changes with delivery transactions.</p>
+    </div>
+  </header>
+<app-list-pager [page]="instrumentsPage" (changed)="reloadinstrumentsPage()"></app-list-pager>
+  <p *ngIf="error" role="alert">{{ error }}</p>
+  
+  <article class="panel table">
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Part No.</th>
+          <th>Description</th>
+          <th>Unit Price</th>
+          <th>Opening</th>
+          <th>Current</th>
+          <th>Catalogue</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let x of filtered">
+          <td>{{ x.category }}</td>
+          <td>{{ x.partNumber || '-' }}</td>
+          <td>{{ x.partDescription }}</td>
+          <td>₹ {{ x.unitPrice | number: '1.2-2' }}</td>
+          <td>{{ x.openingQuantity }}</td>
+          <td [class.stock-low]="x.currentQuantity < x.reorderLevel">{{ x.currentQuantity }}</td>
+          <td>
+            <button *ngIf="x.catalogueFile" class="eye" (click)="open(x)">
+              <i class="fas fa-eye"></i>
+              View
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </article>
+</section>

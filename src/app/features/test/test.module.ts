@@ -6,6 +6,6 @@ import { ResultComponent } from './result.component';
 
 @NgModule({
   declarations: [TestComponent, ResultComponent],
-  imports: [SharedModule, TestRoutingModule]
+  imports: [SharedModule, TestRoutingModule],
 })
 export class TestModule {}

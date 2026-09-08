@@ -1,0 +1,479 @@
+<div class="pm-page invoice-page" [class.invoice-page--embedded]="embedded">
+  <header *ngIf="!embedded" class="pm-head invoice-head">
+    <div>
+      <span class="pm-kicker">Project billing & client invoice</span>
+      <h1>Invoice Control</h1>
+      <p>
+        Generate first, preview the PDF, then send. Every issued document remains available for view, download and
+        resend.
+      </p>
+    </div>
+    <div class="invoice-head__quick">
+      <i class="fas fa-shield-check"></i>
+      <div>
+        <strong>Safe send flow</strong>
+        <span>Generate → Preview → Send</span>
+      </div>
+    </div>
+  </header>
+<app-list-pager [page]="projectsPage" (changed)="reloadprojectsPage()"></app-list-pager>
+
+  <div class="status success" *ngIf="message">
+    <i class="fas fa-circle-check"></i>
+    <span>{{ message }}</span>
+  </div>
+  <div class="status error" *ngIf="error">
+    <i class="fas fa-triangle-exclamation"></i>
+    <span>{{ error }}</span>
+  </div>
+
+  <section class="invoice-split" [class.invoice-split--embedded]="embedded">
+    <aside *ngIf="!embedded" class="invoice-project-pane">
+      <section class="pm-card project-browser">
+        <div class="browser-head">
+          <div>
+            <small>Project list</small>
+            <strong>Select billing project</strong>
+          </div>
+          <span>{{ filteredProjects.length }} / {{ projects.length }}</span>
+        </div>
+        <div class="browser-filters">
+          <label class="browser-search">
+            <i class="fas fa-magnifying-glass"></i>
+            <input [(ngModel)]="projectSearch" placeholder="Filter this page project or customer" />
+          </label>
+          <select [(ngModel)]="projectStatus" aria-label="Project status filter">
+            <option value="ALL">All statuses</option>
+            <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+          </select>
+        </div>
+        <div class="project-scroll">
+          <button
+            type="button"
+            class="project-row"
+            *ngFor="let project of filteredProjects; trackBy: trackProject"
+            [class.active]="selectedProject?.projectId === project.projectId"
+            (click)="selectProject(project)"
+          >
+            <div class="project-row__top">
+              <b>{{ project.projectNo }}</b>
+              <span>{{ project.completionPercent | number: '1.0-0' }}%</span>
+            </div>
+            <strong>{{ project.customerName }}</strong>
+            <small>{{ project.projectTitle }}</small>
+            <div class="project-row__foot">
+              <span>
+                <i class="fas fa-file-signature"></i>
+                {{ project.poWoReference || 'PO pending' }}
+              </span>
+              <span>{{ project.status }}</span>
+            </div>
+          </button>
+          <p class="empty" *ngIf="!filteredProjects.length">No projects match your filter.</p>
+        </div>
+      </section>
+    </aside>
+
+    <main class="invoice-detail-pane">
+      <ng-container *ngIf="billing; else selectHint">
+        <section class="invoice-project-hero">
+          <div class="invoice-project-hero__identity">
+            <small>{{ embedded ? 'Billing & invoices' : 'Selected project billing' }}</small>
+            <h2>{{ billing.projectNo }}</h2>
+            <strong>{{ billing.customerName }}</strong>
+            <span>{{ billing.projectTitle }}</span>
+          </div>
+          <div class="invoice-project-hero__progress" [style.--billing-progress]="workflowProgress">
+            <div>
+              <strong>{{ workflowProgress }}%</strong>
+              <small>billing flow</small>
+            </div>
+          </div>
+          <div class="invoice-project-hero__metrics">
+            <div>
+              <span>Project value</span>
+              <strong>₹ {{ baseAmount() }}</strong>
+            </div>
+            <div>
+              <span>PO / WO</span>
+              <strong [class.warn]="!billing.poWoReference">{{ billing.poWoReference || 'Required' }}</strong>
+            </div>
+            <div>
+              <span>Completion</span>
+              <strong>{{ billing.completionPercent | number: '1.0-0' }}%</strong>
+            </div>
+            <div>
+              <span>Invoices</span>
+              <strong>{{ invoices.length }}</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="billing-flow pm-card">
+          <div class="billing-flow__head">
+            <div>
+              <small>Current workflow</small>
+              <strong>{{ installmentCaption }}</strong>
+            </div>
+            <span>{{ workflowProgress }}% ready</span>
+          </div>
+          <div class="billing-flow__steps">
+            <div [class.done]="!!billing.poWoReference" [class.current]="!billing.poWoReference">
+              <i class="fas fa-file-signature"></i>
+              <span>PO Received</span>
+            </div>
+            <b></b>
+            <div [class.done]="has('PROFORMA', 1)" [class.current]="!!billing.poWoReference && !has('PROFORMA', 1)">
+              <i class="fas fa-file-circle-check"></i>
+              <span>Proforma</span>
+            </div>
+            <b></b>
+            <div [class.done]="has('TAX', 1)" [class.current]="has('PROFORMA', 1) && !has('TAX', 1)">
+              <i class="fas fa-indian-rupee-sign"></i>
+              <span>Tax Invoice</span>
+            </div>
+            <ng-container *ngIf="billing.paymentPlan === 'SPLIT_50_50'">
+              <b></b>
+              <div
+                [class.done]="has('TAX', 2)"
+                [class.current]="has('TAX', 1) && billing.completionPercent >= 100 && !has('TAX', 2)"
+              >
+                <i class="fas fa-flag-checkered"></i>
+                <span>Remaining 50%</span>
+              </div>
+            </ng-container>
+          </div>
+        </section>
+
+        <section class="billing-main-grid">
+          <article class="pm-card billing-setup-card">
+            <div class="section-head">
+              <div>
+                <small>Billing setup</small>
+                <strong>Invoice calculation</strong>
+              </div>
+              <span class="lock" *ngIf="billing.isLocked">
+                <i class="fas fa-lock"></i>
+                Frozen
+              </span>
+            </div>
+
+            <div class="choice-grid">
+              <label class="choice" [class.selected]="form.paymentPlan === 'FULL'">
+                <input
+                  type="radio"
+                  name="paymentPlan"
+                  value="FULL"
+                  [(ngModel)]="form.paymentPlan"
+                  [disabled]="billing.isLocked"
+                />
+                <span>
+                  <b>Full 100%</b>
+                  <small>Proforma + one Tax Invoice</small>
+                </span>
+              </label>
+              <label class="choice" [class.selected]="form.paymentPlan === 'SPLIT_50_50'">
+                <input
+                  type="radio"
+                  name="paymentPlan"
+                  value="SPLIT_50_50"
+                  [(ngModel)]="form.paymentPlan"
+                  [disabled]="billing.isLocked"
+                />
+                <span>
+                  <b>Split 50% + 50%</b>
+                  <small>Advance + remaining after completion</small>
+                </span>
+              </label>
+            </div>
+
+            <div class="billing-form-grid">
+              <label>
+                <span>Client GSTIN</span>
+                <input [(ngModel)]="form.clientGstin" [disabled]="billing.isLocked" placeholder="GSTIN" />
+              </label>
+              <label>
+                <span>HSN / SAC</span>
+                <input [(ngModel)]="form.hsnCode" [disabled]="billing.isLocked" placeholder="998312" />
+              </label>
+              <label>
+                <span>GST type</span>
+                <select [(ngModel)]="form.taxMode" [disabled]="billing.isLocked">
+                  <option value="INTRA_STATE">SGST + CGST</option>
+                  <option value="INTER_STATE">IGST</option>
+                </select>
+              </label>
+              <label>
+                <span>Total GST %</span>
+                <input type="number" min="0" max="100" [(ngModel)]="form.taxPercent" [disabled]="billing.isLocked" />
+              </label>
+              <label>
+                <span>Date of service</span>
+                <input type="date" [(ngModel)]="form.serviceDate" [disabled]="billing.isLocked" />
+              </label>
+            </div>
+            <div class="billing-setup-footer">
+              <span>
+                <i class="fas fa-circle-info"></i>
+                Invoice values are snapshotted after generation.
+              </span>
+              <button
+                type="button"
+                class="pm-btn pm-btn--ghost"
+                (click)="saveBilling()"
+                [disabled]="busy || billing.isLocked"
+              >
+                <i class="fas fa-floppy-disk"></i>
+                Save Billing
+              </button>
+            </div>
+          </article>
+
+          <article class="pm-card next-action-card">
+            <div class="next-action-card__label">
+              <i class="fas fa-bolt"></i>
+              Next action
+            </div>
+
+            <ng-container *ngIf="!billing.poWoReference">
+              <div class="next-action-card__icon warn"><i class="fas fa-file-signature"></i></div>
+              <h3>PO / WO is required</h3>
+              <p>
+                Add the PO / WO reference in
+                <b>Project → Overview & Team</b>
+                , save the project, then return to Billing & Invoices.
+              </p>
+              <span class="action-note">Invoice generation stays blocked until PO / WO is available.</span>
+            </ng-container>
+
+            <ng-container *ngIf="billing.poWoReference && !has('PROFORMA', 1)">
+              <div class="next-action-card__icon"><i class="fas fa-file-circle-plus"></i></div>
+              <h3>Generate Proforma Invoice</h3>
+              <p>
+                {{
+                  form.paymentPlan === 'SPLIT_50_50'
+                    ? 'Creates the 50% Advance Proforma.'
+                    : 'Creates the Full Payment Proforma.'
+                }}
+                It will not email automatically.
+              </p>
+              <button
+                type="button"
+                class="pm-btn pm-btn--primary action-main"
+                (click)="generateProforma()"
+                [disabled]="busy"
+              >
+                <i class="fas fa-file-pdf"></i>
+                Generate Proforma
+              </button>
+            </ng-container>
+
+            <ng-container *ngIf="has('PROFORMA', 1) && !has('TAX', 1)">
+              <div class="next-action-card__icon"><i class="fas fa-money-bill-transfer"></i></div>
+              <h3>Cash received?</h3>
+              <p>
+                After receipt of payment, create the first Tax Invoice. You can preview the Proforma below at any time.
+              </p>
+              <button
+                type="button"
+                class="pm-btn pm-btn--primary action-main"
+                (click)="generateFirstTaxInvoice()"
+                [disabled]="busy"
+              >
+                <i class="fas fa-receipt"></i>
+                Cash Received · Generate Tax Invoice
+              </button>
+            </ng-container>
+
+            <ng-container *ngIf="has('TAX', 1) && billing.paymentPlan === 'FULL'">
+              <div class="next-action-card__icon done"><i class="fas fa-circle-check"></i></div>
+              <h3>Billing complete</h3>
+              <p>The full Tax Invoice is generated. Use Invoice History to preview, download or resend it.</p>
+            </ng-container>
+
+            <ng-container *ngIf="has('TAX', 1) && billing.paymentPlan === 'SPLIT_50_50' && !has('TAX', 2)">
+              <div class="next-action-card__icon" [class.warn]="billing.completionPercent < 100">
+                <i class="fas fa-flag-checkered"></i>
+              </div>
+              <h3>
+                {{ billing.completionPercent < 100 ? 'Waiting for project completion' : 'Generate remaining 50%' }}
+              </h3>
+              <p>
+                {{
+                  billing.completionPercent < 100
+                    ? 'The final invoice unlocks automatically when project completion reaches 100%.'
+                    : 'Project is 100% complete. Generate the remaining 50% Tax Invoice, preview it, then send.'
+                }}
+              </p>
+              <button
+                *ngIf="billing.completionPercent >= 100"
+                type="button"
+                class="pm-btn pm-btn--primary action-main"
+                (click)="generateRemainingInvoice()"
+                [disabled]="busy || !canGenerateRemaining"
+              >
+                <i class="fas fa-file-circle-plus"></i>
+                Generate Remaining 50%
+              </button>
+              <span *ngIf="billing.completionPercent < 100" class="action-note">
+                Current project completion: {{ billing.completionPercent | number: '1.0-0' }}%
+              </span>
+            </ng-container>
+
+            <ng-container *ngIf="has('TAX', 2)">
+              <div class="next-action-card__icon done"><i class="fas fa-circle-check"></i></div>
+              <h3>Split billing complete</h3>
+              <p>Advance and remaining Tax Invoices are generated. All PDFs remain available below.</p>
+            </ng-container>
+          </article>
+        </section>
+
+        <section class="pm-card history-card">
+          <div class="section-head history-head">
+            <div>
+              <small>Any-time access</small>
+              <strong>Invoice history</strong>
+            </div>
+            <span>{{ invoices.length }} document{{ invoices.length === 1 ? '' : 's' }}</span>
+          </div>
+          <div class="invoice-table" *ngIf="invoices.length; else noInvoices">
+            <div class="invoice-table__head">
+              <span>Document</span>
+              <span>Date / Amount</span>
+              <span>Status</span>
+              <span>Actions</span>
+            </div>
+            <article class="invoice-row" *ngFor="let invoice of invoices; trackBy: trackInvoice">
+              <div class="doc-copy">
+                <div class="doc-icon">
+                  <i
+                    class="fas"
+                    [ngClass]="invoice.documentType === 'PROFORMA' ? 'fa-file-lines' : 'fa-file-invoice'"
+                  ></i>
+                </div>
+                <div>
+                  <small>{{ invoice.paymentLabel }}</small>
+                  <strong>{{ typeName(invoice) }} · #{{ invoice.invoiceNo }}</strong>
+                  <span>{{ invoice.projectNo }}</span>
+                </div>
+              </div>
+              <div class="doc-amount">
+                <strong>₹ {{ amount(invoice) }}</strong>
+                <span>{{ invoice.invoiceDate | date: 'dd-MM-yyyy' }}</span>
+              </div>
+              <div>
+                <span class="invoice-status" [class.sent]="invoice.status === 'Sent'">
+                  <i class="fas" [ngClass]="invoice.status === 'Sent' ? 'fa-circle-check' : 'fa-clock'"></i>
+                  {{ invoice.status }}
+                </span>
+                <small class="sent-on" *ngIf="invoice.sentOnUtc">
+                  {{ invoice.sentOnUtc | date: 'dd-MM-yyyy HH:mm' }}
+                </small>
+              </div>
+              <div class="doc-actions">
+                <button type="button" (click)="viewPdf(invoice)" title="Preview PDF">
+                  <i class="fas fa-eye"></i>
+                  <span>View</span>
+                </button>
+                <button type="button" (click)="downloadPdf(invoice)" title="Download PDF">
+                  <i class="fas fa-download"></i>
+                  <span>Download</span>
+                </button>
+                <button type="button" class="send" (click)="openSendDialog(invoice)" [disabled]="busy">
+                  <i class="fas fa-paper-plane"></i>
+                  <span>{{ invoice.status === 'Sent' ? 'Send Again' : 'Send' }}</span>
+                </button>
+              </div>
+            </article>
+          </div>
+          <ng-template #noInvoices>
+            <div class="empty-state">
+              <i class="fas fa-file-invoice"></i>
+              <strong>No invoice generated yet</strong>
+              <span>Save billing details, then generate the Proforma Invoice. Nothing is emailed automatically.</span>
+            </div>
+          </ng-template>
+        </section>
+      </ng-container>
+    </main>
+  </section>
+
+  <ng-template #selectHint>
+    <div class="pm-card select-hint">
+      <i class="fas fa-hand-pointer"></i>
+      <h3>Select a project</h3>
+      <p>Choose a project from the left to manage billing and invoices.</p>
+    </div>
+  </ng-template>
+
+  <div class="invoice-modal-backdrop" *ngIf="sendDialogInvoice" (click)="closeSendDialog()">
+    <section
+      class="invoice-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Send invoice"
+      (click)="$event.stopPropagation()"
+    >
+      <header>
+        <div>
+          <small>Client email</small>
+          <h2>Send {{ typeName(sendDialogInvoice) }}</h2>
+          <p>#{{ sendDialogInvoice.invoiceNo }} · {{ sendDialogInvoice.paymentLabel }}</p>
+        </div>
+        <button type="button" (click)="closeSendDialog()" aria-label="Close"><i class="fas fa-xmark"></i></button>
+      </header>
+      <div class="send-attachment">
+        <i class="fas fa-file-pdf"></i>
+        <div>
+          <strong>
+            {{ sendDialogInvoice.documentType === 'PROFORMA' ? 'Proforma_Invoice' : 'Tax_Invoice' }}_{{
+              sendDialogInvoice.invoiceNo
+            }}_{{ sendDialogInvoice.projectNo }}.pdf
+          </strong>
+          <span>PDF is attached automatically when sent.</span>
+        </div>
+        <button type="button" (click)="viewPdf(sendDialogInvoice)">
+          <i class="fas fa-eye"></i>
+          Preview
+        </button>
+      </div>
+      <div class="send-form">
+        <label>
+          <span>To *</span>
+          <input type="email" [(ngModel)]="sendForm.to" placeholder="client@company.com" />
+        </label>
+        <label>
+          <span>
+            CC
+            <small>optional</small>
+          </span>
+          <input type="text" [(ngModel)]="sendForm.cc" placeholder="accounts@company.com" />
+        </label>
+        <label class="full">
+          <span>Subject</span>
+          <input [(ngModel)]="sendForm.subject" />
+        </label>
+        <label class="full">
+          <span>Message</span>
+          <textarea rows="7" [(ngModel)]="sendForm.message"></textarea>
+        </label>
+      </div>
+      <footer>
+        <button type="button" class="pm-btn pm-btn--ghost" (click)="closeSendDialog()">Cancel</button>
+        <button type="button" class="pm-btn pm-btn--ghost" (click)="viewPdf(sendDialogInvoice)">
+          <i class="fas fa-eye"></i>
+          Preview PDF
+        </button>
+        <button
+          type="button"
+          class="pm-btn pm-btn--primary"
+          (click)="sendCurrentInvoice()"
+          [disabled]="busy || !sendForm.to.trim()"
+        >
+          <i class="fas fa-paper-plane"></i>
+          Send Email
+        </button>
+      </footer>
+    </section>
+  </div>
+</div>

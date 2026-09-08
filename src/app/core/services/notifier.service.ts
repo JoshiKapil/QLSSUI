@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NotifierService {
   successToastr(message: string, title = 'Success'): void {
@@ -28,7 +28,7 @@ export class NotifierService {
       maxWidth: '320px',
       lineHeight: '1.4',
       opacity: '1',
-      transition: 'opacity 0.3s ease'
+      transition: 'opacity 0.3s ease',
     });
 
     document.body.appendChild(toast);

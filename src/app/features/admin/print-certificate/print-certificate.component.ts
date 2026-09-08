@@ -1,9 +1,14 @@
 ﻿import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { HttpClient } from '@angular/common/http';
-import { firstValueFrom, Subject, takeUntil } from 'rxjs';
+import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { firstValueFrom, lastValueFrom, Subject, takeUntil, tap } from 'rxjs';
 import * as JSZip from 'jszip';
-import { CertificateCompletionType, CertificateData, CertificatePrintRecord } from '../../../core/models/certificate-data.model';
+import {
+  CertificateCompletionType,
+  CertificateData,
+  CertificatePrintRecord,
+} from '../../../core/models/certificate-data.model';
 import { Client, ClientCity } from '../../../core/models/client.model';
 import { Training } from '../../../core/models/training.model';
 import { CertificatePdfService } from '../../../core/services/certificate-pdf.service';
@@ -14,7 +19,12 @@ import { ApiClientService } from '../../../core/services/api-client.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ClientManagementService } from '../../../core/services/client-management.service';
 import { environment } from 'src/environments/environment';
+import { TestDefinition } from '../../test/test.model';
 
+interface ExamResultListItem {
+  username: string;
+  testId: number | string | null;
+}
 interface CertificateUserOption {
   id: string;
   name: string;
@@ -40,9 +50,13 @@ interface FilePickerWindow extends Window {
 @Component({
   selector: 'app-print-certificate',
   templateUrl: './print-certificate.component.html',
-  styleUrls: ['./print-certificate.component.scss']
+  styleUrls: ['./print-certificate.component.scss'],
 })
 export class PrintCertificateComponent implements OnInit, OnDestroy {
+  get isExamDetailsRoute(): boolean {
+    return this.router.url.includes('/admin/exam-details-export');
+  }
+
   trainingList: Training[] = [];
   selectedTrainingId = '';
   selectedUserId = '';
@@ -72,6 +86,8 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   bulkTrainingSearch = '';
   bulkTrainingName = '';
   bulkCoveredTopics = '';
+  bulkLogoUrl = '';
+  bulkLogoName = '';
   isCompanyDropdownOpen = false;
   isBulkCityDropdownOpen = false;
   isBulkTrainingDropdownOpen = false;
@@ -82,6 +98,8 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   emailCompanySearch = '';
   emailTrainingSearch = '';
   emailUserSearch = '';
+  emailLogoUrl = '';
+  emailLogoName = '';
   emailTrainingList: Training[] = [];
   selectedEmailUserIds = new Set<string>();
   isEmailCompanyDropdownOpen = false;
@@ -91,6 +109,16 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   emailProcessed = 0;
   emailTotal = 0;
   emailStatus = '';
+  examTests: TestDefinition[] = [];
+  examResults: ExamResultListItem[] = [];
+  examTestId = '';
+  examTestSearch = '';
+  isExamTestDropdownOpen = false;
+  isExamExporting = false;
+  examExportProgress = 0;
+  examExportStatus = '';
+  isExamEmailing = false;
+  examRecipientEmail = '';
 
   currentCertificateName = '';
   correctedCertificateName = '';
@@ -100,11 +128,24 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   // Temporary data until the training-result API is connected.
   readonly users: CertificateUserOption[] = [
     { id: 'usr-101', name: 'Aarav Sharma', email: 'aarav.sharma@example.com', marks: 86, completionType: 'assessment' },
-    { id: 'usr-102', name: 'Meera Kulkarni', email: 'meera.kulkarni@example.com', marks: 52, completionType: 'assessment' },
-    { id: 'usr-103', name: 'Vikram Patil', email: 'vikram.patil@example.com', marks: null, completionType: 'attendance' }
+    {
+      id: 'usr-102',
+      name: 'Meera Kulkarni',
+      email: 'meera.kulkarni@example.com',
+      marks: 52,
+      completionType: 'assessment',
+    },
+    {
+      id: 'usr-103',
+      name: 'Vikram Patil',
+      email: 'vikram.patil@example.com',
+      marks: null,
+      completionType: 'attendance',
+    },
   ];
 
   certificate: CertificateData = this.createEmptyCertificate();
+  individualLogoName = '';
   private readonly destroy$ = new Subject<void>();
 
   constructor(
@@ -116,13 +157,15 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     private trainingService: TrainingManagementService,
     private apiClient: ApiClientService,
     private authService: AuthService,
-    private clientService: ClientManagementService
-  ) { }
+    private clientService: ClientManagementService,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.loadTrainingList();
     this.loadCertificateUsers();
     this.loadCompanies();
+    this.loadExamTests();
   }
 
   ngOnDestroy(): void {
@@ -135,9 +178,12 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     const currentName = this.currentCertificateName.trim().toLowerCase();
     if (!currentName) return [];
 
-    return this.allUserData.filter((record) =>
-      Number(record.trainingId) > 0 &&
-      String(record.userName || record.name || '').trim().toLowerCase() === currentName
+    return this.allUserData.filter(
+      (record) =>
+        Number(record.trainingId) > 0 &&
+        String(record.userName || record.name || '')
+          .trim()
+          .toLowerCase() === currentName,
     );
   }
 
@@ -146,17 +192,19 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     if (search.length < 2 || this.matchingNameRecords.length) return [];
 
     const names = new Set<string>();
-    return this.allUserData.filter((record) => {
-      if (Number(record.trainingId) <= 0) return false;
+    return this.allUserData
+      .filter((record) => {
+        if (Number(record.trainingId) <= 0) return false;
 
-      const name = String(record.userName || record.name || '').trim();
-      const searchable = `${name} ${record.email || ''} ${record.certificationNumber || ''}`.toLowerCase();
-      const key = name.toLowerCase();
-      if (!name || !searchable.includes(search) || names.has(key)) return false;
+        const name = String(record.userName || record.name || '').trim();
+        const searchable = `${name} ${record.email || ''} ${record.certificationNumber || ''}`.toLowerCase();
+        const key = name.toLowerCase();
+        if (!name || !searchable.includes(search) || names.has(key)) return false;
 
-      names.add(key);
-      return true;
-    }).slice(0, 10);
+        names.add(key);
+        return true;
+      })
+      .slice(0, 10);
   }
 
   get canCorrectCertificateName(): boolean {
@@ -168,35 +216,46 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       currentName.toLowerCase() !== newName.toLowerCase() &&
       this.matchingNameRecords.length &&
       this.confirmNameCorrection &&
-      !this.isCorrectingName
+      !this.isCorrectingName,
     );
   }
 
   get filteredTrainingList(): Training[] {
     if (!this.individualCompanyId) return [];
-    const trainingIds = new Set(this.allUserData
-      .filter(record => String(record.location) === this.individualCompanyId)
-      .map(record => String(record.trainingId)));
+    const trainingIds = new Set(
+      this.allUserData
+        .filter((record) => String(record.location) === this.individualCompanyId)
+        .map((record) => String(record.trainingId)),
+    );
     const search = this.trainingSearch.trim().toLowerCase();
     return this.trainingList.filter((training) => {
       if (!trainingIds.has(String(training.trainingId))) return false;
-      const searchable = `${this.getTrainingLabel(training)} ${training.trainingId || ''} ${training.topicCovered || ''}`.toLowerCase();
+      const searchable =
+        `${this.getTrainingLabel(training)} ${training.trainingId || ''} ${training.topicCovered || ''}`.toLowerCase();
       return !search || searchable.includes(search);
     });
   }
 
   get individualCompanies(): Client[] {
-    const ids = new Set(this.allUserData.map(record => String(record.location || '')));
-    return this.companies.filter(company => ids.has(String(company.clientId)));
+    const ids = new Set(this.allUserData.map((record) => String(record.location || '')));
+    return this.companies.filter((company) => ids.has(String(company.clientId)));
+  }
+
+  get companiesWithLogos(): Client[] {
+    return this.companies.filter((company) => String(company.image || '').trim());
   }
 
   get individualDates(): string[] {
     if (!this.individualCompanyId || !this.selectedTrainingId) return [];
-    return Array.from(new Set(this.allUserData
-      .filter(record => String(record.location) === this.individualCompanyId)
-      .filter(record => String(record.trainingId) === this.selectedTrainingId)
-      .map(record => this.toDateInputValue(record.issuedDate || record.date || record.certificationDate))
-      .filter(Boolean))).sort((a, b) => b.localeCompare(a));
+    return Array.from(
+      new Set(
+        this.allUserData
+          .filter((record) => String(record.location) === this.individualCompanyId)
+          .filter((record) => String(record.trainingId) === this.selectedTrainingId)
+          .map((record) => this.toDateInputValue(record.issuedDate || record.date || record.certificationDate))
+          .filter(Boolean),
+      ),
+    ).sort((a, b) => b.localeCompare(a));
   }
 
   get selectedTraining(): Training | undefined {
@@ -211,7 +270,9 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     const search = this.userSearch.trim().toLowerCase();
     if (!search) return this.UserData;
     return this.UserData.filter((user) =>
-      `${user.userName || user.name || ''} ${user.email || ''} ${user.certificationNumber || user.certificateNumber || ''}`.toLowerCase().includes(search)
+      `${user.userName || user.name || ''} ${user.email || ''} ${user.certificationNumber || user.certificateNumber || ''}`
+        .toLowerCase()
+        .includes(search),
     );
   }
 
@@ -235,33 +296,36 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   }
 
   get selectedBulkCompanyCities(): ClientCity[] {
-    return this.selectedCompany?.cities?.filter(city => city.isActive !== false) || [];
+    return this.selectedCompany?.cities?.filter((city) => city.isActive !== false) || [];
   }
 
   get selectedBulkCity(): ClientCity | undefined {
-    return this.selectedBulkCompanyCities.find(city => String(city.cityId) === this.selectedBulkCityId);
+    return this.selectedBulkCompanyCities.find((city) => String(city.cityId) === this.selectedBulkCityId);
   }
 
   get filteredBulkCities(): ClientCity[] {
     const search = this.bulkCitySearch.trim().toLowerCase();
-    return this.selectedBulkCompanyCities.filter(city =>
-      this.allUserData.some(record => String(record.location) === this.selectedCompanyId && String(record.cityId ?? '') === String(city.cityId))
-      && (!search || city.cityName.toLowerCase().includes(search))
+    return this.selectedBulkCompanyCities.filter(
+      (city) =>
+        this.allUserData.some(
+          (record) =>
+            String(record.location) === this.selectedCompanyId && String(record.cityId ?? '') === String(city.cityId),
+        ) &&
+        (!search || city.cityName.toLowerCase().includes(search)),
     );
   }
 
   get selectedBulkTraining(): Training | undefined {
-    return this.bulkTrainingList.find(
-      (training) => String(training.trainingId) === this.selectedBulkTrainingId
-    );
+    return this.bulkTrainingList.find((training) => String(training.trainingId) === this.selectedBulkTrainingId);
   }
 
   get filteredBulkCompanies(): Client[] {
     const companyIds = new Set(this.allUserData.map((record) => String(record.location)));
     const search = this.companySearch.trim().toLowerCase();
-    return this.companies.filter((company) =>
-      companyIds.has(String(company.clientId))
-      && (!search || `${company.clientName} ${company.clientId ?? ''}`.toLowerCase().includes(search))
+    return this.companies.filter(
+      (company) =>
+        companyIds.has(String(company.clientId)) &&
+        (!search || `${company.clientName} ${company.clientId ?? ''}`.toLowerCase().includes(search)),
     );
   }
 
@@ -269,7 +333,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     const search = this.bulkTrainingSearch.trim().toLowerCase();
     if (!search) return this.bulkTrainingList;
     return this.bulkTrainingList.filter((training) =>
-      `${this.getTrainingLabel(training)} ${training.trainingId ?? ''}`.toLowerCase().includes(search)
+      `${this.getTrainingLabel(training)} ${training.trainingId ?? ''}`.toLowerCase().includes(search),
     );
   }
 
@@ -284,9 +348,10 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   get filteredEmailCompanies(): Client[] {
     const companyIds = new Set(this.allUserData.map((record) => String(record.location)));
     const search = this.emailCompanySearch.trim().toLowerCase();
-    return this.companies.filter((company) =>
-      companyIds.has(String(company.clientId))
-      && (!search || `${company.clientName} ${company.clientId ?? ''}`.toLowerCase().includes(search))
+    return this.companies.filter(
+      (company) =>
+        companyIds.has(String(company.clientId)) &&
+        (!search || `${company.clientName} ${company.clientId ?? ''}`.toLowerCase().includes(search)),
     );
   }
 
@@ -294,7 +359,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     const search = this.emailTrainingSearch.trim().toLowerCase();
     if (!search) return this.emailTrainingList;
     return this.emailTrainingList.filter((training) =>
-      `${this.getTrainingLabel(training)} ${training.trainingId ?? ''}`.toLowerCase().includes(search)
+      `${this.getTrainingLabel(training)} ${training.trainingId ?? ''}`.toLowerCase().includes(search),
     );
   }
 
@@ -302,8 +367,10 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     if (!this.emailCompanyId || !this.emailTrainingId) return [];
     const counts = new Map<string, number>();
     this.allUserData
-      .filter((record) => String(record.location) === this.emailCompanyId
-        && String(record.trainingId) === this.emailTrainingId)
+      .filter(
+        (record) =>
+          String(record.location) === this.emailCompanyId && String(record.trainingId) === this.emailTrainingId,
+      )
       .forEach((record) => {
         const value = this.getRecordDateValue(record);
         if (value) counts.set(value, (counts.get(value) || 0) + 1);
@@ -320,11 +387,15 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     if (!this.emailCompanyId || !this.emailTrainingId || !this.emailDateValue) return [];
     const search = this.emailUserSearch.trim().toLowerCase();
     return this.allUserData.filter((record) => {
-      const matchesSelection = String(record.location) === this.emailCompanyId
-        && String(record.trainingId) === this.emailTrainingId
-        && this.getRecordDateValue(record) === this.emailDateValue;
-      const matchesSearch = !search || `${record.userName || record.name || ''} ${record.email || ''} ${record.certificationNumber || ''}`
-        .toLowerCase().includes(search);
+      const matchesSelection =
+        String(record.location) === this.emailCompanyId &&
+        String(record.trainingId) === this.emailTrainingId &&
+        this.getRecordDateValue(record) === this.emailDateValue;
+      const matchesSearch =
+        !search ||
+        `${record.userName || record.name || ''} ${record.email || ''} ${record.certificationNumber || ''}`
+          .toLowerCase()
+          .includes(search);
       return matchesSelection && matchesSearch;
     });
   }
@@ -338,14 +409,16 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   }
 
   get allVisibleEmailUsersSelected(): boolean {
-    return this.selectableEmailUsers.length > 0
-      && this.selectableEmailUsers.every((user) => this.selectedEmailUserIds.has(String(user.certificationDataId)));
+    return (
+      this.selectableEmailUsers.length > 0 &&
+      this.selectableEmailUsers.every((user) => this.selectedEmailUserIds.has(String(user.certificationDataId)))
+    );
   }
 
   getEmailTrainingCertificateCount(training: Training): number {
-    return this.allUserData.filter((record) =>
-      String(record.location) === this.emailCompanyId
-      && String(record.trainingId) === String(training.trainingId)
+    return this.allUserData.filter(
+      (record) =>
+        String(record.location) === this.emailCompanyId && String(record.trainingId) === String(training.trainingId),
     ).length;
   }
 
@@ -353,6 +426,194 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     return this.emailTotal ? Math.round((this.emailProcessed / this.emailTotal) * 100) : 0;
   }
 
+  get filteredExamTests(): TestDefinition[] {
+    const search = this.examTestSearch.trim().toLowerCase();
+    const cohortEmails = new Set(
+      this.allUserData
+        .filter(
+          (record) =>
+            String(record.location) === this.emailCompanyId && String(record.trainingId) === this.emailTrainingId,
+        )
+        .map((record) =>
+          String(record.email || '')
+            .trim()
+            .toLowerCase(),
+        )
+        .filter(Boolean),
+    );
+    const reportableTestIds = new Set(
+      this.examResults
+        .filter((result) =>
+          cohortEmails.has(
+            String(result.username || '')
+              .trim()
+              .toLowerCase(),
+          ),
+        )
+        .map((result) => String(result.testId ?? '')),
+    );
+
+    return this.examTests.filter(
+      (test) =>
+        String(test.trainingId ?? '') === this.emailTrainingId &&
+        reportableTestIds.has(String(test.testId ?? '')) &&
+        (!search ||
+          `${test.displayName || test.testTitle || test.testName} ${test.testId}`.toLowerCase().includes(search)),
+    );
+  }
+
+  get selectedExamTest(): TestDefinition | undefined {
+    return this.examTests.find((test) => String(test.testId) === this.examTestId);
+  }
+
+  toggleExamTestDropdown(): void {
+    if (!this.emailTrainingId || this.isExamExporting) return;
+    this.isExamTestDropdownOpen = !this.isExamTestDropdownOpen;
+    this.isEmailCompanyDropdownOpen = false;
+    this.isEmailTrainingDropdownOpen = false;
+    this.isEmailDateDropdownOpen = false;
+    if (this.isExamTestDropdownOpen) this.examTestSearch = '';
+  }
+
+  selectExamTest(test: TestDefinition): void {
+    this.examTestId = String(test.testId || '');
+    this.examTestSearch = test.displayName || test.testTitle || test.testName;
+    this.isExamTestDropdownOpen = false;
+  }
+
+  async generateExamDetails(): Promise<void> {
+    if (!this.emailCompanyId || !this.emailTrainingId || !this.examTestId || !this.emailDateValue) {
+      this.notifier.warningToastr('Select a company, training, training/test, and date.');
+      return;
+    }
+    if (!this.authService.isServerAuthenticated()) {
+      this.notifier.warningToastr(
+        'Sign in with your server admin account before generating the report.',
+        'Authentication required',
+      );
+      return;
+    }
+
+    const suggestedName = `Exam_Details_${this.emailTrainingId}_${this.emailDateValue}.xlsx`;
+    let fileHandle: SaveFileHandle | null;
+    try {
+      fileHandle = await this.chooseExcelLocation(suggestedName);
+    } catch (error: any) {
+      if (error?.name === 'AbortError') {
+        this.examExportStatus = 'Download cancelled.';
+        return;
+      }
+      throw error;
+    }
+
+    this.isExamExporting = true;
+    this.examExportProgress = 5;
+    this.examExportStatus = 'Preparing exam details...';
+    try {
+      const params = new URLSearchParams({
+        companyId: this.emailCompanyId,
+        trainingId: this.emailTrainingId,
+        testId: this.examTestId,
+        trainingDate: this.emailDateValue,
+      });
+      const response = await lastValueFrom(
+        this.http
+          .get(`${environment.apiBaseUrl.replace(/\/+$/, '')}/results/exam-details-export?${params.toString()}`, {
+            observe: 'events',
+            responseType: 'blob',
+            reportProgress: true,
+          })
+          .pipe(
+            tap((event) => {
+              if (event.type === HttpEventType.DownloadProgress) {
+                this.examExportProgress = event.total
+                  ? Math.min(90, 10 + Math.round((event.loaded / event.total) * 80))
+                  : Math.max(this.examExportProgress, 45);
+                this.examExportStatus = 'Downloading Excel report...';
+              }
+            }),
+          ),
+      );
+      if (!(response instanceof HttpResponse) || !response.body || response.body.size === 0) {
+        this.notifier.warningToastr('No test records found for the selected filters.');
+        this.examExportStatus = 'No test records found.';
+        return;
+      }
+
+      const disposition = response.headers.get('content-disposition') || '';
+      const matchedName = /filename\*?=(?:UTF-8''|\")?([^\";]+)/i.exec(disposition)?.[1];
+      const fileName = matchedName ? decodeURIComponent(matchedName.replace(/\"/g, '').trim()) : suggestedName;
+      this.examExportProgress = 95;
+      this.examExportStatus = 'Saving Excel report...';
+      await this.saveExcel(response.body, fileHandle, fileName);
+      this.examExportProgress = 100;
+      this.examExportStatus = 'Excel report downloaded successfully.';
+      this.notifier.successToastr(this.examExportStatus);
+    } catch (error: any) {
+      const message =
+        error?.status === 404
+          ? 'No test records found for the selected filters.'
+          : 'Could not generate the exam details Excel.';
+      this.examExportStatus = message;
+      this.notifier.warningToastr(message, 'Generation failed');
+    } finally {
+      this.isExamExporting = false;
+    }
+  }
+  async generateAndEmailExamDetails(): Promise<void> {
+    const recipientEmail = this.examRecipientEmail.trim();
+    if (!this.emailCompanyId || !this.emailTrainingId || !this.examTestId || !this.emailDateValue) {
+      this.notifier.warningToastr('Select a company, training, training/test, and date.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipientEmail)) {
+      this.notifier.warningToastr('Enter a valid recipient email address.');
+      return;
+    }
+    if (!this.authService.isServerAuthenticated()) {
+      this.notifier.warningToastr(
+        'Sign in with your server admin account before emailing the report.',
+        'Authentication required',
+      );
+      return;
+    }
+
+    this.isExamEmailing = true;
+    try {
+      await firstValueFrom(
+        this.apiClient.post<void>('/results/exam-details-email', {
+          recipientEmail,
+          companyId: Number(this.emailCompanyId),
+          trainingId: Number(this.emailTrainingId),
+          testId: Number(this.examTestId),
+          trainingDate: this.emailDateValue,
+        }),
+      );
+      this.notifier.successToastr(`Exam details Excel sent to ${recipientEmail}.`);
+    } catch (error: any) {
+      const message =
+        error?.status === 404
+          ? 'No test records found for the selected filters.'
+          : 'Could not generate and email the exam details Excel.';
+      this.notifier.warningToastr(message, 'Email failed');
+    } finally {
+      this.isExamEmailing = false;
+    }
+  }
+  private async loadExamTests(): Promise<void> {
+    try {
+      const [tests, results] = await Promise.all([
+        firstValueFrom(this.apiClient.get<TestDefinition[]>('/Test')),
+        firstValueFrom(this.apiClient.get<ExamResultListItem[]>('/results')),
+      ]);
+      this.examTests = tests;
+      this.examResults = results;
+    } catch (error) {
+      console.error('Could not load tests for exam export.', error);
+      this.examTests = [];
+      this.examResults = [];
+    }
+  }
   toggleEmailCompanyDropdown(): void {
     if (this.isBulkEmailSending) return;
     this.isEmailCompanyDropdownOpen = !this.isEmailCompanyDropdownOpen;
@@ -436,15 +697,19 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       return;
     }
     if (!this.authService.isServerAuthenticated()) {
-      this.notifier.warningToastr('Sign in with your server account before sending certificate emails.', 'Authentication required');
+      this.notifier.warningToastr(
+        'Sign in with your server account before sending certificate emails.',
+        'Authentication required',
+      );
       return;
     }
 
-    const records = this.allUserData.filter((record) =>
-      this.selectedEmailUserIds.has(String(record.certificationDataId))
-      && String(record.location) === this.emailCompanyId
-      && String(record.trainingId) === this.emailTrainingId
-      && this.getRecordDateValue(record) === this.emailDateValue
+    const records = this.allUserData.filter(
+      (record) =>
+        this.selectedEmailUserIds.has(String(record.certificationDataId)) &&
+        String(record.location) === this.emailCompanyId &&
+        String(record.trainingId) === this.emailTrainingId &&
+        this.getRecordDateValue(record) === this.emailDateValue,
     );
     const missingEmail = records.filter((record) => !String(record.email || '').trim()).length;
     const sendable = records.filter((record) => !!String(record.email || '').trim());
@@ -459,19 +724,23 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     let failed = 0;
     try {
       for (const record of sendable) {
-        const certificate = this.mapBulkCertificate(record);
+        const certificate = this.mapBulkCertificate(record, this.emailLogoUrl);
         const recipientEmail = String(record.email).trim();
         this.emailStatus = `Sending ${this.emailProcessed + 1} of ${this.emailTotal} to ${recipientEmail}...`;
         try {
           const bytes = await this.pdfService.generate(certificate);
           const fileName = `${this.sanitizeFilePart(certificate.userName, 'Participant')}-${this.sanitizeFilePart(certificate.trainingName, 'Training')}.pdf`;
-          const file = new File([new Blob([bytes], { type: 'application/pdf' })], fileName, { type: 'application/pdf' });
-          await firstValueFrom(this.apiClient.upload<void>('CertificateOperation/send-email', file, {
-            recipientEmail,
-            recipientName: certificate.userName,
-            trainingName: certificate.trainingName,
-            certificateNumber: certificate.certificateNumber
-          }));
+          const file = new File([new Blob([bytes], { type: 'application/pdf' })], fileName, {
+            type: 'application/pdf',
+          });
+          await firstValueFrom(
+            this.apiClient.upload<void>('CertificateOperation/send-email', file, {
+              recipientEmail,
+              recipientName: certificate.userName,
+              trainingName: certificate.trainingName,
+              certificateNumber: certificate.certificateNumber,
+            }),
+          );
         } catch (error) {
           failed++;
           console.error('Certificate email failed', { recipientEmail, error });
@@ -497,7 +766,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     const trainingIds = new Set(
       this.allUserData
         .filter((record) => String(record.location) === this.emailCompanyId)
-        .map((record) => String(record.trainingId))
+        .map((record) => String(record.trainingId)),
     );
     this.emailTrainingList = this.trainingList.filter((training) => trainingIds.has(String(training.trainingId)));
   }
@@ -559,16 +828,15 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   }
 
   getBulkCompanyCertificateCount(company: Client): number {
-    return this.allUserData.filter(
-      (record) => String(record.location) === String(company.clientId)
-    ).length;
+    return this.allUserData.filter((record) => String(record.location) === String(company.clientId)).length;
   }
 
   getBulkTrainingCertificateCount(training: Training): number {
-    return this.allUserData.filter((record) =>
-      String(record.location) === this.selectedCompanyId
-      && (!this.selectedBulkCityId || String(record.cityId ?? '') === this.selectedBulkCityId)
-      && String(record.trainingId) === String(training.trainingId)
+    return this.allUserData.filter(
+      (record) =>
+        String(record.location) === this.selectedCompanyId &&
+        (!this.selectedBulkCityId || String(record.cityId ?? '') === this.selectedBulkCityId) &&
+        String(record.trainingId) === String(training.trainingId),
     ).length;
   }
 
@@ -599,7 +867,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       const zip = new JSZip();
       this.bulkTotal = selectedRecords.length;
       for (const record of selectedRecords) {
-        const certificate = this.mapBulkCertificate(record);
+        const certificate = this.mapBulkCertificate(record, this.bulkLogoUrl);
         const bytes = await this.pdfService.generate(certificate);
         const folderName = this.sanitizeFilePart(certificate.trainingName, 'Training');
         const certificateNumber = this.sanitizeFilePart(certificate.certificateNumber, 'Certificate');
@@ -633,6 +901,25 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     this.userSearch = '';
   }
 
+  async onIndividualLogoSelected(event: Event): Promise<void> {
+    const file = this.getSelectedImageFile(event);
+    this.individualLogoName = file?.name || '';
+    this.certificate.logoUrl = file ? await this.readImageFile(file) : '';
+    this.revokePreviewUrl();
+  }
+
+  async onBulkLogoSelected(event: Event): Promise<void> {
+    const file = this.getSelectedImageFile(event);
+    this.bulkLogoName = file?.name || '';
+    this.bulkLogoUrl = file ? await this.readImageFile(file) : '';
+  }
+
+  async onEmailLogoSelected(event: Event): Promise<void> {
+    const file = this.getSelectedImageFile(event);
+    this.emailLogoName = file?.name || '';
+    this.emailLogoUrl = file ? await this.readImageFile(file) : '';
+  }
+
   individualDateChanged(): void {
     this.selectedUserId = '';
     this.userSearch = '';
@@ -653,6 +940,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   }
 
   selectTraining(training: Training): void {
+    const selectedLogoUrl = this.certificate.logoUrl || '';
     this.selectedTrainingId = String(training.trainingId ?? '');
     this.trainingSearch = this.getTrainingLabel(training);
     this.isTrainingDropdownOpen = false;
@@ -662,6 +950,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     this.getTrainingUsers();
     this.certificate = {
       ...this.createEmptyCertificate(),
+      logoUrl: selectedLogoUrl,
       trainingName: this.getTrainingLabel(training),
       coveredTopics: this.parseTopics(training.topicCovered, this.getTrainingLabel(training), training.trainingId),
       //certificateNumber: this.createCertificateNumber(training.trainingId)
@@ -681,11 +970,11 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       userName: this.formatPersonName(user.userName || user.name),
       marks: user.marks ?? user.totalPoints ?? null,
       completionType: user.completionType || 'assessment',
-      dateOfIssue: this.toDateInputValue(
-        user.issuedDate || user.date || user.certificationDate
-      ),
+      dateOfIssue: this.toDateInputValue(user.issuedDate || user.date || user.certificationDate),
       trainingHours: Number(user.days || 0) * 8,
-      location: user.locationName || this.formatCertificateLocation(user.clientName || this.getClientName(user.location), user.cityName),
+      location:
+        user.locationName ||
+        this.formatCertificateLocation(user.clientName || this.getClientName(user.location), user.cityName),
       trainerName: user.trainerName || '',
     };
     this.revokePreviewUrl();
@@ -705,7 +994,11 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     this.bulkTrainingSearch = '';
     this.bulkTrainingName = '';
     this.bulkCoveredTopics = '';
+    this.bulkLogoUrl = '';
+    this.bulkLogoName = '';
     this.bulkTrainingList = [];
+    this.bulkLogoUrl = '';
+    this.bulkLogoName = '';
     this.bulkProcessed = 0;
     this.bulkTotal = 0;
     this.bulkStatus = '';
@@ -718,10 +1011,15 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     this.emailCompanyId = '';
     this.emailTrainingId = '';
     this.emailDateValue = '';
+    this.examRecipientEmail = '';
     this.emailCompanySearch = '';
     this.emailTrainingSearch = '';
     this.emailUserSearch = '';
+    this.emailLogoUrl = '';
+    this.emailLogoName = '';
     this.emailTrainingList = [];
+    this.emailLogoUrl = '';
+    this.emailLogoName = '';
     this.selectedEmailUserIds.clear();
     this.isEmailCompanyDropdownOpen = false;
     this.isEmailTrainingDropdownOpen = false;
@@ -729,6 +1027,8 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     this.emailProcessed = 0;
     this.emailTotal = 0;
     this.emailStatus = '';
+    this.examExportProgress = 0;
+    this.examExportStatus = '';
   }
   clearAll(): void {
     this.selectedCompanyId = '';
@@ -748,6 +1048,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     this.emailCompanyId = '';
     this.emailTrainingId = '';
     this.emailDateValue = '';
+    this.examRecipientEmail = '';
     this.emailCompanySearch = '';
     this.emailTrainingSearch = '';
     this.emailUserSearch = '';
@@ -765,9 +1066,11 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     this.trainingSearch = '';
     this.userSearch = '';
     this.UserData = [];
+    this.individualLogoName = '';
     this.isTrainingDropdownOpen = false;
     this.isUserDropdownOpen = false;
     this.certificate = this.createEmptyCertificate();
+    this.individualLogoName = '';
     this.revokePreviewUrl();
   }
   async preview(): Promise<void> {
@@ -778,7 +1081,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       requestAnimationFrame(() => {
         document.getElementById('certificateLiveOutput')?.scrollIntoView({
           behavior: 'smooth',
-          block: 'start'
+          block: 'start',
         });
       });
     }, 'Certificate preview is ready.');
@@ -801,7 +1104,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     if (!this.authService.isServerAuthenticated()) {
       this.notifier.warningToastr(
         'Sign in with your server account before sending certificate emails.',
-        'Authentication required'
+        'Authentication required',
       );
       return;
     }
@@ -815,17 +1118,17 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     this.isSending = true;
     try {
       const bytes = await this.pdfService.generate(this.certificate);
-      const file = new File(
-        [new Blob([bytes], { type: 'application/pdf' })],
-        this.getCertificateFileName(),
-        { type: 'application/pdf' }
+      const file = new File([new Blob([bytes], { type: 'application/pdf' })], this.getCertificateFileName(), {
+        type: 'application/pdf',
+      });
+      await firstValueFrom(
+        this.apiClient.upload<void>('CertificateOperation/send-email', file, {
+          recipientEmail,
+          recipientName: this.certificate.userName,
+          trainingName: this.certificate.trainingName,
+          certificateNumber: this.certificate.certificateNumber,
+        }),
       );
-      await firstValueFrom(this.apiClient.upload<void>('CertificateOperation/send-email', file, {
-        recipientEmail,
-        recipientName: this.certificate.userName,
-        trainingName: this.certificate.trainingName,
-        certificateNumber: this.certificate.certificateNumber
-      }));
       this.notifier.successToastr(`Certificate sent to ${recipientEmail}.`);
     } catch (error) {
       console.error('Certificate email failed', error);
@@ -836,17 +1139,15 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   }
 
   getTrainingLabel(training: Training): string {
-    return String(training.displayName || '').trim()
-      || String(training.trainingName || '').trim()
-      || String(training.trainingId || 'Training');
+    return (
+      String(training.displayName || '').trim() ||
+      String(training.trainingName || '').trim() ||
+      String(training.trainingId || 'Training')
+    );
   }
 
   getTrainingTopicCount(training: Training): number {
-    return this.parseTopics(
-      training.topicCovered,
-      this.getTrainingLabel(training),
-      training.trainingId
-    ).length;
+    return this.parseTopics(training.topicCovered, this.getTrainingLabel(training), training.trainingId).length;
   }
 
   getTrainingUserCount(training: Training): number {
@@ -862,8 +1163,9 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       .trim()
       .replace(/\s+/g, ' ')
       .toLocaleLowerCase('en-IN')
-      .replace(/(^|[\s'-])([a-z])/g, (_match, separator: string, letter: string) =>
-        `${separator}${letter.toUpperCase()}`
+      .replace(
+        /(^|[\s'-])([a-z])/g,
+        (_match, separator: string, letter: string) => `${separator}${letter.toUpperCase()}`,
       );
   }
 
@@ -906,10 +1208,16 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   }
 
   private isCertificateReady(): boolean {
-    return !!this.selectedTrainingId && !!this.selectedUserId && !!this.certificate.userName.trim()
-      && !!this.certificate.trainingName.trim() && !!this.certificate.certificateNumber.trim()
-      && !!this.certificate.location.trim() && !!this.certificate.trainerName.trim()
-      && this.certificate.trainingHours > 0;
+    return (
+      !!this.selectedTrainingId &&
+      !!this.selectedUserId &&
+      !!this.certificate.userName.trim() &&
+      !!this.certificate.trainingName.trim() &&
+      !!this.certificate.certificateNumber.trim() &&
+      !!this.certificate.location.trim() &&
+      !!this.certificate.trainerName.trim() &&
+      this.certificate.trainingHours > 0
+    );
   }
 
   // private loadTrainingList(): void {
@@ -932,18 +1240,22 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
 
   // Future API integration: call this method instead of loadTrainingList().
   private loadTrainingList(): void {
-    this.trainingService.getPaged(1, 100).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (response) => {
-        this.trainingList = (response.items || [])
-          .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
-        this.updateBulkTrainingList(this.allUserData);
-      },
-      error: (error) => {
-        console.error('Failed to load training data.', { status: error.status });
-        this.trainingList = [];
-        this.notifier.warningToastr('Training list could not be loaded.');
-      }
-    });
+    this.trainingService
+      .getPaged(1, 100)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.trainingList = (response.items || []).sort(
+            (a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0),
+          );
+          this.updateBulkTrainingList(this.allUserData);
+        },
+        error: (error) => {
+          console.error('Failed to load training data.', { status: error.status });
+          this.trainingList = [];
+          this.notifier.warningToastr('Training list could not be loaded.');
+        },
+      });
   }
 
   private mapTraining(item: any): Training {
@@ -954,14 +1266,20 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       topicCovered: item.topicCovered ?? item.TopicCovered ?? item.TopicCoveredName ?? '',
       displayName: item.displayName ?? item.DisplayName ?? item.TrainingName ?? '',
       image: item.image ?? item.Image ?? '',
-      displayOrder: Number(item.displayOrder ?? item.DisplayOrder ?? 0)
+      displayOrder: Number(item.displayOrder ?? item.DisplayOrder ?? 0),
     };
   }
 
   private parseTopics(value?: string, trainingName = '', trainingId?: string | number): string[] {
     if (!value?.trim()) return this.getDefaultTopics(trainingName, trainingId);
-    const plainText = value.replace(/<[^>]*>/g, ' ').replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ');
-    const topics = plainText.split(',').map((topic) => topic.replace(/^[-\s]+/, '').trim()).filter(Boolean);
+    const plainText = value
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&nbsp;/g, ' ');
+    const topics = plainText
+      .split(',')
+      .map((topic) => topic.replace(/^[-\s]+/, '').trim())
+      .filter(Boolean);
     return topics.length ? topics : this.getDefaultTopics(trainingName, trainingId);
   }
 
@@ -972,7 +1290,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       return [
         'Integrated Management System Requirements',
         'Internal Audit Planning and Execution',
-        'Audit Findings and Corrective Actions'
+        'Audit Findings and Corrective Actions',
       ];
     }
 
@@ -981,7 +1299,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
         'IATF 16949 Standard Requirements',
         'Automotive Process Approach',
         'Internal Audit Planning and Execution',
-        'Nonconformity and Corrective Actions'
+        'Nonconformity and Corrective Actions',
       ];
     }
 
@@ -992,7 +1310,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
         'Statistical Process Control (SPC)',
         'Measurement System Analysis (MSA)',
         'Failure Mode and Effects Analysis (FMEA)',
-        'Control Plan'
+        'Control Plan',
       ];
     }
 
@@ -1004,7 +1322,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
         'Cause and Effect Diagram',
         'Scatter Diagram',
         'Control Chart',
-        'Stratification'
+        'Stratification',
       ];
     }
 
@@ -1015,7 +1333,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       'Practical Applications',
       'Case Studies and Exercises',
       'Assessment and Review',
-      'Continuous Improvement Actions'
+      'Continuous Improvement Actions',
     ];
     const testCounts = [3, 4, 6, 7];
     const seed = `${trainingId ?? ''}${trainingName}`;
@@ -1026,7 +1344,10 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   private createCertificateNumber(trainingId?: string | number, userId = 'PENDING'): string {
     const date = new Date();
     const ymd = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`;
-    const trainingCode = String(trainingId || 'TRN').replace(/\W/g, '').slice(-5).toUpperCase();
+    const trainingCode = String(trainingId || 'TRN')
+      .replace(/\W/g, '')
+      .slice(-5)
+      .toUpperCase();
     const sequence = (userId.match(/\d+/g)?.join('') || '1').slice(-6).padStart(6, '0');
     return `QLSS/${trainingCode}/${date.getFullYear()}/${sequence}`;
   }
@@ -1045,10 +1366,12 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     this.isCorrectingName = true;
 
     try {
-      const result = await firstValueFrom(this.trainingService.correctCertificateName({
-        currentName,
-        newName
-      }));
+      const result = await firstValueFrom(
+        this.trainingService.correctCertificateName({
+          currentName,
+          newName,
+        }),
+      );
 
       if (!result.updatedCount) {
         this.notifier.warningToastr('No matching records were found in Certifications_Data.');
@@ -1081,7 +1404,6 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     //   'Content-Type': 'application/json'
     // });
 
-
     // this.http.get(environment.certificateUrl, { headers: reqHeader, responseType: 'text' })
     //   .pipe(takeUntil(this.destroy$))
     //   .subscribe({
@@ -1096,38 +1418,42 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     //     }
     //   });
 
-    this.trainingService.getCertificationData()
+    this.trainingService
+      .getCertificationData()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (data) => { 
-          this.allUserData = Array.isArray(data) ? data : []; 
+        next: (data) => {
+          this.allUserData = Array.isArray(data) ? data : [];
           this.getTrainingUsers();
         },
         error: () => {
           this.allUserData = [];
           this.UserData = [];
-        }
+        },
       });
   }
 
-
   private getTrainingUsers(): void {
-    this.UserData = this.allUserData.filter((user) =>
-      String(user.location) === this.individualCompanyId
-      && String(user.trainingId) === this.selectedTrainingId
-      && this.toDateInputValue(user.issuedDate || user.date || user.certificationDate) === this.individualDate
-   );
+    this.UserData = this.allUserData.filter(
+      (user) =>
+        String(user.location) === this.individualCompanyId &&
+        String(user.trainingId) === this.selectedTrainingId &&
+        this.toDateInputValue(user.issuedDate || user.date || user.certificationDate) === this.individualDate,
+    );
   }
 
   private loadCompanies(): void {
-    this.clientService.getAll().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (companies) => {
-        this.companies = (companies || [])
-          .filter((company) => company.isActive !== false)
-          .sort((a, b) => a.clientName.localeCompare(b.clientName));
-      },
-      error: () => this.notifier.warningToastr('Company list could not be loaded.')
-    });
+    this.clientService
+      .getAll()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (companies) => {
+          this.companies = (companies || [])
+            .filter((company) => company.isActive !== false)
+            .sort((a, b) => a.clientName.localeCompare(b.clientName));
+        },
+        error: () => this.notifier.warningToastr('Company list could not be loaded.'),
+      });
   }
 
   private updateBulkTrainingList(records: CertificatePrintRecord[]): void {
@@ -1139,49 +1465,63 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       records
         .filter((record) => String(record.location) === this.selectedCompanyId)
         .filter((record) => !this.selectedBulkCityId || String(record.cityId ?? '') === this.selectedBulkCityId)
-        .map((record) => String(record.trainingId))
+        .map((record) => String(record.trainingId)),
     );
-    this.bulkTrainingList = this.trainingList.filter(
-      (training) => trainingIds.has(String(training.trainingId))
-    );
+    this.bulkTrainingList = this.trainingList.filter((training) => trainingIds.has(String(training.trainingId)));
   }
 
   private filterBulkRecords(records: CertificatePrintRecord[]): CertificatePrintRecord[] {
-    return records.filter((record) =>
-      String(record.location) === this.selectedCompanyId
-      && (!this.selectedBulkCityId || String(record.cityId ?? '') === this.selectedBulkCityId)
-      && (!this.selectedBulkTrainingId || String(record.trainingId) === this.selectedBulkTrainingId)
-      && !!String(record.certificationNumber || '').trim()
+    return records.filter(
+      (record) =>
+        String(record.location) === this.selectedCompanyId &&
+        (!this.selectedBulkCityId || String(record.cityId ?? '') === this.selectedBulkCityId) &&
+        (!this.selectedBulkTrainingId || String(record.trainingId) === this.selectedBulkTrainingId) &&
+        !!String(record.certificationNumber || '').trim(),
     );
   }
 
-  private mapBulkCertificate(record: CertificatePrintRecord): CertificateData {
-    const training = this.trainingList.find(
-      (item) => String(item.trainingId) === String(record.trainingId)
-    );
+  private mapBulkCertificate(record: CertificatePrintRecord, logoUrl = ''): CertificateData {
+    const training = this.trainingList.find((item) => String(item.trainingId) === String(record.trainingId));
     const defaultTrainingName = training
       ? this.getTrainingLabel(training)
-      : (record.trainingName || `Training ${record.trainingId}`);
-    const useBulkDetails = !!this.selectedBulkTrainingId
-      && String(record.trainingId) === this.selectedBulkTrainingId;
-    const trainingName = useBulkDetails && this.bulkTrainingName.trim()
-      ? this.bulkTrainingName.trim()
-      : defaultTrainingName;
+      : record.trainingName || `Training ${record.trainingId}`;
+    const useBulkDetails = !!this.selectedBulkTrainingId && String(record.trainingId) === this.selectedBulkTrainingId;
+    const trainingName =
+      useBulkDetails && this.bulkTrainingName.trim() ? this.bulkTrainingName.trim() : defaultTrainingName;
     return {
       userName: this.formatPersonName(record.userName || record.name),
-      coveredTopics: useBulkDetails && this.bulkCoveredTopics.trim()
-        ? this.parseTopics(this.bulkCoveredTopics, trainingName, record.trainingId)
-        : this.parseTopics(training?.topicCovered, trainingName, record.trainingId),
+      coveredTopics:
+        useBulkDetails && this.bulkCoveredTopics.trim()
+          ? this.parseTopics(this.bulkCoveredTopics, trainingName, record.trainingId)
+          : this.parseTopics(training?.topicCovered, trainingName, record.trainingId),
       completionType: record.completionType || 'assessment',
       marks: record.totalPoints ?? null,
       passingMarks: 60,
       trainingName,
       certificateNumber: record.certificationNumber,
       trainingHours: Number(record.days || 0) * 8,
-      location: record.locationName || this.formatCertificateLocation(record.clientName || this.getClientName(record.location), record.cityName),
+      location:
+        record.locationName ||
+        this.formatCertificateLocation(record.clientName || this.getClientName(record.location), record.cityName),
       trainerName: record.trainerName || '',
-      dateOfIssue: this.toDateInputValue(record.issuedDate || record.date)
+      dateOfIssue: this.toDateInputValue(record.issuedDate || record.date),
+      logoUrl,
     };
+  }
+
+  private getSelectedImageFile(event: Event): File | null {
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.[0] || null;
+    return file && file.type.startsWith('image/') ? file : null;
+  }
+
+  private readImageFile(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ''));
+      reader.onerror = () => reject(reader.error || new Error('Could not read logo file.'));
+      reader.readAsDataURL(file);
+    });
   }
 
   private getClientName(clientId: string | number | null | undefined): string {
@@ -1189,18 +1529,51 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     return company?.clientName || String(clientId ?? '');
   }
 
+  getClientImageUrl(imageName: string | null | undefined): string {
+    return imageName ? `assets/img/CustomerLogo/${encodeURIComponent(imageName)}` : '';
+  }
+
   private formatCertificateLocation(clientName: string, cityName?: string): string {
     return [clientName, cityName]
-      .map(value => String(value || '').trim())
+      .map((value) => String(value || '').trim())
       .filter(Boolean)
       .join(', ');
+  }
+  private async chooseExcelLocation(suggestedName: string): Promise<SaveFileHandle | null> {
+    const pickerWindow = window as FilePickerWindow;
+    if (!pickerWindow.showSaveFilePicker) return null;
+    return pickerWindow.showSaveFilePicker({
+      suggestedName,
+      types: [
+        {
+          description: 'Excel workbook',
+          accept: { 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'] },
+        },
+      ],
+    });
+  }
+
+  private async saveExcel(blob: Blob, fileHandle: SaveFileHandle | null, fileName: string): Promise<void> {
+    if (fileHandle) {
+      const writable = await fileHandle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      return;
+    }
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   private async chooseZipLocation(): Promise<SaveFileHandle | null> {
     const pickerWindow = window as FilePickerWindow;
     if (!pickerWindow.showSaveFilePicker) return null;
     return pickerWindow.showSaveFilePicker({
       suggestedName: `${this.getSelectedCompanyFileName()}_Certificates.zip`,
-      types: [{ description: 'ZIP archive', accept: { 'application/zip': ['.zip'] } }]
+      types: [{ description: 'ZIP archive', accept: { 'application/zip': ['.zip'] } }],
     });
   }
 
@@ -1219,9 +1592,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   }
 
   private getSelectedCompanyFileName(): string {
-    const company = this.companies.find(
-      (item) => String(item.clientId) === this.selectedCompanyId
-    );
+    const company = this.companies.find((item) => String(item.clientId) === this.selectedCompanyId);
     return this.sanitizeFilePart(company?.clientName, 'Company');
   }
 
@@ -1248,11 +1619,9 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   }
   private toDateInputValue(value: unknown): string {
     if (value instanceof Date) {
-      return Number.isNaN(value.getTime()) ? '' : this.formatDateParts(
-        value.getFullYear(),
-        value.getMonth() + 1,
-        value.getDate()
-      );
+      return Number.isNaN(value.getTime())
+        ? ''
+        : this.formatDateParts(value.getFullYear(), value.getMonth() + 1, value.getDate());
     }
 
     const text = String(value ?? '').trim();
@@ -1272,18 +1641,15 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
 
     // Supports unambiguous values such as "28 Jul 2026" without throwing.
     const parsed = new Date(text);
-    return Number.isNaN(parsed.getTime()) ? '' : this.formatDateParts(
-      parsed.getFullYear(),
-      parsed.getMonth() + 1,
-      parsed.getDate()
-    );
+    return Number.isNaN(parsed.getTime())
+      ? ''
+      : this.formatDateParts(parsed.getFullYear(), parsed.getMonth() + 1, parsed.getDate());
   }
 
   private formatDateParts(year: number, month: number, day: number): string {
     const candidate = new Date(year, month - 1, day);
-    const isValid = candidate.getFullYear() === year
-      && candidate.getMonth() === month - 1
-      && candidate.getDate() === day;
+    const isValid =
+      candidate.getFullYear() === year && candidate.getMonth() === month - 1 && candidate.getDate() === day;
 
     return isValid
       ? `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
@@ -1302,7 +1668,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       trainingHours: 8,
       location: 'Pune, India',
       trainerName: 'QLSS Training Faculty',
-      dateOfIssue: new Date().toISOString().slice(0, 10)
+      dateOfIssue: new Date().toISOString().slice(0, 10),
     };
   }
 
@@ -1312,4 +1678,5 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
     this.previewUrl = null;
   }
 }
+
 

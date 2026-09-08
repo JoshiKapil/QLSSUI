@@ -18,7 +18,7 @@ describe('ContactModalComponent', () => {
     await TestBed.configureTestingModule({
       imports: [FormsModule],
       declarations: [ContactModalComponent],
-      providers: [{ provide: NotifierService, useValue: notifier }]
+      providers: [{ provide: NotifierService, useValue: notifier }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ContactModalComponent);

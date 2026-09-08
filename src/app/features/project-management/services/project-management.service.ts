@@ -1,12 +1,10 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { environment } from "../../../../environments/environment";
-import {
-  ApiResponse,
-  unwrapApiResponse,
-} from "../../../core/models/api-response.model";
+import { ListPage } from '../../../shared/list-page';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { finalize, map, shareReplay } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
+import { ApiResponse, unwrapApiResponse } from '../../../core/models/api-response.model';
 import {
   PmAcknowledgement,
   PmActivity,
@@ -14,6 +12,7 @@ import {
   PmDashboard,
   PmEmailLog,
   PmEnquiry,
+  PmEnquiryMetadata,
   PmFollowUp,
   PmLookups,
   PmModuleLink,
@@ -26,11 +25,14 @@ import {
   PmUser,
   PmSetting,
   PmCustomerResponse,
-} from "../models/project-management.models";
+  PmProjectBilling,
+  PmProjectInvoice,
+} from '../models/project-management.models';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class ProjectManagementService {
   private readonly url = `${environment.apiBaseUrl}/project-management`;
+  private lookupsRequest$?: Observable<PmLookups>;
 
   constructor(private http: HttpClient) {}
 
@@ -38,19 +40,60 @@ export class ProjectManagementService {
     return map((value: ApiResponse<T> | T) => unwrapApiResponse<T>(value));
   }
 
+  reportSummary(): Observable<any> { return this.http.get<any>(this.url + '/reports/summary').pipe(this.unwrap<any>()); }
+  exportProjects(): Observable<Blob> { return this.http.get(this.url + '/reports/projects.csv', { responseType: 'blob' }); }
   dashboard(): Observable<PmDashboard> {
     return this.http
       .get<ApiResponse<PmDashboard> | PmDashboard>(`${this.url}/dashboard`)
       .pipe(this.unwrap<PmDashboard>());
   }
 
+  lookupPage(kind: string, page: ListPage): Observable<any[]> { return page.read<any>(this.http, this.url + '/lookup-pages/' + kind); }
   lookups(): Observable<PmLookups> {
-    return this.http
-      .get<ApiResponse<PmLookups> | PmLookups>(`${this.url}/lookups`)
-      .pipe(this.unwrap<PmLookups>());
+    if (!this.lookupsRequest$) {
+      this.lookupsRequest$ = this.http.get<ApiResponse<PmLookups> | PmLookups>(`${this.url}/lookups`).pipe(
+        this.unwrap<PmLookups>(),
+        shareReplay(1),
+        finalize(() => (this.lookupsRequest$ = undefined)),
+      );
+    }
+    return this.lookupsRequest$;
   }
 
-  enquiries(): Observable<PmEnquiry[]> {
+  enquiryMetadata(includeInactive = false): Observable<PmEnquiryMetadata> {
+    return this.http
+      .get<ApiResponse<PmEnquiryMetadata> | PmEnquiryMetadata>(`${this.url}/metadata/enquiry`, {
+        params: { includeInactive: String(includeInactive) },
+      })
+      .pipe(this.unwrap<PmEnquiryMetadata>());
+  }
+
+  saveEnquiryCategoryMetadata(id: number | null, body: any): Observable<PmEnquiryMetadata> {
+    const request = id
+      ? this.http.put<ApiResponse<PmEnquiryMetadata> | PmEnquiryMetadata>(
+          `${this.url}/metadata/enquiry/categories/${id}`,
+          body,
+        )
+      : this.http.post<ApiResponse<PmEnquiryMetadata> | PmEnquiryMetadata>(
+          `${this.url}/metadata/enquiry/categories`,
+          body,
+        );
+    return request.pipe(this.unwrap<PmEnquiryMetadata>());
+  }
+
+  saveEnquiryCategoryValue(id: number | null, body: any): Observable<PmEnquiryMetadata> {
+    const request = id
+      ? this.http.put<ApiResponse<PmEnquiryMetadata> | PmEnquiryMetadata>(
+          `${this.url}/metadata/enquiry/values/${id}`,
+          body,
+        )
+      : this.http.post<ApiResponse<PmEnquiryMetadata> | PmEnquiryMetadata>(`${this.url}/metadata/enquiry/values`, body);
+    return request.pipe(this.unwrap<PmEnquiryMetadata>());
+  }
+
+  enquiries(page?: ListPage): Observable<PmEnquiry[]> {
+    if (page) return page.read<PmEnquiry>(this.http, `${this.url}/enquiries`);
+
     return this.http
       .get<ApiResponse<PmEnquiry[]> | PmEnquiry[]>(`${this.url}/enquiries`)
       .pipe(this.unwrap<PmEnquiry[]>());
@@ -70,38 +113,26 @@ export class ProjectManagementService {
 
   updateEnquiry(id: number, body: any): Observable<PmEnquiry> {
     return this.http
-      .put<ApiResponse<PmEnquiry> | PmEnquiry>(
-        `${this.url}/enquiries/${id}`,
-        body,
-      )
+      .put<ApiResponse<PmEnquiry> | PmEnquiry>(`${this.url}/enquiries/${id}`, body)
       .pipe(this.unwrap<PmEnquiry>());
   }
 
-  assignEnquiry(
-    id: number,
-    userIds: number[],
-    primaryUserId?: number,
-  ): Observable<unknown> {
+  assignEnquiry(id: number, userIds: number[], primaryUserId?: number): Observable<unknown> {
     return this.http.put(`${this.url}/enquiries/${id}/assignments`, {
       userIds,
       primaryUserId: primaryUserId || null,
     });
   }
 
-  updateEnquiryStatus(
-    id: number,
-    status: string,
-    remark = "",
-  ): Observable<PmEnquiry> {
+  updateEnquiryStatus(id: number, status: string, remark = ''): Observable<PmEnquiry> {
     return this.http
-      .put<ApiResponse<PmEnquiry> | PmEnquiry>(
-        `${this.url}/enquiries/${id}/status`,
-        { status, remark },
-      )
+      .put<ApiResponse<PmEnquiry> | PmEnquiry>(`${this.url}/enquiries/${id}/status`, { status, remark })
       .pipe(this.unwrap<PmEnquiry>());
   }
 
-  quotations(): Observable<PmQuotation[]> {
+  quotations(page?: ListPage): Observable<PmQuotation[]> {
+    if (page) return page.read<PmQuotation>(this.http, `${this.url}/quotations`);
+
     return this.http
       .get<ApiResponse<PmQuotation[]> | PmQuotation[]>(`${this.url}/quotations`)
       .pipe(this.unwrap<PmQuotation[]>());
@@ -109,73 +140,56 @@ export class ProjectManagementService {
 
   quotation(id: number): Observable<PmQuotation> {
     return this.http
-      .get<ApiResponse<PmQuotation> | PmQuotation>(
-        `${this.url}/quotations/${id}`,
-      )
+      .get<ApiResponse<PmQuotation> | PmQuotation>(`${this.url}/quotations/${id}`)
       .pipe(this.unwrap<PmQuotation>());
   }
 
-  createQuotation(
-    enquiryId: number,
-    quotationTemplateId?: number,
-  ): Observable<PmQuotation> {
+  createQuotation(enquiryId: number, quotationTemplateId?: number): Observable<PmQuotation> {
     return this.http
-      .post<ApiResponse<PmQuotation> | PmQuotation>(
-        `${this.url}/quotations/from-enquiry/${enquiryId}`,
-        { quotationTemplateId: quotationTemplateId || null },
-      )
+      .post<ApiResponse<PmQuotation> | PmQuotation>(`${this.url}/quotations/from-enquiry/${enquiryId}`, {
+        quotationTemplateId: quotationTemplateId || null,
+      })
       .pipe(this.unwrap<PmQuotation>());
   }
 
   updateQuotation(id: number, body: any): Observable<PmQuotation> {
     return this.http
-      .put<ApiResponse<PmQuotation> | PmQuotation>(
-        `${this.url}/quotations/${id}`,
-        body,
-      )
+      .put<ApiResponse<PmQuotation> | PmQuotation>(`${this.url}/quotations/${id}`, body)
       .pipe(this.unwrap<PmQuotation>());
   }
 
   submitQuotation(id: number): Observable<PmQuotation> {
     return this.http
-      .post<ApiResponse<PmQuotation> | PmQuotation>(
-        `${this.url}/quotations/${id}/submit`,
-        {},
-      )
+      .post<ApiResponse<PmQuotation> | PmQuotation>(`${this.url}/quotations/${id}/submit`, {})
       .pipe(this.unwrap<PmQuotation>());
   }
 
   decideQuotation(
     id: number,
     action: string,
-    remark = "",
+    remark = '',
     sendAfterApproval = true,
     followUpDays = 2,
   ): Observable<PmQuotation> {
     return this.http
-      .post<ApiResponse<PmQuotation> | PmQuotation>(
-        `${this.url}/quotations/${id}/decision`,
-        { action, remark, sendAfterApproval, followUpDays },
-      )
+      .post<ApiResponse<PmQuotation> | PmQuotation>(`${this.url}/quotations/${id}/decision`, {
+        action,
+        remark,
+        sendAfterApproval,
+        followUpDays,
+      })
       .pipe(this.unwrap<PmQuotation>());
   }
 
-  sendQuotation(
-    id: number,
-    followUpDays = 2,
-    cc = "",
-  ): Observable<PmQuotation> {
+  sendQuotation(id: number, followUpDays = 2, cc = ''): Observable<PmQuotation> {
     return this.http
-      .post<ApiResponse<PmQuotation> | PmQuotation>(
-        `${this.url}/quotations/${id}/send`,
-        { followUpDays, cc },
-      )
+      .post<ApiResponse<PmQuotation> | PmQuotation>(`${this.url}/quotations/${id}/send`, { followUpDays, cc })
       .pipe(this.unwrap<PmQuotation>());
   }
 
   quotationPdf(id: number): Observable<Blob> {
     return this.http.get(`${this.url}/quotations/${id}/pdf`, {
-      responseType: "blob",
+      responseType: 'blob',
     });
   }
 
@@ -187,39 +201,25 @@ export class ProjectManagementService {
 
   approvalHistory(id: number): Observable<PmQuotationApprovalHistory[]> {
     return this.http
-      .get<
-        ApiResponse<PmQuotationApprovalHistory[]> | PmQuotationApprovalHistory[]
-      >(`${this.url}/quotations/${id}/approval-history`)
+      .get<ApiResponse<PmQuotationApprovalHistory[]> | PmQuotationApprovalHistory[]>(
+        `${this.url}/quotations/${id}/approval-history`,
+      )
       .pipe(this.unwrap<PmQuotationApprovalHistory[]>());
   }
 
   followUps(id: number): Observable<PmFollowUp[]> {
     return this.http
-      .get<ApiResponse<PmFollowUp[]> | PmFollowUp[]>(
-        `${this.url}/quotations/${id}/follow-ups`,
-      )
+      .get<ApiResponse<PmFollowUp[]> | PmFollowUp[]>(`${this.url}/quotations/${id}/follow-ups`)
       .pipe(this.unwrap<PmFollowUp[]>());
   }
 
-  createFollowUp(
-    id: number,
-    daysFromNow: number,
-    notes = "",
-  ): Observable<PmFollowUp> {
+  createFollowUp(id: number, daysFromNow: number, notes = ''): Observable<PmFollowUp> {
     return this.http
-      .post<ApiResponse<PmFollowUp> | PmFollowUp>(
-        `${this.url}/quotations/${id}/follow-ups`,
-        { daysFromNow, notes },
-      )
+      .post<ApiResponse<PmFollowUp> | PmFollowUp>(`${this.url}/quotations/${id}/follow-ups`, { daysFromNow, notes })
       .pipe(this.unwrap<PmFollowUp>());
   }
 
-  sendFollowUp(
-    id: number,
-    followUpId?: number,
-    notes = "",
-    cc = "",
-  ): Observable<unknown> {
+  sendFollowUp(id: number, followUpId?: number, notes = '', cc = ''): Observable<unknown> {
     return this.http.post(`${this.url}/quotations/${id}/follow-ups/send`, {
       followUpId: followUpId || null,
       notes,
@@ -227,7 +227,7 @@ export class ProjectManagementService {
     });
   }
 
-  completeFollowUp(followUpId: number, notes = ""): Observable<unknown> {
+  completeFollowUp(followUpId: number, notes = ''): Observable<unknown> {
     return this.http.post(`${this.url}/follow-ups/${followUpId}/complete`, {
       notes,
     });
@@ -235,30 +235,21 @@ export class ProjectManagementService {
 
   emailLogs(entityType: string, entityId: number): Observable<PmEmailLog[]> {
     return this.http
-      .get<ApiResponse<PmEmailLog[]> | PmEmailLog[]>(
-        `${this.url}/email-logs/${entityType}/${entityId}`,
-      )
+      .get<ApiResponse<PmEmailLog[]> | PmEmailLog[]>(`${this.url}/email-logs/${entityType}/${entityId}`)
       .pipe(this.unwrap<PmEmailLog[]>());
   }
 
   emailDeliveries(): Observable<PmEmailLog[]> {
     return this.http
-      .get<ApiResponse<PmEmailLog[]> | PmEmailLog[]>(
-        `${this.url}/operations/email-deliveries`,
-      )
+      .get<ApiResponse<PmEmailLog[]> | PmEmailLog[]>(`${this.url}/operations/email-deliveries`)
       .pipe(this.unwrap<PmEmailLog[]>());
   }
   retryEmail(id: number): Observable<unknown> {
-    return this.http.post(
-      `${this.url}/operations/email-deliveries/${id}/retry`,
-      {},
-    );
+    return this.http.post(`${this.url}/operations/email-deliveries/${id}/retry`, {});
   }
   settings(): Observable<PmSetting[]> {
     return this.http
-      .get<ApiResponse<PmSetting[]> | PmSetting[]>(
-        `${this.url}/operations/settings`,
-      )
+      .get<ApiResponse<PmSetting[]> | PmSetting[]>(`${this.url}/operations/settings`)
       .pipe(this.unwrap<PmSetting[]>());
   }
   saveSettings(body: any): Observable<unknown> {
@@ -266,21 +257,18 @@ export class ProjectManagementService {
   }
   customerResponses(): Observable<PmCustomerResponse[]> {
     return this.http
-      .get<ApiResponse<PmCustomerResponse[]> | PmCustomerResponse[]>(
-        `${this.url}/operations/customer-responses`,
-      )
+      .get<ApiResponse<PmCustomerResponse[]> | PmCustomerResponse[]>(`${this.url}/operations/customer-responses`)
       .pipe(this.unwrap<PmCustomerResponse[]>());
   }
   addCustomerResponse(body: any): Observable<PmCustomerResponse> {
     return this.http
-      .post<ApiResponse<PmCustomerResponse> | PmCustomerResponse>(
-        `${this.url}/operations/customer-responses`,
-        body,
-      )
+      .post<ApiResponse<PmCustomerResponse> | PmCustomerResponse>(`${this.url}/operations/customer-responses`, body)
       .pipe(this.unwrap<PmCustomerResponse>());
   }
 
-  projects(): Observable<PmProject[]> {
+  projects(page?: ListPage): Observable<PmProject[]> {
+    if (page) return page.read<PmProject>(this.http, `${this.url}/projects`);
+
     return this.http
       .get<ApiResponse<PmProject[]> | PmProject[]>(`${this.url}/projects`)
       .pipe(this.unwrap<PmProject[]>());
@@ -292,29 +280,65 @@ export class ProjectManagementService {
       .pipe(this.unwrap<PmProject>());
   }
 
+  projectBilling(projectId: number): Observable<PmProjectBilling> {
+    return this.http
+      .get<ApiResponse<PmProjectBilling> | PmProjectBilling>(`${this.url}/projects/${projectId}/billing`)
+      .pipe(this.unwrap<PmProjectBilling>());
+  }
+
+  saveProjectBilling(projectId: number, body: any): Observable<PmProjectBilling> {
+    return this.http
+      .put<ApiResponse<PmProjectBilling> | PmProjectBilling>(`${this.url}/projects/${projectId}/billing`, body)
+      .pipe(this.unwrap<PmProjectBilling>());
+  }
+
+  projectInvoices(projectId: number): Observable<PmProjectInvoice[]> {
+    return this.http
+      .get<ApiResponse<PmProjectInvoice[]> | PmProjectInvoice[]>(`${this.url}/projects/${projectId}/invoices`)
+      .pipe(this.unwrap<PmProjectInvoice[]>());
+  }
+
+  createProformaInvoice(projectId: number): Observable<PmProjectInvoice> {
+    return this.http
+      .post<ApiResponse<PmProjectInvoice> | PmProjectInvoice>(`${this.url}/projects/${projectId}/invoices/proforma`, {})
+      .pipe(this.unwrap<PmProjectInvoice>());
+  }
+
+  createTaxInvoice(projectId: number, installmentNo: number, cashReceived: boolean): Observable<PmProjectInvoice> {
+    return this.http
+      .post<ApiResponse<PmProjectInvoice> | PmProjectInvoice>(`${this.url}/projects/${projectId}/invoices/tax`, {
+        installmentNo,
+        cashReceived,
+      })
+      .pipe(this.unwrap<PmProjectInvoice>());
+  }
+
+  invoicePdf(invoiceId: number): Observable<Blob> {
+    return this.http.get(`${this.url}/invoices/${invoiceId}/pdf`, { responseType: 'blob' });
+  }
+
+  sendProjectInvoice(
+    invoiceId: number,
+    body: { to?: string; cc?: string; subject?: string; message?: string } = {},
+  ): Observable<PmProjectInvoice> {
+    return this.http
+      .post<ApiResponse<PmProjectInvoice> | PmProjectInvoice>(`${this.url}/invoices/${invoiceId}/send`, body)
+      .pipe(this.unwrap<PmProjectInvoice>());
+  }
+
   createProject(quotationId: number, body: any): Observable<PmProject> {
     return this.http
-      .post<ApiResponse<PmProject> | PmProject>(
-        `${this.url}/projects/from-quotation/${quotationId}`,
-        body,
-      )
+      .post<ApiResponse<PmProject> | PmProject>(`${this.url}/projects/from-quotation/${quotationId}`, body)
       .pipe(this.unwrap<PmProject>());
   }
 
   updateProject(id: number, body: any): Observable<PmProject> {
     return this.http
-      .put<ApiResponse<PmProject> | PmProject>(
-        `${this.url}/projects/${id}`,
-        body,
-      )
+      .put<ApiResponse<PmProject> | PmProject>(`${this.url}/projects/${id}`, body)
       .pipe(this.unwrap<PmProject>());
   }
 
-  assignProject(
-    id: number,
-    userIds: number[],
-    primaryUserId?: number,
-  ): Observable<unknown> {
+  assignProject(id: number, userIds: number[], primaryUserId?: number): Observable<unknown> {
     return this.http.put(`${this.url}/projects/${id}/assignments`, {
       userIds,
       primaryUserId: primaryUserId || null,
@@ -323,27 +347,19 @@ export class ProjectManagementService {
 
   activities(projectId: number): Observable<PmActivity[]> {
     return this.http
-      .get<ApiResponse<PmActivity[]> | PmActivity[]>(
-        `${this.url}/projects/${projectId}/activities`,
-      )
+      .get<ApiResponse<PmActivity[]> | PmActivity[]>(`${this.url}/projects/${projectId}/activities`)
       .pipe(this.unwrap<PmActivity[]>());
   }
 
   saveActivity(projectId: number, body: any): Observable<PmActivity> {
     return this.http
-      .post<ApiResponse<PmActivity> | PmActivity>(
-        `${this.url}/projects/${projectId}/activities`,
-        body,
-      )
+      .post<ApiResponse<PmActivity> | PmActivity>(`${this.url}/projects/${projectId}/activities`, body)
       .pipe(this.unwrap<PmActivity>());
   }
 
   updateActivity(activityId: number, body: any): Observable<PmActivity> {
     return this.http
-      .put<ApiResponse<PmActivity> | PmActivity>(
-        `${this.url}/activities/${activityId}`,
-        body,
-      )
+      .put<ApiResponse<PmActivity> | PmActivity>(`${this.url}/activities/${activityId}`, body)
       .pipe(this.unwrap<PmActivity>());
   }
 
@@ -351,22 +367,18 @@ export class ProjectManagementService {
     return this.http.delete(`${this.url}/activities/${activityId}`);
   }
 
-  requestClosure(projectId: number, remark = ""): Observable<unknown> {
+  requestClosure(projectId: number, remark = ''): Observable<unknown> {
     return this.http.post(`${this.url}/projects/${projectId}/closure/request`, {
       remark,
     });
   }
 
-  decideClosure(
-    projectId: number,
-    action: string,
-    remark = "",
-    sendCompletionEmail = true,
-  ): Observable<unknown> {
-    return this.http.post(
-      `${this.url}/projects/${projectId}/closure/decision`,
-      { action, remark, sendCompletionEmail },
-    );
+  decideClosure(projectId: number, action: string, remark = '', sendCompletionEmail = true): Observable<unknown> {
+    return this.http.post(`${this.url}/projects/${projectId}/closure/decision`, {
+      action,
+      remark,
+      sendCompletionEmail,
+    });
   }
 
   acknowledgement(projectId: number): Observable<PmAcknowledgement | null> {
@@ -378,39 +390,26 @@ export class ProjectManagementService {
   }
 
   acknowledge(projectId: number, body: any): Observable<unknown> {
-    return this.http.put(
-      `${this.url}/projects/${projectId}/acknowledgement`,
-      body,
-    );
+    return this.http.put(`${this.url}/projects/${projectId}/acknowledgement`, body);
   }
 
   acknowledgementPdf(projectId: number): Observable<Blob> {
-    return this.http.get(
-      `${this.url}/projects/${projectId}/acknowledgement/pdf`,
-      { responseType: "blob" },
-    );
+    return this.http.get(`${this.url}/projects/${projectId}/acknowledgement/pdf`, { responseType: 'blob' });
   }
 
-  sendAcknowledgement(
-    projectId: number,
-    cc = "",
-    message = "",
-  ): Observable<unknown> {
-    return this.http.post(
-      `${this.url}/projects/${projectId}/acknowledgement/send`,
-      { cc, message },
-    );
+  sendAcknowledgement(projectId: number, cc = '', message = ''): Observable<unknown> {
+    return this.http.post(`${this.url}/projects/${projectId}/acknowledgement/send`, { cc, message });
   }
 
   finalClose(projectId: number): Observable<unknown> {
     return this.http.post(`${this.url}/projects/${projectId}/final-close`, {});
   }
 
-  notifications(): Observable<PmNotification[]> {
+  notifications(page?: ListPage): Observable<PmNotification[]> {
+    if (page) return page.read<PmNotification>(this.http, `${this.url}/notifications`);
+
     return this.http
-      .get<ApiResponse<PmNotification[]> | PmNotification[]>(
-        `${this.url}/notifications`,
-      )
+      .get<ApiResponse<PmNotification[]> | PmNotification[]>(`${this.url}/notifications`)
       .pipe(this.unwrap<PmNotification[]>());
   }
 
@@ -418,110 +417,78 @@ export class ProjectManagementService {
     return this.http.post(`${this.url}/notifications/${id}/read`, {});
   }
 
-  users(): Observable<PmUser[]> {
-    return this.http
-      .get<ApiResponse<PmUser[]> | PmUser[]>(`${this.url}/users`)
-      .pipe(this.unwrap<PmUser[]>());
+  users(page?: ListPage): Observable<PmUser[]> {
+    if (page) return page.read<PmUser>(this.http, `${this.url}/users`);
+
+    return this.http.get<ApiResponse<PmUser[]> | PmUser[]>(`${this.url}/users`).pipe(this.unwrap<PmUser[]>());
   }
 
   changeRole(id: number, role: string): Observable<unknown> {
     return this.http.put(`${this.url}/users/${id}/role`, { role });
   }
 
-  quotationTemplates(): Observable<PmQuotationTemplate[]> {
+  quotationTemplates(page?: ListPage): Observable<PmQuotationTemplate[]> {
+    if (page) return page.read<PmQuotationTemplate>(this.http, `${this.url}/quotation-templates`);
+
     return this.http
-      .get<ApiResponse<PmQuotationTemplate[]> | PmQuotationTemplate[]>(
-        `${this.url}/quotation-templates`,
-      )
+      .get<ApiResponse<PmQuotationTemplate[]> | PmQuotationTemplate[]>(`${this.url}/quotation-templates`)
       .pipe(this.unwrap<PmQuotationTemplate[]>());
   }
 
-  saveQuotationTemplate(
-    id: number | null,
-    body: any,
-  ): Observable<PmQuotationTemplate> {
+  saveQuotationTemplate(id: number | null, body: any): Observable<PmQuotationTemplate> {
     const request = id
       ? this.http.put<ApiResponse<PmQuotationTemplate> | PmQuotationTemplate>(
           `${this.url}/quotation-templates/${id}`,
           body,
         )
-      : this.http.post<ApiResponse<PmQuotationTemplate> | PmQuotationTemplate>(
-          `${this.url}/quotation-templates`,
-          body,
-        );
+      : this.http.post<ApiResponse<PmQuotationTemplate> | PmQuotationTemplate>(`${this.url}/quotation-templates`, body);
     return request.pipe(this.unwrap<PmQuotationTemplate>());
   }
 
-  projectTemplates(): Observable<PmProjectTemplate[]> {
+  projectTemplates(page?: ListPage): Observable<PmProjectTemplate[]> {
+    if (page) return page.read<PmProjectTemplate>(this.http, `${this.url}/project-templates`);
+
     return this.http
-      .get<ApiResponse<PmProjectTemplate[]> | PmProjectTemplate[]>(
-        `${this.url}/project-templates`,
-      )
+      .get<ApiResponse<PmProjectTemplate[]> | PmProjectTemplate[]>(`${this.url}/project-templates`)
       .pipe(this.unwrap<PmProjectTemplate[]>());
   }
 
-  saveProjectTemplate(
-    id: number | null,
-    body: any,
-  ): Observable<PmProjectTemplate> {
+  saveProjectTemplate(id: number | null, body: any): Observable<PmProjectTemplate> {
     const request = id
-      ? this.http.put<ApiResponse<PmProjectTemplate> | PmProjectTemplate>(
-          `${this.url}/project-templates/${id}`,
-          body,
-        )
-      : this.http.post<ApiResponse<PmProjectTemplate> | PmProjectTemplate>(
-          `${this.url}/project-templates`,
-          body,
-        );
+      ? this.http.put<ApiResponse<PmProjectTemplate> | PmProjectTemplate>(`${this.url}/project-templates/${id}`, body)
+      : this.http.post<ApiResponse<PmProjectTemplate> | PmProjectTemplate>(`${this.url}/project-templates`, body);
     return request.pipe(this.unwrap<PmProjectTemplate>());
   }
 
-  attachments(
-    entityType: string,
-    entityId: number,
-  ): Observable<PmAttachment[]> {
+  attachments(entityType: string, entityId: number): Observable<PmAttachment[]> {
     return this.http
-      .get<ApiResponse<PmAttachment[]> | PmAttachment[]>(
-        `${this.url}/attachments/${entityType}/${entityId}`,
-      )
+      .get<ApiResponse<PmAttachment[]> | PmAttachment[]>(`${this.url}/attachments/${entityType}/${entityId}`)
       .pipe(this.unwrap<PmAttachment[]>());
   }
 
-  uploadAttachment(
-    entityType: string,
-    entityId: number,
-    file: File,
-  ): Observable<PmAttachment> {
+  uploadAttachment(entityType: string, entityId: number, file: File): Observable<PmAttachment> {
     const body = new FormData();
-    body.append("file", file, file.name);
+    body.append('file', file, file.name);
     return this.http
-      .post<ApiResponse<PmAttachment> | PmAttachment>(
-        `${this.url}/attachments/${entityType}/${entityId}`,
-        body,
-      )
+      .post<ApiResponse<PmAttachment> | PmAttachment>(`${this.url}/attachments/${entityType}/${entityId}`, body)
       .pipe(this.unwrap<PmAttachment>());
   }
 
   attachmentFile(id: number): Observable<Blob> {
     return this.http.get(`${this.url}/attachments/file/${id}`, {
-      responseType: "blob",
+      responseType: 'blob',
     });
   }
 
   moduleLinks(projectId: number): Observable<PmModuleLink[]> {
     return this.http
-      .get<ApiResponse<PmModuleLink[]> | PmModuleLink[]>(
-        `${this.url}/projects/${projectId}/module-links`,
-      )
+      .get<ApiResponse<PmModuleLink[]> | PmModuleLink[]>(`${this.url}/projects/${projectId}/module-links`)
       .pipe(this.unwrap<PmModuleLink[]>());
   }
 
   addModuleLink(projectId: number, body: any): Observable<PmModuleLink> {
     return this.http
-      .post<ApiResponse<PmModuleLink> | PmModuleLink>(
-        `${this.url}/projects/${projectId}/module-links`,
-        body,
-      )
+      .post<ApiResponse<PmModuleLink> | PmModuleLink>(`${this.url}/projects/${projectId}/module-links`, body)
       .pipe(this.unwrap<PmModuleLink>());
   }
 }

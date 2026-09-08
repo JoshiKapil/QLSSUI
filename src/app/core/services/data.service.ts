@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import * as pako from 'pako';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DataService {
   decrypt(data: string): any {
@@ -21,5 +21,4 @@ export class DataService {
       return null;
     }
   }
-
 }

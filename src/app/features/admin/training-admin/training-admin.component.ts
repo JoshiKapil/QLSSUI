@@ -10,7 +10,7 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-training-admin',
   templateUrl: './training-admin.component.html',
-  styleUrls: ['./training-admin.component.scss']
+  styleUrls: ['./training-admin.component.scss'],
 })
 export class TrainingAdminComponent implements OnInit, OnDestroy {
   readonly title = 'Training';
@@ -35,7 +35,7 @@ export class TrainingAdminComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private notifier: NotifierService,
-    private trainingService: TrainingManagementService
+    private trainingService: TrainingManagementService,
     // private http: HttpClient, // Training.json path disabled.
     // private dataService: DataService // Training.json path disabled.
   ) {}
@@ -55,9 +55,11 @@ export class TrainingAdminComponent implements OnInit, OnDestroy {
       trainingName: ['', Validators.required],
       trainingDesc: ['', Validators.required],
       topicCovered: ['', []],
+      duration: ['', []],
+      modules: [null, [Validators.min(0)]],
       displayName: ['', Validators.required],
       image: ['', []],
-      displayOrder: ['', Validators.required]
+      displayOrder: ['', Validators.required],
     });
   }
 
@@ -90,21 +92,23 @@ export class TrainingAdminComponent implements OnInit, OnDestroy {
     //   });
 
     // Active path: database-backed API with server-side memory caching.
-    this.trainingService.getAll().pipe(takeUntil(this.Destroy$)).subscribe({
-      next: (trainings) => {
-        this.allRecords = trainings
-          .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
-        this.applySearch();
-      },
-      error: (error) => {
-        console.error('Failed to load training data.', { status: error.status });
-        this.allRecords = [];
-        this.records = [];
-        this.isLoading = false;
-        this.notifier.warningToastr('Training data could not be refreshed. Please try again.');
-      },
-      complete: () => (this.isLoading = false)
-    });
+    this.trainingService
+      .getAll()
+      .pipe(takeUntil(this.Destroy$))
+      .subscribe({
+        next: (trainings) => {
+          this.allRecords = trainings.sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
+          this.applySearch();
+        },
+        error: (error) => {
+          console.error('Failed to load training data.', { status: error.status });
+          this.allRecords = [];
+          this.records = [];
+          this.isLoading = false;
+          this.notifier.warningToastr('Training data could not be refreshed. Please try again.');
+        },
+        complete: () => (this.isLoading = false),
+      });
   }
 
   search(): void {
@@ -170,7 +174,6 @@ export class TrainingAdminComponent implements OnInit, OnDestroy {
     this.goToPage(Math.min(this.currentPage, this.totalPages));
   }
 
-
   // Legacy Training.json mapping retained as comments only.
   // private mapTrainingFromAsset(training: unknown): Training {
   // const item = training as Record<string, unknown>;
@@ -210,25 +213,26 @@ export class TrainingAdminComponent implements OnInit, OnDestroy {
     this.isSaving = true;
     const payload = { ...this.selectedRecord, ...this.form.value } as Training;
 
-    this.trainingService.save(payload).pipe(takeUntil(this.Destroy$)).subscribe({
-      next: (savedTraining) => {
-        this.upsertSavedTraining(savedTraining);
-        this.notifier.successToastr(`Training saved successfully.`);
-        this.resetForm();
-      },
-      error: () => {
-        this.isSaving = false;
-        this.notifier.warningToastr('Training could not be saved. Please try again.');
-      },
-      complete: () => (this.isSaving = false)
-    });
+    this.trainingService
+      .save(payload)
+      .pipe(takeUntil(this.Destroy$))
+      .subscribe({
+        next: (savedTraining) => {
+          this.upsertSavedTraining(savedTraining);
+          this.notifier.successToastr(`Training saved successfully.`);
+          this.resetForm();
+        },
+        error: () => {
+          this.isSaving = false;
+          this.notifier.warningToastr('Training could not be saved. Please try again.');
+        },
+        complete: () => (this.isSaving = false),
+      });
   }
 
   private upsertSavedTraining(savedTraining: Training): void {
     const savedId = String(savedTraining.trainingId || '');
-    const index = this.allRecords.findIndex(
-      (training) => String(training.trainingId || '') === savedId
-    );
+    const index = this.allRecords.findIndex((training) => String(training.trainingId || '') === savedId);
 
     if (index >= 0) {
       this.allRecords[index] = savedTraining;
@@ -236,14 +240,10 @@ export class TrainingAdminComponent implements OnInit, OnDestroy {
       this.allRecords.push(savedTraining);
     }
 
-    this.allRecords.sort(
-      (a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0)
-    );
+    this.allRecords.sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
     this.searchTerm = '';
     this.applySearch();
-    const savedIndex = this.records.findIndex(
-      (training) => String(training.trainingId || '') === savedId
-    );
+    const savedIndex = this.records.findIndex((training) => String(training.trainingId || '') === savedId);
     if (savedIndex >= 0) {
       this.goToPage(Math.floor(savedIndex / this.pageSize) + 1);
     }
@@ -311,7 +311,9 @@ export class TrainingAdminComponent implements OnInit, OnDestroy {
       return 'New Training';
     }
 
-    const selected = this.records.find((training) => String(training.trainingId || '') === String(this.selectedTrainingId));
+    const selected = this.records.find(
+      (training) => String(training.trainingId || '') === String(this.selectedTrainingId),
+    );
     return selected ? this.getTrainingLabel(selected) : 'New Training';
   }
 

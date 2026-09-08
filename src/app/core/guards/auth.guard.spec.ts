@@ -13,11 +13,7 @@ describe('AuthGuard', () => {
     router = jasmine.createSpyObj<Router>('Router', ['createUrlTree']);
 
     TestBed.configureTestingModule({
-      providers: [
-        AuthGuard,
-        { provide: AuthService, useValue: authService },
-        { provide: Router, useValue: router }
-      ]
+      providers: [AuthGuard, { provide: AuthService, useValue: authService }, { provide: Router, useValue: router }],
     });
     guard = TestBed.inject(AuthGuard);
   });

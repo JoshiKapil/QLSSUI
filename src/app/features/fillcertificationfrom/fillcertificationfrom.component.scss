@@ -103,7 +103,10 @@
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .saved-details-button:hover:not(:disabled),
@@ -230,7 +233,7 @@
   border-top: 1px solid rgba(37, 99, 235, 0.18);
   border-left: 1px solid rgba(37, 99, 235, 0.18);
   background: #fff;
-  content: "";
+  content: '';
   transform: rotate(45deg);
 }
 
@@ -286,11 +289,7 @@
 .training-search-option:hover,
 .training-search-option:focus-visible {
   outline: none;
-  background: linear-gradient(
-    90deg,
-    rgba(37, 99, 235, 0.12),
-    rgba(14, 165, 233, 0.07)
-  );
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.12), rgba(14, 165, 233, 0.07));
   color: #1d4ed8;
   transform: translateX(2px);
 }
@@ -322,4 +321,64 @@
 }
 
 /* Mobile form density and safe viewport spacing */
-@media(max-width:720px){.certification-form-page{padding:24px 0 36px}.certification-form-shell{width:100%;padding:0 14px}.certification-form-header{margin-bottom:18px}.certification-form-header h1{font-size:clamp(30px,9vw,42px);line-height:1.08}.certification-form-header p{font-size:15px;line-height:1.6}.certification-form{padding:16px;border-radius:14px}.form-grid{gap:14px}.form-field,.checkbox-field{gap:6px;font-size:14px}.form-field input,.form-field select,.training-dropdown-toggle{min-height:48px;padding:10px 12px;font-size:16px}.form-actions{display:grid;grid-template-columns:1fr;margin-top:20px}.form-actions .btn{width:100%;min-height:48px}.training-search-menu{position:fixed;z-index:1200;top:auto;right:12px;bottom:max(12px,env(safe-area-inset-bottom));left:12px;max-height:min(58vh,430px);border-radius:18px}.returning-user-help{padding:13px}}
+@media (max-width: 720px) {
+  .certification-form-page {
+    padding: 24px 0 36px;
+  }
+  .certification-form-shell {
+    width: 100%;
+    padding: 0 14px;
+  }
+  .certification-form-header {
+    margin-bottom: 18px;
+  }
+  .certification-form-header h1 {
+    font-size: clamp(30px, 9vw, 42px);
+    line-height: 1.08;
+  }
+  .certification-form-header p {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .certification-form {
+    padding: 16px;
+    border-radius: 14px;
+  }
+  .form-grid {
+    gap: 14px;
+  }
+  .form-field,
+  .checkbox-field {
+    gap: 6px;
+    font-size: 14px;
+  }
+  .form-field input,
+  .form-field select,
+  .training-dropdown-toggle {
+    min-height: 48px;
+    padding: 10px 12px;
+    font-size: 16px;
+  }
+  .form-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-top: 20px;
+  }
+  .form-actions .btn {
+    width: 100%;
+    min-height: 48px;
+  }
+  .training-search-menu {
+    position: fixed;
+    z-index: 1200;
+    top: auto;
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    left: 12px;
+    max-height: min(58vh, 430px);
+    border-radius: 18px;
+  }
+  .returning-user-help {
+    padding: 13px;
+  }
+}

@@ -1,0 +1,289 @@
+<section class="page">
+  <header>
+    <div>
+      <small>SALES / QUOTATION</small>
+      <h1>Quotations</h1>
+      <p>
+        Prepare → Submit → SuperAdmin Approve → View PDF → Send to Client → Follow-up → Client Confirmation. Same PM
+        working style, with item-wise Zeiss pricing.
+      </p>
+    </div>
+  </header>
+
+
+  <div class="split">
+    <article class="panel listPane">
+      <app-list-pager [compact]="true" [page]="quotationsPage" (changed)="reloadquotationsPage()"></app-list-pager>
+      <button
+        class="listRow"
+        *ngFor="let x of filtered"
+        [class.active]="selected?.quotationId === x.quotationId"
+        (click)="select(x)"
+      >
+        <div>
+          <strong>{{ x.quotationNo }}</strong>
+          <span>{{ x.customerName }}</span>
+        </div>
+        <small>{{ x.quotationDate | date: 'dd-MMM-yyyy' }}</small>
+        <span class="stage">{{ x.status }}</span>
+      </button>
+    </article>
+    <article class="panel" *ngIf="selected as x">
+      <div class="detailHead">
+        <div>
+          <small>{{ x.enquiryNo }}</small>
+          <h2>{{ x.quotationNo }}</h2>
+          <p>{{ x.customerName }}</p>
+        </div>
+        <div class="command">
+          <button class="btn secondary" (click)="viewPdf()">
+            <i class="fas fa-eye"></i>
+            View PDF
+          </button>
+          <button
+            class="btn secondary"
+            *ngIf="x.status === 'Draft Quotation' || x.status === 'Returned for Modification'"
+            (click)="openEdit()"
+          >
+            Edit
+          </button>
+          <button
+            [disabled]="saving"
+            class="btn primary"
+            *ngIf="x.status === 'Draft Quotation' || x.status === 'Returned for Modification'"
+            (click)="submit()"
+          >
+            Submit
+          </button>
+          <button
+            [disabled]="saving"
+            class="btn success"
+            *ngIf="isSuperAdmin && x.status === 'Approval Pending'"
+            (click)="decision('Approve')"
+          >
+            Approve
+          </button>
+          <button
+            [disabled]="saving"
+            class="btn danger"
+            *ngIf="isSuperAdmin && x.status === 'Approval Pending'"
+            (click)="decision('Reject')"
+          >
+            Reject
+          </button>
+          <button
+            [disabled]="saving"
+            class="btn secondary"
+            *ngIf="isSuperAdmin && x.status === 'Approval Pending'"
+            (click)="decision('Return')"
+          >
+            Return
+          </button>
+          <button
+            class="btn primary"
+            *ngIf="x.status === 'Quotation Approved' || x.status === 'Quotation Sent'"
+            (click)="openSend()"
+          >
+            <i class="fas fa-paper-plane"></i>
+            Send
+          </button>
+          <button
+            class="btn success"
+            *ngIf="x.status === 'Quotation Sent' && !x.clientResponse?.includes('CONFIRMED')"
+            (click)="openConfirm()"
+          >
+            Client Confirmed
+          </button>
+        </div>
+      </div>
+      <div class="facts">
+        <div>
+          <small>Subtotal</small>
+          <b>₹ {{ x.subtotalAmount | number: '1.2-2' }}</b>
+        </div>
+        <div>
+          <small>Discount</small>
+          <b>{{ x.discountPercent }}%</b>
+        </div>
+        <div>
+          <small>Taxable</small>
+          <b>₹ {{ x.taxableAmount | number: '1.2-2' }}</b>
+        </div>
+        <div>
+          <small>GST</small>
+          <b>{{ x.taxPercent }}%</b>
+        </div>
+        <div>
+          <small>Total incl. GST</small>
+          <b>₹ {{ x.totalAmount | number: '1.2-2' }}</b>
+        </div>
+      </div>
+      <div class="table">
+        <table>
+          <thead>
+            <tr>
+              <th>Part No.</th>
+              <th>Description</th>
+              <th>Qty</th>
+              <th>Unit Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let i of x.items">
+              <td>{{ i.partNumber }}</td>
+              <td>{{ i.partDescription }}</td>
+              <td>{{ i.quantity }}</td>
+              <td>₹ {{ i.unitPrice | number: '1.2-2' }}</td>
+              <td>₹ {{ i.lineTotal | number: '1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="terms">
+        <p>
+          <b>Payment:</b>
+          {{ x.paymentTerms }}
+        </p>
+        <p>
+          <b>Delivery:</b>
+          {{ x.deliveryTerms }}
+        </p>
+        <p>
+          <b>Special:</b>
+          {{ x.specialConditions || '-' }}
+        </p>
+      </div>
+      <div class="followHead">
+        <h3>Follow-ups</h3>
+        <button [disabled]="saving" class="btn secondary" (click)="addFollowUp()">+ Schedule</button>
+      </div>
+      <div class="row" *ngFor="let f of followups">
+        <div>
+          <strong>#{{ f.followUpNo }} - {{ f.dueOnUtc | date: 'dd-MMM-yyyy' }}</strong>
+          <small>{{ f.notes }}</small>
+        </div>
+        <div>
+          <span class="stage">{{ f.status }}</span>
+          <button [disabled]="saving" class="eye" *ngIf="f.status === 'Pending'" (click)="complete(f)">Complete</button>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+<div class="modal" *ngIf="edit && selected">
+  <div class="dialog" role="dialog" aria-modal="true" aria-label="Quotation and sales form">
+    <header>
+      <h2>Edit {{ selected.quotationNo }}</h2>
+      <button class="btn secondary" (click)="edit = false">Close</button>
+    </header>
+    <div class="form">
+      <label>
+        Quotation Date
+        <input type="date" [(ngModel)]="form.quotationDate" />
+      </label>
+      <label>
+        Validity Days
+        <input type="number" [(ngModel)]="form.validityDays" />
+      </label>
+      <label>
+        Discount %
+        <input type="number" [(ngModel)]="form.discountPercent" />
+      </label>
+      <label>
+        GST %
+        <input type="number" [(ngModel)]="form.taxPercent" />
+      </label>
+      <label class="span2">
+        Payment Terms
+        <textarea [(ngModel)]="form.paymentTerms"></textarea>
+      </label>
+      <label class="span2">
+        Delivery Terms
+        <textarea [(ngModel)]="form.deliveryTerms"></textarea>
+      </label>
+      <label class="span4">
+        Special Conditions
+        <textarea [(ngModel)]="form.specialConditions"></textarea>
+      </label>
+    </div>
+    <div class="itemTitle">
+      <h3>Quotation Items</h3>
+      <button class="btn secondary" (click)="addItem()">+ Add Item</button>
+    </div>
+    <div class="lookup-tools"><app-list-pager [compact]="true" [page]="instrumentsPage" (changed)="loadInstruments()"></app-list-pager></div>
+    <div class="itemline" *ngFor="let i of form.items; let n = index">
+      <select [(ngModel)]="i.instrumentId" (ngModelChange)="itemChanged(i)">
+        <option *ngFor="let z of instruments" [ngValue]="z.instrumentId">
+          {{ z.partNumber }} - {{ z.partDescription }}
+        </option>
+      </select>
+      <input aria-label="Quantity" type="number" min="1" [(ngModel)]="i.quantity" />
+      <input aria-label="Unit price" type="number" min="0" [(ngModel)]="i.unitPrice" />
+      <button class="btn danger" (click)="removeItem(n)" aria-label="Remove item" title="Remove item">&times;</button>
+    </div>
+    <div class="actions">
+      <button [disabled]="saving" class="btn primary" (click)="saveQuote()">Save Quotation</button>
+    </div>
+  </div>
+</div>
+<div class="modal" *ngIf="send && selected">
+  <div class="dialog small" role="dialog" aria-modal="true" aria-label="Quotation and sales form">
+    <header>
+      <h2>Send {{ selected.quotationNo }}</h2>
+      <button class="btn secondary" (click)="send = false">Close</button>
+    </header>
+    <div class="form">
+      <label class="span2">
+        To
+        <input [(ngModel)]="sendForm.to" />
+      </label>
+      <label class="span2">
+        CC
+        <input [(ngModel)]="sendForm.cc" />
+      </label>
+      <label class="span4">
+        Subject
+        <input [(ngModel)]="sendForm.subject" />
+      </label>
+      <label class="span4">
+        Message
+        <textarea rows="6" [(ngModel)]="sendForm.message"></textarea>
+      </label>
+      <label>
+        Follow-up after days
+        <input type="number" [(ngModel)]="sendForm.followUpDays" />
+      </label>
+    </div>
+    <div class="actions">
+      <button [disabled]="saving" class="btn primary" (click)="sendMail()">Send PDF by Email</button>
+    </div>
+  </div>
+</div>
+<div class="modal" *ngIf="confirm && selected">
+  <div class="dialog small" role="dialog" aria-modal="true" aria-label="Quotation and sales form">
+    <header>
+      <h2>Client Confirmation</h2>
+      <button class="btn secondary" (click)="confirm = false">Close</button>
+    </header>
+    <div class="form">
+      <label>
+        Date
+        <input type="date" [(ngModel)]="confirmForm.confirmedOn" />
+      </label>
+      <label>
+        Vendor ID / Code (if already received)
+        <input [(ngModel)]="confirmForm.vendorCode" />
+      </label>
+      <label class="span4">
+        Remarks
+        <textarea [(ngModel)]="confirmForm.remarks"></textarea>
+      </label>
+    </div>
+    <div class="actions">
+      <button [disabled]="saving" class="btn success" (click)="confirmClient()">
+        Confirm & Create Sales Lifecycle
+      </button>
+    </div>
+  </div>
+</div>

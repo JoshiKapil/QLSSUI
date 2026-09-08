@@ -1,17 +1,23 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { NotifierService } from '../services/notifier.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AdminGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router, private notifier: NotifierService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private notifier: NotifierService,
+  ) {}
 
-  canActivate(): boolean | UrlTree {
+  canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree {
     if (!this.authService.isLoggedIn()) {
-      return this.router.createUrlTree(['/login']);
+      return this.router.createUrlTree(['/login'], {
+        queryParams: { returnUrl: state.url },
+      });
     }
 
     if (!this.authService.isAdmin()) {
@@ -22,4 +28,3 @@ export class AdminGuard implements CanActivate {
     return true;
   }
 }
-

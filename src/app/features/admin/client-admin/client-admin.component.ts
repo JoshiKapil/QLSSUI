@@ -1,33 +1,33 @@
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { Client, ClientCity } from "../../../core/models/client.model";
-import { ClientManagementService } from "../../../core/services/client-management.service";
-import { NotifierService } from "../../../core/services/notifier.service";
-import { of, switchMap } from "rxjs";
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Client, ClientCity } from '../../../core/models/client.model';
+import { ClientManagementService } from '../../../core/services/client-management.service';
+import { NotifierService } from '../../../core/services/notifier.service';
+import { of, switchMap } from 'rxjs';
 
 @Component({
-  selector: "app-client-admin",
-  templateUrl: "./client-admin.component.html",
-  styleUrls: ["./client-admin.component.scss"],
+  selector: 'app-client-admin',
+  templateUrl: './client-admin.component.html',
+  styleUrls: ['./client-admin.component.scss'],
 })
 export class ClientAdminComponent implements OnInit {
-  @ViewChild("imageFileInput") imageFileInput?: ElementRef<HTMLInputElement>;
-  readonly searchPlaceholder = "Search by Company Name";
+  @ViewChild('imageFileInput') imageFileInput?: ElementRef<HTMLInputElement>;
+  readonly searchPlaceholder = 'Search by Company Name';
 
   form!: FormGroup;
   records: Client[] = [];
   selectedRecord: Client | null = null;
-  selectedClientId = "";
-  clientSearch = "";
-  searchTerm = "";
+  selectedClientId = '';
+  clientSearch = '';
+  searchTerm = '';
   isClientDropdownOpen = false;
   isLoading = false;
   isSaving = false;
-  busyClientId = "";
+  busyClientId = '';
   selectedImageFile: File | null = null;
-  imagePreviewUrl = "";
+  imagePreviewUrl = '';
   cities: ClientCity[] = [];
-  cityName = "";
+  cityName = '';
   editingCityIndex: number | null = null;
   currentPage = 1;
   pageSize = 10;
@@ -41,10 +41,10 @@ export class ClientAdminComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      clientName: ["", Validators.required],
-      clientNameDesc: ["", Validators.required],
-      image: [""],
-      displayOrder: ["", Validators.required],
+      clientName: ['', Validators.required],
+      clientNameDesc: ['', Validators.required],
+      image: [''],
+      displayOrder: ['', Validators.required],
     });
     this.loadRecords();
   }
@@ -58,7 +58,7 @@ export class ClientAdminComponent implements OnInit {
       },
       error: () => {
         this.records = [];
-        this.notifier.warningToastr("Clients could not be loaded.");
+        this.notifier.warningToastr('Clients could not be loaded.');
       },
       complete: () => (this.isLoading = false),
     });
@@ -72,7 +72,7 @@ export class ClientAdminComponent implements OnInit {
         this.currentPage = 1;
         this.goToPageValue = 1;
       },
-      error: () => this.notifier.warningToastr("Client search failed."),
+      error: () => this.notifier.warningToastr('Client search failed.'),
       complete: () => (this.isLoading = false),
     });
   }
@@ -81,9 +81,7 @@ export class ClientAdminComponent implements OnInit {
     const search = this.clientSearch.trim().toLowerCase();
     return !search
       ? this.records
-      : this.records.filter((client) =>
-          (client.clientName || "").toLowerCase().includes(search),
-        );
+      : this.records.filter((client) => (client.clientName || '').toLowerCase().includes(search));
   }
 
   get totalPages(): number {
@@ -127,12 +125,12 @@ export class ClientAdminComponent implements OnInit {
   }
 
   getSelectedClientLabel(): string {
-    return this.selectedRecord?.clientName || "New Company";
+    return this.selectedRecord?.clientName || 'New Company';
   }
 
   toggleClientDropdown(): void {
     this.isClientDropdownOpen = !this.isClientDropdownOpen;
-    if (this.isClientDropdownOpen) this.clientSearch = "";
+    if (this.isClientDropdownOpen) this.clientSearch = '';
   }
 
   selectClient(client: Client | null): void {
@@ -145,32 +143,31 @@ export class ClientAdminComponent implements OnInit {
     this.isLoading = true;
     this.clientService.getById(client.clientId).subscribe({
       next: (record) => this.edit(record || client),
-      error: () =>
-        this.notifier.warningToastr("Client details could not be loaded."),
+      error: () => this.notifier.warningToastr('Client details could not be loaded.'),
       complete: () => (this.isLoading = false),
     });
   }
 
   edit(record: Client): void {
     this.selectedRecord = record;
-    this.selectedClientId = String(record.clientId || "");
+    this.selectedClientId = String(record.clientId || '');
     this.clientSearch = record.clientName;
     this.form.patchValue(record);
-    this.cities = (record.cities || []).map(city => ({ ...city }));
+    this.cities = (record.cities || []).map((city) => ({ ...city }));
   }
 
   resetForm(): void {
     this.selectedRecord = null;
-    this.selectedClientId = "";
-    this.clientSearch = "";
+    this.selectedClientId = '';
+    this.clientSearch = '';
     this.isClientDropdownOpen = false;
     this.selectedImageFile = null;
-    this.imagePreviewUrl = "";
+    this.imagePreviewUrl = '';
     this.cities = [];
-    this.cityName = "";
+    this.cityName = '';
     this.editingCityIndex = null;
     if (this.imageFileInput) {
-      this.imageFileInput.nativeElement.value = "";
+      this.imageFileInput.nativeElement.value = '';
     }
     this.form.reset();
   }
@@ -186,7 +183,7 @@ export class ClientAdminComponent implements OnInit {
     const imageUpload$ = this.selectedImageFile
       ? this.clientService.uploadImage(this.selectedImageFile)
       : of({
-          fileName: String(formValue.image || this.selectedRecord?.image || ""),
+          fileName: String(formValue.image || this.selectedRecord?.image || ''),
         });
 
     imageUpload$
@@ -205,17 +202,13 @@ export class ClientAdminComponent implements OnInit {
       .subscribe({
         next: () => {
           this.notifier.successToastr(
-            this.selectedRecord
-              ? "Client updated successfully."
-              : "Client saved successfully.",
+            this.selectedRecord ? 'Client updated successfully.' : 'Client saved successfully.',
           );
           this.resetForm();
           this.loadRecords();
         },
         error: () => {
-          this.notifier.warningToastr(
-            "Client image or details could not be saved.",
-          );
+          this.notifier.warningToastr('Client image or details could not be saved.');
           this.isSaving = false;
         },
         complete: () => (this.isSaving = false),
@@ -225,19 +218,21 @@ export class ClientAdminComponent implements OnInit {
   saveCity(): void {
     const cityName = this.cityName.trim();
     if (!cityName) return;
-    const duplicate = this.cities.some((city, index) =>
-      index !== this.editingCityIndex && city.cityName.toLowerCase() === cityName.toLowerCase());
+    const duplicate = this.cities.some(
+      (city, index) => index !== this.editingCityIndex && city.cityName.toLowerCase() === cityName.toLowerCase(),
+    );
     if (duplicate) {
-      this.notifier.warningToastr("This city already exists for the company.");
+      this.notifier.warningToastr('This city already exists for the company.');
       return;
     }
     if (this.editingCityIndex === null) {
       this.cities = [...this.cities, { cityName, isActive: true }];
     } else {
       this.cities = this.cities.map((city, index) =>
-        index === this.editingCityIndex ? { ...city, cityName, isActive: true } : city);
+        index === this.editingCityIndex ? { ...city, cityName, isActive: true } : city,
+      );
     }
-    this.cityName = "";
+    this.cityName = '';
     this.editingCityIndex = null;
   }
 
@@ -249,7 +244,7 @@ export class ClientAdminComponent implements OnInit {
   removeCity(index: number): void {
     this.cities = this.cities.filter((_, cityIndex) => cityIndex !== index);
     if (this.editingCityIndex === index) {
-      this.cityName = "";
+      this.cityName = '';
       this.editingCityIndex = null;
     }
   }
@@ -258,38 +253,32 @@ export class ClientAdminComponent implements OnInit {
     this.busyClientId = String(record.clientId);
     this.clientService.setActive(record, isActive).subscribe({
       next: () => {
-        this.notifier.successToastr(
-          `Client ${isActive ? "activated" : "deactivated"} successfully.`,
-        );
+        this.notifier.successToastr(`Client ${isActive ? 'activated' : 'deactivated'} successfully.`);
         this.loadRecords();
       },
-      error: () =>
-        this.notifier.warningToastr("Client status could not be updated."),
-      complete: () => (this.busyClientId = ""),
+      error: () => this.notifier.warningToastr('Client status could not be updated.'),
+      complete: () => (this.busyClientId = ''),
     });
   }
 
   delete(record: Client): void {
-    if (!record.clientId || !window.confirm(`Delete "${record.clientName}"?`))
-      return;
+    if (!record.clientId || !window.confirm(`Delete "${record.clientName}"?`)) return;
     this.busyClientId = String(record.clientId);
     this.clientService.delete(record.clientId).subscribe({
       next: () => {
-        this.notifier.successToastr("Client deleted successfully.");
+        this.notifier.successToastr('Client deleted successfully.');
         if (this.selectedClientId === String(record.clientId)) this.resetForm();
         this.loadRecords();
       },
-      error: () => this.notifier.warningToastr("Client could not be deleted."),
-      complete: () => (this.busyClientId = ""),
+      error: () => this.notifier.warningToastr('Client could not be deleted.'),
+      complete: () => (this.busyClientId = ''),
     });
   }
 
   fieldError(key: string, label: string): string {
     const control = this.form.get(key);
-    if (!control?.touched || !control.errors) return "";
-    return control.errors["required"]
-      ? `${label} is required.`
-      : `${label} is invalid.`;
+    if (!control?.touched || !control.errors) return '';
+    return control.errors['required'] ? `${label} is required.` : `${label} is invalid.`;
   }
 
   trackByRecordId(index: number, record: Client): string | number {
@@ -297,7 +286,12 @@ export class ClientAdminComponent implements OnInit {
   }
 
   getCityNames(record: Client): string {
-    return record.cities?.filter(city => city.isActive !== false).map(city => city.cityName).join(', ') || 'No cities';
+    return (
+      record.cities
+        ?.filter((city) => city.isActive !== false)
+        .map((city) => city.cityName)
+        .join(', ') || 'No cities'
+    );
   }
 
   onImageSelected(event: Event): void {
@@ -307,28 +301,26 @@ export class ClientAdminComponent implements OnInit {
       return;
     }
 
-    if (!file.type.startsWith("image/")) {
-      this.notifier.warningToastr("Please select a valid image file.");
-      input.value = "";
+    if (!file.type.startsWith('image/')) {
+      this.notifier.warningToastr('Please select a valid image file.');
+      input.value = '';
       return;
     }
 
     const fileName = this.removeSpaces(file.name);
     this.selectedImageFile = new File([file], fileName, { type: file.type });
-    this.form.controls["image"].setValue(fileName);
+    this.form.controls['image'].setValue(fileName);
 
     const reader = new FileReader();
-    reader.onload = () => (this.imagePreviewUrl = String(reader.result || ""));
+    reader.onload = () => (this.imagePreviewUrl = String(reader.result || ''));
     reader.readAsDataURL(file);
   }
 
   getClientImageUrl(imageName: string | null | undefined): string {
-    return imageName
-      ? `assets/img/CustomerLogo/${encodeURIComponent(imageName)}`
-      : "";
+    return imageName ? `assets/img/CustomerLogo/${encodeURIComponent(imageName)}` : '';
   }
 
   private removeSpaces(fileName: string): string {
-    return fileName.replace(/\s+/g, "");
+    return fileName.replace(/\s+/g, '');
   }
 }

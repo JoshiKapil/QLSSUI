@@ -18,10 +18,10 @@
 
     <div class="admin-layout">
       <form class="admin-form" [formGroup]="form" (ngSubmit)="submit()">
-        <h2>{{ selectedRecord ? "Edit" : "Add" }} Company</h2>
+        <h2>{{ selectedRecord ? 'Edit' : 'Add' }} Company</h2>
 
-        <label class="form-field client-search-field"
-          >Company Name
+        <label class="form-field client-search-field">
+          Company Name
           <div class="client-search-control">
             <button
               class="btn btn-outline btn-small client-dropdown-toggle"
@@ -33,11 +33,7 @@
               {{ getSelectedClientLabel() }}
               <span class="dropdown-icon">&#9662;</span>
             </button>
-            <div
-              class="client-search-menu"
-              *ngIf="isClientDropdownOpen"
-              role="listbox"
-            >
+            <div class="client-search-menu" *ngIf="isClientDropdownOpen" role="listbox">
               <input
                 type="text"
                 [(ngModel)]="clientSearch"
@@ -45,80 +41,59 @@
                 placeholder="Search Company name"
                 autocomplete="off"
               />
+              <button class="client-search-option" type="button" (mousedown)="selectClient(null)">New Company</button>
               <button
                 class="client-search-option"
                 type="button"
-                (mousedown)="selectClient(null)"
-              >
-                New Company
-              </button>
-              <button
-                class="client-search-option"
-                type="button"
-                *ngFor="
-                  let client of filteredClientList;
-                  trackBy: trackByRecordId
-                "
+                *ngFor="let client of filteredClientList; trackBy: trackByRecordId"
                 (mousedown)="selectClient(client)"
               >
                 {{ client.clientName }}
               </button>
-              <div
-                class="client-search-empty"
-                *ngIf="!filteredClientList.length"
-              >
-                No Company found
-              </div>
+              <div class="client-search-empty" *ngIf="!filteredClientList.length">No Company found</div>
             </div>
           </div>
         </label>
 
-        <label class="form-field"
-          >Company Name
+        <label class="form-field">
+          Company Name
           <input type="text" formControlName="clientName" />
-          <small>{{ fieldError("clientName", "Company Name") }}</small>
+          <small>{{ fieldError('clientName', 'Company Name') }}</small>
         </label>
-        <label class="form-field"
-          >Description
+        <label class="form-field">
+          Description
           <textarea rows="4" formControlName="clientNameDesc"></textarea>
-          <small>{{ fieldError("clientNameDesc", "Description") }}</small>
+          <small>{{ fieldError('clientNameDesc', 'Description') }}</small>
         </label>
         <label class="form-field">
           Image
-          <input
-            type="text"
-            formControlName="image"
-            readonly
-            placeholder="No image selected"
-          />
-          <input
-            #imageFileInput
-            type="file"
-            accept="image/*"
-            (change)="onImageSelected($event)"
-          />
+          <input type="text" formControlName="image" readonly placeholder="No image selected" />
+          <input #imageFileInput type="file" accept="image/*" (change)="onImageSelected($event)" />
           <img
             class="client-image-preview"
             *ngIf="imagePreviewUrl || form.controls['image'].value"
-            [src]="
-              imagePreviewUrl || getClientImageUrl(form.controls['image'].value)
-            "
+            [src]="imagePreviewUrl || getClientImageUrl(form.controls['image'].value)"
             [alt]="form.controls['clientName'].value || 'Client logo preview'"
           />
           <small>The image is uploaded only when you save the Company.</small>
         </label>
-        <label class="form-field"
-          >Display Order
+        <label class="form-field">
+          Display Order
           <input type="number" formControlName="displayOrder" />
-          <small>{{ fieldError("displayOrder", "Display Order") }}</small>
+          <small>{{ fieldError('displayOrder', 'Display Order') }}</small>
         </label>
         <div class="form-field city-manager">
           <span>Cities</span>
           <div class="city-manager__entry">
-            <input type="text" [(ngModel)]="cityName" [ngModelOptions]="{ standalone: true }"
-              placeholder="e.g. Pune" (keydown.enter)="$event.preventDefault(); saveCity()" />
+            <input
+              type="text"
+              [(ngModel)]="cityName"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="e.g. Pune"
+              (keydown.enter)="$event.preventDefault(); saveCity()"
+            />
             <button class="btn btn-outline btn-small" type="button" (click)="saveCity()">
-              {{ editingCityIndex === null ? "Add City" : "Update City" }}
+              {{ editingCityIndex === null ? 'Add City' : 'Update City' }}
             </button>
           </div>
           <div class="city-manager__list" *ngIf="cities.length">
@@ -134,11 +109,9 @@
         </div>
         <div class="admin-actions">
           <button class="btn btn-primary" type="submit" [disabled]="isSaving">
-            {{ isSaving ? "Saving..." : selectedRecord ? "Update" : "Save" }}
+            {{ isSaving ? 'Saving...' : selectedRecord ? 'Update' : 'Save' }}
           </button>
-          <button class="btn btn-outline" type="button" (click)="resetForm()">
-            Clear
-          </button>
+          <button class="btn btn-outline" type="button" (click)="resetForm()">Clear</button>
         </div>
       </form>
 
@@ -161,7 +134,6 @@
         </div>
         <div class="admin-loading" *ngIf="isLoading">Loading Companies...</div>
       </div> -->
-    
 
       <div class="admin-table-wrap">
         <table class="admin-table" *ngIf="records.length; else emptyState">
@@ -187,9 +159,10 @@
                   *ngIf="record.image"
                   [src]="getClientImageUrl(record.image)"
                   [alt]="record.clientName + ' logo'"
-                /><span *ngIf="!record.image">No image</span>
+                />
+                <span *ngIf="!record.image">No image</span>
               </td>
-             <!-- <td>{{ record.displayOrder }}</td>
+              <!-- <td>{{ record.displayOrder }}</td>
                <td>
                 <span
                   class="status-pill"
@@ -198,13 +171,7 @@
                 >
               </td> -->
               <td class="row-actions">
-                <button
-                  class="table-link"
-                  type="button"
-                  (click)="selectClient(record)"
-                >
-                  Edit
-                </button>
+                <button class="table-link" type="button" (click)="selectClient(record)">Edit</button>
                 <!-- <button
                   class="table-link"
                   type="button"
@@ -225,34 +192,51 @@
             </tr>
           </tbody>
         </table>
-        <ng-template #emptyState
-          ><div class="admin-loading">No clients found.</div></ng-template
-        >
+        <ng-template #emptyState><div class="admin-loading">No clients found.</div></ng-template>
         <nav class="client-pagination" *ngIf="records.length" aria-label="Company table pagination">
           <div class="client-pagination__summary">
             <span class="client-pagination__dot"></span>
-            Showing <strong>{{ firstVisibleRecord }}–{{ lastVisibleRecord }}</strong> of
-            <strong>{{ records.length }}</strong> companies
+            Showing
+            <strong>{{ firstVisibleRecord }}–{{ lastVisibleRecord }}</strong>
+            of
+            <strong>{{ records.length }}</strong>
+            companies
           </div>
 
           <div class="client-pagination__pages" aria-label="Page numbers">
-            <button class="client-pagination__arrow" type="button" aria-label="Previous page"
-              [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+            <button
+              class="client-pagination__arrow"
+              type="button"
+              aria-label="Previous page"
+              [disabled]="currentPage === 1"
+              (click)="goToPage(currentPage - 1)"
+            >
               <i class="fas fa-chevron-left" aria-hidden="true"></i>
             </button>
-            <button class="client-pagination__page" type="button" *ngFor="let page of pageNumbers"
+            <button
+              class="client-pagination__page"
+              type="button"
+              *ngFor="let page of pageNumbers"
               [class.client-pagination__page--active]="page === currentPage"
-              [attr.aria-current]="page === currentPage ? 'page' : null" (click)="goToPage(page)">
+              [attr.aria-current]="page === currentPage ? 'page' : null"
+              (click)="goToPage(page)"
+            >
               {{ page }}
             </button>
-            <button class="client-pagination__arrow" type="button" aria-label="Next page"
-              [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+            <button
+              class="client-pagination__arrow"
+              type="button"
+              aria-label="Next page"
+              [disabled]="currentPage === totalPages"
+              (click)="goToPage(currentPage + 1)"
+            >
               <i class="fas fa-chevron-right" aria-hidden="true"></i>
             </button>
           </div>
 
           <div class="client-pagination__tools">
-            <label>Rows
+            <label>
+              Rows
               <select [ngModel]="pageSize" (ngModelChange)="changePageSize($event)">
                 <option [ngValue]="5">5</option>
                 <option [ngValue]="10">10</option>
@@ -262,8 +246,14 @@
             </label>
             <form class="client-pagination__jump" (ngSubmit)="submitGoToPage()">
               <label for="clientGoToPage">Go to</label>
-              <input id="clientGoToPage" type="number" min="1" [max]="totalPages"
-                [(ngModel)]="goToPageValue" name="goToPageValue" />
+              <input
+                id="clientGoToPage"
+                type="number"
+                min="1"
+                [max]="totalPages"
+                [(ngModel)]="goToPageValue"
+                name="goToPageValue"
+              />
               <button type="submit">Go</button>
             </form>
           </div>

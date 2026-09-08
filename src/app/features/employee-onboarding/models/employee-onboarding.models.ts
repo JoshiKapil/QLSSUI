@@ -102,6 +102,8 @@ export interface OnboardingEnrollmentSummary {
   employeeEmail: string;
   departmentId?: number;
   departmentName?: string;
+  trainingId?: number;
+  trainingName?: string;
   startOnUtc: string;
   dueOnUtc: string;
   graceUntilUtc: string;
@@ -221,9 +223,14 @@ export interface SavePlanRequest {
   isActive: boolean;
   welcomeMessage?: string;
   completionMessage?: string;
-  items: Array<{ videoId: number; sequenceNo: number; minimumWatchPercent: number; passingPercent: number; mustPassAssignment: boolean }>;
+  items: Array<{
+    videoId: number;
+    sequenceNo: number;
+    minimumWatchPercent: number;
+    passingPercent: number;
+    mustPassAssignment: boolean;
+  }>;
 }
-
 
 export interface OnboardingSetupOverview {
   activeDepartments: number;

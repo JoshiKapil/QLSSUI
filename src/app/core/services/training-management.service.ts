@@ -4,16 +4,18 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PagedResult, Training } from '../models/training.model';
 import { ApiClientService } from './api-client.service';
-import { CertificateNameCorrectionRequest, CertificateNameCorrectionResponse, CertificatePrintRecord } from '../models/certificate-data.model';
+import {
+  CertificateNameCorrectionRequest,
+  CertificateNameCorrectionResponse,
+  CertificatePrintRecord,
+} from '../models/certificate-data.model';
 
 @Injectable({ providedIn: 'root' })
 export class TrainingManagementService {
   private readonly endpoint = 'Training';
   private readonly operationEndpoint = 'TrainingOperation';
 
-  constructor(
-    private apiClient: ApiClientService
-  ) { }
+  constructor(private apiClient: ApiClientService) {}
 
   getAll(): Observable<Training[]> {
     return this.getPaged(1, 100).pipe(map((response) => response.items || []));
@@ -21,11 +23,20 @@ export class TrainingManagementService {
 
   search(query: string): Observable<Training[]> {
     const search = query.trim().toLowerCase();
-    return this.getAll().pipe(map((records) => records.filter((record) =>
-      !search ||
-      String(record.trainingName || '').toLowerCase().includes(search) ||
-      String(record.trainingId || '').toLowerCase().includes(search)
-    )));
+    return this.getAll().pipe(
+      map((records) =>
+        records.filter(
+          (record) =>
+            !search ||
+            String(record.trainingName || '')
+              .toLowerCase()
+              .includes(search) ||
+            String(record.trainingId || '')
+              .toLowerCase()
+              .includes(search),
+        ),
+      ),
+    );
   }
 
   save(record: Training): Observable<Training> {

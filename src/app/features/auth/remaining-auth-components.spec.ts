@@ -20,7 +20,7 @@ describe('remaining auth components', () => {
       'forgotPassword',
       'resetPassword',
       'updateProfile',
-      'getCurrentUser'
+      'getCurrentUser',
     ]);
     notifier = jasmine.createSpyObj<NotifierService>('NotifierService', ['successToastr']);
     router = jasmine.createSpyObj<Router>('Router', ['navigate']);
@@ -36,26 +36,21 @@ describe('remaining auth components', () => {
       address: 'Main Street',
       role: 'User',
       createdAt: '2026-01-01',
-      updatedAt: '2026-01-01'
+      updatedAt: '2026-01-01',
     });
 
     await TestBed.configureTestingModule({
       imports: [ReactiveFormsModule],
-      declarations: [
-        ChangePasswordComponent,
-        ForgotPasswordComponent,
-        ResetPasswordComponent,
-        EditProfileComponent
-      ],
+      declarations: [ChangePasswordComponent, ForgotPasswordComponent, ResetPasswordComponent, EditProfileComponent],
       providers: [
         { provide: AuthService, useValue: authService },
         { provide: NotifierService, useValue: notifier },
         { provide: Router, useValue: router },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { queryParamMap: { get: () => 'token-1' } } }
-        }
-      ]
+          useValue: { snapshot: { queryParamMap: { get: () => 'token-1' } } },
+        },
+      ],
     }).compileComponents();
   });
 
@@ -78,7 +73,7 @@ describe('remaining auth components', () => {
     expect(authService.changePassword).toHaveBeenCalledWith({
       oldPassword: 'old123',
       newPassword: 'new123',
-      confirmPassword: 'new123'
+      confirmPassword: 'new123',
     });
     expect(notifier.successToastr).toHaveBeenCalledWith('Password changed successfully.');
     expect(component.isSubmitting).toBeFalse();
@@ -106,7 +101,7 @@ describe('remaining auth components', () => {
     expect(authService.resetPassword).toHaveBeenCalledWith({
       token: 'token-1',
       newPassword: 'new123',
-      confirmPassword: 'new123'
+      confirmPassword: 'new123',
     });
     expect(router.navigate).toHaveBeenCalledWith(['/login']);
   });

@@ -14,7 +14,7 @@ import { EditProfileComponent } from './edit-profile/edit-profile.component';
     ForgotPasswordComponent,
     ResetPasswordComponent,
     ChangePasswordComponent,
-    EditProfileComponent
+    EditProfileComponent,
   ],
   imports: [SharedModule],
   exports: [
@@ -23,7 +23,7 @@ import { EditProfileComponent } from './edit-profile/edit-profile.component';
     ForgotPasswordComponent,
     ResetPasswordComponent,
     ChangePasswordComponent,
-    EditProfileComponent
-  ]
+    EditProfileComponent,
+  ],
 })
 export class AuthModule {}

@@ -76,12 +76,17 @@ const routingSource = fs.readFileSync(appRoutingPath, 'utf8');
 const routeMatches = Array.from(
   routingSource.matchAll(/\{\s*path:\s*['"]([^'"]*)['"][\s\S]*?loadChildren:/g)
 );
+const redirectRoutes = new Set(
+  Array.from(routingSource.matchAll(/\{\s*path:\s*['"]([^'"]*)['"][^{}]*redirectTo:/g))
+    .map((match) => normalizeRoute(match[1]))
+);
 
 const publicRoutes = Array.from(
   new Set(
     routeMatches
       .map((match) => normalizeRoute(match[1]))
       .filter((route) => route !== '**')
+      .filter((route) => !redirectRoutes.has(route))
       .filter((route) => !isExcluded(route))
   )
 ).sort((a, b) => {

@@ -5,3 +5,22 @@ dist/
 
 
 .codex-temp/
+# Temporary/build validation files
+work/
+**/tmp/
+
+# Local configuration containing secrets
+appsettings.Development.json
+# Generated temporary/build validation files
+/tmp/
+/work/
+
+# Local AI/development artifacts
+.codex-*
+.qlss-performance-backup/
+*.bak
+*.patch
+
+# Generated temporary/build folders
+/tmp/
+/work/

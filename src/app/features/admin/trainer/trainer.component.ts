@@ -1,25 +1,25 @@
-import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { Trainer } from "../../../core/models/trainer.model";
-import { NotifierService } from "../../../core/services/notifier.service";
-import { TrainerService } from "../../../core/services/trainer.service";
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Trainer } from '../../../core/models/trainer.model';
+import { NotifierService } from '../../../core/services/notifier.service';
+import { TrainerService } from '../../../core/services/trainer.service';
 
 @Component({
-  selector: "app-trainer",
-  templateUrl: "./trainer.component.html",
-  styleUrls: ["./trainer.component.scss"],
+  selector: 'app-trainer',
+  templateUrl: './trainer.component.html',
+  styleUrls: ['./trainer.component.scss'],
 })
 export class TrainerComponent implements OnInit {
-  readonly searchPlaceholder = "Search by Name, Mobile or Email";
+  readonly searchPlaceholder = 'Search by Name, Mobile or Email';
 
   form!: FormGroup;
   records: Trainer[] = [];
   selectedRecord: Trainer | null = null;
-  searchTerm = "";
+  searchTerm = '';
   isLoading = false;
   isSaving = false;
   isDeleting = false;
-  busyTrainerId = "";
+  busyTrainerId = '';
 
   constructor(
     private fb: FormBuilder,
@@ -34,11 +34,11 @@ export class TrainerComponent implements OnInit {
 
   private initForm(): void {
     this.form = this.fb.group({
-      name: ["", [Validators.required, Validators.maxLength(200)]],
-      mobile: ["", [Validators.required, Validators.pattern("^[0-9]{10}$")]],
-      email: ["", [Validators.required, Validators.email]],
-      address: ["", [Validators.maxLength(1000)]],
-      company: ["", [Validators.maxLength(1000)]],
+      name: ['', [Validators.required, Validators.maxLength(200)]],
+      mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      email: ['', [Validators.required, Validators.email]],
+      address: ['', [Validators.maxLength(1000)]],
+      company: ['', [Validators.maxLength(1000)]],
     });
   }
 
@@ -91,12 +91,12 @@ export class TrainerComponent implements OnInit {
 
     this.trainerService.save(payload).subscribe({
       next: () => {
-        this.notifier.successToastr("Trainer saved successfully.");
+        this.notifier.successToastr('Trainer saved successfully.');
         this.resetForm();
         this.loadRecords();
       },
       error: () => {
-        this.notifier.warningToastr("Trainer could not be saved.");
+        this.notifier.warningToastr('Trainer could not be saved.');
         this.isSaving = false;
       },
       complete: () => (this.isSaving = false),
@@ -111,21 +111,19 @@ export class TrainerComponent implements OnInit {
     this.busyTrainerId = String(record.trainerId);
     this.trainerService.setActive(record, isActive).subscribe({
       next: () => {
-        this.notifier.successToastr(
-          `Trainer ${isActive ? "activated" : "deactivated"} successfully.`,
-        );
+        this.notifier.successToastr(`Trainer ${isActive ? 'activated' : 'deactivated'} successfully.`);
         this.loadRecords();
       },
       error: () => {
-        this.notifier.warningToastr("Trainer status could not be updated.");
-        this.busyTrainerId = "";
+        this.notifier.warningToastr('Trainer status could not be updated.');
+        this.busyTrainerId = '';
       },
-      complete: () => (this.busyTrainerId = ""),
+      complete: () => (this.busyTrainerId = ''),
     });
   }
-  
+
   delete(record: Trainer): void {
-    if (!record.trainerId || !confirm("Delete this trainer?")) {
+    if (!record.trainerId || !confirm('Delete this trainer?')) {
       return;
     }
 
@@ -133,19 +131,14 @@ export class TrainerComponent implements OnInit {
     this.trainerService.delete(record.trainerId).subscribe({
       next: () => {
         // this.notifier.successToastr("Trainer deleted successfully.");
-        this.notifier.successToastr(
-          `Trainer ${record.isActive ? "activated" : "deactivated"} successfully.`,
-        );
-        if (
-          String(this.selectedRecord?.trainerId || "") ===
-          String(record.trainerId)
-        ) {
+        this.notifier.successToastr(`Trainer ${record.isActive ? 'activated' : 'deactivated'} successfully.`);
+        if (String(this.selectedRecord?.trainerId || '') === String(record.trainerId)) {
           this.resetForm();
         }
         this.loadRecords();
       },
       error: () => {
-        this.notifier.warningToastr("Trainer could not be deleted.");
+        this.notifier.warningToastr('Trainer could not be deleted.');
         this.isDeleting = false;
       },
       complete: () => (this.isDeleting = false),
@@ -155,18 +148,18 @@ export class TrainerComponent implements OnInit {
   fieldError(key: string, label: string): string {
     const control = this.form.get(key);
     if (!control?.touched || !control.errors) {
-      return "";
+      return '';
     }
 
-    if (control.errors["required"]) {
-      return label + " is required.";
+    if (control.errors['required']) {
+      return label + ' is required.';
     }
 
-    if (control.errors["maxlength"]) {
-      return label + " is too long.";
+    if (control.errors['maxlength']) {
+      return label + ' is too long.';
     }
 
-    return label + " is invalid.";
+    return label + ' is invalid.';
   }
 
   trackByTrainerId(index: number, record: Trainer): string | number {

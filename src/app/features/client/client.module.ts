@@ -5,6 +5,6 @@ import { ClientRoutingModule } from './client-routing.module';
 
 @NgModule({
   declarations: [ClientComponent],
-  imports: [SharedModule, ClientRoutingModule]
+  imports: [SharedModule, ClientRoutingModule],
 })
 export class ClientModule {}

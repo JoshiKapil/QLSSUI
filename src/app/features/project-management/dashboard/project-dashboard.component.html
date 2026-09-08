@@ -1,132 +1,484 @@
-<div class="pm-page">
-  <header class="pm-head">
-    <div>
-      <div class="pm-head__eyebrow">Project command center</div>
-      <h1>{{ isSuperAdmin ? 'Business delivery at a glance' : 'Your project workspace' }}</h1>
-      <p>Enquiries, quotation approvals, delivery health, follow-ups and closure actions in one role-aware view.</p>
-    </div>
-    <div class="pm-actions">
-      <a class="pm-btn pm-btn--ghost" routerLink="/workspace/enquiries"><i class="fas fa-plus"></i> New enquiry</a>
-      <a *ngIf="isSuperAdmin" class="pm-btn pm-btn--soft" routerLink="/workspace/approvals"><i class="fas fa-shield-check"></i> Approval queue</a>
-      <button class="pm-btn pm-btn--primary" (click)="load()"><i class="fas fa-rotate"></i> Refresh</button>
-    </div>
-  </header>
+<div class="pm-page dashboard-v5">
+  <section class="command-hero">
+    <div class="command-hero__glow command-hero__glow--one"></div>
+    <div class="command-hero__glow command-hero__glow--two"></div>
 
-  <p *ngIf="error" class="pm-error">{{ error }}</p>
-  <section *ngIf="loading" class="pm-card dashboard-loading"><i class="fas fa-circle-notch fa-spin"></i> Loading project intelligence...</section>
+    <div class="command-hero__copy">
+      <div class="command-hero__eyebrow">
+        <span></span>
+        QLSS PROJECT COMMAND CENTER
+      </div>
+      <h1>{{ isSuperAdmin ? 'Portfolio clarity. Faster decisions.' : 'Your delivery workspace, simplified.' }}</h1>
+      <p>
+        Track commercial pipeline, delivery health, customer follow-ups and closure actions from one focused workspace.
+      </p>
 
-  <section *ngIf="onboardingDashboard && isAdminLike" class="onboarding-alert">
-    <div class="onboarding-alert__icon"><i class="fas fa-graduation-cap"></i></div>
-    <div class="onboarding-alert__copy">
-      <small>EMPLOYEE ONBOARDING</small>
-      <strong>Induction attention center</strong>
-      <span>{{ onboardingDashboard.dueSoon }} due soon · {{ onboardingDashboard.blocked }} blocked · {{ onboardingDashboard.pendingAccessRequests }} approval pending</span>
+      <div class="command-hero__meta">
+        <span>
+          <i class="fas fa-user-shield"></i>
+          {{ role || 'User' }}
+        </span>
+        <span>
+          <i class="fas fa-calendar-day"></i>
+          {{ today | date: 'dd MMM yyyy' }}
+        </span>
+        <span>
+          <i class="fas fa-circle-check"></i>
+          Live project status
+        </span>
+      </div>
+
+      <div class="command-hero__actions">
+        <a class="hero-action hero-action--primary" routerLink="/workspace/enquiries">
+          <i class="fas fa-plus"></i>
+          <span>
+            <b>New enquiry</b>
+            <small>Start customer opportunity</small>
+          </span>
+        </a>
+        <a class="hero-action" routerLink="/workspace/projects">
+          <i class="fas fa-diagram-project"></i>
+          <span>
+            <b>Open projects</b>
+            <small>Manage delivery</small>
+          </span>
+        </a>
+        <a *ngIf="isSuperAdmin" class="hero-action" routerLink="/workspace/approvals">
+          <i class="fas fa-shield-check"></i>
+          <span>
+            <b>Approvals</b>
+            <small>{{ data?.summary?.quotationsPendingApproval || 0 }} waiting</small>
+          </span>
+        </a>
+        <button class="hero-action hero-action--button" type="button" (click)="load()">
+          <i class="fas fa-rotate"></i>
+          <span>
+            <b>Refresh</b>
+            <small>Update dashboard</small>
+          </span>
+        </button>
+      </div>
     </div>
-    <div class="onboarding-alert__metrics">
-      <span><b>{{ onboardingDashboard.activeEmployees }}</b> Active</span>
-      <span><b>{{ onboardingDashboard.completed }}</b> Completed</span>
+
+    <div class="command-hero__insight project-focus" *ngIf="data">
+      <div class="project-focus__head">
+        <div>
+          <small>PROJECT CONTROL</small>
+          <strong>{{ data.summary.activeProjects }} active projects</strong>
+          <span>Current delivery snapshot</span>
+        </div>
+        <a routerLink="/workspace/projects" aria-label="Open projects">
+          <i class="fas fa-arrow-up-right-from-square"></i>
+        </a>
+      </div>
+
+      <div class="project-focus__grid">
+        <a routerLink="/workspace/projects">
+          <i class="fas fa-user-clock"></i>
+          <span>Unassigned</span>
+          <strong>{{ data.summary.projectsUnassigned }}</strong>
+        </a>
+        <a routerLink="/workspace/projects">
+          <i class="fas fa-triangle-exclamation"></i>
+          <span>Delayed</span>
+          <strong>{{ data.summary.delayedProjects }}</strong>
+        </a>
+        <a routerLink="/workspace/projects">
+          <i class="fas fa-list-check"></i>
+          <span>Overdue activities</span>
+          <strong>{{ data.summary.activitiesOverdue }}</strong>
+        </a>
+        <a routerLink="/workspace/projects">
+          <i class="fas fa-flag-checkered"></i>
+          <span>Closure pending</span>
+          <strong>{{ data.summary.projectsPendingClosure }}</strong>
+        </a>
+      </div>
+
+      <div class="project-focus__foot">
+        <span>
+          <i class="fas fa-bolt"></i>
+          {{ data.summary.activitiesDueToday }} due today
+        </span>
+        <span>
+          <i class="fas fa-chart-line"></i>
+          {{ data.summary.projectsNearCompletion }} near completion
+        </span>
+      </div>
     </div>
-    <a class="onboarding-alert__action" routerLink="/onboarding/dashboard">Open onboarding <i class="fas fa-arrow-right"></i></a>
   </section>
 
-  <section *ngIf="onboardingState && isEmployee && onboardingState.isRequired" class="onboarding-alert onboarding-alert--employee">
-    <div class="onboarding-alert__icon"><i class="fas fa-play-circle"></i></div>
-    <div class="onboarding-alert__copy">
+  <p *ngIf="error" class="pm-error dashboard-error">
+    <i class="fas fa-triangle-exclamation"></i>
+    {{ error }}
+  </p>
+
+  <section *ngIf="onboardingDashboard && isAdminLike" class="people-strip">
+    <div class="people-strip__icon"><i class="fas fa-graduation-cap"></i></div>
+    <div class="people-strip__copy">
+      <small>PEOPLE READINESS</small>
+      <strong>Employee onboarding needs attention</strong>
+      <span>
+        {{ onboardingDashboard.dueSoon }} due soon · {{ onboardingDashboard.blocked }} blocked ·
+        {{ onboardingDashboard.pendingAccessRequests }} approval pending
+      </span>
+    </div>
+    <div class="people-strip__stats">
+      <span>
+        <b>{{ onboardingDashboard.activeEmployees }}</b>
+        Active
+      </span>
+      <span>
+        <b>{{ onboardingDashboard.completed }}</b>
+        Completed
+      </span>
+    </div>
+    <a routerLink="/onboarding/dashboard">
+      Open onboarding
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+  <section
+    *ngIf="onboardingState && isEmployee && onboardingState.isRequired"
+    class="people-strip people-strip--employee"
+  >
+    <div class="people-strip__icon"><i class="fas fa-play-circle"></i></div>
+    <div class="people-strip__copy">
       <small>MANDATORY INDUCTION</small>
       <strong>Continue your onboarding</strong>
-      <span>{{ onboardingState.completionPercent | number:'1.0-0' }}% completed<span *ngIf="onboardingState.dueOnUtc"> · Due {{ onboardingState.dueOnUtc | date:'dd MMM yyyy' }}</span></span>
+      <span>
+        {{ onboardingState.completionPercent | number: '1.0-0' }}% completed
+        <span *ngIf="onboardingState.dueOnUtc">· Due {{ onboardingState.dueOnUtc | date: 'dd MMM yyyy' }}</span>
+      </span>
     </div>
-    <a class="onboarding-alert__action" routerLink="/onboarding/my-learning">Resume learning <i class="fas fa-arrow-right"></i></a>
+    <a routerLink="/onboarding/my-learning">
+      Resume learning
+      <i class="fas fa-arrow-right"></i>
+    </a>
   </section>
 
   <ng-container *ngIf="data && !loading">
-    <div class="metric-group">
-      <div class="metric-group__title"><span>Lead & quotation pipeline</span><small>From enquiry receipt to customer communication</small></div>
-      <div class="pm-kpis">
-        <a class="pm-kpi" routerLink="/workspace/enquiries"><span>New enquiries</span><strong>{{ data.summary.newEnquiries }}</strong><small>Action / allocation needed</small></a>
-        <a class="pm-kpi pm-kpi--teal" routerLink="/workspace/quotations"><span>Quotations in preparation</span><strong>{{ data.summary.quotationsUnderPreparation }}</strong><small>Draft or returned</small></a>
-        <a class="pm-kpi pm-kpi--warn" routerLink="/workspace/approvals"><span>Approval pending</span><strong>{{ data.summary.quotationsPendingApproval }}</strong><small>SuperAdmin action</small></a>
-        <a class="pm-kpi pm-kpi--teal" routerLink="/workspace/quotations"><span>Quotations sent</span><strong>{{ data.summary.quotationsSent }}</strong><small>Customer communication</small></a>
-      </div>
-    </div>
-
-    <div class="metric-group">
-      <div class="metric-group__title"><span>Delivery health</span><small>Assignment, timelines and activity execution</small></div>
-      <div class="pm-kpis">
-        <a class="pm-kpi pm-kpi--teal" routerLink="/workspace/projects"><span>Confirmed projects</span><strong>{{ data.summary.projectsConfirmed }}</strong><small>Ready / recently created</small></a>
-        <a class="pm-kpi pm-kpi--warn" routerLink="/workspace/projects"><span>Yet to assign</span><strong>{{ data.summary.projectsUnassigned }}</strong><small>Project leader missing</small></a>
-        <a class="pm-kpi" routerLink="/workspace/projects"><span>Active projects</span><strong>{{ data.summary.activeProjects }}</strong><small>Open delivery portfolio</small></a>
-        <a class="pm-kpi pm-kpi--danger" routerLink="/workspace/projects"><span>Delayed projects</span><strong>{{ data.summary.delayedProjects }}</strong><small>Past target date</small></a>
-      </div>
-    </div>
-
-    <div class="metric-group">
-      <div class="metric-group__title"><span>Pending activity control</span><small>Daily operational priorities</small></div>
-      <div class="pm-kpis">
-        <div class="pm-kpi pm-kpi--warn"><span>Due today</span><strong>{{ data.summary.activitiesDueToday }}</strong><small>Complete today</small></div>
-        <div class="pm-kpi"><span>Upcoming · 5 days</span><strong>{{ data.summary.activitiesUpcoming }}</strong><small>Prepare in advance</small></div>
-        <div class="pm-kpi pm-kpi--danger"><span>Overdue activities</span><strong>{{ data.summary.activitiesOverdue }}</strong><small>Immediate attention</small></div>
-        <div class="pm-kpi pm-kpi--teal"><span>Completed activities</span><strong>{{ data.summary.activitiesCompleted }}</strong><small>Recorded completion</small></div>
-      </div>
-    </div>
-
-    <div class="metric-group">
-      <div class="metric-group__title"><span>Closure & value</span><small>Completion, acknowledgment and portfolio value</small></div>
-      <div class="pm-kpis closure-kpis">
-        <div class="pm-kpi pm-kpi--warn"><span>Follow-ups due</span><strong>{{ data.summary.followUpsDue }}</strong><small>Quotation follow-up</small></div>
-        <div class="pm-kpi"><span>Near completion</span><strong>{{ data.summary.projectsNearCompletion }}</strong><small>Due within 5 days</small></div>
-        <div class="pm-kpi pm-kpi--warn"><span>Closure pending</span><strong>{{ data.summary.projectsPendingClosure }}</strong><small>Review / approval</small></div>
-        <div class="pm-kpi pm-kpi--warn"><span>Acknowledgment pending</span><strong>{{ data.summary.customerAcknowledgementPending }}</strong><small>Customer signed copy</small></div>
-        <div class="pm-kpi pm-kpi--teal"><span>Closed projects</span><strong>{{ data.summary.closedProjects }}</strong><small>Final closure complete</small></div>
-        <div class="pm-kpi value-kpi"><span>Active project value</span><strong>{{ data.summary.activeProjectValue | number:'1.0-0' }}</strong><small>Current open portfolio</small></div>
-      </div>
-    </div>
-
-    <div class="pm-grid dashboard-sections">
-      <section class="pm-card dashboard-sections__projects">
-        <div class="pm-section-head">
-          <div><h2>Projects requiring attention</h2><p>Target dates, delivery status and completion progress.</p></div>
-          <a class="pm-link" routerLink="/workspace/projects">View all projects</a>
+    <section class="signal-grid">
+      <a class="signal-card signal-card--blue" routerLink="/workspace/enquiries">
+        <div class="signal-card__icon"><i class="fas fa-inbox"></i></div>
+        <div>
+          <span>New enquiries</span>
+          <strong>{{ data.summary.newEnquiries }}</strong>
+          <small>New business waiting for allocation</small>
         </div>
-        <div class="pm-table-wrap">
-          <table class="pm-table">
-            <thead><tr><th>Project</th><th>Customer</th><th>Status</th><th>Progress</th><th>Next Activity</th><th>Pending</th><th>Target</th><th>Days</th></tr></thead>
-            <tbody>
-              <tr *ngFor="let p of data.projects">
-                <td><strong>{{ p.projectNo }}</strong><br><small>{{ p.projectTitle }}</small></td>
-                <td>{{ p.customerName }}</td>
-                <td><span [class]="badge(p.status)">{{ p.status }}</span></td>
-                <td><strong>{{ p.completionPercent }}%</strong><div class="pm-progress"><i [style.width.%]="p.completionPercent"></i></div></td>
-                <td>{{ p.nextActivity || '—' }}</td>
-                <td><strong>{{ p.pendingActivities }}</strong></td>
-                <td>{{ p.targetCompletionDate | date:'dd-MM-yyyy' }}</td>
-                <td><span [class.pm-days--late]="p.daysRemaining < 0">{{ p.daysRemaining }}</span></td>
-              </tr>
-              <tr *ngIf="!data.projects.length"><td colspan="8" class="pm-empty">No project currently requires attention.</td></tr>
-            </tbody>
-          </table>
+        <i class="fas fa-arrow-up-right-from-square signal-card__arrow"></i>
+      </a>
+      <a class="signal-card signal-card--cyan" routerLink="/workspace/quotations">
+        <div class="signal-card__icon"><i class="fas fa-file-signature"></i></div>
+        <div>
+          <span>Quotation pipeline</span>
+          <strong>{{ data.summary.quotationsUnderPreparation + data.summary.quotationsPendingApproval }}</strong>
+          <small>Preparation + approval pending</small>
         </div>
-      </section>
+        <i class="fas fa-arrow-up-right-from-square signal-card__arrow"></i>
+      </a>
+      <a class="signal-card signal-card--violet" routerLink="/workspace/projects">
+        <div class="signal-card__icon"><i class="fas fa-layer-group"></i></div>
+        <div>
+          <span>Active projects</span>
+          <strong>{{ data.summary.activeProjects }}</strong>
+          <small>{{ data.summary.projectsUnassigned }} still need assignment</small>
+        </div>
+        <i class="fas fa-arrow-up-right-from-square signal-card__arrow"></i>
+      </a>
+      <a class="signal-card signal-card--rose" routerLink="/workspace/projects">
+        <div class="signal-card__icon"><i class="fas fa-triangle-exclamation"></i></div>
+        <div>
+          <span>Delivery risks</span>
+          <strong>{{ data.summary.delayedProjects + data.summary.activitiesOverdue }}</strong>
+          <small>Delayed projects + overdue activities</small>
+        </div>
+        <i class="fas fa-arrow-up-right-from-square signal-card__arrow"></i>
+      </a>
+    </section>
 
-      <section class="pm-card dashboard-sections__actions">
-        <div class="pm-section-head"><div><h2>Activity priority</h2><p>Sorted by the nearest target date.</p></div></div>
-        <div *ngFor="let a of data.activities" [class]="activityClass(a)">
-          <div class="activity-card__icon"><i class="fas fa-list-check"></i></div>
-          <div><strong>{{ a.activityName }}</strong><small>{{ a.projectNo }} · {{ a.responsiblePerson || 'Unassigned' }}</small><small>{{ a.plannedCompletionDate | date:'dd-MM-yyyy' }}</small></div>
-          <span [class]="badge(a.status)">{{ a.status }}</span>
+    <section class="control-grid">
+      <article class="control-panel pipeline-panel">
+        <div class="panel-head">
+          <div>
+            <small>COMMERCIAL FLOW</small>
+            <h2>Opportunity pipeline</h2>
+            <p>Where current customer opportunities are sitting.</p>
+          </div>
+          <span class="panel-chip">{{ pipelineCount }} touchpoints</span>
         </div>
-        <div *ngIf="!data.activities.length" class="pm-empty">No pending activities.</div>
-      </section>
 
-      <section class="pm-card dashboard-sections__follow">
-        <div class="pm-section-head"><div><h2>Quotation follow-ups</h2><p>Customer follow-up schedule.</p></div><a class="pm-link" routerLink="/workspace/quotations">Open quotations</a></div>
-        <div class="follow-card" *ngFor="let f of data.followUps">
-          <div><strong>{{ f.quotationNo }}</strong><span>{{ f.customerName }}</span></div>
-          <div><small>Due</small><strong>{{ f.dueOnUtc | date:'dd-MM-yyyy HH:mm' }}</strong></div>
-          <span class="pm-badge pm-badge--warn">{{ f.status }}</span>
+        <div class="pipeline-list">
+          <a routerLink="/workspace/enquiries">
+            <span class="pipeline-list__index">01</span>
+            <div>
+              <b>Enquiries received</b>
+              <small>Qualification & allocation</small>
+            </div>
+            <strong>{{ data.summary.newEnquiries }}</strong>
+          </a>
+          <a routerLink="/workspace/quotations">
+            <span class="pipeline-list__index">02</span>
+            <div>
+              <b>Quotation preparation</b>
+              <small>Commercial draft</small>
+            </div>
+            <strong>{{ data.summary.quotationsUnderPreparation }}</strong>
+          </a>
+          <a routerLink="/workspace/approvals">
+            <span class="pipeline-list__index">03</span>
+            <div>
+              <b>Approval pending</b>
+              <small>Decision required</small>
+            </div>
+            <strong>{{ data.summary.quotationsPendingApproval }}</strong>
+          </a>
+          <a routerLink="/workspace/quotations">
+            <span class="pipeline-list__index">04</span>
+            <div>
+              <b>Sent to customer</b>
+              <small>Follow-up & confirmation</small>
+            </div>
+            <strong>{{ data.summary.quotationsSent }}</strong>
+          </a>
         </div>
-        <div *ngIf="!data.followUps.length" class="pm-empty">No quotation follow-ups due.</div>
-      </section>
-    </div>
+      </article>
+
+      <article class="control-panel attention-panel">
+        <div class="panel-head">
+          <div>
+            <small>ATTENTION CENTER</small>
+            <h2>What needs action now</h2>
+            <p>High-value exceptions brought to the front.</p>
+          </div>
+          <span class="panel-chip panel-chip--alert">{{ attentionCount }} items</span>
+        </div>
+
+        <div class="attention-list">
+          <a *ngIf="isSuperAdmin" routerLink="/workspace/approvals">
+            <span class="attention-dot attention-dot--amber"></span>
+            <div>
+              <b>Quotation approvals</b>
+              <small>Commercial decision queue</small>
+            </div>
+            <strong>{{ data.summary.quotationsPendingApproval }}</strong>
+            <i class="fas fa-chevron-right"></i>
+          </a>
+          <a routerLink="/workspace/projects">
+            <span class="attention-dot attention-dot--blue"></span>
+            <div>
+              <b>Projects unassigned</b>
+              <small>Project leader required</small>
+            </div>
+            <strong>{{ data.summary.projectsUnassigned }}</strong>
+            <i class="fas fa-chevron-right"></i>
+          </a>
+          <a routerLink="/workspace/projects">
+            <span class="attention-dot attention-dot--red"></span>
+            <div>
+              <b>Activities overdue</b>
+              <small>Past target completion</small>
+            </div>
+            <strong>{{ data.summary.activitiesOverdue }}</strong>
+            <i class="fas fa-chevron-right"></i>
+          </a>
+          <a routerLink="/workspace/quotations">
+            <span class="attention-dot attention-dot--cyan"></span>
+            <div>
+              <b>Follow-ups due</b>
+              <small>Customer response pending</small>
+            </div>
+            <strong>{{ data.summary.followUpsDue }}</strong>
+            <i class="fas fa-chevron-right"></i>
+          </a>
+          <a routerLink="/workspace/projects">
+            <span class="attention-dot attention-dot--violet"></span>
+            <div>
+              <b>Closure pending</b>
+              <small>Completion review required</small>
+            </div>
+            <strong>{{ data.summary.projectsPendingClosure }}</strong>
+            <i class="fas fa-chevron-right"></i>
+          </a>
+        </div>
+      </article>
+
+      <article class="control-panel pulse-panel">
+        <div class="panel-head">
+          <div>
+            <small>DELIVERY PULSE</small>
+            <h2>Execution control</h2>
+            <p>Daily activity and closure readiness.</p>
+          </div>
+        </div>
+
+        <div class="execution-card">
+          <div class="execution-card__top">
+            <span>Activity completion</span>
+            <strong>{{ executionRate }}%</strong>
+          </div>
+          <div class="execution-track"><i [style.width.%]="executionRate"></i></div>
+          <small>{{ data.summary.activitiesCompleted }} completed · {{ openActivityCount }} open</small>
+        </div>
+
+        <div class="pulse-metrics">
+          <div>
+            <span>Due today</span>
+            <strong>{{ data.summary.activitiesDueToday }}</strong>
+            <small>Focus today</small>
+          </div>
+          <div>
+            <span>Next 5 days</span>
+            <strong>{{ data.summary.activitiesUpcoming }}</strong>
+            <small>Prepare ahead</small>
+          </div>
+          <div>
+            <span>Near completion</span>
+            <strong>{{ data.summary.projectsNearCompletion }}</strong>
+            <small>Closing soon</small>
+          </div>
+          <div>
+            <span>Closed</span>
+            <strong>{{ data.summary.closedProjects }}</strong>
+            <small>Finalized</small>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="workspace-grid">
+      <article class="workspace-card workspace-card--projects">
+        <div class="section-title">
+          <div>
+            <small>DELIVERY PORTFOLIO</small>
+            <h2>Projects requiring attention</h2>
+            <p>Progress, next activity and target date in one view.</p>
+          </div>
+          <a routerLink="/workspace/projects">
+            View all
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="project-list">
+          <a class="project-row" *ngFor="let p of data.projects" routerLink="/workspace/projects">
+            <div class="project-row__identity">
+              <span>{{ p.projectNo }}</span>
+              <b>{{ p.projectTitle }}</b>
+              <small>{{ p.customerName }}</small>
+            </div>
+            <div class="project-row__status">
+              <span [class]="badge(p.status)">{{ p.status }}</span>
+              <small>{{ p.nextActivity || 'No next activity' }}</small>
+            </div>
+            <div class="project-row__progress">
+              <div>
+                <span>Progress</span>
+                <strong>{{ p.completionPercent }}%</strong>
+              </div>
+              <div class="project-track"><i [style.width.%]="p.completionPercent"></i></div>
+              <small>{{ p.pendingActivities }} pending</small>
+            </div>
+            <div class="project-row__date">
+              <span>Target</span>
+              <strong>{{ p.targetCompletionDate | date: 'dd MMM yyyy' }}</strong>
+              <small [class.project-row__late]="p.daysRemaining < 0">{{ p.daysRemaining }} days</small>
+            </div>
+            <i class="fas fa-chevron-right project-row__chevron"></i>
+          </a>
+          <div *ngIf="!data.projects.length" class="dashboard-empty">
+            <i class="fas fa-circle-check"></i>
+            <strong>No projects need immediate attention.</strong>
+            <span>Your active delivery portfolio is currently clear.</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="workspace-card workspace-card--priority">
+        <div class="section-title">
+          <div>
+            <small>ACTIVITY PRIORITY</small>
+            <h2>Next actions</h2>
+            <p>Nearest target activities first.</p>
+          </div>
+        </div>
+        <div class="priority-list">
+          <div *ngFor="let a of data.activities" [class]="activityClass(a)">
+            <div class="priority-row__icon"><i class="fas fa-list-check"></i></div>
+            <div class="priority-row__copy">
+              <b>{{ a.activityName }}</b>
+              <span>{{ a.projectNo }} · {{ a.responsiblePerson || 'Unassigned' }}</span>
+              <small>{{ a.plannedCompletionDate | date: 'dd MMM yyyy' }}</small>
+            </div>
+            <span [class]="badge(a.status)">{{ a.status }}</span>
+          </div>
+          <div *ngIf="!data.activities.length" class="dashboard-empty dashboard-empty--compact">
+            <i class="fas fa-check"></i>
+            <strong>No pending priority activities.</strong>
+          </div>
+        </div>
+      </article>
+
+      <article class="workspace-card workspace-card--followups">
+        <div class="section-title">
+          <div>
+            <small>CUSTOMER MOMENTUM</small>
+            <h2>Quotation follow-ups</h2>
+            <p>Keep commercial conversations moving.</p>
+          </div>
+          <a routerLink="/workspace/quotations">
+            Open quotations
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+        <div class="follow-list">
+          <a class="follow-row" *ngFor="let f of data.followUps" routerLink="/workspace/quotations">
+            <div class="follow-row__icon"><i class="fas fa-comments"></i></div>
+            <div>
+              <b>{{ f.quotationNo }}</b>
+              <span>{{ f.customerName }}</span>
+            </div>
+            <div class="follow-row__due">
+              <small>Due</small>
+              <strong>{{ f.dueOnUtc | date: 'dd MMM, HH:mm' }}</strong>
+            </div>
+            <span class="pm-badge pm-badge--warn">{{ f.status }}</span>
+          </a>
+          <div *ngIf="!data.followUps.length" class="dashboard-empty dashboard-empty--compact">
+            <i class="fas fa-message-circle-check"></i>
+            <strong>No quotation follow-ups are due.</strong>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="closure-ribbon">
+      <div>
+        <span><i class="fas fa-flag-checkered"></i></span>
+        <div>
+          <small>CLOSURE CONTROL</small>
+          <strong>Finish strong. Keep customer evidence complete.</strong>
+        </div>
+      </div>
+      <div class="closure-ribbon__metrics">
+        <span>
+          <b>{{ data.summary.projectsPendingClosure }}</b>
+          Closure pending
+        </span>
+        <span>
+          <b>{{ data.summary.customerAcknowledgementPending }}</b>
+          Acknowledgment pending
+        </span>
+        <span>
+          <b>{{ data.summary.closedProjects }}</b>
+          Closed projects
+        </span>
+      </div>
+      <a routerLink="/workspace/projects">
+        Review projects
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </section>
   </ng-container>
 </div>

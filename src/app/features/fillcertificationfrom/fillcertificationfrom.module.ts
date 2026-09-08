@@ -5,6 +5,6 @@ import { FillcertificationfromComponent } from './fillcertificationfrom.componen
 
 @NgModule({
   declarations: [FillcertificationfromComponent],
-  imports: [SharedModule, FillcertificationfromRoutingModule]
+  imports: [SharedModule, FillcertificationfromRoutingModule],
 })
 export class FillcertificationfromModule {}

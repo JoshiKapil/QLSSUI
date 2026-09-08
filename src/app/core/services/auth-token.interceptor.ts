@@ -13,9 +13,8 @@ export class AuthTokenInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const isApiRequest = request.url.startsWith(environment.apiBaseUrl);
     const token = this.auth.getToken();
-    const authenticatedRequest = token && isApiRequest && this.auth.isServerAuthenticated()
-      ? this.withBearerToken(request, token)
-      : request;
+    const authenticatedRequest =
+      token && isApiRequest && this.auth.isServerAuthenticated() ? this.withBearerToken(request, token) : request;
 
     return next.handle(authenticatedRequest).pipe(
       catchError((error: HttpErrorResponse) => {
@@ -29,9 +28,9 @@ export class AuthTokenInterceptor implements HttpInterceptor {
           catchError((refreshError) => {
             this.auth.logout();
             return throwError(() => normalizeApiError(refreshError));
-          })
+          }),
         );
-      })
+      }),
     );
   }
 

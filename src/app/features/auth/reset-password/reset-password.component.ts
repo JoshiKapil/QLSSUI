@@ -8,7 +8,7 @@ import { firstError, passwordMatchValidator, passwordPattern } from '../auth-for
 @Component({
   selector: 'app-reset-password',
   templateUrl: './reset-password.component.html',
-  styleUrls: ['./reset-password.component.scss']
+  styleUrls: ['./reset-password.component.scss'],
 })
 export class ResetPasswordComponent {
   isSubmitting = false;
@@ -17,9 +17,9 @@ export class ResetPasswordComponent {
     {
       token: [this.route.snapshot.queryParamMap.get('token')],
       newPassword: ['', [Validators.required, Validators.pattern(passwordPattern)]],
-      confirmPassword: ['', Validators.required]
+      confirmPassword: ['', Validators.required],
     },
-    { validators: passwordMatchValidator('newPassword', 'confirmPassword') }
+    { validators: passwordMatchValidator('newPassword', 'confirmPassword') },
   );
 
   constructor(
@@ -27,7 +27,7 @@ export class ResetPasswordComponent {
     private route: ActivatedRoute,
     private authService: AuthService,
     private notifier: NotifierService,
-    private router: Router
+    private router: Router,
   ) {}
 
   submit(): void {
@@ -41,7 +41,7 @@ export class ResetPasswordComponent {
       .resetPassword({
         token: this.form.value.token,
         newPassword: this.form.value.newPassword || '',
-        confirmPassword: this.form.value.confirmPassword || ''
+        confirmPassword: this.form.value.confirmPassword || '',
       })
       .subscribe({
         next: () => {
@@ -52,7 +52,7 @@ export class ResetPasswordComponent {
           this.notifier.warningToastr('Unable to reset the password. The reset link may be invalid or expired.');
           this.isSubmitting = false;
         },
-        complete: () => (this.isSubmitting = false)
+        complete: () => (this.isSubmitting = false),
       });
   }
 }

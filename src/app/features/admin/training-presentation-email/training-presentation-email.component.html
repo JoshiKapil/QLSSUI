@@ -1,0 +1,244 @@
+<section class="admin-section presentation-page">
+  <div class="container admin-shell">
+    <div class="admin-header">
+      <div>
+        <span class="auth-eyebrow">Training</span>
+        <h1>Send Presentation</h1>
+        <p>Send a private PPT/PPTX presentation to selected participants.</p>
+      </div>
+      <div class="admin-actions">
+        <a class="btn btn-outline" routerLink="/admin/trainings">Trainings</a>
+        <a class="btn btn-outline" routerLink="/admin/training-presentation">Send Presentation</a>
+      </div>
+    </div>
+
+    <div class="presentation-layout">
+      <form class="admin-form" [formGroup]="form" (ngSubmit)="submit()">
+        <h2>Presentation email</h2>
+        <label class="form-field presentation-picker-field">
+          Company
+          <div class="presentation-picker" (click)="$event.stopPropagation()">
+            <button
+              class="presentation-picker__toggle"
+              type="button"
+              (click)="togglePicker('company')"
+              [attr.aria-expanded]="openPicker === 'company'"
+              aria-haspopup="listbox"
+            >
+              <span>{{ selectedCompanyLabel }}</span>
+              <span class="dropdown-icon">&#9662;</span>
+            </button>
+            <div class="presentation-picker__menu" *ngIf="openPicker === 'company'" role="listbox">
+              <input
+                type="text"
+                [(ngModel)]="companySearch"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="Search company"
+                autocomplete="off"
+              />
+              <button class="presentation-picker__option" type="button" (mousedown)="selectCompany(null)">
+                Select company
+              </button>
+              <button
+                class="presentation-picker__option"
+                type="button"
+                *ngFor="let company of filteredCompanies"
+                (mousedown)="selectCompany(company)"
+                role="option"
+              >
+                {{ company.clientName }}
+              </button>
+              <div class="presentation-picker__empty" *ngIf="!filteredCompanies.length">No company found</div>
+            </div>
+          </div>
+          <small>{{ fieldError('companyId', 'Company') }}</small>
+        </label>
+        <label class="form-field presentation-picker-field">
+          Training
+          <div class="presentation-picker" (click)="$event.stopPropagation()">
+            <button
+              class="presentation-picker__toggle"
+              type="button"
+              (click)="togglePicker('training')"
+              [attr.aria-expanded]="openPicker === 'training'"
+              aria-haspopup="listbox"
+            >
+              <span>{{ selectedTrainingLabel }}</span>
+              <span class="dropdown-icon">&#9662;</span>
+            </button>
+            <div class="presentation-picker__menu" *ngIf="openPicker === 'training'" role="listbox">
+              <input
+                type="text"
+                [(ngModel)]="trainingSearch"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="Search training"
+                autocomplete="off"
+              />
+              <button class="presentation-picker__option" type="button" (mousedown)="selectTraining(null)">
+                Select training
+              </button>
+              <button
+                class="presentation-picker__option"
+                type="button"
+                *ngFor="let training of filteredTrainings"
+                (mousedown)="selectTraining(training)"
+                role="option"
+              >
+                {{ training.displayName || training.trainingName }}
+              </button>
+              <div class="presentation-picker__empty" *ngIf="!filteredTrainings.length">No training found</div>
+            </div>
+          </div>
+          <small>{{ fieldError('trainingId', 'Training') }}</small>
+        </label>
+        <label class="form-field">
+          Training Date
+          <div class="presentation-picker date-picker" (click)="$event.stopPropagation()">
+            <button
+              class="presentation-picker__toggle"
+              type="button"
+              (click)="togglePicker('date')"
+              [attr.aria-expanded]="openPicker === 'date'"
+              aria-haspopup="listbox"
+              [disabled]="!form.get('trainingId')?.value"
+            >
+              <span>{{ selectedDateLabel }}</span>
+              <span class="dropdown-icon">&#9662;</span>
+            </button>
+            <div class="presentation-picker__menu" *ngIf="openPicker === 'date'" role="listbox">
+              <button
+                class="presentation-picker__option"
+                type="button"
+                *ngFor="let option of trainingDateOptions"
+                (mousedown)="selectDate(option.value)"
+                role="option"
+              >
+                <strong>
+                  <i class="fas fa-calendar-day" aria-hidden="true"></i>
+                  {{ option.label }}
+                </strong>
+                <small>{{ option.count }} {{ option.count === 1 ? 'user' : 'users' }}</small>
+              </button>
+              <div class="presentation-picker__empty" *ngIf="!trainingDateOptions.length">
+                No dates found for this training.
+              </div>
+            </div>
+          </div>
+          <small>{{ fieldError('trainingDate', 'Training Date') }}</small>
+        </label>
+        <label class="form-field">
+          Attachment file
+          <input type="file" (change)="onFileSelected($event)" />
+          <small>{{ selectedFile?.name || 'Any file type, maximum 10 MB' }}</small>
+        </label>
+        <label class="form-field">
+          Subject
+          <input type="text" formControlName="subject" maxlength="250" placeholder="Training presentation" />
+          <small>{{ fieldError('subject', 'Subject') }}</small>
+        </label>
+        <label class="form-field">
+          Email Message
+          <textarea
+            rows="7"
+            formControlName="message"
+            maxlength="5000"
+            placeholder="Message to participants"
+          ></textarea>
+          <small>{{ fieldError('message', 'Email Message') }}</small>
+        </label>
+        <div class="admin-actions">
+          <button class="btn btn-primary" type="submit" [disabled]="isSending || isLoading">
+            {{ isSending ? 'Sending...' : 'Send' }}
+          </button>
+          <span class="sending-user">Sent by {{ currentUserName() }}</span>
+        </div>
+      </form>
+
+      <div class="recipient-panel">
+        <div class="panel-heading">
+          <div>
+            <span class="auth-eyebrow">Recipients</span>
+            <h2>{{ selectedRecipientCount }} selected / {{ recipients.length }}</h2>
+          </div>
+          <button
+            class="btn btn-outline btn-small"
+            type="button"
+            *ngIf="recipients.length"
+            (click)="toggleAllRecipients()"
+          >
+            {{ allRecipientsSelected ? 'Clear all' : 'Select all' }}
+          </button>
+        </div>
+        <div class="admin-loading" *ngIf="isLoadingRecipients">Loading participant emails...</div>
+        <div class="recipient-empty" *ngIf="!isLoadingRecipients && !recipients.length">
+          Choose company, training and date to load recipients.
+        </div>
+        <label class="recipient-row" *ngFor="let recipient of recipients; trackBy: trackByEmail">
+          <input type="checkbox" [(ngModel)]="recipient.selected" [ngModelOptions]="{ standalone: true }" />
+          <span>
+            <strong>{{ recipient.name || recipient.email }}</strong>
+            <small>{{ recipient.email }}</small>
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <div class="history-section">
+      <div class="panel-heading">
+        <div>
+          <span class="auth-eyebrow">Delivery log</span>
+          <h2>Email Sending History</h2>
+        </div>
+      </div>
+      <div class="admin-loading" *ngIf="isLoading">Loading history...</div>
+      <div class="history-table-wrap" *ngIf="history.length; else noHistory">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Training</th>
+              <th>Date</th>
+              <th>File</th>
+              <th>Recipients</th>
+              <th>Sent</th>
+              <th>Failed</th>
+              <th>Sent By</th>
+              <th>Sent Date</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let record of history">
+              <td>{{ record.companyName }}</td>
+              <td>{{ record.trainingName }}</td>
+              <td>{{ record.trainingDate | date: 'mediumDate' }}</td>
+              <td>{{ record.fileName }}</td>
+              <td>{{ record.recipientCount }}</td>
+              <td>{{ record.sentCount }}</td>
+              <td>{{ record.failedCount }}</td>
+              <td>{{ record.sentBy }}</td>
+              <td>{{ record.sentDate | date: 'short' }}</td>
+              <td>
+                <span class="status-pill" [class.status-pill--failed]="record.status === 'Failed'">
+                  {{ record.status }}
+                </span>
+              </td>
+              <td>
+                <button
+                  class="table-link"
+                  type="button"
+                  [disabled]="isSending || !record.failedCount"
+                  (click)="resendFailed(record)"
+                >
+                  Resend Failed
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #noHistory><div class="recipient-empty">No presentation emails have been sent.</div></ng-template>
+    </div>
+  </div>
+</section>

@@ -1,11 +1,8 @@
-﻿<header
-  class="navbar"
-  [class.navbar--public]="!isLoggedIn"
-  [class.navbar--logged-in]="isLoggedIn">
+﻿<header class="navbar" [class.navbar--public]="!isLoggedIn" [class.navbar--logged-in]="isLoggedIn">
   <div class="container navbar-wrapper">
     <!-- LEFT: Logo -->
     <div class="navbar-logo">
-      <img (click)="closeMenu()" routerLink="/" style="cursor: pointer;" src="assets/logos/logo.png" alt="QLSS Logo" />
+      <img (click)="closeMenu()" routerLink="/" style="cursor: pointer" src="assets/logos/logo.png" alt="QLSS Logo" />
     </div>
 
     <!-- CENTER: Nav links -->
@@ -23,40 +20,117 @@
         <a (click)="closeMenu()" routerLink="/teams" routerLinkActive="active-link">Our Team</a>
         <a (click)="closeMenu()" routerLink="/contact" routerLinkActive="active-link">Contact</a>
         <a (click)="closeMenu()" routerLink="/test" routerLinkActive="active-link">Test</a>
-        <a (click)="closeMenu()" routerLink="/assessment" routerLinkActive="active-link">Assessment</a>
+        <a (click)="closeMenu()" routerLink="/ghar-9001" routerLinkActive="active-link">Ghar 9001</a>
         <!-- <a (click)="closeMenu()" routerLink="/login" routerLink="/contact">Login</a> -->
 
-        <div *ngIf="isLoggedIn" class="navbar-account">          
-
+        <div *ngIf="isLoggedIn" class="navbar-account">
+          <div *ngIf="hasZeissAccess" class="account-nav-item">
+            <a class="account-nav-item__link account-nav-item__link--secondary" (click)="closeMenu()" routerLink="/zeiss/dashboard" routerLinkActive="active-link">
+              <i class="fas fa-microscope account-nav-item__icon"></i><span>Zeiss</span>
+            </a>
+          </div>
           <div *ngIf="hasWorkspaceAccess" class="account-nav-item">
-            <a class="account-nav-item__link account-nav-item__link--secondary" (click)="closeMenu()" routerLink="/workspace/dashboard" routerLinkActive="active-link">
-              <i class="fas fa-chart-pie account-nav-item__icon"></i><span>Workspace</span>
+            <a
+              class="account-nav-item__link account-nav-item__link--secondary"
+              (click)="closeMenu()"
+              routerLink="/workspace/dashboard"
+              routerLinkActive="active-link"
+            >
+              <i class="fas fa-chart-pie account-nav-item__icon"></i>
+              <span>Workspace</span>
             </a>
           </div>
 
-          <div *ngIf="isAdmin" class="account-nav-item account-nav-item--admin" [class.account-nav-item--open]="adminMenuOpen" (mouseenter)="adminMenuOpen = true" (mouseleave)="adminMenuOpen = false">
-            <a class="account-nav-item__link account-nav-item__link--secondary" (click)="toggleAdminMenu($event)" href="javascript:void(0)">
+          <div
+            *ngIf="isAdmin"
+            class="account-nav-item account-nav-item--admin"
+            [class.account-nav-item--open]="adminMenuOpen"
+            (mouseenter)="adminMenuOpen = true"
+            (mouseleave)="adminMenuOpen = false"
+          >
+            <a
+              class="account-nav-item__link account-nav-item__link--secondary"
+              (click)="toggleAdminMenu($event)"
+              href="javascript:void(0)"
+            >
               <span>Admin</span>
               <span class="account-nav-item__caret">&#9662;</span>
             </a>
             <div class="account-nav-item__dropdown account-nav-item__dropdown--admin">
-              <a (click)="closeMenu()" routerLink="/admin/trainings" routerLinkActive="active-link"><i class="fas fa-book"></i> Trainings</a>
-              <a (click)="closeMenu()" routerLink="/admin/trainer" routerLinkActive="active-link"><i class="fas fa-chalkboard-teacher"></i> Trainer</a>
-              <a (click)="closeMenu()" routerLink="/admin/clients" routerLinkActive="active-link"><i class="fa-solid fa-building-columns"></i> Company</a>
-              <a (click)="closeMenu()" routerLink="/admin/create-test" routerLinkActive="active-link"><i class="fas fa-flask"></i> Test</a>
-              <a (click)="closeMenu()" routerLink="/admin/create-test-questions" routerLinkActive="active-link"><i class="fas fa-list-check"></i> Test Questions</a>
-              <a (click)="closeMenu()" routerLink="/admin/test-training-lists" routerLinkActive="active-link"><i class="fas fa-link"></i> Test Training Lists</a>
-              <a (click)="closeMenu()" routerLink="/admin/create-question" routerLinkActive="active-link"><i class="fas fa-question-circle"></i> Question</a>
-              <a (click)="closeMenu()" routerLink="/admin/certifications" routerLinkActive="active-link"><i class="fas fa-certificate"></i> Upload Certificates</a>
-              <a (click)="closeMenu()" routerLink="/admin/print-certificate" routerLinkActive="active-link"><i class="fas fa-certificate"></i> Print Certificate</a>
-              <a (click)="closeMenu()" routerLink="/admin/approve-certificate" routerLinkActive="active-link"><i class="fas fa-circle-check"></i> Approve Certificates</a>
-              <a (click)="closeMenu()" routerLink="/assessment/admin" routerLinkActive="active-link"><i class="fas fa-clipboard-list"></i> Ghar 9001 Entries</a>
-              <a (click)="closeMenu()" routerLink="/test/result" routerLinkActive="active-link"><i class="fas fa-chart-line"></i> Result</a>
+              <a (click)="closeMenu()" routerLink="/admin/support-tickets" routerLinkActive="active-link">
+                <i class="fas fa-headset"></i>
+                Support Tickets
+              </a>
+              <a (click)="closeMenu()" routerLink="/admin/trainings" routerLinkActive="active-link">
+                <i class="fas fa-book"></i>
+                Trainings
+              </a>
+              <a (click)="closeMenu()" routerLink="/admin/training-presentation" routerLinkActive="active-link">
+                <i class="fas fa-file-powerpoint"></i>
+                Training Presentation
+              </a>
+              <a (click)="closeMenu()" routerLink="/admin/trainer" routerLinkActive="active-link">
+                <i class="fas fa-chalkboard-teacher"></i>
+                Trainer
+              </a>
+              <a (click)="closeMenu()" routerLink="/admin/clients" routerLinkActive="active-link">
+                <i class="fa-solid fa-building-columns"></i>
+                Company
+              </a>
+              <a (click)="closeMenu()" routerLink="/admin/create-test" routerLinkActive="active-link">
+                <i class="fas fa-flask"></i>
+                Test
+              </a>
+              <a (click)="closeMenu()" routerLink="/admin/create-test-questions" routerLinkActive="active-link">
+                <i class="fas fa-list-check"></i>
+                Test Questions
+              </a>
+              <a (click)="closeMenu()" routerLink="/admin/test-training-lists" routerLinkActive="active-link">
+                <i class="fas fa-link"></i>
+                Test Training Lists
+              </a>
+              <a (click)="closeMenu()" routerLink="/admin/create-question" routerLinkActive="active-link">
+                <i class="fas fa-question-circle"></i>
+                Question
+              </a>
+              <a (click)="closeMenu()" routerLink="/admin/certifications" routerLinkActive="active-link">
+                <i class="fas fa-certificate"></i>
+                Upload Certificates
+              </a>
+              <a (click)="closeMenu()" routerLink="/admin/print-certificate" routerLinkActive="active-link">
+                <i class="fas fa-certificate"></i>
+                Print Certificate
+              </a>
+              <a (click)="closeMenu()" routerLink="/admin/exam-details-export" routerLinkActive="active-link">
+                <i class="fas fa-file-excel"></i>
+                Exam Details Export
+              </a>
+              <a (click)="closeMenu()" routerLink="/admin/approve-certificate" routerLinkActive="active-link">
+                <i class="fas fa-circle-check"></i>
+                Approve Certificates
+              </a>
+              <a (click)="closeMenu()" routerLink="/ghar-9001/admin" routerLinkActive="active-link">
+                <i class="fas fa-clipboard-list"></i>
+                Ghar 9001 Entries
+              </a>
+              <a (click)="closeMenu()" routerLink="/admin/ghar-9001-bookings" routerLinkActive="active-link">
+                <i class="fas fa-box"></i>
+                Ghar 9001 Bookings
+              </a>
+              <a (click)="closeMenu()" routerLink="/test/result" routerLinkActive="active-link">
+                <i class="fas fa-chart-line"></i>
+                Result
+              </a>
               <!-- <a (click)="closeMenu()" routerLink="/admin/linkedin-posts" routerLinkActive="active-link">LinkedIn Posts</a>
               <a (click)="closeMenu()" routerLink="/admin/linkedin-comments" routerLinkActive="active-link">LinkedIn Comments</a> -->
             </div>
           </div>
-          <div class="account-nav-item" [class.account-nav-item--open]="userMenuOpen" (mouseenter)="userMenuOpen = true" (mouseleave)="closeUserMenu()">
+          <div
+            class="account-nav-item"
+            [class.account-nav-item--open]="userMenuOpen"
+            (mouseenter)="userMenuOpen = true"
+            (mouseleave)="closeUserMenu()"
+          >
             <a class="account-nav-item__link" (click)="toggleUserMenu($event)" href="javascript:void(0)">
               <i class="fas fa-user-circle account-nav-item__icon"></i>
               <span>{{ truncatedUserName }}</span>
@@ -64,9 +138,19 @@
             </a>
 
             <div class="account-nav-item__dropdown">
-              <a (click)="closeMenu()" routerLink="/profile" routerLinkActive="active-link"><i class="fas fa-user"></i> Profile</a>
-              <a (click)="closeMenu()" routerLink="/change-password" routerLinkActive="active-link"><i class="fas fa-lock"></i> Change Password</a>
-              <a (click)="logout()" routerLink="/login" routerLinkActive="active-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+              <a (click)="closeMenu()" routerLink="/support">My support tickets</a>
+              <a (click)="closeMenu()" routerLink="/profile" routerLinkActive="active-link">
+                <i class="fas fa-user"></i>
+                Profile
+              </a>
+              <a (click)="closeMenu()" routerLink="/change-password" routerLinkActive="active-link">
+                <i class="fas fa-lock"></i>
+                Change Password
+              </a>
+              <a (click)="logout()" routerLink="/login" routerLinkActive="active-link">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+              </a>
             </div>
           </div>
         </div>
@@ -80,12 +164,23 @@
 
     <!-- RIGHT: Button + Hamburger -->
     <div class="navbar-right">
-      <a (click)="closeMenu()" routerLink="/verify" routerLinkActive="active-link" class="btn btn-primary navbar-btn vrfbtn">
+      <a
+        (click)="closeMenu()"
+        routerLink="/verify"
+        routerLinkActive="active-link"
+        class="btn btn-primary navbar-btn vrfbtn"
+      >
         <i *ngIf="isLoggedIn" class="fas fa-certificate" aria-hidden="true"></i>
         <span>Verify Certificate</span>
       </a>
 
-      <button type="button" class="navbar-toggle" [class.active]="menuOpen" (click)="toggleMenu()" aria-label="Toggle navigation">
+      <button
+        type="button"
+        class="navbar-toggle"
+        [class.active]="menuOpen"
+        (click)="toggleMenu()"
+        aria-label="Toggle navigation"
+      >
         <span></span>
         <span></span>
         <span></span>

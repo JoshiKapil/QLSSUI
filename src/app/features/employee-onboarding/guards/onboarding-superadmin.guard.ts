@@ -4,7 +4,10 @@ import { AuthService } from '../../../core/services/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class OnboardingSuperAdminGuard implements CanActivate {
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+  ) {}
   canActivate(): boolean {
     if (this.auth.hasRole('SuperAdmin')) return true;
     this.router.navigate(['/onboarding/dashboard']);

@@ -7,10 +7,9 @@ import { NotifierService } from '../../core/services/notifier.service';
 @Component({
   selector: 'app-contact',
   templateUrl: './contact.component.html',
-  styleUrls: ['./contact.component.scss']
+  styleUrls: ['./contact.component.scss'],
 })
 export class ContactComponent implements AfterViewInit {
-  
   name = '';
   email = '';
   mobile = '';
@@ -23,12 +22,12 @@ export class ContactComponent implements AfterViewInit {
     private interactions: SiteInteractionsService,
     private title: Title,
     private meta: Meta,
-    private notifierService: NotifierService
+    private notifierService: NotifierService,
   ) {
     this.title.setTitle('Contact - QLSS Consulting');
     this.meta.updateTag({
       name: 'description',
-      content: 'QLSS Business Consulting services, training, operational excellence and business transformation.'
+      content: 'QLSS Business Consulting services, training, operational excellence and business transformation.',
     });
   }
 
@@ -45,22 +44,16 @@ export class ContactComponent implements AfterViewInit {
     };
 
     try {
-      const response = await emailjs.send(
-        this.SERVICE_ID,
-        this.TEMPLATE_ID,
-        templateParams,
-        this.PUBLIC_KEY
-      );
-      this.notifierService.successToastr('Message sent successfully!')
+      const response = await emailjs.send(this.SERVICE_ID, this.TEMPLATE_ID, templateParams, this.PUBLIC_KEY);
+      this.notifierService.successToastr('Message sent successfully!');
 
       this.name = '';
       this.email = '';
       this.mobile = '';
       this.messages = '';
       //this.contactForm.reset();
-
     } catch (err) {
-      this.notifierService.warningToastr('Failed to send message. Please try again.')
+      this.notifierService.warningToastr('Failed to send message. Please try again.');
     }
   }
 }

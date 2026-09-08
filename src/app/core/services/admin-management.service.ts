@@ -14,14 +14,14 @@ export class AdminManagementService {
   getAll<T>(endpoint: string): Observable<T[]> {
     return this.http.get<ApiResponse<T[]> | T[]>(this.url(endpoint)).pipe(
       map((response) => unwrapApiResponse<T[]>(response)),
-      catchError(() => of(this.getLocalRecords<T>(endpoint)))
+      catchError(() => of(this.getLocalRecords<T>(endpoint))),
     );
   }
 
   getById<T extends object>(endpoint: string, idKey: string, id: number | string): Observable<T> {
     return this.http.get<ApiResponse<T> | T>(this.url(endpoint, id)).pipe(
       map((response) => unwrapApiResponse<T>(response)),
-      catchError(() => of(this.findLocalRecord<T>(endpoint, idKey, id) as T))
+      catchError(() => of(this.findLocalRecord<T>(endpoint, idKey, id) as T)),
     );
   }
 
@@ -33,14 +33,14 @@ export class AdminManagementService {
 
     return request$.pipe(
       map((response) => unwrapApiResponse<T>(response)),
-      tap((saved) => this.upsertLocalRecord(endpoint, idKey, saved))
+      tap((saved) => this.upsertLocalRecord(endpoint, idKey, saved)),
     );
   }
 
   delete(endpoint: string, idKey: string, id: number | string): Observable<void> {
     return this.http.delete<ApiResponse<void> | void>(this.url(endpoint, id)).pipe(
       map((response) => unwrapApiResponse<void>(response)),
-      tap(() => this.deleteLocalRecord(endpoint, idKey, id))
+      tap(() => this.deleteLocalRecord(endpoint, idKey, id)),
     );
   }
 
@@ -53,7 +53,7 @@ export class AdminManagementService {
         }
 
         return records.filter((record) => this.matchesSearch(record, searchKeys, search));
-      })
+      }),
     );
   }
 
@@ -67,9 +67,9 @@ export class AdminManagementService {
     const formData = new FormData();
     formData.append('file', file);
 
-    return this.http.post<ApiResponse<void> | void>(this.url(endpoint) + '/upload', formData).pipe(
-      map((response) => unwrapApiResponse<void>(response))
-    );
+    return this.http
+      .post<ApiResponse<void> | void>(this.url(endpoint) + '/upload', formData)
+      .pipe(map((response) => unwrapApiResponse<void>(response)));
   }
 
   private findLocalRecord<T>(endpoint: string, idKey: string, id: number | string): T | undefined {
@@ -102,7 +102,11 @@ export class AdminManagementService {
   }
 
   private matchesSearch(record: unknown, searchKeys: string[], search: string): boolean {
-    return searchKeys.some((key) => String(this.getRecordValue(record, key) || '').toLowerCase().includes(search));
+    return searchKeys.some((key) =>
+      String(this.getRecordValue(record, key) || '')
+        .toLowerCase()
+        .includes(search),
+    );
   }
 
   private getRecordId(record: unknown, key: string): string | number | undefined {

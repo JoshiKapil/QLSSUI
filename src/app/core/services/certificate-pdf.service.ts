@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { PDFDocument, PDFFont, PDFPage, RGB, StandardFonts, rgb } from 'pdf-lib';
+import { PDFDocument, PDFFont, PDFPage, PDFImage, RGB, StandardFonts, rgb } from 'pdf-lib';
 import { CertificateData } from '../models/certificate-data.model';
 import { CERTIFICATE_PDF_LAYOUT } from './certificate-pdf-layout.config';
 import * as QRCode from 'qrcode';
@@ -9,7 +9,9 @@ import * as QRCode from 'qrcode';
 @Injectable({ providedIn: 'root' })
 export class CertificatePdfService {
   private readonly templateUrl = 'assets/certificates/certificate-template.png';
+  private readonly qlssLogoUrl = 'assets/logos/logo.png';
   private templateBytes?: ArrayBuffer;
+  private qlssLogoBytes?: ArrayBuffer;
 
   constructor(private http: HttpClient) {}
 
@@ -29,7 +31,7 @@ export class CertificatePdfService {
       y: layout.background.y,
       width: layout.page.width,
       height: layout.page.height,
-      color: layout.colors.white
+      color: layout.colors.white,
     });
 
     const backgroundWidth = layout.page.width;
@@ -40,27 +42,96 @@ export class CertificatePdfService {
       x: backgroundX,
       y: backgroundY,
       width: backgroundWidth,
-      height: backgroundHeight
+      height: backgroundHeight,
     });
+    await this.drawDynamicBranding(document, page, data.logoUrl);
     if (layout.background.cropPageToArtwork) {
       page.setCropBox(backgroundX, backgroundY, backgroundWidth, backgroundHeight);
     }
 
     const clear = layout.completion.clearArea;
-    page.drawRectangle({ x: clear.x, y: clear.y, width: clear.width, height: clear.height, color: layout.colors.white });
+    page.drawRectangle({
+      x: clear.x,
+      y: clear.y,
+      width: clear.width,
+      height: clear.height,
+      color: layout.colors.white,
+    });
 
-    this.drawCenteredAt(page, data.userName, nameFont, layout.userName.fontSize, layout.userName.centerX, layout.userName.y, layout.colors.navy, layout.userName.maxWidth);
-    this.drawCenteredAt(page, this.getCompletionSentence(data), regularFont, layout.completion.fontSize, layout.completion.centerX, layout.verticalFlow.completionY, layout.colors.body, layout.completion.maxWidth);
-    this.drawCenteredAt(page, data.trainingName.toUpperCase(), boldFont, layout.trainingName.fontSize, layout.trainingName.centerX, layout.verticalFlow.trainingNameY, layout.colors.green, layout.trainingName.maxWidth);
+    this.drawCenteredAt(
+      page,
+      data.userName,
+      nameFont,
+      layout.userName.fontSize,
+      layout.userName.centerX,
+      layout.userName.y,
+      layout.colors.navy,
+      layout.userName.maxWidth,
+    );
+    this.drawCenteredAt(
+      page,
+      this.getCompletionSentence(data),
+      regularFont,
+      layout.completion.fontSize,
+      layout.completion.centerX,
+      layout.verticalFlow.completionY,
+      layout.colors.body,
+      layout.completion.maxWidth,
+    );
+    this.drawCenteredAt(
+      page,
+      data.trainingName.toUpperCase(),
+      boldFont,
+      layout.trainingName.fontSize,
+      layout.trainingName.centerX,
+      layout.verticalFlow.trainingNameY,
+      layout.colors.green,
+      layout.trainingName.maxWidth,
+    );
 
     this.drawTopics(page, data.coveredTopics, regularFont);
     this.drawMetadataPanel(page, boldFont);
 
-    this.drawDetailValue(page, data.certificateNumber, regularFont, boldFont, layout.details.certificateNumber, layout.verticalFlow.detailValueY);
-    this.drawDetailValue(page, `${data.trainingHours} Hours`, regularFont, boldFont, layout.details.trainingHours, layout.verticalFlow.detailValueY);
-    this.drawDetailValue(page, data.location, regularFont, boldFont, layout.details.location, layout.verticalFlow.detailValueY);
-    this.drawDetailValue(page, data.trainerName, regularFont, boldFont, layout.details.trainerName, layout.verticalFlow.detailValueY);
-    this.drawDetailValue(page, this.formatDate(data.dateOfIssue), regularFont, boldFont, layout.dateOfIssue, layout.verticalFlow.dateValueY);
+    this.drawDetailValue(
+      page,
+      data.certificateNumber,
+      regularFont,
+      boldFont,
+      layout.details.certificateNumber,
+      layout.verticalFlow.detailValueY,
+    );
+    this.drawDetailValue(
+      page,
+      `${data.trainingHours} Hours`,
+      regularFont,
+      boldFont,
+      layout.details.trainingHours,
+      layout.verticalFlow.detailValueY,
+    );
+    this.drawDetailValue(
+      page,
+      data.location,
+      regularFont,
+      boldFont,
+      layout.details.location,
+      layout.verticalFlow.detailValueY,
+    );
+    this.drawDetailValue(
+      page,
+      data.trainerName,
+      regularFont,
+      boldFont,
+      layout.details.trainerName,
+      layout.verticalFlow.detailValueY,
+    );
+    this.drawDetailValue(
+      page,
+      this.formatDate(data.dateOfIssue),
+      regularFont,
+      boldFont,
+      layout.dateOfIssue,
+      layout.verticalFlow.dateValueY,
+    );
     await this.drawQrCode(document, page, data.certificateNumber, regularFont);
 
     document.setTitle(`${data.trainingName} - ${data.userName}`);
@@ -107,7 +178,7 @@ export class CertificatePdfService {
     document: PDFDocument,
     page: PDFPage,
     certificateNumber: string,
-    regularFont: PDFFont
+    regularFont: PDFFont,
   ): Promise<void> {
     const layout = CERTIFICATE_PDF_LAYOUT.qrCode;
     const verificationUrl = layout.urlBase + '?certificate=' + encodeURIComponent(certificateNumber.trim());
@@ -117,20 +188,20 @@ export class CertificatePdfService {
       width: 512,
       color: {
         dark: '#000000',
-        light: '#FFFFFF'
-      }
+        light: '#FFFFFF',
+      },
     });
     const qrImage = await document.embedPng(dataUrl);
 
     page.drawRectangle({
       ...layout.originalQrMask,
-      color: CERTIFICATE_PDF_LAYOUT.colors.templatePaper
+      color: CERTIFICATE_PDF_LAYOUT.colors.templatePaper,
     });
     page.drawImage(qrImage, {
       x: layout.x,
       y: layout.y,
       width: layout.size,
-      height: layout.size
+      height: layout.size,
     });
 
     const drawQrLabel = (text: string, font: PDFFont, y: number): void => {
@@ -139,7 +210,7 @@ export class CertificatePdfService {
         y,
         size: layout.labelFontSize,
         font,
-        color: CERTIFICATE_PDF_LAYOUT.colors.body
+        color: CERTIFICATE_PDF_LAYOUT.colors.body,
       });
     };
     drawQrLabel('SCAN QR CODE TO VERIFY', regularFont, layout.labelY);
@@ -151,8 +222,143 @@ export class CertificatePdfService {
     return this.templateBytes;
   }
 
+  private async loadQlssLogo(): Promise<ArrayBuffer> {
+    if (!this.qlssLogoBytes) {
+      this.qlssLogoBytes = await firstValueFrom(this.http.get(this.qlssLogoUrl, { responseType: 'arraybuffer' }));
+    }
+    return this.qlssLogoBytes;
+  }
+
+  protected async embedCompanyLogo(document: PDFDocument, logoUrl: string): Promise<ReturnType<PDFDocument['embedPng']>> {
+    const bytes = logoUrl.startsWith('data:')
+      ? await fetch(logoUrl).then((response) => response.arrayBuffer())
+      : await firstValueFrom(this.http.get(logoUrl, { responseType: 'arraybuffer' }));
+    const transparentPng = await this.removeLogoBackground(bytes);
+    return document.embedPng(transparentPng);
+  }
+
+  private async removeLogoBackground(bytes: ArrayBuffer): Promise<Uint8Array> {
+    const blob = new Blob([bytes]);
+    const image = await createImageBitmap(blob);
+    const canvas = document.createElement('canvas');
+    canvas.width = image.width;
+    canvas.height = image.height;
+    const context = canvas.getContext('2d');
+    if (!context) return new Uint8Array(bytes);
+
+    context.drawImage(image, 0, 0);
+    const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
+    const background = this.getCornerColor(pixels, canvas.width, canvas.height);
+    for (let index = 0; index < pixels.data.length; index += 4) {
+      if (pixels.data[index + 3] === 0) continue;
+      const distance = Math.max(
+        Math.abs(pixels.data[index] - background.red),
+        Math.abs(pixels.data[index + 1] - background.green),
+        Math.abs(pixels.data[index + 2] - background.blue),
+      );
+      if (distance <= 18) pixels.data[index + 3] = 0;
+    }
+    context.putImageData(pixels, 0, 0);
+    const bounds = this.getVisibleBounds(pixels, canvas.width, canvas.height);
+    const output = document.createElement('canvas');
+    if (bounds) {
+      const padding = 2;
+      output.width = bounds.width + padding * 2;
+      output.height = bounds.height + padding * 2;
+      output.getContext('2d')?.drawImage(
+        canvas,
+        bounds.x,
+        bounds.y,
+        bounds.width,
+        bounds.height,
+        padding,
+        padding,
+        bounds.width,
+        bounds.height,
+      );
+    } else {
+      output.width = canvas.width;
+      output.height = canvas.height;
+      output.getContext('2d')?.drawImage(canvas, 0, 0);
+    }
+    const png = await new Promise<Blob | null>((resolve) => output.toBlob(resolve, 'image/png'));
+    image.close();
+    return png ? new Uint8Array(await png.arrayBuffer()) : new Uint8Array(bytes);
+  }
+
+  private getVisibleBounds(
+    pixels: ImageData,
+    width: number,
+    height: number,
+  ): { x: number; y: number; width: number; height: number } | null {
+    let left = width;
+    let top = height;
+    let right = -1;
+    let bottom = -1;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        if (pixels.data[(y * width + x) * 4 + 3] < 12) continue;
+        left = Math.min(left, x);
+        top = Math.min(top, y);
+        right = Math.max(right, x);
+        bottom = Math.max(bottom, y);
+      }
+    }
+    return right < left || bottom < top
+      ? null
+      : { x: left, y: top, width: right - left + 1, height: bottom - top + 1 };
+  }
+
+  private getCornerColor(
+    pixels: ImageData,
+    width: number,
+    height: number,
+  ): { red: number; green: number; blue: number } {
+    const samples = [0, width - 1, (height - 1) * width, height * width - 1];
+    const values = samples.map((pixel) => pixel * 4).filter((index) => pixels.data[index + 3] > 0);
+    const safeValues = values.length ? values : [0];
+    return {
+      red: safeValues.reduce((sum, index) => sum + pixels.data[index], 0) / safeValues.length,
+      green: safeValues.reduce((sum, index) => sum + pixels.data[index + 1], 0) / safeValues.length,
+      blue: safeValues.reduce((sum, index) => sum + pixels.data[index + 2], 0) / safeValues.length,
+    };
+  }
+
+  protected async drawDynamicBranding(document: PDFDocument, page: PDFPage, logoUrl?: string): Promise<void> {
+    if (!logoUrl) return;
+
+    const layout = CERTIFICATE_PDF_LAYOUT.dynamicBranding;
+    page.drawRectangle({ ...layout.originalBrandMask, color: CERTIFICATE_PDF_LAYOUT.colors.templatePaper });
+    const qlssLogo = await document.embedPng(await this.loadQlssLogo());
+    const logo = await this.embedCompanyLogo(document, logoUrl);
+    this.drawContainedImage(page, qlssLogo, layout.qlssImage);
+    this.drawContainedImage(page, logo, layout.companyImage);
+    page.drawLine({
+      start: { x: layout.separator.x, y: layout.separator.y },
+      end: { x: layout.separator.x, y: layout.separator.y + layout.separator.height },
+      thickness: layout.separator.thickness,
+      color: CERTIFICATE_PDF_LAYOUT.colors.gold,
+    });
+  }
+
+  private drawContainedImage(
+    page: PDFPage,
+    image: PDFImage,
+    area: { x: number; y: number; width: number; height: number },
+  ): void {
+    const scale = Math.min(area.width / image.width, area.height / image.height);
+    const width = image.width * scale;
+    const height = image.height * scale;
+    page.drawImage(image, {
+      x: area.x + (area.width - width) / 2,
+      y: area.y + (area.height - height) / 2,
+      width,
+      height,
+    });
+  }
+
   private getCompletionSentence(data: CertificateData): string {
-   return 'has attended and successfully completed the assessment on';
+    return 'has attended and successfully completed the assessment on';
     // if (this.certificate.completionType === 'attendance') {
     //   return 'has successfully attended the training program on';
     // }
@@ -166,9 +372,10 @@ export class CertificatePdfService {
     const colors = CERTIFICATE_PDF_LAYOUT.colors;
     const bulletColors = [colors.green, colors.gold, colors.blue, colors.red];
     const topics = sourceTopics.map((topic) => topic.trim()).filter(Boolean);
-    const visibleTopics = topics.length > layout.maxItems
-      ? [...topics.slice(0, layout.maxItems - 1), topics.slice(layout.maxItems - 1).join(', ')]
-      : topics;
+    const visibleTopics =
+      topics.length > layout.maxItems
+        ? [...topics.slice(0, layout.maxItems - 1), topics.slice(layout.maxItems - 1).join(', ')]
+        : topics;
 
     // The template PNG already contains placeholder bullets and separators in
     // this area. Cover only that artwork with the template-matched paper color
@@ -178,35 +385,31 @@ export class CertificatePdfService {
       y: layout.panel.y,
       width: layout.panel.width,
       height: layout.panel.height,
-      color: colors.templatePaper
+      color: colors.templatePaper,
     });
 
     const count = visibleTopics.length;
     if (!count) return;
 
     const availableHeight = layout.firstRowCenterY - layout.lastRowCenterY;
-    const rowGap = count > 1
-      ? Math.min(layout.maximumRowGap, availableHeight / (count - 1))
-      : 0;
+    const rowGap = count > 1 ? Math.min(layout.maximumRowGap, availableHeight / (count - 1)) : 0;
 
     visibleTopics.forEach((topic, index) => {
       const maxLines = index === layout.maxItems - 1 ? layout.overflowMaxLines : layout.maxLinesPerItem;
       const rowCenterY = layout.firstRowCenterY - index * rowGap;
-      let fontSize: number = layout.fontSize
-        - Math.max(0, count - layout.compactAfterCount) * layout.fontReductionPerItem;
+      let fontSize: number =
+        layout.fontSize - Math.max(0, count - layout.compactAfterCount) * layout.fontReductionPerItem;
       let lines = this.wrapText(topic, font, fontSize, layout.maxWidth);
       while (lines.length > maxLines && fontSize > layout.minimumFontSize) {
         fontSize = Math.max(layout.minimumFontSize, fontSize - 0.3);
         lines = this.wrapText(topic, font, fontSize, layout.maxWidth);
       }
-      const startY = rowCenterY
-        + ((lines.length - 1) * layout.lineHeight) / 2
-        - fontSize * 0.35;
+      const startY = rowCenterY + ((lines.length - 1) * layout.lineHeight) / 2 - fontSize * 0.35;
       page.drawCircle({
         x: layout.bulletX,
         y: rowCenterY,
         size: layout.bulletRadius,
-        color: bulletColors[index % bulletColors.length]
+        color: bulletColors[index % bulletColors.length],
       });
       lines.forEach((line, lineIndex) => {
         page.drawText(line, {
@@ -214,7 +417,7 @@ export class CertificatePdfService {
           y: startY - lineIndex * layout.lineHeight,
           size: fontSize,
           font,
-          color: CERTIFICATE_PDF_LAYOUT.colors.body
+          color: CERTIFICATE_PDF_LAYOUT.colors.body,
         });
       });
       if (layout.separatorThickness > 0) {
@@ -224,7 +427,7 @@ export class CertificatePdfService {
           end: { x: layout.separatorEndX, y: separatorY },
           thickness: layout.separatorThickness,
           color: colors.topicRule,
-          dashArray: [...layout.separatorDash]
+          dashArray: [...layout.separatorDash],
         });
       }
     });
@@ -247,13 +450,33 @@ export class CertificatePdfService {
     return lines;
   }
 
-  private drawCenteredAt(page: PDFPage, text: string, font: PDFFont, size: number, centerX: number, y: number, color: RGB, maxWidth: number, minimumSize = 6.5): void {
+  private drawCenteredAt(
+    page: PDFPage,
+    text: string,
+    font: PDFFont,
+    size: number,
+    centerX: number,
+    y: number,
+    color: RGB,
+    maxWidth: number,
+    minimumSize = 6.5,
+  ): void {
     const fittedSize = this.fitFontSize(text, font, size, maxWidth, minimumSize);
     const width = font.widthOfTextAtSize(text, fittedSize);
     page.drawText(text, { x: centerX - width / 2, y, size: fittedSize, font, color });
   }
 
-  private drawLeftFitted(page: PDFPage, text: string, font: PDFFont, size: number, x: number, y: number, color: RGB, maxWidth: number, minimumSize = 6.5): void {
+  private drawLeftFitted(
+    page: PDFPage,
+    text: string,
+    font: PDFFont,
+    size: number,
+    x: number,
+    y: number,
+    color: RGB,
+    maxWidth: number,
+    minimumSize = 6.5,
+  ): void {
     page.drawText(text, { x, y, size: this.fitFontSize(text, font, size, maxWidth, minimumSize), font, color });
   }
 
@@ -264,7 +487,7 @@ export class CertificatePdfService {
       { field: layout.details.certificateNumber, icon: 'document' as const },
       { field: layout.details.trainingHours, icon: 'clock' as const },
       { field: layout.details.location, icon: 'location' as const },
-      { field: layout.details.trainerName, icon: 'trainer' as const }
+      { field: layout.details.trainerName, icon: 'trainer' as const },
     ];
 
     // Remove the metadata artwork baked into the PNG before drawing a fully
@@ -282,13 +505,13 @@ export class CertificatePdfService {
       `Q 0 ${height} 0 ${height - radius}`,
       `V ${radius}`,
       `Q 0 0 ${radius} 0`,
-      'Z'
+      'Z',
     ].join(' ');
     page.drawSvgPath(roundedBorderPath, {
       x,
       y: y + height,
       borderColor: layout.colors.orange,
-      borderWidth: thickness
+      borderWidth: thickness,
     });
 
     fields.slice(0, -1).forEach(({ field }, index) => {
@@ -300,7 +523,7 @@ export class CertificatePdfService {
         thickness: panel.separator.thickness,
         color: layout.colors.orange,
         opacity: 0.65,
-        dashArray: [...panel.separator.dash]
+        dashArray: [...panel.separator.dash],
       });
     });
 
@@ -314,7 +537,7 @@ export class CertificatePdfService {
     icon: 'document' | 'clock' | 'location' | 'trainer',
     centerX: number,
     y: number,
-    font: PDFFont
+    font: PDFFont,
   ): void {
     const layout = CERTIFICATE_PDF_LAYOUT;
     const panel = layout.metadataPanel;
@@ -327,7 +550,7 @@ export class CertificatePdfService {
       y,
       size: panel.labelFontSize,
       font,
-      color: layout.colors.navy
+      color: layout.colors.navy,
     });
   }
 
@@ -336,14 +559,15 @@ export class CertificatePdfService {
     icon: 'document' | 'clock' | 'location' | 'trainer',
     x: number,
     y: number,
-    color: RGB
+    color: RGB,
   ): void {
-    const line = (x1: number, y1: number, x2: number, y2: number, thickness = 0.8) => page.drawLine({
-      start: { x: x1, y: y1 },
-      end: { x: x2, y: y2 },
-      thickness,
-      color
-    });
+    const line = (x1: number, y1: number, x2: number, y2: number, thickness = 0.8) =>
+      page.drawLine({
+        start: { x: x1, y: y1 },
+        end: { x: x2, y: y2 },
+        thickness,
+        color,
+      });
 
     if (icon === 'document') {
       page.drawRectangle({ x: x - 3, y: y - 4, width: 6, height: 8, borderColor: color, borderWidth: 0.8 });
@@ -378,8 +602,16 @@ export class CertificatePdfService {
     text: string,
     regularFont: PDFFont,
     boldFont: PDFFont,
-    field: { centerX: number; maxWidth: number; fontSize: number; minimumFontSize: number; maxLines: number; lineHeight: number; weight: 'regular' | 'bold' },
-    y: number
+    field: {
+      centerX: number;
+      maxWidth: number;
+      fontSize: number;
+      minimumFontSize: number;
+      maxLines: number;
+      lineHeight: number;
+      weight: 'regular' | 'bold';
+    },
+    y: number,
   ): void {
     const font = field.weight === 'bold' ? boldFont : regularFont;
     let fontSize = field.fontSize;
@@ -392,14 +624,21 @@ export class CertificatePdfService {
     const firstLineY = y + ((lines.length - 1) * field.lineHeight) / 2;
     lines.forEach((line, index) => {
       const lineWidth = font.widthOfTextAtSize(line, fontSize);
-      page.drawText(line, { x: field.centerX - lineWidth / 2, y: firstLineY - index * field.lineHeight, size: fontSize, font, color: CERTIFICATE_PDF_LAYOUT.colors.body });
+      page.drawText(line, {
+        x: field.centerX - lineWidth / 2,
+        y: firstLineY - index * field.lineHeight,
+        size: fontSize,
+        font,
+        color: CERTIFICATE_PDF_LAYOUT.colors.body,
+      });
     });
   }
 
   private clampLines(lines: string[], maxLines: number, font: PDFFont, size: number, maxWidth: number): string[] {
     const visible = lines.slice(0, maxLines);
     let lastLine = lines.slice(maxLines - 1).join(' ');
-    while (lastLine.length && font.widthOfTextAtSize(`${lastLine}...`, size) > maxWidth) lastLine = lastLine.slice(0, -1).trimEnd();
+    while (lastLine.length && font.widthOfTextAtSize(`${lastLine}...`, size) > maxWidth)
+      lastLine = lastLine.slice(0, -1).trimEnd();
     visible[maxLines - 1] = `${lastLine}...`;
     return visible;
   }
@@ -418,7 +657,11 @@ export class CertificatePdfService {
 
   private getFileName(data: CertificateData): string {
     const maxLength = CERTIFICATE_PDF_LAYOUT.fileName.maxSlugLength;
-    const slug = `${data.userName}-${data.trainingName}`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, maxLength);
+    const slug = `${data.userName}-${data.trainingName}`
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, maxLength);
     return `${slug || CERTIFICATE_PDF_LAYOUT.fileName.fallback}.pdf`;
   }
 
@@ -427,14 +670,15 @@ export class CertificatePdfService {
   }
 
   private validate(data: CertificateData): void {
-    const required: Array<keyof CertificateData> = ['userName', 'trainingName', 'certificateNumber', 'location', 'trainerName', 'dateOfIssue'];
+    const required: Array<keyof CertificateData> = [
+      'userName',
+      'trainingName',
+      'certificateNumber',
+      'location',
+      'trainerName',
+      'dateOfIssue',
+    ];
     const missing = required.filter((key) => !String(data[key] ?? '').trim());
     if (missing.length) throw new Error(`Missing certificate fields: ${missing.join(', ')}`);
   }
 }
-
-
-
-
-
-

@@ -5,10 +5,21 @@ import { NotifierService } from '../../../core/services/notifier.service';
 import { DataService } from '../../../core/services/data.service';
 import { TrainingManagementService } from '../../../core/services/training-management.service';
 import { TEST_QUESTIONS } from '../../test/test-data';
-import { QuestionUsageInfo, TestDefinition, TestDifficulty, TestOption, TestQuestion, TestQuestionType } from '../../test/test.model';
+import {
+  QuestionUsageInfo,
+  TestDefinition,
+  TestDifficulty,
+  TestOption,
+  TestQuestion,
+  TestQuestionType,
+} from '../../test/test.model';
 import { TestStorageService } from '../../test/services/test-storage.service';
 import { TestExcelImportService } from '../../test/services/test-excel-import.service';
-import { ImportDuplicateAction, QuestionImportPreview, QuestionImportResult } from '../../test/services/test-excel-import.model';
+import {
+  ImportDuplicateAction,
+  QuestionImportPreview,
+  QuestionImportResult,
+} from '../../test/services/test-excel-import.model';
 import { Subject, takeUntil } from 'rxjs';
 
 const DEFAULT_QUESTION_MARKS = 1;
@@ -18,7 +29,7 @@ const DEFAULT_TEST_NAME = 'Test 1';
 @Component({
   selector: 'app-create-question',
   templateUrl: './create-question.component.html',
-  styleUrls: ['./create-question.component.scss']
+  styleUrls: ['./create-question.component.scss'],
 })
 export class CreateQuestionComponent implements OnInit, OnDestroy {
   questionTypes: TestQuestionType[] = ['MCSA', 'MCMA', 'TRUE_FALSE', 'ESSAY'];
@@ -34,7 +45,9 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
   validationErrors: string[] = [];
   usageInfo: QuestionUsageInfo | null = null;
   isSaving = false;
-  private pendingQuestionMediaFiles: Partial<Record<'questionImageUrl' | 'audioUrl' | 'videoUrl' | 'explanationImageUrl', File>> = {};
+  private pendingQuestionMediaFiles: Partial<
+    Record<'questionImageUrl' | 'audioUrl' | 'videoUrl' | 'explanationImageUrl', File>
+  > = {};
   private pendingOptionImageFiles: Record<number, File> = {};
   private Destroy$ = new Subject<void>();
 
@@ -62,7 +75,7 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
   readonly mediaFolders = {
     images: 'images',
     audios: 'audios',
-    videos: 'videos'
+    videos: 'videos',
   } as const;
 
   constructor(
@@ -71,7 +84,7 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
     private excelImport: TestExcelImportService,
     private http: HttpClient,
     private dataService: DataService,
-    private trainingService: TrainingManagementService
+    private trainingService: TrainingManagementService,
   ) {}
 
   ngOnInit(): void {
@@ -88,18 +101,31 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
     const search = this.searchText.trim().toLowerCase();
     return this.questionBank.filter((question) => {
       const matchesSearch = !search || question.questionText.toLowerCase().includes(search);
-      const matchesTraining = !this.filterTraining.trim() || (question.trainingName || '').toLowerCase().includes(this.filterTraining.trim().toLowerCase());
-      const matchesSubject = !this.filterSubject.trim() || question.subject.toLowerCase().includes(this.filterSubject.trim().toLowerCase());
-      const matchesTopic = !this.filterTopic.trim() || question.topic.toLowerCase().includes(this.filterTopic.trim().toLowerCase());
+      const matchesTraining =
+        !this.filterTraining.trim() ||
+        (question.trainingName || '').toLowerCase().includes(this.filterTraining.trim().toLowerCase());
+      const matchesSubject =
+        !this.filterSubject.trim() || question.subject.toLowerCase().includes(this.filterSubject.trim().toLowerCase());
+      const matchesTopic =
+        !this.filterTopic.trim() || question.topic.toLowerCase().includes(this.filterTopic.trim().toLowerCase());
       const matchesType = !this.filterType || question.questionType === this.filterType;
       const matchesDifficulty = !this.filterDifficulty || question.difficulty === this.filterDifficulty;
       const matchesMarks = !this.filterMarks || (question.marks || 1) === this.filterMarks;
-      const matchesActive = this.filterActive === 'all' || (this.filterActive === 'active' ? question.isActive !== false : question.isActive === false);
-      return matchesSearch && matchesTraining && matchesSubject && matchesTopic && matchesType && matchesDifficulty && matchesMarks && matchesActive;
+      const matchesActive =
+        this.filterActive === 'all' ||
+        (this.filterActive === 'active' ? question.isActive !== false : question.isActive === false);
+      return (
+        matchesSearch &&
+        matchesTraining &&
+        matchesSubject &&
+        matchesTopic &&
+        matchesType &&
+        matchesDifficulty &&
+        matchesMarks &&
+        matchesActive
+      );
     });
   }
-
-
 
   downloadQuestionTemplate(): void {
     this.storage.downloadBlob(this.excelImport.buildQuestionTemplate(), 'QuestionImportTemplate.xlsx');
@@ -115,7 +141,8 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
     this.questionImportFileName = file.name;
     this.questionImportResult = null;
     this.storage.importQuestionExcelToServer(file);
-    this.excelImport.parseQuestionExcel(file, this.questionImportDuplicateAction)
+    this.excelImport
+      .parseQuestionExcel(file, this.questionImportDuplicateAction)
       .then((preview) => (this.questionImportPreview = preview))
       .catch(() => this.notifier.warningToastr('Question Excel file could not be read.'));
     input.value = '';
@@ -126,7 +153,8 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.excelImport.applyQuestionImport(this.questionImportPreview)
+    this.excelImport
+      .applyQuestionImport(this.questionImportPreview)
       .then((result) => {
         this.questionImportResult = result;
         this.questionImportPreview = null;
@@ -163,22 +191,26 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
         question = {
           ...question,
           questionId: savedServerId,
-          id: Number(savedServerId)
+          id: Number(savedServerId),
         };
         this.form = { ...this.form, questionId: savedServerId, id: Number(savedServerId) };
       }
 
-      const questionToStore = savedQuestion ? {
-        ...question,
-        ...savedQuestion,
-        questionId: savedServerId || savedQuestion.questionId || question.questionId,
-        id: savedServerId ? Number(savedServerId) : (savedQuestion.id || question.id)
-      } : question;
+      const questionToStore = savedQuestion
+        ? {
+            ...question,
+            ...savedQuestion,
+            questionId: savedServerId || savedQuestion.questionId || question.questionId,
+            id: savedServerId ? Number(savedServerId) : savedQuestion.id || question.id,
+          }
+        : question;
 
       if (this.editingIndex === null) {
         this.questionBank = [...this.questionBank, questionToStore];
       } else {
-        this.questionBank = this.questionBank.map((item, index) => (index === this.editingIndex ? questionToStore : item));
+        this.questionBank = this.questionBank.map((item, index) =>
+          index === this.editingIndex ? questionToStore : item,
+        );
       }
 
       this.persistQuestionBank('Question bank saved.', false);
@@ -194,7 +226,9 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
 
   editQuestion(index: number): void {
     const question = this.filteredQuestions[index];
-    const bankIndex = this.questionBank.findIndex((item) => this.storage.getQuestionKey(item) === this.storage.getQuestionKey(question));
+    const bankIndex = this.questionBank.findIndex(
+      (item) => this.storage.getQuestionKey(item) === this.storage.getQuestionKey(question),
+    );
     this.editingIndex = bankIndex;
     this.clearPendingMediaFiles();
     this.form = this.createEditableQuestion(question);
@@ -214,7 +248,7 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
       questionText: `${source.questionText} Copy`,
       version: 1,
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
     };
     this.questionBank = [...this.questionBank, clone];
     this.persistQuestionBank('Question cloned.');
@@ -222,11 +256,13 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
 
   deactivateQuestion(index: number): void {
     const question = this.filteredQuestions[index];
-    this.questionBank = this.questionBank.map((item) => this.storage.getQuestionKey(item) === this.storage.getQuestionKey(question) ? { ...item, isActive: false, updatedAt: new Date().toISOString() } : item);
+    this.questionBank = this.questionBank.map((item) =>
+      this.storage.getQuestionKey(item) === this.storage.getQuestionKey(question)
+        ? { ...item, isActive: false, updatedAt: new Date().toISOString() }
+        : item,
+    );
     this.persistQuestionBank('Question deactivated.');
   }
-
-
 
   mapQuestionToTest(question: TestQuestion): void {
     if (!question) {
@@ -242,12 +278,18 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
     const questionKey = this.storage.getQuestionKey(question);
     this.mappingMessage = '';
 
-    this.storage.loadAssessment(testName)
+    this.storage
+      .loadAssessment(testName)
       .then((assessment) => {
         const nextAssessment = assessment || this.createDefaultAssessment(testName);
-        const existingOrder = nextAssessment.questionOrder?.length ? nextAssessment.questionOrder : nextAssessment.mappedQuestionIds || [];
+        const existingOrder = nextAssessment.questionOrder?.length
+          ? nextAssessment.questionOrder
+          : nextAssessment.mappedQuestionIds || [];
         const withoutCurrent = existingOrder.filter((mappedQuestionId) => mappedQuestionId !== questionKey);
-        const requestedNumber = this.mappingQuestionNumber && this.mappingQuestionNumber > 0 ? this.mappingQuestionNumber : withoutCurrent.length + 1;
+        const requestedNumber =
+          this.mappingQuestionNumber && this.mappingQuestionNumber > 0
+            ? this.mappingQuestionNumber
+            : withoutCurrent.length + 1;
         const insertIndex = Math.min(Math.max(requestedNumber - 1, 0), withoutCurrent.length);
 
         withoutCurrent.splice(insertIndex, 0, questionKey);
@@ -257,8 +299,15 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
         nextAssessment.totalMarks = this.calculateMappedMarks(withoutCurrent);
         nextAssessment.updatedAt = new Date().toISOString();
 
-        return this.storage.saveAssessment(nextAssessment)
-          .then(() => this.storage.mapQuestionToTestOnServer(nextAssessment.testId, questionKey, nextAssessment.questionOrder.indexOf(questionKey) + 1))
+        return this.storage
+          .saveAssessment(nextAssessment)
+          .then(() =>
+            this.storage.mapQuestionToTestOnServer(
+              nextAssessment.testId,
+              questionKey,
+              nextAssessment.questionOrder.indexOf(questionKey) + 1,
+            ),
+          )
           .then(() => nextAssessment);
       })
       .then((assessment) => {
@@ -300,7 +349,10 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
 
   onQuestionTypeChange(): void {
     if (this.form.questionType === 'TRUE_FALSE') {
-      this.form.options = [{ id: 'true', text: 'True' }, { id: 'false', text: 'False' }];
+      this.form.options = [
+        { id: 'true', text: 'True' },
+        { id: 'false', text: 'False' },
+      ];
       this.form.correctOptionId = '';
       this.form.correctOptionIds = [];
       return;
@@ -334,7 +386,9 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
   toggleCorrectOption(optionId: string): void {
     if (this.form.questionType === 'MCMA') {
       const selected = this.form.correctOptionIds || [];
-      this.form.correctOptionIds = selected.includes(optionId) ? selected.filter((id) => id !== optionId) : [...selected, optionId];
+      this.form.correctOptionIds = selected.includes(optionId)
+        ? selected.filter((id) => id !== optionId)
+        : [...selected, optionId];
       this.form.correctOptionId = this.form.correctOptionIds[0] || '';
       return;
     }
@@ -344,11 +398,14 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
   }
 
   isCorrectOption(optionId: string): boolean {
-    return this.form.questionType === 'MCMA' ? !!this.form.correctOptionIds?.includes(optionId) : this.form.correctOptionId === optionId;
+    return this.form.questionType === 'MCMA'
+      ? !!this.form.correctOptionIds?.includes(optionId)
+      : this.form.correctOptionId === optionId;
   }
 
   exportQuestionBank(): void {
-    this.storage.exportQuestionBank()
+    this.storage
+      .exportQuestionBank()
       .then((blob) => this.storage.downloadBlob(blob, 'QuestionBank.json'))
       .catch(() => this.notifier.warningToastr('Question bank export failed.'));
   }
@@ -360,7 +417,8 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.storage.importQuestionBank(file)
+    this.storage
+      .importQuestionBank(file)
       .then((questions) => {
         this.questionBank = questions;
         input.value = '';
@@ -423,12 +481,14 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
 
   private setOptionImage(optionIndex: number, imageUrl: string): void {
     this.form.options = (this.form.options || []).map((option, index) =>
-      index === optionIndex ? { ...option, imageUrl } : option
+      index === optionIndex ? { ...option, imageUrl } : option,
     );
   }
 
   private async uploadPendingMediaFiles(): Promise<void> {
-    const mediaFields = Object.entries(this.pendingQuestionMediaFiles) as Array<['questionImageUrl' | 'audioUrl' | 'videoUrl' | 'explanationImageUrl', File]>;
+    const mediaFields = Object.entries(this.pendingQuestionMediaFiles) as Array<
+      ['questionImageUrl' | 'audioUrl' | 'videoUrl' | 'explanationImageUrl', File]
+    >;
 
     for (const [field, file] of mediaFields) {
       const mediaType = field === 'audioUrl' ? 'audio' : field === 'videoUrl' ? 'video' : 'image';
@@ -489,26 +549,32 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
 
   // Helpers that operate by question object so pagination indices are irrelevant
   editQuestionByItem(question: TestQuestion): void {
-    const index = this.filteredQuestions.findIndex((q) => this.storage.getQuestionKey(q) === this.storage.getQuestionKey(question));
+    const index = this.filteredQuestions.findIndex(
+      (q) => this.storage.getQuestionKey(q) === this.storage.getQuestionKey(question),
+    );
     if (index > -1) this.editQuestion(index);
   }
 
   cloneQuestionByItem(question: TestQuestion): void {
-    const index = this.filteredQuestions.findIndex((q) => this.storage.getQuestionKey(q) === this.storage.getQuestionKey(question));
+    const index = this.filteredQuestions.findIndex(
+      (q) => this.storage.getQuestionKey(q) === this.storage.getQuestionKey(question),
+    );
     if (index > -1) this.cloneQuestion(index);
   }
 
   deactivateQuestionByItem(question: TestQuestion): void {
-    const index = this.filteredQuestions.findIndex((q) => this.storage.getQuestionKey(q) === this.storage.getQuestionKey(question));
+    const index = this.filteredQuestions.findIndex(
+      (q) => this.storage.getQuestionKey(q) === this.storage.getQuestionKey(question),
+    );
     if (index > -1) this.deactivateQuestion(index);
   }
 
   deleteQuestionByItem(question: TestQuestion): void {
-    const index = this.filteredQuestions.findIndex((q) => this.storage.getQuestionKey(q) === this.storage.getQuestionKey(question));
+    const index = this.filteredQuestions.findIndex(
+      (q) => this.storage.getQuestionKey(q) === this.storage.getQuestionKey(question),
+    );
     if (index > -1) this.deleteQuestion(index);
   }
-
-
 
   private getSavedServerQuestionId(savedQuestion: TestQuestion | null): string {
     const saved = (savedQuestion as any)?.data ?? savedQuestion;
@@ -539,7 +605,7 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
       totalMarks: 0,
       createdAt: now,
       updatedAt: now,
-      version: 1
+      version: 1,
     };
   }
 
@@ -551,7 +617,8 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
   }
 
   private loadQuestionBank(): void {
-    this.storage.loadQuestionBank(TEST_QUESTIONS)
+    this.storage
+      .loadQuestionBank(TEST_QUESTIONS)
       .then((questions) => (this.questionBank = questions))
       .catch(() => this.notifier.warningToastr('Question bank could not be loaded.'));
   }
@@ -603,18 +670,22 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
     //   });
 
     // Future API integration: call this block instead of the asset request above.
-    this.trainingService.getPaged(1, 100).pipe(takeUntil(this.Destroy$)).subscribe({
-      next: (response) => {
-        this.trainingList = (response.items || [])
-          .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
-        this.syncSelectedTrainingFromForm();
-      },
-      error: (error) => {
-        console.error('Failed to load training data.', { status: error.status });
-        this.trainingList = [];
-        this.syncSelectedTrainingFromForm();
-      }
-    });
+    this.trainingService
+      .getPaged(1, 100)
+      .pipe(takeUntil(this.Destroy$))
+      .subscribe({
+        next: (response) => {
+          this.trainingList = (response.items || []).sort(
+            (a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0),
+          );
+          this.syncSelectedTrainingFromForm();
+        },
+        error: (error) => {
+          console.error('Failed to load training data.', { status: error.status });
+          this.trainingList = [];
+          this.syncSelectedTrainingFromForm();
+        },
+      });
   }
 
   private mapTrainingFromAsset(training: any): Training {
@@ -625,11 +696,9 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
       topicCovered: training.topicCovered ?? training.TopicCovered ?? training.TopicCoveredName ?? '',
       displayName: training.displayName ?? training.DisplayName ?? training.TrainingName ?? '',
       image: training.image ?? training.Image ?? '',
-      displayOrder: Number(training.displayOrder ?? training.DisplayOrder ?? 0)
+      displayOrder: Number(training.displayOrder ?? training.DisplayOrder ?? 0),
     };
   }
-
-
 
   get filteredTrainingList(): Training[] {
     const search = this.trainingSearch.trim().toLowerCase();
@@ -652,9 +721,9 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
 
   getQuestionTrainingLabel(question: { trainingId?: unknown; trainingName?: string }): string {
     const training = this.trainingList.find(
-      (item) => String(item.trainingId ?? '') === String(question.trainingId ?? '')
+      (item) => String(item.trainingId ?? '') === String(question.trainingId ?? ''),
     );
-    return training ? this.getTrainingLabel(training) : (question.trainingName || 'No training');
+    return training ? this.getTrainingLabel(training) : question.trainingName || 'No training';
   }
   openTrainingDropdown(): void {
     this.isTrainingDropdownOpen = true;
@@ -676,7 +745,9 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
       return 'Select Training';
     }
 
-    const selected = this.trainingList.find((training) => String(training.trainingId ?? '') === String(this.selectedTrainingId));
+    const selected = this.trainingList.find(
+      (training) => String(training.trainingId ?? '') === String(this.selectedTrainingId),
+    );
     return selected ? this.getTrainingLabel(selected) : 'Select Training';
   }
 
@@ -716,10 +787,14 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
     if (!this.form.trainingName?.trim() && !this.form.trainingId?.trim()) errors.push('Training is required.');
     if (!this.form.questionType) errors.push('Question type is required.');
     if (!this.form.questionText.trim()) errors.push('Question text is required.');
-    if (this.form.questionType === 'MCSA' && (validOptions.length < 2 || !this.form.correctOptionId)) errors.push('MCSA requires at least 2 options and exactly 1 correct option.');
-    if (this.form.questionType === 'MCMA' && (validOptions.length < 2 || !this.form.correctOptionIds?.length)) errors.push('MCMA requires at least 2 options and at least 1 correct option.');
-    if (this.form.questionType === 'TRUE_FALSE' && !this.form.correctOptionId) errors.push('Select the correct True / False answer.');
-    if (this.form.questionType === 'ESSAY' && !this.form.expectedAnswer?.trim() && !this.form.sampleAnswer?.trim()) errors.push('Essay requires expected answer or sample answer.');
+    if (this.form.questionType === 'MCSA' && (validOptions.length < 2 || !this.form.correctOptionId))
+      errors.push('MCSA requires at least 2 options and exactly 1 correct option.');
+    if (this.form.questionType === 'MCMA' && (validOptions.length < 2 || !this.form.correctOptionIds?.length))
+      errors.push('MCMA requires at least 2 options and at least 1 correct option.');
+    if (this.form.questionType === 'TRUE_FALSE' && !this.form.correctOptionId)
+      errors.push('Select the correct True / False answer.');
+    if (this.form.questionType === 'ESSAY' && !this.form.expectedAnswer?.trim() && !this.form.sampleAnswer?.trim())
+      errors.push('Essay requires expected answer or sample answer.');
 
     return errors;
   }
@@ -752,7 +827,7 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
       negativeMarks: 0,
       estimatedTimeSeconds: DEFAULT_ESTIMATED_TIME_SECONDS,
       isActive: true,
-      version: 1
+      version: 1,
     };
   }
 
@@ -761,7 +836,7 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
       ...question,
       subject: question.subject || 'NA',
       topic: question.topic || 'NA',
-      options: (question.options || []).map((option) => ({ ...option }))
+      options: (question.options || []).map((option) => ({ ...option })),
     };
   }
 
@@ -779,7 +854,7 @@ export class CreateQuestionComponent implements OnInit, OnDestroy {
       isActive: this.form.isActive !== false,
       version: (this.form.version || 0) + (this.editingIndex === null ? 1 : 1),
       createdAt: this.form.createdAt || now,
-      updatedAt: now
+      updatedAt: now,
     };
   }
 

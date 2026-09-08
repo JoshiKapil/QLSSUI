@@ -11,18 +11,29 @@ import { TestStorageService } from '../../test/services/test-storage.service';
 import { QuestionDto, QuestionOptionDto, QuestionTestImportResultDto } from '../../test/services/test-api.models';
 import { TestDefinition, TestQuestion } from '../../test/test.model';
 
-interface TrainingPage { items: Training[]; }
-interface PreviewQuestion extends QuestionDto { validationErrors: string[]; }
+interface TrainingPage {
+  items: Training[];
+}
+interface PreviewQuestion extends QuestionDto {
+  validationErrors: string[];
+}
 interface ParsedQuestion {
-  text: string; type: string; subject: string; topic: string; difficulty: string;
-  answer: string; expectedAnswer: string; explanation: string; marks: string;
+  text: string;
+  type: string;
+  subject: string;
+  topic: string;
+  difficulty: string;
+  answer: string;
+  expectedAnswer: string;
+  explanation: string;
+  marks: string;
   options: Array<{ id: string; text: string }>;
 }
 
 @Component({
   selector: 'app-create-test-questions',
   templateUrl: './create-test-questions.component.html',
-  styleUrls: ['./create-test-questions.component.scss']
+  styleUrls: ['./create-test-questions.component.scss'],
 })
 export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
   trainings: Training[] = [];
@@ -50,18 +61,20 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
     private readonly testApi: TestApiService,
     private readonly testStorage: TestStorageService,
     private readonly trainingService: TrainingManagementService,
-    private readonly route: ActivatedRoute
+    private readonly route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
     this.loadTrainingList();
 
-    this.testApi.getTestTypes().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (types) => this.testTypes = types.filter((type) =>
-        ['pre', 'post', 'chalange'].includes(type.toLowerCase())
-      ),
-      error: (error) => this.fail('Test type dropdown could not be loaded.', error)
-    });
+    this.testApi
+      .getTestTypes()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (types) =>
+          (this.testTypes = types.filter((type) => ['pre', 'post', 'chalange'].includes(type.toLowerCase()))),
+        error: (error) => this.fail('Test type dropdown could not be loaded.', error),
+      });
   }
 
   ngOnDestroy(): void {
@@ -100,21 +113,30 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
 
   // Future API integration: call this method instead of loadTrainingList().
   private loadTrainingList(): void {
-    this.trainingService.getPaged(1, 100).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (response) => {
-        this.trainings = (response.items || [])
-          .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
-        this.applyRouteSelection();
-      },
-      error: (error) => this.fail('Training dropdown could not be loaded.', error)
-    });
+    this.trainingService
+      .getPaged(1, 100)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.trainings = (response.items || []).sort(
+            (a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0),
+          );
+          this.applyRouteSelection();
+        },
+        error: (error) => this.fail('Training dropdown could not be loaded.', error),
+      });
   }
 
   private applyRouteSelection(): void {
     const trainingId = String(this.route.snapshot.queryParamMap.get('trainingId') || '').trim();
-    const testType = String(this.route.snapshot.queryParamMap.get('testType') || '').trim().toLowerCase();
+    const testType = String(this.route.snapshot.queryParamMap.get('testType') || '')
+      .trim()
+      .toLowerCase();
     const training = this.trainings.find((item) => String(item.trainingId ?? '') === trainingId);
-    if (training) { this.trainingId = trainingId; this.trainingSearch = this.getTrainingLabel(training); }
+    if (training) {
+      this.trainingId = trainingId;
+      this.trainingSearch = this.getTrainingLabel(training);
+    }
     if (['pre', 'post', 'chalange'].includes(testType)) this.testType = testType;
   }
 
@@ -129,7 +151,7 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
       displayOrder: Number(training.displayOrder ?? training.DisplayOrder ?? 0),
       preTestId: training.preTestId ?? training.PreTestId ?? null,
       postTestId: training.postTestId ?? training.PostTestId ?? null,
-      chalangeTestId: training.chalangeTestId ?? training.ChalangeTestId ?? null
+      chalangeTestId: training.chalangeTestId ?? training.ChalangeTestId ?? null,
     };
   }
   get filteredTrainingList(): Training[] {
@@ -144,9 +166,11 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
   }
 
   getTrainingLabel(training: Training): string {
-    return String(training.displayName || '').trim()
-      || String(training.trainingName || '').trim()
-      || String(training.trainingId || 'Training');
+    return (
+      String(training.displayName || '').trim() ||
+      String(training.trainingName || '').trim() ||
+      String(training.trainingId || 'Training')
+    );
   }
 
   getSelectedTrainingLabel(): string {
@@ -172,13 +196,14 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
 
   private getLinkedTestId(training: Training, type: string): string {
     const normalized = type.toLowerCase();
-    const value = normalized === 'pre'
-      ? training.preTestId
-      : normalized === 'post'
-        ? training.postTestId
-        : normalized === 'chalange'
-          ? training.chalangeTestId
-          : null;
+    const value =
+      normalized === 'pre'
+        ? training.preTestId
+        : normalized === 'post'
+          ? training.postTestId
+          : normalized === 'chalange'
+            ? training.chalangeTestId
+            : null;
     return String(value ?? '').trim();
   }
 
@@ -246,7 +271,7 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
     const questions = this.validQuestions.map(({ validationErrors, ...question }) => ({
       ...question,
       trainingId: this.trainingId,
-      trainingName
+      trainingName,
     }));
     this.busy = true;
     this.progress = 0;
@@ -254,57 +279,63 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
     this.message = '';
     this.errorMessage = '';
     this.saveStatus = 'saving';
-    this.questionApi.importWordQuestions({
-      trainingId: this.trainingId,
-      trainingName,
-      testType: this.testType,
-      testName: this.testName,
-      durationMinutes: this.durationMinutes,
-      questions
-    }).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (event) => {
-        if (event.type === HttpEventType.UploadProgress) {
-          this.progress = event.total ? Math.round(event.loaded * 100 / event.total) : 50;
-        }
-        if (event.type === HttpEventType.Response && event.body) {
-          this.result = event.body;
-          this.progress = 100;
-          const hasMappedQuestions = event.body.details.some((detail) =>
-            !!detail.questionId && (detail.status === 'inserted' || detail.status === 'duplicate')
-          );
-          if (event.body.testCreated && !!event.body.testId && questions.length > 0 && hasMappedQuestions) {
-            this.fileSaving = true;
-            this.saveStatus = 'saving';
-            this.message = '';
-            void this.saveCreatedTestFile(event.body, questions)
-              .then(() => {
-                this.saveStatus = 'success';
-                this.message = `Completed: test ${event.body!.testId}, ${event.body!.inserted + event.body!.duplicate} mapping(s), and encrypted test file were saved.`;
-              })
-              .catch((error) => {
-                this.saveStatus = 'error';
-                this.fail('Test and mappings were saved, but the encrypted test file could not be generated.', error);
-              })
-              .finally(() => {
-                this.fileSaving = false;
-                this.busy = false;
-              });
-          } else {
-            this.saveStatus = 'success';
-            this.message = `Completed: ${event.body.inserted} question(s) saved to the question bank.`;
+    this.questionApi
+      .importWordQuestions({
+        trainingId: this.trainingId,
+        trainingName,
+        testType: this.testType,
+        testName: this.testName,
+        durationMinutes: this.durationMinutes,
+        questions,
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (event) => {
+          if (event.type === HttpEventType.UploadProgress) {
+            this.progress = event.total ? Math.round((event.loaded * 100) / event.total) : 50;
           }
-        }
-      },
-      error: (error) => {
-        this.busy = false;
-        this.saveStatus = 'error';
-        this.fail('Import failed. The transaction was rolled back.', error);
-      },
-      complete: () => this.busy = false
-    });
+          if (event.type === HttpEventType.Response && event.body) {
+            this.result = event.body;
+            this.progress = 100;
+            const hasMappedQuestions = event.body.details.some(
+              (detail) => !!detail.questionId && (detail.status === 'inserted' || detail.status === 'duplicate'),
+            );
+            if (event.body.testCreated && !!event.body.testId && questions.length > 0 && hasMappedQuestions) {
+              this.fileSaving = true;
+              this.saveStatus = 'saving';
+              this.message = '';
+              void this.saveCreatedTestFile(event.body, questions)
+                .then(() => {
+                  this.saveStatus = 'success';
+                  this.message = `Completed: test ${event.body!.testId}, ${event.body!.inserted + event.body!.duplicate} mapping(s), and encrypted test file were saved.`;
+                })
+                .catch((error) => {
+                  this.saveStatus = 'error';
+                  this.fail('Test and mappings were saved, but the encrypted test file could not be generated.', error);
+                })
+                .finally(() => {
+                  this.fileSaving = false;
+                  this.busy = false;
+                });
+            } else {
+              this.saveStatus = 'success';
+              this.message = `Completed: ${event.body.inserted} question(s) saved to the question bank.`;
+            }
+          }
+        },
+        error: (error) => {
+          this.busy = false;
+          this.saveStatus = 'error';
+          this.fail('Import failed. The transaction was rolled back.', error);
+        },
+        complete: () => (this.busy = false),
+      });
   }
 
-  private async saveCreatedTestFile(result: QuestionTestImportResultDto, importedQuestions: QuestionDto[]): Promise<void> {
+  private async saveCreatedTestFile(
+    result: QuestionTestImportResultDto,
+    importedQuestions: QuestionDto[],
+  ): Promise<void> {
     const mappedQuestions: TestQuestion[] = result.details
       .filter((detail) => !!detail.questionId && (detail.status === 'inserted' || detail.status === 'duplicate'))
       .map((detail, index) => {
@@ -320,8 +351,8 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
             id: option.id,
             text: option.text,
             imageUrl: option.imageUrl,
-            imageAlt: option.imageAlt
-          }))
+            imageAlt: option.imageAlt,
+          })),
         } as TestQuestion;
       });
     const mappedQuestionIds = mappedQuestions.map((question) => String(question.questionId));
@@ -338,7 +369,8 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
       testTitle: this.testName,
       description: this.testName,
       trainingId: this.trainingId,
-      trainingName: this.trainings.find((item) => String(item.trainingId || '') === this.trainingId)?.trainingName || '',
+      trainingName:
+        this.trainings.find((item) => String(item.trainingId || '') === this.trainingId)?.trainingName || '',
       testFileType: testType,
       subject: '',
       topic: '',
@@ -353,7 +385,7 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
       createdAt: now,
       updatedAt: now,
       version: 1,
-      questions: mappedQuestions
+      questions: mappedQuestions,
     };
 
     await this.testStorage.saveAssessmentFileToServer(testFile, testType);
@@ -405,43 +437,83 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
 
   private emptyParsed(text: string): ParsedQuestion {
     return {
-      text, type: 'MCSA', subject: '', topic: '', difficulty: 'Easy', answer: '',
-      expectedAnswer: '', explanation: '', marks: '1', options: []
+      text,
+      type: 'MCSA',
+      subject: '',
+      topic: '',
+      difficulty: 'Easy',
+      answer: '',
+      expectedAnswer: '',
+      explanation: '',
+      marks: '1',
+      options: [],
     };
   }
 
   private toQuestion(item: ParsedQuestion, index: number): PreviewQuestion {
     const type = this.normalizeType(item.type);
-    const sourceOptions = type === 'TRUE_FALSE' && !item.options.length
-      ? [{ id: 'true', text: 'True' }, { id: 'false', text: 'False' }]
-      : item.options;
+    const sourceOptions =
+      type === 'TRUE_FALSE' && !item.options.length
+        ? [
+            { id: 'true', text: 'True' },
+            { id: 'false', text: 'False' },
+          ]
+        : item.options;
     const answerIds = (type === 'MCMA' ? item.answer.split('#') : [item.answer])
       .map((value) => this.normalizeAnswerValue(value))
       .filter(Boolean);
     const options: QuestionOptionDto[] = sourceOptions.map((option, optionIndex) => {
       const id = this.normalizeAnswerValue(option.id);
       const optionText = this.normalizeAnswerValue(option.text);
-      const correct = answerIds.some((answer) =>
-        answer.replace(/^option\s+/, '') === id || answer === optionText
-      );
+      const correct = answerIds.some((answer) => answer.replace(/^option\s+/, '') === id || answer === optionText);
       return {
-        id, text: option.text, imageUrl: '', audioUrl: '', videoUrl: '', imageAlt: '',
-        displayOrder: optionIndex + 1, isCorrect: correct
+        id,
+        text: option.text,
+        imageUrl: '',
+        audioUrl: '',
+        videoUrl: '',
+        imageAlt: '',
+        displayOrder: optionIndex + 1,
+        isCorrect: correct,
       };
     });
     const correctIds = options.filter((option) => option.isCorrect).map((option) => option.id);
     const now = new Date().toISOString();
     const question: PreviewQuestion = {
-      questionId: '', id: '', trainingId: '', trainingName: '', questionNo: index + 1,
-      questionType: type, subject: item.subject, topic: item.topic, category: '', section: '',
-      difficulty: this.normalizeDifficulty(item.difficulty), questionText: item.text,
-      questionImageUrl: '', questionImageAlt: '', audioUrl: '', videoUrl: '', options,
-      correctOptionId: correctIds[0] || '', correctOptionIds: correctIds,
-      expectedAnswer: type === 'ESSAY' ? (item.expectedAnswer || item.answer) : '',
-      sampleAnswer: '', manualReviewRequired: type === 'ESSAY', explanation: item.explanation,
-      explanationImageUrl: '', explanationImageAlt: '', marks: Number(item.marks || 1),
-      negativeMarks: 0, estimatedTimeSeconds: 60, metadataJson: '', isActive: true,
-      version: 1, createdAt: now, updatedAt: now, validationErrors: []
+      questionId: '',
+      id: '',
+      trainingId: '',
+      trainingName: '',
+      questionNo: index + 1,
+      questionType: type,
+      subject: item.subject,
+      topic: item.topic,
+      category: '',
+      section: '',
+      difficulty: this.normalizeDifficulty(item.difficulty),
+      questionText: item.text,
+      questionImageUrl: '',
+      questionImageAlt: '',
+      audioUrl: '',
+      videoUrl: '',
+      options,
+      correctOptionId: correctIds[0] || '',
+      correctOptionIds: correctIds,
+      expectedAnswer: type === 'ESSAY' ? item.expectedAnswer || item.answer : '',
+      sampleAnswer: '',
+      manualReviewRequired: type === 'ESSAY',
+      explanation: item.explanation,
+      explanationImageUrl: '',
+      explanationImageAlt: '',
+      marks: Number(item.marks || 1),
+      negativeMarks: 0,
+      estimatedTimeSeconds: 60,
+      metadataJson: '',
+      isActive: true,
+      version: 1,
+      createdAt: now,
+      updatedAt: now,
+      validationErrors: [],
     };
     question.validationErrors = this.validate(question);
     return question;
@@ -450,7 +522,6 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
   private normalizeAnswerValue(value: string): string {
     return value.trim().toLowerCase();
   }
-
 
   private validate(question: PreviewQuestion): string[] {
     const errors: string[] = [];
@@ -491,13 +562,7 @@ export class CreateTestQuestionsComponent implements OnInit, OnDestroy {
 
   private fail(message: string, error: unknown): void {
     console.error('[CreateTestQuestions]', message, error);
-    const apiMessage = (error as any)?.error?.message
-      || (error as any)?.error?.title
-      || (error as any)?.message;
+    const apiMessage = (error as any)?.error?.message || (error as any)?.error?.title || (error as any)?.message;
     this.errorMessage = apiMessage ? `${message} ${apiMessage}` : message;
   }
 }
-
-
-
-

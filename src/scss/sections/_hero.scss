@@ -1,9 +1,7 @@
-@use "../utilities/breakpoints" as *;
-@use "../base/variables" as *;
+@use '../utilities/breakpoints' as *;
+@use '../base/variables' as *;
 .hero {
   height: 90vh;
-
-   
 
   display: flex;
   align-items: center;

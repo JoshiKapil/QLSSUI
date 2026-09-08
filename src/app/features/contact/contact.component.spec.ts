@@ -23,8 +23,8 @@ describe('ContactComponent', () => {
         Title,
         Meta,
         { provide: NotifierService, useValue: notifier },
-        { provide: SiteInteractionsService, useValue: interactions }
-      ]
+        { provide: SiteInteractionsService, useValue: interactions },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ContactComponent);

@@ -17,25 +17,31 @@
     <div class="admin-layout">
       <form class="admin-form" [formGroup]="form" (ngSubmit)="submit()">
         <h2>{{ selectedRecord ? 'Edit' : 'Add' }} LinkedInPost</h2>
-        <label class="form-field">PostId
+        <label class="form-field">
+          PostId
           <input type="text" formControlName="postId" />
           <small>{{ fieldError('postId', 'PostId') }}</small>
         </label>
-        <label class="form-field">Content
+        <label class="form-field">
+          Content
           <textarea rows="4" formControlName="content"></textarea>
           <small>{{ fieldError('content', 'Content') }}</small>
         </label>
-        <label class="form-field">CreatedDate
+        <label class="form-field">
+          CreatedDate
           <input type="date" formControlName="createdDate" />
           <small>{{ fieldError('createdDate', 'CreatedDate') }}</small>
         </label>
-        <label class="form-field">Author
+        <label class="form-field">
+          Author
           <input type="text" formControlName="author" />
           <small>{{ fieldError('author', 'Author') }}</small>
         </label>
 
         <div class="admin-actions">
-          <button class="btn btn-primary" type="submit" [disabled]="isSaving">{{ isSaving ? 'Saving...' : 'Save' }}</button>
+          <button class="btn btn-primary" type="submit" [disabled]="isSaving">
+            {{ isSaving ? 'Saving...' : 'Save' }}
+          </button>
           <button class="btn btn-outline" type="button" (click)="resetForm()">Clear</button>
         </div>
       </form>
@@ -43,7 +49,13 @@
       <div class="admin-tools">
         <h2>Search</h2>
         <div class="admin-search">
-          <input type="text" [(ngModel)]="searchTerm" [placeholder]="searchPlaceholder" name="searchTerm" (keydown.enter)="search()" />
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            [placeholder]="searchPlaceholder"
+            name="searchTerm"
+            (keydown.enter)="search()"
+          />
           <button class="btn btn-primary" type="button" (click)="search()">Search</button>
           <button class="btn btn-outline" type="button" (click)="loadRecords()">Reset</button>
         </div>
@@ -79,4 +91,3 @@
     </div>
   </div>
 </section>
-

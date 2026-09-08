@@ -12,7 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-feedback-form',
   templateUrl: './feedback-form.component.html',
-  styleUrls: ['./feedback-form.component.scss']
+  styleUrls: ['./feedback-form.component.scss'],
 })
 export class FeedbackFormComponent implements OnInit {
   form!: FormGroup;
@@ -39,7 +39,7 @@ export class FeedbackFormComponent implements OnInit {
     private trainingService: TrainingManagementService,
     private feedbackService: TrainingFeedbackService,
     private authService: AuthService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
@@ -59,7 +59,7 @@ export class FeedbackFormComponent implements OnInit {
     this.form.patchValue({
       trainingId: trainingId || null,
       trainerId: trainerId || null,
-      UserName: userName || null
+      UserName: userName || null,
     });
   }
 
@@ -67,7 +67,7 @@ export class FeedbackFormComponent implements OnInit {
     this.form = this.fb.group({
       trainerId: [null, Validators.required],
       trainingId: [null, Validators.required],
-      UserName :[null,Validators.required],
+      UserName: [null, Validators.required],
       overallExperience: [5, [Validators.required, Validators.min(1), Validators.max(5)]],
       trainerKnowledge: [5, [Validators.required, Validators.min(1), Validators.max(5)]],
       contentPresentation: [5, [Validators.required, Validators.min(1), Validators.max(5)]],
@@ -75,36 +75,40 @@ export class FeedbackFormComponent implements OnInit {
       likedMost: ['', Validators.required],
       suggestions: ['', Validators.required],
       usefulness: ['', Validators.required],
-      recommend: [true, Validators.required]
+      recommend: [true, Validators.required],
     });
   }
 
   private loadTrainerList(): void {
     this.trainerService.getAll().subscribe({
       next: (items) => (this.trainers = items || []),
-      error: () => (this.trainers = [])
+      error: () => (this.trainers = []),
     });
   }
 
   private loadTrainingList(): void {
     this.trainingService.getAll().subscribe({
       next: (items) => (this.trainings = items || []),
-      error: () => (this.trainings = [])
+      error: () => (this.trainings = []),
     });
   }
 
   get filteredTrainers(): Trainer[] {
     const search = this.trainerSearch.trim().toLowerCase();
-    return !search ? this.trainers : this.trainers.filter((item) =>
-      `${item.name || ''} ${item.trainerId || ''}`.toLowerCase().includes(search)
-    );
+    return !search
+      ? this.trainers
+      : this.trainers.filter((item) => `${item.name || ''} ${item.trainerId || ''}`.toLowerCase().includes(search));
   }
 
   get filteredTrainings(): Training[] {
     const search = this.trainingSearch.trim().toLowerCase();
-    return !search ? this.trainings : this.trainings.filter((item) =>
-      `${this.getTrainingLabel(item)} ${item.trainingId || ''} ${item.topicCovered || ''}`.toLowerCase().includes(search)
-    );
+    return !search
+      ? this.trainings
+      : this.trainings.filter((item) =>
+          `${this.getTrainingLabel(item)} ${item.trainingId || ''} ${item.topicCovered || ''}`
+            .toLowerCase()
+            .includes(search),
+        );
   }
 
   toggleTrainerDropdown(): void {
@@ -169,8 +173,8 @@ export class FeedbackFormComponent implements OnInit {
     this.historyError = '';
     this.feedbackService.getAll().subscribe({
       next: (items) => {
-        this.feedbacks = (Array.isArray(items) ? items : []).sort((a, b) =>
-          this.getFeedbackTimestamp(b) - this.getFeedbackTimestamp(a)
+        this.feedbacks = (Array.isArray(items) ? items : []).sort(
+          (a, b) => this.getFeedbackTimestamp(b) - this.getFeedbackTimestamp(a),
         );
         this.currentPage = Math.min(this.currentPage, this.totalPages);
       },
@@ -179,7 +183,7 @@ export class FeedbackFormComponent implements OnInit {
         this.historyError = 'Unable to load previous feedback.';
         this.historyLoading = false;
       },
-      complete: () => (this.historyLoading = false)
+      complete: () => (this.historyLoading = false),
     });
   }
 
@@ -188,7 +192,10 @@ export class FeedbackFormComponent implements OnInit {
   }
 
   getAverageRating(feedback: TrainingFeedback): number {
-    return Math.round((feedback.overallExperience + feedback.trainerKnowledge + feedback.contentPresentation + feedback.satisfaction) / 4);
+    return Math.round(
+      (feedback.overallExperience + feedback.trainerKnowledge + feedback.contentPresentation + feedback.satisfaction) /
+        4,
+    );
   }
 
   onSubmit(): void {
@@ -203,7 +210,7 @@ export class FeedbackFormComponent implements OnInit {
 
     const payload: TrainingFeedback = {
       userId: this.authService.getCurrentUser()?.id,
-      userName:  this.form.value.UserName,//this authService.getCurrentUser()?.name || this.authService.getCurrentUser()?.email ||
+      userName: this.form.value.UserName, //this authService.getCurrentUser()?.name || this.authService.getCurrentUser()?.email ||
       trainerId: Number(this.form.value.trainerId),
       trainingId: Number(this.form.value.trainingId),
       trainingName: this.getTrainingName(this.form.value.trainingId),
@@ -215,9 +222,8 @@ export class FeedbackFormComponent implements OnInit {
       likedMost: this.form.value.likedMost?.trim() ?? '',
       suggestions: this.form.value.suggestions?.trim() ?? '',
       usefulness: this.form.value.usefulness?.trim() ?? '',
-      recommend: Boolean(this.form.value.recommend)
+      recommend: Boolean(this.form.value.recommend),
     };
-
 
     this.feedbackService.submitFeedback(payload).subscribe({
       next: () => {
@@ -225,7 +231,7 @@ export class FeedbackFormComponent implements OnInit {
         this.form.reset({
           trainerId: null,
           trainingId: null,
-          userName :null,
+          userName: null,
           overallExperience: 5,
           trainerKnowledge: 5,
           contentPresentation: 5,
@@ -233,7 +239,7 @@ export class FeedbackFormComponent implements OnInit {
           likedMost: '',
           suggestions: '',
           usefulness: '',
-          recommend: true
+          recommend: true,
         });
         this.trainerSearch = '';
         this.trainingSearch = '';
@@ -246,7 +252,7 @@ export class FeedbackFormComponent implements OnInit {
       },
       complete: () => {
         this.submitting = false;
-      }
+      },
     });
   }
 
@@ -259,7 +265,11 @@ export class FeedbackFormComponent implements OnInit {
   }
 
   getTrainingLabel(training: Training): string {
-    return String(training.displayName || '').trim() || String(training.trainingName || '').trim() || `Training ${training.trainingId}`;
+    return (
+      String(training.displayName || '').trim() ||
+      String(training.trainingName || '').trim() ||
+      `Training ${training.trainingId}`
+    );
   }
 
   private getFeedbackTimestamp(feedback: TrainingFeedback): number {

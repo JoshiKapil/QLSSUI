@@ -7,17 +7,22 @@ import { GharAssessmentService } from '../services/ghar-assessment.service';
 @Component({
   selector: 'app-assessment-admin',
   templateUrl: './assessment-admin.component.html',
-  styleUrls: ['./assessment-admin.component.scss']
+  styleUrls: ['./assessment-admin.component.scss'],
 })
 export class AssessmentAdminComponent implements OnInit {
   readonly tabs: Array<GharAssessmentTab & { color?: string }> = [
     { code: 'WEEKLY_5S', shortTitle: 'Weekly 5S', title: 'Weekly 5S Family Patrol', icon: 'fa-list-check' },
-    { code: 'PM_MATRIX', shortTitle: 'PM Matrix', title: 'Household Preventive Maintenance Matrix', icon: 'fa-screwdriver-wrench' },
+    {
+      code: 'PM_MATRIX',
+      shortTitle: 'PM Matrix',
+      title: 'Household Preventive Maintenance Matrix',
+      icon: 'fa-screwdriver-wrench',
+    },
     { code: 'FMR', shortTitle: 'Family Review', title: 'Family Management Review', icon: 'fa-people-roof' },
     { code: 'CAPA_FMEA', shortTitle: 'CAPA / FMEA', title: 'Quick-Response CAPA / FMEA', icon: 'fa-shield-halved' },
     { code: 'EHS', shortTitle: 'Safety & EHS', title: 'Safety and Environment', icon: 'fa-person-circle-check' },
     { code: 'MUDA', shortTitle: '8 Wastes', title: 'Lean 8 Wastes Assessment', icon: 'fa-recycle' },
-    { code: 'KPI', shortTitle: 'Monthly KPI', title: 'Monthly Family KPI Dashboard', icon: 'fa-chart-line' }
+    { code: 'KPI', shortTitle: 'Monthly KPI', title: 'Monthly Family KPI Dashboard', icon: 'fa-chart-line' },
   ];
 
   selectedTab = '';
@@ -36,7 +41,7 @@ export class AssessmentAdminComponent implements OnInit {
   constructor(
     private readonly service: GharAssessmentService,
     private readonly pdf: AssessmentPdfService,
-    private readonly notifier: NotifierService
+    private readonly notifier: NotifierService,
   ) {}
 
   ngOnInit(): void {
@@ -64,23 +69,28 @@ export class AssessmentAdminComponent implements OnInit {
 
   load(): void {
     this.isLoading = true;
-    this.service.getAdminEntries({
-      tabCode: this.selectedTab || undefined,
-      search: this.search || undefined,
-      fromDate: this.fromDate || undefined,
-      toDate: this.toDate || undefined,
-      page: this.page,
-      pageSize: this.pageSize
-    }).subscribe({
-      next: (result) => {
-        this.entries = result.items || [];
-        this.totalCount = result.totalCount || 0;
-        this.page = result.page || this.page;
-        this.pageSize = result.pageSize || this.pageSize;
-      },
-      error: (error) => this.notifier.warningToastr(error?.error?.message || error?.message || 'Assessment entries could not be loaded.'),
-      complete: () => (this.isLoading = false)
-    });
+    this.service
+      .getAdminEntries({
+        tabCode: this.selectedTab || undefined,
+        search: this.search || undefined,
+        fromDate: this.fromDate || undefined,
+        toDate: this.toDate || undefined,
+        page: this.page,
+        pageSize: this.pageSize,
+      })
+      .subscribe({
+        next: (result) => {
+          this.entries = result.items || [];
+          this.totalCount = result.totalCount || 0;
+          this.page = result.page || this.page;
+          this.pageSize = result.pageSize || this.pageSize;
+        },
+        error: (error) =>
+          this.notifier.warningToastr(
+            error?.error?.message || error?.message || 'Assessment entries could not be loaded.',
+          ),
+        complete: () => (this.isLoading = false),
+      });
   }
 
   view(entry: GharAssessmentAdminListItem): void {
@@ -90,8 +100,11 @@ export class AssessmentAdminComponent implements OnInit {
         this.selectedEntry = detail;
         this.detailRows = this.flattenPayload(detail.payloadJson);
       },
-      error: (error) => this.notifier.warningToastr(error?.error?.message || error?.message || 'Assessment detail could not be loaded.'),
-      complete: () => (this.isLoadingDetail = false)
+      error: (error) =>
+        this.notifier.warningToastr(
+          error?.error?.message || error?.message || 'Assessment detail could not be loaded.',
+        ),
+      complete: () => (this.isLoadingDetail = false),
     });
   }
 
@@ -103,7 +116,11 @@ export class AssessmentAdminComponent implements OnInit {
   async downloadSelected(): Promise<void> {
     if (!this.selectedEntry) return;
     let payload: any = {};
-    try { payload = JSON.parse(this.selectedEntry.payloadJson || '{}'); } catch { payload = {}; }
+    try {
+      payload = JSON.parse(this.selectedEntry.payloadJson || '{}');
+    } catch {
+      payload = {};
+    }
     await this.pdf.download(this.selectedEntry.tabTitle, payload, this.selectedEntry.entryNo);
   }
 

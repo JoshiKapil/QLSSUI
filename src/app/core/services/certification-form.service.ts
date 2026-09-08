@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import {
   CertificateApprovalResult,
   CertificationForm,
-  CertificationImportResult
+  CertificationImportResult,
 } from '../models/certification-form.model';
 import { AdminManagementService } from './admin-management.service';
 import { ApiClientService } from './api-client.service';
@@ -13,7 +13,10 @@ export class CertificationFormService {
   private readonly endpoint = 'Certification-Data';
   private readonly idKey = 'certificationDataId';
 
-  constructor(private adminService: AdminManagementService, private api: ApiClientService) {}
+  constructor(
+    private adminService: AdminManagementService,
+    private api: ApiClientService,
+  ) {}
 
   getAll(): Observable<CertificationForm[]> {
     return this.adminService.getAll<CertificationForm>(this.endpoint);
@@ -32,7 +35,7 @@ export class CertificationFormService {
       batchNo: record.batchNo || '',
       contactNo: record.contactNo || '',
       email: record.email || '',
-      location: record.location || ''
+      location: record.location || '',
     });
   }
   save(record: CertificationForm): Observable<CertificationForm> {
@@ -43,11 +46,15 @@ export class CertificationFormService {
     return this.api.get<CertificationForm>('certification-data/by-user-training', { email, trainingId });
   }
 
-  approve(certificationDataIds: number[], location = '', cityId: number | null = null): Observable<CertificateApprovalResult> {
+  approve(
+    certificationDataIds: number[],
+    location = '',
+    cityId: number | null = null,
+  ): Observable<CertificateApprovalResult> {
     return this.api.post<CertificateApprovalResult>('certification-data/approve', {
       certificationDataIds,
       location,
-      cityId
+      cityId,
     });
   }
 
@@ -55,5 +62,3 @@ export class CertificationFormService {
     return this.api.post<CertificationImportResult>('certification-data/import', { records });
   }
 }
-
-

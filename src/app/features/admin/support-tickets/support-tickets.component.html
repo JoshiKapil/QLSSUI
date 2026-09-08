@@ -1,0 +1,84 @@
+<section class="admin-section support-page">
+  <div class="container admin-shell">
+    <header class="admin-header support-header">
+      <div>
+        <span class="eyebrow">Customer Support</span>
+        <h1>Support Tickets</h1>
+        <p>Manage customer requests, conversations and resolutions in one place.</p>
+      </div>
+      <button class="btn btn-primary" (click)="showCreate=!showCreate">{{showCreate?'Cancel':'New Ticket'}}</button>
+    </header>
+
+    <section class="manual-ticket" *ngIf="showCreate">
+      <div class="manual-title"><div><strong>Create Ticket from QLSS</strong><span>Use this when QLSS Support/Admin raises a ticket manually.</span></div></div>
+      <div class="manual-grid">
+        <label class="check-row"><input type="checkbox" [(ngModel)]="newTicket.showInEkrupa"> Show this ticket in the customer's eKRUPA <strong>My Tickets</strong></label>
+        <label *ngIf="newTicket.showInEkrupa">eKRUPA Source / Tenant *
+          <select [(ngModel)]="newTicket.sourceCode"><option value="">Select source</option><option *ngFor="let s of sources" [value]="s.sourceCode">{{s.displayName}} ({{s.sourceCode}})</option></select>
+        </label>
+        <label>Customer / Company *<input [(ngModel)]="newTicket.sourceCompanyName" placeholder="Customer company"></label>
+        <label>Customer User / Contact *<input [(ngModel)]="newTicket.sourceUserName" placeholder="User/contact name"></label>
+        <label>Customer Email <input [(ngModel)]="newTicket.sourceUserEmail" type="email" placeholder="user@customer.com"></label>
+        <label *ngIf="newTicket.showInEkrupa">eKRUPA User ID <input [(ngModel)]="newTicket.sourceUserId" type="number" min="1" placeholder="Optional if email is entered"></label>
+        <label>eKRUPA Employee ID <input [(ngModel)]="newTicket.sourceEmployeeId" type="number" min="1" placeholder="Optional"></label>
+        <label>Department <input [(ngModel)]="newTicket.sourceDepartment" placeholder="Optional"></label>
+        <label>Module *
+          <select [(ngModel)]="newTicket.moduleName"><option *ngFor="let m of ['Login','Dashboard','Documents','Approval','Revision','Training','My Learning','Assessment','Competency','TNI','HRMS','Reports','Notifications / Email','Other']">{{m}}</option></select>
+        </label>
+        <label>Issue Type *
+          <select [(ngModel)]="newTicket.issueType"><option *ngFor="let i of ['Error / Bug','Unable to Access','Data Issue','Performance Issue','Feature Not Working','Configuration','How-to / Support','Enhancement Request','Other']">{{i}}</option></select>
+        </label>
+        <label>Priority *
+          <select [(ngModel)]="newTicket.priority"><option *ngFor="let p of ['Low','Normal','High','Critical']">{{p}}</option></select>
+        </label>
+        <label>Assign To
+          <select [(ngModel)]="newTicket.assignedToUserId"><option [ngValue]="null">Unassigned</option><option *ngFor="let u of users" [ngValue]="u.userId">{{u.name}}</option></select>
+        </label>
+        <label class="full">Subject *<input [(ngModel)]="newTicket.subject" maxlength="200" placeholder="Short issue summary"></label>
+        <label class="full">Description *<textarea [(ngModel)]="newTicket.description" rows="4" placeholder="Problem details / observation"></textarea></label>
+      </div>
+      <div class="manual-note" *ngIf="newTicket.showInEkrupa">If User ID is unknown, enter the customer's eKRUPA login email. On the user's next My Tickets refresh, QLSS securely links this ticket to that logged-in eKRUPA user.</div>
+      <div class="manual-actions"><button class="btn btn-primary" [disabled]="creating" (click)="createTicket()">{{creating?'Creating...':'Create Ticket'}}</button></div>
+    </section>
+
+    <div class="ticket-error" role="alert" *ngIf="loadError">{{loadError}} <button type="button" class="btn btn-outline" (click)="refresh()">Retry</button></div>
+    <div class="ticket-kpis">
+      <div class="ticket-kpi"><span>Open</span><strong>{{dashboard?.totalOpen||0}}</strong></div>
+      <div class="ticket-kpi"><span>New</span><strong>{{dashboard?.newCount||0}}</strong></div>
+      <div class="ticket-kpi"><span>Critical</span><strong>{{dashboard?.criticalCount||0}}</strong></div>
+      <div class="ticket-kpi"><span>SLA breached</span><strong>{{dashboard?.slaBreachedCount||0}}</strong></div>
+      <div class="ticket-kpi"><span>Waiting user</span><strong>{{dashboard?.waitingCount||0}}</strong></div>
+    </div>
+
+    <div class="admin-tools ticket-filters">
+      <input [(ngModel)]="search" placeholder="Ticket / company / user / subject">
+      <select [(ngModel)]="status"><option value="">All statuses</option><option *ngFor="let s of ['New','Assigned','Acknowledged','In Progress','Waiting for User','Resolved','Reopened','Closed','Cancelled']">{{s}}</option></select>
+      <select [(ngModel)]="priority"><option value="">All priorities</option><option *ngFor="let p of ['Critical','High','Normal','Low']">{{p}}</option></select>
+      <button class="btn btn-primary" (click)="refresh()">Apply</button>
+    </div>
+
+    <div class="ticket-workbench">
+      <section class="ticket-panel ticket-list">
+        <div class="ticket-list__head"><strong>Ticket Register</strong><span>{{rows.length}}</span></div>
+        <button class="ticket-row" *ngFor="let r of rows" [class.active]="selected?.ticketId===r.ticketId" (click)="open(r)">
+          <div><strong>{{r.ticketNo}}</strong><span>{{r.sourceCompanyName}}</span></div>
+          <p>{{r.subject}}</p>
+          <small>{{r.sourceCode==='QLSS-WEB'?'Customer portal':r.origin==='QLSS'?'QLSS Manual':'eKRUPA'}} · {{r.moduleName}} · {{r.priority}} · {{r.status}}</small>
+        </button>
+        <div class="empty" role="status" *ngIf="loading">Loading tickets...</div>
+        <div class="empty" *ngIf="!loading&&!loadError&&!rows.length">No tickets match the selected filters.</div>
+      </section>
+
+      <section class="ticket-panel ticket-detail" *ngIf="selected as t; else pick">
+        <div class="detail-top"><div><span>{{t.ticketNo}} · {{t.sourceCode==='QLSS-WEB'?'Customer portal':t.origin==='QLSS'?'QLSS Manual':'eKRUPA'}}</span><h2>{{t.subject}}</h2><p>{{t.sourceCompanyName}} · {{t.sourceUserName}} · {{t.moduleName}}</p></div><span class="status-pill">{{t.status}}</span></div>
+        <div class="detail-grid"><label>Status<select [(ngModel)]="t.status"><option *ngFor="let s of ['New','Assigned','Acknowledged','In Progress','Waiting for User','Resolved','Reopened','Closed','Cancelled']">{{s}}</option></select></label><label>Priority<select [(ngModel)]="t.priority"><option *ngFor="let p of ['Critical','High','Normal','Low']">{{p}}</option></select></label><label>Assign to<select [(ngModel)]="t.assignedToUserId"><option [ngValue]="null">Unassigned</option><option *ngFor="let u of users" [ngValue]="u.userId">{{u.name}}</option></select></label><button class="btn btn-primary" (click)="saveControl()">Save control</button></div>
+        <article class="issue"><h3>Issue</h3><p>{{t.description}}</p><small *ngIf="t.sourcePageUrl">Page: {{t.sourcePageUrl}}</small></article>
+        <div class="timeline"><h3>Conversation</h3><div class="msg" *ngFor="let m of t.messages" [class.internal]="m.visibility==='Internal'"><div><strong>{{m.authorName}}</strong><span>{{m.authorType}} · {{m.visibility}}</span></div><p>{{m.messageText}}</p><small>{{m.createdOnUtc|date:'medium'}}</small></div></div>
+        <div class="reply-box"><textarea [(ngModel)]="reply" rows="4" placeholder="Write reply or internal note"></textarea><label><input type="checkbox" [(ngModel)]="internal"> Internal note only</label><button class="btn btn-primary" (click)="sendReply()">{{internal?'Save internal note':'Reply to customer'}}</button></div>
+        <div class="resolve-box" *ngIf="t.status!=='Closed'"><h3>Resolution</h3><textarea [(ngModel)]="rootCause" rows="2" placeholder="Root cause"></textarea><textarea [(ngModel)]="resolution" rows="3" placeholder="Resolution / fix"></textarea><div><select [(ngModel)]="resolutionType"><option>Bug Fixed</option><option>Configuration Updated</option><option>Data Corrected</option><option>Permission Updated</option><option>User Guidance</option><option>Server Issue Resolved</option><option>Enhancement Required</option><option>No Issue Found</option></select><input [(ngModel)]="fixedVersion" placeholder="Fixed version (optional)"><button class="btn btn-primary" (click)="resolve()">Mark Resolved</button></div></div>
+        <div class="attachment"><label class="btn btn-outline">Add attachment<input type="file" hidden (change)="upload($event)"></label><span>{{t.attachments?.length||0}} attachment(s)</span><button type="button" class="attachment-link" *ngFor="let a of t.attachments" (click)="download(a)">{{a.originalFileName}}</button></div>
+      </section>
+      <ng-template #pick><section class="ticket-panel empty-detail"><i class="fas fa-ticket-alt"></i><h3>Select a ticket</h3><p>Choose a ticket from the register to see the complete conversation and resolution controls.</p></section></ng-template>
+    </div>
+  </div>
+</section>

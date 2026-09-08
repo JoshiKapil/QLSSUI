@@ -1,3 +1,4 @@
+import { ListPage } from '../../../shared/list-page';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -7,9 +8,12 @@ import { ProjectManagementService } from '../services/project-management.service
 @Component({
   selector: 'app-project-notifications',
   templateUrl: './project-notifications.component.html',
-  styleUrls: ['./project-notifications.component.scss']
+  styleUrls: ['./project-notifications.component.scss'],
 })
 export class ProjectNotificationsComponent implements OnInit {
+  readonly notificationsPage = new ListPage('Notifications');
+  reloadnotificationsPage(): void { this.load(); }
+
   items: PmNotification[] = [];
   error = '';
   filter: 'all' | 'unread' = 'all';
@@ -18,7 +22,7 @@ export class ProjectNotificationsComponent implements OnInit {
   constructor(
     private api: ProjectManagementService,
     private router: Router,
-    private auth: AuthService
+    private auth: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -30,27 +34,28 @@ export class ProjectNotificationsComponent implements OnInit {
   }
 
   get unread(): number {
-    return this.items.filter(item => !item.isRead).length;
+    return this.items.filter((item) => !item.isRead).length;
   }
 
   get recipientCount(): number {
-    return new Set(this.items.map(item => item.recipientUserId)).size;
+    return new Set(this.items.map((item) => item.recipientUserId)).size;
   }
 
   get filtered(): PmNotification[] {
     const search = this.search.trim().toLowerCase();
-    return this.items.filter(item => {
+    return this.items.filter((item) => {
       const matchesStatus = this.filter === 'all' || !item.isRead;
-      const searchable = `${item.title} ${item.message} ${item.notificationType} ${item.recipientName} ${item.recipientEmail}`.toLowerCase();
+      const searchable =
+        `${item.title} ${item.message} ${item.notificationType} ${item.recipientName} ${item.recipientEmail}`.toLowerCase();
       return matchesStatus && (!search || searchable.includes(search));
     });
   }
 
   load(): void {
     this.error = '';
-    this.api.notifications().subscribe({
-      next: notifications => this.items = notifications,
-      error: error => this.error = error?.error?.message || 'Unable to load notifications.'
+    this.api.notifications(this.notificationsPage).subscribe({
+      next: (notifications) => (this.items = notifications),
+      error: (error) => (this.error = error?.error?.message || 'Unable to load notifications.'),
     });
   }
 
@@ -62,7 +67,7 @@ export class ProjectNotificationsComponent implements OnInit {
           this.router.navigateByUrl(notification.routeUrl.replace(/\/\d+$/, ''));
         }
       },
-      error: () => this.error = 'You are not allowed to update this notification.'
+      error: () => (this.error = 'You are not allowed to update this notification.'),
     });
   }
 

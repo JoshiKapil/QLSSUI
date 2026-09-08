@@ -3,210 +3,687 @@
     <div>
       <span>SUPERADMIN · ONBOARDING SETUP STUDIO</span>
       <h1>Build the complete new-employee learning path</h1>
-      <p>Create departments, training videos, video-wise assignments, passing rules and the exact sequence employees must complete.</p>
+      <p>
+        Create departments, training videos, video-wise assignments, passing rules and the exact sequence employees must
+        complete.
+      </p>
     </div>
     <div class="hero-note">
       <i class="fas fa-shield-halved"></i>
-      <div><strong>SuperAdmin only</strong><small>Admin setup access is intentionally disabled for now and can be enabled later.</small></div>
+      <div>
+        <strong>SuperAdmin only</strong>
+        <small>Admin setup access is intentionally disabled for now and can be enabled later.</small>
+      </div>
     </div>
   </header>
+<app-list-pager [page]="departmentsPage" (changed)="reloaddepartmentsPage()"></app-list-pager>
+<app-list-pager [page]="videosPage" (changed)="reloadvideosPage()"></app-list-pager>
+<app-list-pager [page]="plansPage" (changed)="reloadplansPage()"></app-list-pager>
 
   <section class="flow-strip">
-    <button [class.active]="tab === 'overview'" (click)="setTab('overview')"><b>1</b><span><small>Start</small>Overview</span></button>
+    <button [class.active]="tab === 'overview'" (click)="setTab('overview')">
+      <b>1</b>
+      <span>
+        <small>Start</small>
+        Overview
+      </span>
+    </button>
     <i class="fas fa-chevron-right"></i>
-    <button [class.active]="tab === 'departments'" (click)="setTab('departments')"><b>2</b><span><small>Scope</small>Departments</span></button>
+    <button [class.active]="tab === 'departments'" (click)="setTab('departments')">
+      <b>2</b>
+      <span>
+        <small>Scope</small>
+        Departments
+      </span>
+    </button>
     <i class="fas fa-chevron-right"></i>
-    <button [class.active]="tab === 'videos'" (click)="setTab('videos')"><b>3</b><span><small>Content</small>Videos + Questions</span></button>
+    <button [class.active]="tab === 'videos'" (click)="setTab('videos')">
+      <b>3</b>
+      <span>
+        <small>Content</small>
+        Videos + Questions
+      </span>
+    </button>
     <i class="fas fa-chevron-right"></i>
-    <button [class.active]="tab === 'plans'" (click)="setTab('plans')"><b>4</b><span><small>Sequence</small>Path + Publish</span></button>
+    <button [class.active]="tab === 'plans'" (click)="setTab('plans')">
+      <b>4</b>
+      <span>
+        <small>Sequence</small>
+        Path + Publish
+      </span>
+    </button>
   </section>
 
   <section *ngIf="tab === 'overview'" class="overview-grid">
-    <article class="metric-card"><i class="fas fa-building"></i><div><strong>{{ overview.activeDepartments }}</strong><span>Active departments</span></div></article>
-    <article class="metric-card"><i class="fas fa-circle-play"></i><div><strong>{{ overview.activeVideos }}</strong><span>Active videos</span></div></article>
-    <article class="metric-card"><i class="fas fa-list-check"></i><div><strong>{{ overview.activeQuestions }}</strong><span>Assignment questions</span></div></article>
-    <article class="metric-card"><i class="fas fa-pen-ruler"></i><div><strong>{{ overview.draftPlans }}</strong><span>Draft paths</span></div></article>
-    <article class="metric-card"><i class="fas fa-circle-check"></i><div><strong>{{ overview.publishedPlans }}</strong><span>Published paths</span></div></article>
+    <article class="metric-card">
+      <i class="fas fa-building"></i>
+      <div>
+        <strong>{{ overview.activeDepartments }}</strong>
+        <span>Active departments</span>
+      </div>
+    </article>
+    <article class="metric-card">
+      <i class="fas fa-circle-play"></i>
+      <div>
+        <strong>{{ overview.activeVideos }}</strong>
+        <span>Active videos</span>
+      </div>
+    </article>
+    <article class="metric-card">
+      <i class="fas fa-list-check"></i>
+      <div>
+        <strong>{{ overview.activeQuestions }}</strong>
+        <span>Assignment questions</span>
+      </div>
+    </article>
+    <article class="metric-card">
+      <i class="fas fa-pen-ruler"></i>
+      <div>
+        <strong>{{ overview.draftPlans }}</strong>
+        <span>Draft paths</span>
+      </div>
+    </article>
+    <article class="metric-card">
+      <i class="fas fa-circle-check"></i>
+      <div>
+        <strong>{{ overview.publishedPlans }}</strong>
+        <span>Published paths</span>
+      </div>
+    </article>
 
     <article class="content-card getting-started">
-      <div class="section-title"><div><small>RECOMMENDED ORDER</small><h2>How SuperAdmin sets up onboarding</h2></div></div>
+      <div class="section-title">
+        <div>
+          <small>RECOMMENDED ORDER</small>
+          <h2>How SuperAdmin sets up onboarding</h2>
+        </div>
+      </div>
       <ol class="setup-steps">
-        <li><b>01</b><div><strong>Create departments</strong><span>Add only the departments that need department-specific induction. A Default/Common path does not require a department.</span></div></li>
-        <li><b>02</b><div><strong>Create every training video</strong><span>Add video URL, description, optional duration and the assignment rules for that video.</span></div></li>
-        <li><b>03</b><div><strong>Create questions after each video</strong><span>Each video must have at least one question, at least two options and exactly one correct answer.</span></div></li>
-        <li><b>04</b><div><strong>Build the learning path</strong><span>Arrange videos in order. Set required watch percentage, assignment passing percentage and Must Pass rule.</span></div></li>
-        <li><b>05</b><div><strong>Preview and publish</strong><span>Only Published paths are used for new employee onboarding. Existing assigned employees keep their saved snapshot even if the master is edited later.</span></div></li>
-        <li><b>06</b><div><strong>Assign the employee</strong><span>Go to Employee Assignment, choose Employee + Department + completion days. The system then creates the sequential path automatically.</span></div></li>
+        <li>
+          <b>01</b>
+          <div>
+            <strong>Create departments</strong>
+            <span>
+              Add only the departments that need department-specific induction. A Default/Common path does not require a
+              department.
+            </span>
+          </div>
+        </li>
+        <li>
+          <b>02</b>
+          <div>
+            <strong>Create every training video</strong>
+            <span>Add video URL, description, optional duration and the assignment rules for that video.</span>
+          </div>
+        </li>
+        <li>
+          <b>03</b>
+          <div>
+            <strong>Create questions after each video</strong>
+            <span>
+              Each video must have at least one question, at least two options and exactly one correct answer.
+            </span>
+          </div>
+        </li>
+        <li>
+          <b>04</b>
+          <div>
+            <strong>Build the learning path</strong>
+            <span>
+              Arrange videos in order. Set required watch percentage, assignment passing percentage and Must Pass rule.
+            </span>
+          </div>
+        </li>
+        <li>
+          <b>05</b>
+          <div>
+            <strong>Preview and publish</strong>
+            <span>
+              Only Published paths are used for new employee onboarding. Existing assigned employees keep their saved
+              snapshot even if the master is edited later.
+            </span>
+          </div>
+        </li>
+        <li>
+          <b>06</b>
+          <div>
+            <strong>Assign the employee</strong>
+            <span>
+              Go to Employee Assignment, choose Employee + Department + completion days. The system then creates the
+              sequential path automatically.
+            </span>
+          </div>
+        </li>
       </ol>
     </article>
 
     <article class="content-card readiness">
-      <div class="section-title"><div><small>SETUP READINESS</small><h2>Before assigning employees</h2></div></div>
-      <div *ngIf="!overview.warnings.length" class="ready-ok"><i class="fas fa-circle-check"></i><div><strong>Setup is ready</strong><span>At least one published onboarding path is available.</span></div></div>
-      <div *ngFor="let warning of overview.warnings" class="warning-row"><i class="fas fa-triangle-exclamation"></i><span>{{ warning }}</span></div>
+      <div class="section-title">
+        <div>
+          <small>SETUP READINESS</small>
+          <h2>Before assigning employees</h2>
+        </div>
+      </div>
+      <div *ngIf="!overview.warnings.length" class="ready-ok">
+        <i class="fas fa-circle-check"></i>
+        <div>
+          <strong>Setup is ready</strong>
+          <span>At least one published onboarding path is available.</span>
+        </div>
+      </div>
+      <div *ngFor="let warning of overview.warnings" class="warning-row">
+        <i class="fas fa-triangle-exclamation"></i>
+        <span>{{ warning }}</span>
+      </div>
       <div class="rule-box">
         <strong>Sequential rule</strong>
-        <p>Video 2 stays locked until Video 1 is watched and its assignment is passed. The same rule continues for all N videos.</p>
+        <p>
+          Video 2 stays locked until Video 1 is watched and its assignment is passed. The same rule continues for all N
+          videos.
+        </p>
       </div>
       <div class="rule-box">
         <strong>Current reminder rule</strong>
-        <p>D−2 reminder → D−1 reminder → due-date final reminder → 1-day grace → login block → employee justification → SuperAdmin approval.</p>
+        <p>
+          D−2 reminder → D−1 reminder → due-date final reminder → 1-day grace → login block → employee justification →
+          SuperAdmin approval.
+        </p>
       </div>
     </article>
   </section>
 
   <section *ngIf="tab === 'departments'" class="two-col">
     <aside class="master-list">
-      <div class="section-title"><div><small>DEPARTMENT SCOPE</small><h2>{{ departments.length }} departments</h2></div><button (click)="resetDepartment()"><i class="fas fa-plus"></i> New</button></div>
+      <div class="section-title">
+        <div>
+          <small>DEPARTMENT SCOPE</small>
+          <h2>{{ departments.length }} departments</h2>
+        </div>
+        <button (click)="resetDepartment()">
+          <i class="fas fa-plus"></i>
+          New
+        </button>
+      </div>
       <button class="list-row" *ngFor="let row of departments" (click)="editDepartment(row)">
-        <div><strong>{{ row.departmentName }}</strong><span>{{ row.departmentCode }}</span></div><b [class.off]="!row.isActive">{{ row.isActive ? 'Active' : 'Inactive' }}</b>
+        <div>
+          <strong>{{ row.departmentName }}</strong>
+          <span>{{ row.departmentCode }}</span>
+        </div>
+        <b [class.off]="!row.isActive">{{ row.isActive ? 'Active' : 'Inactive' }}</b>
       </button>
-      <div class="empty" *ngIf="!departments.length"><i class="fas fa-building-circle-exclamation"></i><span>No onboarding department added yet.</span></div>
+      <div class="empty" *ngIf="!departments.length">
+        <i class="fas fa-building-circle-exclamation"></i>
+        <span>No onboarding department added yet.</span>
+      </div>
     </aside>
 
     <article class="editor">
-      <div class="section-title"><div><small>DEPARTMENT MASTER</small><h2>{{ departmentId ? 'Edit department' : 'Create department' }}</h2></div><span class="pill">Optional for Default path</span></div>
-      <div class="fields">
-        <label><span>Department code *</span><input [(ngModel)]="departmentForm.departmentCode" placeholder="QUALITY"></label>
-        <label><span>Department name *</span><input [(ngModel)]="departmentForm.departmentName" placeholder="Quality"></label>
-        <label class="wide"><span>Description</span><textarea rows="4" [(ngModel)]="departmentForm.description" placeholder="Short purpose or employee group"></textarea></label>
-        <label class="check"><input type="checkbox" [(ngModel)]="departmentForm.isActive"><span>Active</span></label>
+      <div class="section-title">
+        <div>
+          <small>DEPARTMENT MASTER</small>
+          <h2>{{ departmentId ? 'Edit department' : 'Create department' }}</h2>
+        </div>
+        <span class="pill">Optional for Default path</span>
       </div>
-      <div class="actions"><button class="ghost" (click)="resetDepartment()">Clear</button><button class="primary" [disabled]="saving" (click)="saveDepartment()">Save department</button></div>
+      <div class="fields">
+        <label>
+          <span>Department code *</span>
+          <input [(ngModel)]="departmentForm.departmentCode" placeholder="QUALITY" />
+        </label>
+        <label>
+          <span>Department name *</span>
+          <input [(ngModel)]="departmentForm.departmentName" placeholder="Quality" />
+        </label>
+        <label class="wide">
+          <span>Description</span>
+          <textarea
+            rows="4"
+            [(ngModel)]="departmentForm.description"
+            placeholder="Short purpose or employee group"
+          ></textarea>
+        </label>
+        <label class="check">
+          <input type="checkbox" [(ngModel)]="departmentForm.isActive" />
+          <span>Active</span>
+        </label>
+      </div>
+      <div class="actions">
+        <button class="ghost" (click)="resetDepartment()">Clear</button>
+        <button class="primary" [disabled]="saving" (click)="saveDepartment()">Save department</button>
+      </div>
     </article>
   </section>
 
   <section *ngIf="tab === 'videos'" class="video-layout">
     <aside class="master-list">
-      <div class="section-title"><div><small>VIDEO LIBRARY</small><h2>{{ videos.length }} videos</h2></div><button (click)="resetVideo()"><i class="fas fa-plus"></i> New</button></div>
-      <div class="search-box"><i class="fas fa-search"></i><input [(ngModel)]="search" placeholder="Search video"></div>
+      <div class="section-title">
+        <div>
+          <small>VIDEO LIBRARY</small>
+          <h2>{{ videos.length }} videos</h2>
+        </div>
+        <button (click)="resetVideo()">
+          <i class="fas fa-plus"></i>
+          New
+        </button>
+      </div>
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input [(ngModel)]="search" placeholder="Filter this page video" />
+      </div>
       <button class="list-row video-row" *ngFor="let row of filteredVideos" (click)="editVideo(row)">
-        <div><strong>{{ row.title }}</strong><span>{{ row.videoCode }} · {{ row.questions.length }} question(s)</span></div>
+        <div>
+          <strong>{{ row.title }}</strong>
+          <span>{{ row.videoCode }} · {{ row.questions.length }} question(s)</span>
+        </div>
         <b [class.off]="!row.isActive">{{ row.isActive ? 'Ready' : 'Off' }}</b>
       </button>
-      <div class="empty" *ngIf="!filteredVideos.length"><i class="fas fa-film"></i><span>No matching video.</span></div>
+      <div class="empty" *ngIf="!filteredVideos.length">
+        <i class="fas fa-film"></i>
+        <span>No matching video.</span>
+      </div>
     </aside>
 
     <article class="editor video-editor">
       <div class="section-title">
-        <div><small>VIDEO + ASSIGNMENT BUILDER</small><h2>{{ videoId ? 'Edit onboarding video' : 'Create onboarding video' }}</h2></div>
+        <div>
+          <small>VIDEO + ASSIGNMENT BUILDER</small>
+          <h2>{{ videoId ? 'Edit onboarding video' : 'Create onboarding video' }}</h2>
+        </div>
         <span class="pill">{{ videoForm.questions.length }} questions · {{ totalMarks }} marks</span>
       </div>
 
       <div class="fields">
-        <label><span>Video code *</span><input [(ngModel)]="videoForm.videoCode" placeholder="IND-001"></label>
-        <label><span>Video title *</span><input [(ngModel)]="videoForm.title" placeholder="Welcome to QLSS"></label>
-        <label class="wide"><span>Video URL / server path *</span><input [(ngModel)]="videoForm.videoUrl" placeholder="/assets/onboarding/welcome.mp4 or https://..."><small>Use a browser-accessible MP4/WebM/server URL.</small></label>
-        <label><span>Thumbnail URL</span><input [(ngModel)]="videoForm.thumbnailUrl" placeholder="Optional"></label>
-        <label><span>Duration (seconds)</span><input type="number" min="1" [(ngModel)]="videoForm.durationSeconds" placeholder="Optional"></label>
-        <label class="wide"><span>Video description</span><textarea rows="3" [(ngModel)]="videoForm.description" placeholder="What the employee will learn"></textarea></label>
+        <label>
+          <span>Video code *</span>
+          <input [(ngModel)]="videoForm.videoCode" placeholder="IND-001" />
+        </label>
+        <label>
+          <span>Video title *</span>
+          <input [(ngModel)]="videoForm.title" placeholder="Welcome to QLSS" />
+        </label>
+        <label class="wide">
+          <span>Video URL / server path *</span>
+          <input [(ngModel)]="videoForm.videoUrl" placeholder="/assets/onboarding/welcome.mp4 or https://..." />
+          <small>Use a browser-accessible MP4/WebM/server URL.</small>
+        </label>
+        <label>
+          <span>Thumbnail URL</span>
+          <input [(ngModel)]="videoForm.thumbnailUrl" placeholder="Optional" />
+        </label>
+        <label>
+          <span>Duration (seconds)</span>
+          <input type="number" min="1" [(ngModel)]="videoForm.durationSeconds" placeholder="Optional" />
+        </label>
+        <label class="wide">
+          <span>Video description</span>
+          <textarea rows="3" [(ngModel)]="videoForm.description" placeholder="What the employee will learn"></textarea>
+        </label>
       </div>
 
       <div class="assignment-policy">
-        <div class="builder-head"><div><small>ASSIGNMENT POLICY</small><h3>Rules after this video</h3></div></div>
+        <div class="builder-head">
+          <div>
+            <small>ASSIGNMENT POLICY</small>
+            <h3>Rules after this video</h3>
+          </div>
+        </div>
         <div class="fields">
-          <label><span>Assignment title</span><input [(ngModel)]="videoForm.assignmentTitle" [placeholder]="videoForm.title ? videoForm.title + ' - Assignment' : 'Video assignment'"></label>
-          <label><span>Maximum attempts</span><input type="number" min="1" max="20" [(ngModel)]="videoForm.maxAttempts" placeholder="Blank = unlimited"><small>Leave blank for unlimited retries.</small></label>
-          <label class="wide"><span>Instructions</span><textarea rows="3" [(ngModel)]="videoForm.assignmentInstructions"></textarea></label>
-          <label class="check"><input type="checkbox" [(ngModel)]="videoForm.showResultAfterSubmit"><span>Show score after submit</span></label>
-          <label class="check"><input type="checkbox" [(ngModel)]="videoForm.isActive"><span>Video active</span></label>
+          <label>
+            <span>Assignment title</span>
+            <input
+              [(ngModel)]="videoForm.assignmentTitle"
+              [placeholder]="videoForm.title ? videoForm.title + ' - Assignment' : 'Video assignment'"
+            />
+          </label>
+          <label>
+            <span>Maximum attempts</span>
+            <input type="number" min="1" max="20" [(ngModel)]="videoForm.maxAttempts" placeholder="Blank = unlimited" />
+            <small>Leave blank for unlimited retries.</small>
+          </label>
+          <label class="wide">
+            <span>Instructions</span>
+            <textarea rows="3" [(ngModel)]="videoForm.assignmentInstructions"></textarea>
+          </label>
+          <label class="check">
+            <input type="checkbox" [(ngModel)]="videoForm.showResultAfterSubmit" />
+            <span>Show score after submit</span>
+          </label>
+          <label class="check">
+            <input type="checkbox" [(ngModel)]="videoForm.isActive" />
+            <span>Video active</span>
+          </label>
         </div>
       </div>
 
       <div class="assignment-builder">
         <div class="builder-head">
-          <div><small>QUESTION BUILDER</small><h3>Assignment questions</h3></div>
-          <div class="mini-actions"><button (click)="addQuestion('SingleChoice')"><i class="fas fa-plus"></i> Choice</button><button (click)="addQuestion('TrueFalse')"><i class="fas fa-plus"></i> True / False</button></div>
+          <div>
+            <small>QUESTION BUILDER</small>
+            <h3>Assignment questions</h3>
+          </div>
+          <div class="mini-actions">
+            <button (click)="addQuestion('SingleChoice')">
+              <i class="fas fa-plus"></i>
+              Choice
+            </button>
+            <button (click)="addQuestion('TrueFalse')">
+              <i class="fas fa-plus"></i>
+              True / False
+            </button>
+          </div>
         </div>
-        <p class="snapshot-note"><i class="fas fa-camera"></i> Questions are snapshotted when an employee is assigned. Future master edits do not alter already-issued assignments.</p>
+        <p class="snapshot-note">
+          <i class="fas fa-camera"></i>
+          Questions are snapshotted when an employee is assigned. Future master edits do not alter already-issued
+          assignments.
+        </p>
 
         <div class="question-editor" *ngFor="let question of videoForm.questions; let qi = index">
           <div class="q-head">
             <b>{{ qi + 1 }}</b>
-            <input [(ngModel)]="question.questionText" placeholder="Question text *">
-            <select [(ngModel)]="question.questionType" (change)="onQuestionTypeChanged(question)"><option value="SingleChoice">Single choice</option><option value="TrueFalse">True / False</option></select>
-            <input class="marks" type="number" min="0.01" [(ngModel)]="question.marks" title="Marks">
-            <div class="q-tools"><button class="icon" [disabled]="qi === 0" (click)="moveQuestion(qi,-1)" title="Move up"><i class="fas fa-arrow-up"></i></button><button class="icon" [disabled]="qi === videoForm.questions.length - 1" (click)="moveQuestion(qi,1)" title="Move down"><i class="fas fa-arrow-down"></i></button><button class="icon danger" (click)="removeQuestion(qi)" title="Remove"><i class="fas fa-trash"></i></button></div>
+            <input [(ngModel)]="question.questionText" placeholder="Question text *" />
+            <select [(ngModel)]="question.questionType" (change)="onQuestionTypeChanged(question)">
+              <option value="SingleChoice">Single choice</option>
+              <option value="TrueFalse">True / False</option>
+            </select>
+            <input class="marks" type="number" min="0.01" [(ngModel)]="question.marks" title="Marks" />
+            <div class="q-tools">
+              <button class="icon" [disabled]="qi === 0" (click)="moveQuestion(qi, -1)" title="Move up">
+                <i class="fas fa-arrow-up"></i>
+              </button>
+              <button
+                class="icon"
+                [disabled]="qi === videoForm.questions.length - 1"
+                (click)="moveQuestion(qi, 1)"
+                title="Move down"
+              >
+                <i class="fas fa-arrow-down"></i>
+              </button>
+              <button class="icon danger" (click)="removeQuestion(qi)" title="Remove">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
           </div>
           <div class="options">
             <div *ngFor="let option of question.options; let oi = index">
-              <input type="radio" [name]="'correct-' + qi" [checked]="option.isCorrect" (change)="setCorrect(question,oi)" title="Correct answer">
-              <input [(ngModel)]="option.optionText" placeholder="Option {{ oi + 1 }} *">
-              <button class="icon danger" (click)="removeOption(question,oi)" [disabled]="question.options.length <= 2"><i class="fas fa-times"></i></button>
+              <input
+                type="radio"
+                [name]="'correct-' + qi"
+                [checked]="option.isCorrect"
+                (change)="setCorrect(question, oi)"
+                title="Correct answer"
+              />
+              <input [(ngModel)]="option.optionText" placeholder="Option {{ oi + 1 }} *" />
+              <button
+                class="icon danger"
+                (click)="removeOption(question, oi)"
+                [disabled]="question.options.length <= 2"
+              >
+                <i class="fas fa-times"></i>
+              </button>
             </div>
-            <button *ngIf="question.questionType === 'SingleChoice'" class="add-option" (click)="addOption(question)"><i class="fas fa-plus"></i> Add option</button>
+            <button *ngIf="question.questionType === 'SingleChoice'" class="add-option" (click)="addOption(question)">
+              <i class="fas fa-plus"></i>
+              Add option
+            </button>
           </div>
-          <label class="explanation"><span>Correct-answer explanation (optional)</span><textarea rows="2" [(ngModel)]="question.explanation" placeholder="Stored for SuperAdmin reference; correct answers remain hidden from the employee player"></textarea></label>
+          <label class="explanation">
+            <span>Correct-answer explanation (optional)</span>
+            <textarea
+              rows="2"
+              [(ngModel)]="question.explanation"
+              placeholder="Stored for SuperAdmin reference; correct answers remain hidden from the employee player"
+            ></textarea>
+          </label>
         </div>
       </div>
 
-      <div class="actions sticky-actions"><button class="ghost" (click)="resetVideo()">Clear</button><button class="primary" [disabled]="saving" (click)="saveVideo()"><i class="fas fa-floppy-disk"></i> Save video + assignment</button></div>
+      <div class="actions sticky-actions">
+        <button class="ghost" (click)="resetVideo()">Clear</button>
+        <button class="primary" [disabled]="saving" (click)="saveVideo()">
+          <i class="fas fa-floppy-disk"></i>
+          Save video + assignment
+        </button>
+      </div>
     </article>
   </section>
 
   <section *ngIf="tab === 'plans'" class="plan-layout">
     <aside class="master-list">
-      <div class="section-title"><div><small>LEARNING PATHS</small><h2>{{ plans.length }} paths</h2></div><button (click)="resetPlan()"><i class="fas fa-plus"></i> New</button></div>
-      <div class="search-box"><i class="fas fa-search"></i><input [(ngModel)]="search" placeholder="Search path"></div>
+      <div class="section-title">
+        <div>
+          <small>LEARNING PATHS</small>
+          <h2>{{ plans.length }} paths</h2>
+        </div>
+        <button (click)="resetPlan()">
+          <i class="fas fa-plus"></i>
+          New
+        </button>
+      </div>
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input [(ngModel)]="search" placeholder="Filter this page path" />
+      </div>
       <button class="list-row plan-master-row" *ngFor="let row of filteredPlans" (click)="editPlan(row)">
-        <div><strong>{{ row.planName }}</strong><span>{{ row.isDefault ? 'Default / Common' : (row.departmentName || 'Department') }} · {{ row.items.length }} step(s)</span></div>
+        <div>
+          <strong>{{ row.planName }}</strong>
+          <span>
+            {{ row.isDefault ? 'Default / Common' : row.departmentName || 'Department' }} ·
+            {{ row.items.length }} step(s)
+          </span>
+        </div>
         <b [class.draft]="row.planStatus === 'Draft'">{{ row.planStatus }}</b>
       </button>
-      <div class="empty" *ngIf="!filteredPlans.length"><i class="fas fa-route"></i><span>No matching learning path.</span></div>
+      <div class="empty" *ngIf="!filteredPlans.length">
+        <i class="fas fa-route"></i>
+        <span>No matching learning path.</span>
+      </div>
     </aside>
 
     <div class="plan-workspace">
       <article class="editor">
         <div class="section-title">
-          <div><small>PATH BUILDER</small><h2>{{ planId ? 'Edit learning path' : 'Create learning path' }}</h2></div>
-          <div class="status-pills" *ngIf="selectedPlan"><span [class.published]="selectedPlan.planStatus === 'Published'">{{ selectedPlan.planStatus }}</span><span>v{{ selectedPlan.versionNo }}</span></div>
+          <div>
+            <small>PATH BUILDER</small>
+            <h2>{{ planId ? 'Edit learning path' : 'Create learning path' }}</h2>
+          </div>
+          <div class="status-pills" *ngIf="selectedPlan">
+            <span [class.published]="selectedPlan.planStatus === 'Published'">{{ selectedPlan.planStatus }}</span>
+            <span>v{{ selectedPlan.versionNo }}</span>
+          </div>
         </div>
         <div class="fields">
-          <label><span>Path code *</span><input [(ngModel)]="planForm.planCode" placeholder="COMMON-INDUCTION"></label>
-          <label><span>Path name *</span><input [(ngModel)]="planForm.planName" placeholder="QLSS Common Induction"></label>
-          <label><span>Completion days *</span><input type="number" min="1" max="365" [(ngModel)]="planForm.completionDays"></label>
-          <label class="check"><input type="checkbox" [(ngModel)]="planForm.isDefault" (change)="defaultChanged()"><span>Default / Common path</span></label>
-          <label *ngIf="!planForm.isDefault"><span>Department *</span><select [(ngModel)]="planForm.departmentId"><option [ngValue]="null">Select department</option><option *ngFor="let d of departments" [ngValue]="d.departmentId">{{ d.departmentName }}</option></select></label>
-          <label class="check"><input type="checkbox" [(ngModel)]="planForm.isActive"><span>Path active</span></label>
-          <label class="wide"><span>Welcome message</span><textarea rows="3" [(ngModel)]="planForm.welcomeMessage"></textarea></label>
-          <label class="wide"><span>Completion message</span><textarea rows="3" [(ngModel)]="planForm.completionMessage"></textarea></label>
+          <label>
+            <span>Path code *</span>
+            <input [(ngModel)]="planForm.planCode" placeholder="COMMON-INDUCTION" />
+          </label>
+          <label>
+            <span>Path name *</span>
+            <input [(ngModel)]="planForm.planName" placeholder="QLSS Common Induction" />
+          </label>
+          <label>
+            <span>Completion days *</span>
+            <input type="number" min="1" max="365" [(ngModel)]="planForm.completionDays" />
+          </label>
+          <label class="check">
+            <input type="checkbox" [(ngModel)]="planForm.isDefault" (change)="defaultChanged()" />
+            <span>Default / Common path</span>
+          </label>
+          <label *ngIf="!planForm.isDefault">
+            <span>Department *</span>
+            <select [(ngModel)]="planForm.departmentId">
+              <option [ngValue]="null">Select department</option>
+              <option *ngFor="let d of departments" [ngValue]="d.departmentId">{{ d.departmentName }}</option>
+            </select>
+          </label>
+          <label class="check">
+            <input type="checkbox" [(ngModel)]="planForm.isActive" />
+            <span>Path active</span>
+          </label>
+          <label class="wide">
+            <span>Welcome message</span>
+            <textarea rows="3" [(ngModel)]="planForm.welcomeMessage"></textarea>
+          </label>
+          <label class="wide">
+            <span>Completion message</span>
+            <textarea rows="3" [(ngModel)]="planForm.completionMessage"></textarea>
+          </label>
         </div>
 
         <div class="plan-items">
-          <div class="builder-head"><div><small>SEQUENTIAL FLOW</small><h3>Video order and unlock rules</h3></div><button (click)="addPlanItem()"><i class="fas fa-plus"></i> Add video</button></div>
+          <div class="builder-head">
+            <div>
+              <small>SEQUENTIAL FLOW</small>
+              <h3>Video order and unlock rules</h3>
+            </div>
+            <button (click)="addPlanItem()">
+              <i class="fas fa-plus"></i>
+              Add video
+            </button>
+          </div>
           <div class="plan-row" *ngFor="let item of planForm.items; let i = index">
             <div class="seq">{{ i + 1 }}</div>
-            <label><small>Video *</small><select [(ngModel)]="item.videoId"><option [ngValue]="0">Select video</option><option *ngFor="let video of videos" [ngValue]="video.videoId" [disabled]="!video.isActive">{{ video.title }}</option></select></label>
-            <label><small>Watch %</small><input type="number" min="50" max="100" [(ngModel)]="item.minimumWatchPercent"></label>
-            <label><small>Pass %</small><input type="number" min="0" max="100" [(ngModel)]="item.passingPercent"></label>
-            <label class="check mini"><input type="checkbox" [(ngModel)]="item.mustPassAssignment"><span>Must pass</span></label>
-            <div class="row-tools"><button class="icon" [disabled]="i === 0" (click)="movePlanItem(i,-1)"><i class="fas fa-arrow-up"></i></button><button class="icon" [disabled]="i === planForm.items.length - 1" (click)="movePlanItem(i,1)"><i class="fas fa-arrow-down"></i></button><button class="icon danger" (click)="removePlanItem(i)"><i class="fas fa-trash"></i></button></div>
+            <label>
+              <small>Video *</small>
+              <select [(ngModel)]="item.videoId">
+                <option [ngValue]="0">Select video</option>
+                <option *ngFor="let video of videos" [ngValue]="video.videoId" [disabled]="!video.isActive">
+                  {{ video.title }}
+                </option>
+              </select>
+            </label>
+            <label>
+              <small>Watch %</small>
+              <input type="number" min="50" max="100" [(ngModel)]="item.minimumWatchPercent" />
+            </label>
+            <label>
+              <small>Pass %</small>
+              <input type="number" min="0" max="100" [(ngModel)]="item.passingPercent" />
+            </label>
+            <label class="check mini">
+              <input type="checkbox" [(ngModel)]="item.mustPassAssignment" />
+              <span>Must pass</span>
+            </label>
+            <div class="row-tools">
+              <button class="icon" [disabled]="i === 0" (click)="movePlanItem(i, -1)">
+                <i class="fas fa-arrow-up"></i>
+              </button>
+              <button class="icon" [disabled]="i === planForm.items.length - 1" (click)="movePlanItem(i, 1)">
+                <i class="fas fa-arrow-down"></i>
+              </button>
+              <button class="icon danger" (click)="removePlanItem(i)"><i class="fas fa-trash"></i></button>
+            </div>
           </div>
         </div>
 
-        <div class="actions"><button class="ghost" (click)="resetPlan()">Clear</button><button class="primary" [disabled]="saving" (click)="savePlan()"><i class="fas fa-floppy-disk"></i> Save as Draft</button><button class="publish" [disabled]="saving || !planId" (click)="publishPlan()"><i class="fas fa-paper-plane"></i> Publish path</button></div>
+        <div class="actions">
+          <button class="ghost" (click)="resetPlan()">Clear</button>
+          <button class="primary" [disabled]="saving" (click)="savePlan()">
+            <i class="fas fa-floppy-disk"></i>
+            Save as Draft
+          </button>
+          <button class="publish" [disabled]="saving || !planId" (click)="publishPlan()">
+            <i class="fas fa-paper-plane"></i>
+            Publish path
+          </button>
+        </div>
       </article>
 
       <aside class="path-preview content-card">
-        <div class="section-title"><div><small>LIVE PREVIEW</small><h2>Employee path flow</h2></div></div>
-        <div class="preview-message" *ngIf="planForm.welcomeMessage"><i class="fas fa-hand-sparkles"></i><span>{{ planForm.welcomeMessage }}</span></div>
+        <div class="section-title">
+          <div>
+            <small>LIVE PREVIEW</small>
+            <h2>Employee path flow</h2>
+          </div>
+        </div>
+        <div class="preview-message" *ngIf="planForm.welcomeMessage">
+          <i class="fas fa-hand-sparkles"></i>
+          <span>{{ planForm.welcomeMessage }}</span>
+        </div>
         <div class="path-flow">
           <ng-container *ngFor="let item of activePlanItems; let i = index">
             <article class="path-step" [class.missing]="!item.videoId">
               <b>{{ i + 1 }}</b>
-              <div><strong>{{ videoName(item.videoId) }}</strong><span>{{ questionCount(item.videoId) }} question(s) · Watch {{ item.minimumWatchPercent }}% · Pass {{ item.passingPercent }}%</span><small>{{ item.mustPassAssignment ? 'Assignment must pass before next video unlocks' : 'Next video can unlock after assignment submission' }}</small></div>
+              <div>
+                <strong>{{ videoName(item.videoId) }}</strong>
+                <span>
+                  {{ questionCount(item.videoId) }} question(s) · Watch {{ item.minimumWatchPercent }}% · Pass
+                  {{ item.passingPercent }}%
+                </span>
+                <small>
+                  {{
+                    item.mustPassAssignment
+                      ? 'Assignment must pass before next video unlocks'
+                      : 'Next video can unlock after assignment submission'
+                  }}
+                </small>
+              </div>
             </article>
-            <div class="path-arrow" *ngIf="i < activePlanItems.length - 1"><i class="fas fa-arrow-down"></i><span>Pass / complete</span></div>
+            <div class="path-arrow" *ngIf="i < activePlanItems.length - 1">
+              <i class="fas fa-arrow-down"></i>
+              <span>Pass / complete</span>
+            </div>
           </ng-container>
         </div>
-        <div class="preview-message success" *ngIf="planForm.completionMessage"><i class="fas fa-trophy"></i><span>{{ planForm.completionMessage }}</span></div>
-        <div class="publish-guide"><strong>Publish rule</strong><span>Saving changes puts the path in Draft. Publish only after checking every video, assignment and sequence.</span></div>
+        <div class="preview-message success" *ngIf="planForm.completionMessage">
+          <i class="fas fa-trophy"></i>
+          <span>{{ planForm.completionMessage }}</span>
+        </div>
+        <div class="publish-guide">
+          <strong>Publish rule</strong>
+          <span>
+            Saving changes puts the path in Draft. Publish only after checking every video, assignment and sequence.
+          </span>
+        </div>
       </aside>
     </div>
 
     <section class="published-register content-card">
-      <div class="section-title"><div><small>PATH REGISTER</small><h2>Draft & published learning paths</h2></div></div>
-      <div class="table-wrap"><table><thead><tr><th>Path</th><th>Scope</th><th>Days</th><th>Steps</th><th>Status</th><th>Version</th><th>Action</th></tr></thead><tbody><tr *ngFor="let row of plans"><td><strong>{{ row.planName }}</strong><small>{{ row.planCode }}</small></td><td>{{ row.isDefault ? 'Default / Common' : row.departmentName }}</td><td>{{ row.completionDays }}</td><td>{{ row.items.length }}</td><td><span class="status" [class.published]="row.planStatus === 'Published'">{{ row.planStatus }}</span></td><td>v{{ row.versionNo }}</td><td><div class="table-actions"><button (click)="editPlan(row)">Edit</button><button *ngIf="row.planStatus === 'Draft'" class="publish" (click)="publishPlan(row)">Publish</button><button *ngIf="row.planStatus === 'Published'" class="ghost" (click)="movePlanToDraft(row)">Move to Draft</button></div></td></tr></tbody></table></div>
+      <div class="section-title">
+        <div>
+          <small>PATH REGISTER</small>
+          <h2>Draft & published learning paths</h2>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Path</th>
+              <th>Scope</th>
+              <th>Days</th>
+              <th>Steps</th>
+              <th>Status</th>
+              <th>Version</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of plans">
+              <td>
+                <strong>{{ row.planName }}</strong>
+                <small>{{ row.planCode }}</small>
+              </td>
+              <td>{{ row.isDefault ? 'Default / Common' : row.departmentName }}</td>
+              <td>{{ row.completionDays }}</td>
+              <td>{{ row.items.length }}</td>
+              <td>
+                <span class="status" [class.published]="row.planStatus === 'Published'">{{ row.planStatus }}</span>
+              </td>
+              <td>v{{ row.versionNo }}</td>
+              <td>
+                <div class="table-actions">
+                  <button (click)="editPlan(row)">Edit</button>
+                  <button *ngIf="row.planStatus === 'Draft'" class="publish" (click)="publishPlan(row)">Publish</button>
+                  <button *ngIf="row.planStatus === 'Published'" class="ghost" (click)="movePlanToDraft(row)">
+                    Move to Draft
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
   </section>
 </div>

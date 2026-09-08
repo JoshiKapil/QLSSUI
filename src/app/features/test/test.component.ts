@@ -15,7 +15,7 @@ import {
   TestResult,
   TestSubmission,
   TestSummaryItem,
-  UserAnswer
+  UserAnswer,
 } from './test.model';
 import { firstValueFrom, Subject, takeUntil } from 'rxjs';
 import { Router } from '@angular/router';
@@ -49,7 +49,7 @@ interface DirectTrainingOption {
 @Component({
   selector: 'app-test',
   templateUrl: './test.component.html',
-  styleUrls: ['./test.component.scss']
+  styleUrls: ['./test.component.scss'],
 })
 export class TestComponent implements OnInit, OnDestroy {
   questions: TestQuestion[] = [];
@@ -109,7 +109,7 @@ export class TestComponent implements OnInit, OnDestroy {
     private router: Router,
     private http: HttpClient,
     private dataService: DataService,
-    private trainingService: TrainingManagementService
+    private trainingService: TrainingManagementService,
   ) {
     this.authService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
       this.isAdmin = false;
@@ -176,10 +176,7 @@ export class TestComponent implements OnInit, OnDestroy {
     this.directEntryMessage = '';
 
     try {
-      const [, tests] = await Promise.all([
-        this.loadTrainingList(),
-        this.testStorage.listTestDefinitions()
-      ]);
+      const [, tests] = await Promise.all([this.loadTrainingList(), this.testStorage.listTestDefinitions()]);
       this.directTests = tests;
     } catch {
       this.directEntryMessage = 'Training list could not be loaded. Please try again.';
@@ -221,7 +218,7 @@ export class TestComponent implements OnInit, OnDestroy {
           displayName: training.displayName || training.trainingName || '',
           preTestId: String(training.preTestId ?? ''),
           postTestId: String(training.postTestId ?? ''),
-          chalangeTestId: String(training.chalangeTestId ?? '')
+          chalangeTestId: String(training.chalangeTestId ?? ''),
         }))
         .filter((training) => training.trainingId && this.getDirectTrainingLabel(training))
         .sort((a, b) => this.getDirectTrainingLabel(a).localeCompare(this.getDirectTrainingLabel(b)));
@@ -251,16 +248,24 @@ export class TestComponent implements OnInit, OnDestroy {
         }
       }
 
-      const selectedTraining = this.directTrainings.find(
-        (training) => training.trainingId === this.selectedTrainingId
-      );
+      const selectedTraining = this.directTrainings.find((training) => training.trainingId === this.selectedTrainingId);
       const linkedTestId = this.getLinkedTestId(selectedTraining);
-      const selectedTest = linkedTestId
+      let selectedTest = linkedTestId
         ? this.directTests.find((test) => String(test.testId || '') === linkedTestId)
-        : [...this.directTests].reverse().find((test) =>
-            String(test.trainingId || '') === this.selectedTrainingId &&
-            this.getDefinitionTestType(test) === this.testType
-          );
+        : [...this.directTests]
+            .reverse()
+            .find(
+              (test) =>
+                String(test.trainingId || '') === this.selectedTrainingId &&
+                this.getDefinitionTestType(test) === this.testType,
+            );
+
+      // A training link is authoritative. Fetch it directly when the test list is
+      // stale or when an older API record did not persist its test-type metadata.
+      if (!selectedTest && linkedTestId) {
+        selectedTest = (await this.testStorage.loadTestDefinition(linkedTestId)) || undefined;
+      }
+
       if (!selectedTest) {
         this.directEntryMessage = 'No test is available for the selected training and test type.';
         return;
@@ -282,9 +287,10 @@ export class TestComponent implements OnInit, OnDestroy {
       return this.directTrainings;
     }
 
-    return this.directTrainings.filter((training) =>
-      this.getDirectTrainingLabel(training).toLowerCase().includes(search) ||
-      training.trainingId.toLowerCase().includes(search)
+    return this.directTrainings.filter(
+      (training) =>
+        this.getDirectTrainingLabel(training).toLowerCase().includes(search) ||
+        training.trainingId.toLowerCase().includes(search),
     );
   }
 
@@ -340,7 +346,16 @@ export class TestComponent implements OnInit, OnDestroy {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  private getStartTestData(): { testName: string; testId?: string; username: string; testType?: 'pre' | 'post' | 'assessment' | 'chalange' | 'NOR'; trainingId?: string; trainerId?: string; name?: string; contact?: string } | null {
+  private getStartTestData(): {
+    testName: string;
+    testId?: string;
+    username: string;
+    testType?: 'pre' | 'post' | 'assessment' | 'chalange' | 'NOR';
+    trainingId?: string;
+    trainerId?: string;
+    name?: string;
+    contact?: string;
+  } | null {
     const savedData = sessionStorage.getItem(STORAGE_KEY_START_TEST);
     sessionStorage.removeItem(STORAGE_KEY_START_TEST);
 
@@ -415,7 +430,8 @@ export class TestComponent implements OnInit, OnDestroy {
 
     // Previous database/local assessment lookup kept for reference:
     // this.testStorage.resolveAssessmentQuestions(displayTestName)
-    this.testStorage.resolveAssessmentFileQuestions(displayTestName, this.testType === 'NOR' ? 'assessment' : this.testType)
+    this.testStorage
+      .resolveAssessmentFileQuestions(displayTestName, this.testType === 'NOR' ? 'assessment' : this.testType)
       .then((attempt) => {
         this.applyTestAttempt(attempt.testDefinition, attempt.questions, attempt.missingQuestionIds);
       })
@@ -447,7 +463,8 @@ export class TestComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.testStorage.loadSavedSubmission(normalizedUsername, normalizedTestName)
+    this.testStorage
+      .loadSavedSubmission(normalizedUsername, normalizedTestName)
       .then((submission) => {
         if (!submission) {
           this.savedResultMessage = 'No saved result found.';
@@ -488,7 +505,7 @@ export class TestComponent implements OnInit, OnDestroy {
     const [tests, users, savedResults] = await Promise.all([
       this.loadResultTests(),
       this.loadResultUsers(),
-      this.loadResultSavedResults()
+      this.loadResultSavedResults(),
     ]);
 
     this.savedResults = savedResults.length ? savedResults : this.savedResults;
@@ -560,12 +577,14 @@ export class TestComponent implements OnInit, OnDestroy {
           version: 1,
           createdAt: item.submittedAt || new Date().toISOString(),
           updatedAt: item.submittedAt || new Date().toISOString(),
-          optionKey
+          optionKey,
         });
       }
     });
 
-    return Array.from(options.values()).sort((a, b) => this.getResultTestLabel(a).localeCompare(this.getResultTestLabel(b)));
+    return Array.from(options.values()).sort((a, b) =>
+      this.getResultTestLabel(a).localeCompare(this.getResultTestLabel(b)),
+    );
   }
 
   private buildResultUserOptions(users: string[], savedResults: SavedResultListItem[]): ResultUserOption[] {
@@ -585,7 +604,10 @@ export class TestComponent implements OnInit, OnDestroy {
 
     const key = this.testStorage.normalizeFileName(cleanUsername).toLowerCase();
     if (!options.has(key)) {
-      options.set(key, { username: cleanUsername, normalizedUsername: this.testStorage.normalizeFileName(cleanUsername) });
+      options.set(key, {
+        username: cleanUsername,
+        normalizedUsername: this.testStorage.normalizeFileName(cleanUsername),
+      });
     }
   }
 
@@ -622,9 +644,18 @@ export class TestComponent implements OnInit, OnDestroy {
   }
 
   onResultTestDropdownKeydown(event: KeyboardEvent): void {
-    this.handleResultDropdownKeydown(event, this.resultAvailableTests.length, this.isResultTestDropdownOpen, this.highlightedResultTestIndex, (index) => {
-      this.highlightedResultTestIndex = index;
-    }, () => this.toggleResultTestDropdown(), (index) => this.selectResultTest(this.resultAvailableTests[index]), () => this.closeResultTestDropdown());
+    this.handleResultDropdownKeydown(
+      event,
+      this.resultAvailableTests.length,
+      this.isResultTestDropdownOpen,
+      this.highlightedResultTestIndex,
+      (index) => {
+        this.highlightedResultTestIndex = index;
+      },
+      () => this.toggleResultTestDropdown(),
+      (index) => this.selectResultTest(this.resultAvailableTests[index]),
+      () => this.closeResultTestDropdown(),
+    );
   }
 
   getSelectedResultUserLabel(): string {
@@ -655,9 +686,18 @@ export class TestComponent implements OnInit, OnDestroy {
   }
 
   onResultUserDropdownKeydown(event: KeyboardEvent): void {
-    this.handleResultDropdownKeydown(event, this.resultAvailableUsers.length, this.isResultUserDropdownOpen, this.highlightedResultUserIndex, (index) => {
-      this.highlightedResultUserIndex = index;
-    }, () => this.toggleResultUserDropdown(), (index) => this.selectResultUser(this.resultAvailableUsers[index]), () => this.closeResultUserDropdown());
+    this.handleResultDropdownKeydown(
+      event,
+      this.resultAvailableUsers.length,
+      this.isResultUserDropdownOpen,
+      this.highlightedResultUserIndex,
+      (index) => {
+        this.highlightedResultUserIndex = index;
+      },
+      () => this.toggleResultUserDropdown(),
+      (index) => this.selectResultUser(this.resultAvailableUsers[index]),
+      () => this.closeResultUserDropdown(),
+    );
   }
 
   private handleResultDropdownKeydown(
@@ -668,9 +708,12 @@ export class TestComponent implements OnInit, OnDestroy {
     setHighlightedIndex: (index: number) => void,
     openDropdown: () => void,
     selectIndex: (index: number) => void,
-    closeDropdown: () => void
+    closeDropdown: () => void,
   ): void {
-    if (!optionCount && (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === 'Enter' || event.key === ' ')) {
+    if (
+      !optionCount &&
+      (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === 'Enter' || event.key === ' ')
+    ) {
       event.preventDefault();
       return;
     }
@@ -683,9 +726,15 @@ export class TestComponent implements OnInit, OnDestroy {
       }
 
       const maxIndex = optionCount - 1;
-      setHighlightedIndex(event.key === 'ArrowDown'
-        ? (highlightedIndex < maxIndex ? highlightedIndex + 1 : 0)
-        : (highlightedIndex > 0 ? highlightedIndex - 1 : maxIndex));
+      setHighlightedIndex(
+        event.key === 'ArrowDown'
+          ? highlightedIndex < maxIndex
+            ? highlightedIndex + 1
+            : 0
+          : highlightedIndex > 0
+            ? highlightedIndex - 1
+            : maxIndex,
+      );
       return;
     }
 
@@ -731,8 +780,13 @@ export class TestComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const submission = this.buildSubmissionPayload(this.result, this.isAutoSubmitted, this.resultSourceLabel || DEFAULT_RESULT_SOURCE);
-    this.testStorage.exportSubmissionResult(submission)
+    const submission = this.buildSubmissionPayload(
+      this.result,
+      this.isAutoSubmitted,
+      this.resultSourceLabel || DEFAULT_RESULT_SOURCE,
+    );
+    this.testStorage
+      .exportSubmissionResult(submission)
       .then((blob) => this.testStorage.downloadBlob(blob, `${submission.testName}-result.json`))
       .catch(() => (this.resultSaveWarning = 'Result export failed.'));
   }
@@ -793,7 +847,13 @@ export class TestComponent implements OnInit, OnDestroy {
   }
 
   moveToQuestion(index: number): void {
-    if (index < 0 || index >= this.questions.length || index === this.currentQuestionIndex || this.isSubmitted || this.isSubmitModalOpen) {
+    if (
+      index < 0 ||
+      index >= this.questions.length ||
+      index === this.currentQuestionIndex ||
+      this.isSubmitted ||
+      this.isSubmitModalOpen
+    ) {
       return;
     }
 
@@ -803,7 +863,7 @@ export class TestComponent implements OnInit, OnDestroy {
     requestAnimationFrame(() => {
       document.querySelector<HTMLElement>('.test-panel')?.scrollIntoView({
         behavior: 'smooth',
-        block: 'start'
+        block: 'start',
       });
     });
   }
@@ -881,9 +941,8 @@ export class TestComponent implements OnInit, OnDestroy {
       })
       .catch((error: unknown) => {
         this.isSubmitted = false;
-        this.submissionMessage = error instanceof Error
-          ? error.message
-          : 'Your test result could not be submitted. Please try again.';
+        this.submissionMessage =
+          error instanceof Error ? error.message : 'Your test result could not be submitted. Please try again.';
       });
   }
 
@@ -901,8 +960,8 @@ export class TestComponent implements OnInit, OnDestroy {
         queryParams: {
           trainingId: this.startTrainingId || this.selectedTrainingId || this.activeTestDefinition?.trainingId || '',
           trainerId: this.feedbackTrainerId,
-          userName: this.feedbackUserName || submission.username
-        }
+          userName: this.feedbackUserName || submission.username,
+        },
       });
       return;
     }
@@ -975,7 +1034,7 @@ export class TestComponent implements OnInit, OnDestroy {
       wrong: 'Wrong',
       skipped: 'Skipped',
       manualReview: 'Manual Review Required',
-      notAnswered: 'Not Answered'
+      notAnswered: 'Not Answered',
     };
 
     return labels[answer.evaluationStatus];
@@ -986,7 +1045,12 @@ export class TestComponent implements OnInit, OnDestroy {
       return answer.essayAnswer.trim() || 'Not answered';
     }
 
-    const selectedIds = question.questionType === 'MCMA' ? answer.selectedOptionIds : (answer.selectedOptionId ? [answer.selectedOptionId] : []);
+    const selectedIds =
+      question.questionType === 'MCMA'
+        ? answer.selectedOptionIds
+        : answer.selectedOptionId
+          ? [answer.selectedOptionId]
+          : [];
 
     if (!selectedIds.length) {
       return 'Not answered';
@@ -1016,7 +1080,7 @@ export class TestComponent implements OnInit, OnDestroy {
       MCSA: 'Single Answer',
       MCMA: 'Multiple Answer',
       TRUE_FALSE: 'True / False',
-      ESSAY: 'Essay'
+      ESSAY: 'Essay',
     };
 
     return labels[type];
@@ -1060,10 +1124,16 @@ export class TestComponent implements OnInit, OnDestroy {
     return item.label;
   }
 
-  private buildSubmissionPayload(resultSummary: TestResult, isAutoSubmitted: boolean, resultSource: string): TestSubmission {
+  private buildSubmissionPayload(
+    resultSummary: TestResult,
+    isAutoSubmitted: boolean,
+    resultSource: string,
+  ): TestSubmission {
     // Save the randomized attempt order so the result shows the same question sequence.
     const questionsInAttemptOrder = [...this.questions];
-    const solutionReview = questionsInAttemptOrder.map((question, index) => this.buildQuestionResult(question, this.answers[index], index));
+    const solutionReview = questionsInAttemptOrder.map((question, index) =>
+      this.buildQuestionResult(question, this.answers[index], index),
+    );
     const displayName = this.activeTestDefinition?.displayName || this.testName || 'Test 1';
     const fileName = this.testStorage.normalizeFileName(displayName);
     const username = this.username.trim() || 'demo-user';
@@ -1093,7 +1163,7 @@ export class TestComponent implements OnInit, OnDestroy {
       questionTypeBreakdown: resultSummary.questionTypeBreakdown,
       difficultyBreakdown: resultSummary.difficultyBreakdown,
       subjectWiseSummary: resultSummary.subjectWiseSummary,
-      topicWiseSummary: resultSummary.topicWiseSummary
+      topicWiseSummary: resultSummary.topicWiseSummary,
     };
   }
   private buildQuestionResult(question: TestQuestion, answer: UserAnswer, index: number): QuestionResult {
@@ -1125,12 +1195,16 @@ export class TestComponent implements OnInit, OnDestroy {
         questionImageUrl: question.questionImageUrl,
         audioUrl: question.audioUrl,
         videoUrl: question.videoUrl,
-        explanationImageUrl: question.explanationImageUrl
-      }
+        explanationImageUrl: question.explanationImageUrl,
+      },
     };
   }
 
-  private applyTestAttempt(testDefinition: TestDefinition, questions: TestQuestion[], missingQuestionIds: string[]): void {
+  private applyTestAttempt(
+    testDefinition: TestDefinition,
+    questions: TestQuestion[],
+    missingQuestionIds: string[],
+  ): void {
     if (!questions.length) {
       this.testLoadWarning = 'No active mapped questions were found for this assessment.';
       return;
@@ -1144,15 +1218,19 @@ export class TestComponent implements OnInit, OnDestroy {
       questionNo: index + 1,
       marks: question.marks && question.marks > 0 ? question.marks : 1,
       negativeMarks: question.negativeMarks || 0,
-      estimatedTimeSeconds: question.estimatedTimeSeconds && question.estimatedTimeSeconds > 0 ? question.estimatedTimeSeconds : 60
+      estimatedTimeSeconds:
+        question.estimatedTimeSeconds && question.estimatedTimeSeconds > 0 ? question.estimatedTimeSeconds : 60,
     }));
     this.activeTestDefinition = {
       ...testDefinition,
       trainingId: this.startTrainingId || testDefinition.trainingId,
-      testFileType: this.testType
+      testFileType: this.testType,
     };
     this.testName = this.sanitizeDisplayValue(testDefinition.displayName || testDefinition.testName, DEFAULT_TEST_NAME);
-    this.totalSeconds = testDefinition.durationMinutes && testDefinition.durationMinutes > 0 ? testDefinition.durationMinutes * 60 : this.totalSeconds;
+    this.totalSeconds =
+      testDefinition.durationMinutes && testDefinition.durationMinutes > 0
+        ? testDefinition.durationMinutes * 60
+        : this.totalSeconds;
     this.remainingSeconds = this.totalSeconds;
     this.currentQuestionIndex = 0;
     this.isSubmitted = false;
@@ -1163,10 +1241,11 @@ export class TestComponent implements OnInit, OnDestroy {
     this.resultSaveWarning = '';
     this.answers = this.createEmptyAnswers();
     this.brokenMedia = {};
-    this.testLoadWarning = missingQuestionIds.length ? `${missingQuestionIds.length} mapped question(s) were not found in the question bank.` : '';
+    this.testLoadWarning = missingQuestionIds.length
+      ? `${missingQuestionIds.length} mapped question(s) were not found in the question bank.`
+      : '';
     this.startQuestionVisit();
-    if (!this.isAdmin)
-      this.startTimer();
+    if (!this.isAdmin) this.startTimer();
   }
 
   private shuffleQuestions(questions: TestQuestion[]): TestQuestion[] {
@@ -1174,8 +1253,10 @@ export class TestComponent implements OnInit, OnDestroy {
 
     for (let index = shuffledQuestions.length - 1; index > 0; index -= 1) {
       const randomIndex = Math.floor(Math.random() * (index + 1));
-      [shuffledQuestions[index], shuffledQuestions[randomIndex]] =
-        [shuffledQuestions[randomIndex], shuffledQuestions[index]];
+      [shuffledQuestions[index], shuffledQuestions[randomIndex]] = [
+        shuffledQuestions[randomIndex],
+        shuffledQuestions[index],
+      ];
     }
 
     return shuffledQuestions;
@@ -1283,7 +1364,9 @@ export class TestComponent implements OnInit, OnDestroy {
 
     const obtainedMarks = Math.max(0, positiveMarks - negativeMarksDeducted);
     const totalTimeUsedSeconds = this.answers.reduce((sum, answer) => sum + answer.timeSpentSeconds, 0);
-    const averageTimePerQuestionSeconds = this.answeredCount ? Math.round(totalTimeUsedSeconds / this.answeredCount) : 0;
+    const averageTimePerQuestionSeconds = this.answeredCount
+      ? Math.round(totalTimeUsedSeconds / this.answeredCount)
+      : 0;
     const percentage = totalMarks ? Math.round((obtainedMarks / totalMarks) * 100) : 0;
 
     return {
@@ -1302,11 +1385,17 @@ export class TestComponent implements OnInit, OnDestroy {
       passed: percentage >= PASSING_PERCENTAGE,
       totalTimeUsedSeconds,
       averageTimePerQuestionSeconds,
-      questionTypeBreakdown: this.buildBreakdown((question) => this.getQuestionTypeLabel(question.questionType), perQuestionObtainedMarks),
+      questionTypeBreakdown: this.buildBreakdown(
+        (question) => this.getQuestionTypeLabel(question.questionType),
+        perQuestionObtainedMarks,
+      ),
       difficultyBreakdown: this.buildBreakdown((question) => question.difficulty, perQuestionObtainedMarks),
-      marksBreakdown: this.buildBreakdown((question) => `${this.getQuestionMarks(question)} Mark${this.getQuestionMarks(question) === 1 ? '' : 's'}`, perQuestionObtainedMarks),
+      marksBreakdown: this.buildBreakdown(
+        (question) => `${this.getQuestionMarks(question)} Mark${this.getQuestionMarks(question) === 1 ? '' : 's'}`,
+        perQuestionObtainedMarks,
+      ),
       subjectWiseSummary: this.buildBreakdown((question) => question.subject, perQuestionObtainedMarks),
-      topicWiseSummary: this.buildBreakdown((question) => question.topic, perQuestionObtainedMarks)
+      topicWiseSummary: this.buildBreakdown((question) => question.topic, perQuestionObtainedMarks),
     };
   }
 
@@ -1320,7 +1409,10 @@ export class TestComponent implements OnInit, OnDestroy {
     }
 
     if (question.questionType === 'ESSAY') {
-      if (question.expectedAnswer && this.normalizeText(answer.essayAnswer) === this.normalizeText(question.expectedAnswer)) {
+      if (
+        question.expectedAnswer &&
+        this.normalizeText(answer.essayAnswer) === this.normalizeText(question.expectedAnswer)
+      ) {
         return 'correct';
       }
 
@@ -1334,7 +1426,10 @@ export class TestComponent implements OnInit, OnDestroy {
     return answer.selectedOptionId === question.correctOptionId ? 'correct' : 'wrong';
   }
 
-  private buildBreakdown(getLabel: (question: TestQuestion) => string, perQuestionObtainedMarks: number[]): TestSummaryItem[] {
+  private buildBreakdown(
+    getLabel: (question: TestQuestion) => string,
+    perQuestionObtainedMarks: number[],
+  ): TestSummaryItem[] {
     const summary: { [label: string]: TestSummaryItem } = {};
 
     this.questions.forEach((question, index) => {
@@ -1369,7 +1464,9 @@ export class TestComponent implements OnInit, OnDestroy {
   }
 
   isReviewOptionSelected(question: TestQuestion, answer: UserAnswer, optionId: string): boolean {
-    return question.questionType === 'MCMA' ? answer.selectedOptionIds.includes(optionId) : answer.selectedOptionId === optionId;
+    return question.questionType === 'MCMA'
+      ? answer.selectedOptionIds.includes(optionId)
+      : answer.selectedOptionId === optionId;
   }
 
   private getCorrectOptionIds(question: TestQuestion): string[] {
@@ -1408,7 +1505,7 @@ export class TestComponent implements OnInit, OnDestroy {
       timeSpentSeconds: 0,
       firstVisitedAt: null,
       lastVisitedAt: null,
-      visitedCount: 0
+      visitedCount: 0,
     }));
   }
 

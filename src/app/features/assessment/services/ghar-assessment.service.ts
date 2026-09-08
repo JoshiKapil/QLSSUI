@@ -5,7 +5,7 @@ import {
   GharAssessmentAdminDetail,
   GharAssessmentAdminPage,
   GharAssessmentSaveRequest,
-  GharAssessmentSaveResult
+  GharAssessmentSaveResult,
 } from '../assessment.models';
 
 @Injectable({ providedIn: 'root' })

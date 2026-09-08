@@ -1,11 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  EvaluationStatus,
-  TestQuestion,
-  TestSubmission,
-  UserAnswer
-} from './test.model';
+import { EvaluationStatus, TestQuestion, TestSubmission, UserAnswer } from './test.model';
 import { TestStorageService } from './services/test-storage.service';
 
 const PENDING_RESULT_KEY = 'qlss-pending-test-result';
@@ -19,7 +14,7 @@ interface ResultTrainingOption {
 @Component({
   selector: 'app-result',
   templateUrl: './result.component.html',
-  styleUrls: ['./result.component.scss']
+  styleUrls: ['./result.component.scss'],
 })
 export class ResultComponent implements OnInit {
   submission: TestSubmission | null = null;
@@ -37,7 +32,7 @@ export class ResultComponent implements OnInit {
 
   constructor(
     private readonly testStorage: TestStorageService,
-    private readonly router: Router
+    private readonly router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -84,21 +79,23 @@ export class ResultComponent implements OnInit {
     try {
       const [users, tests] = await Promise.all([
         this.testStorage.listResultUsers(),
-        this.testStorage.listTestDefinitions().catch(() => this.testStorage.listAssessments())
+        this.testStorage.listTestDefinitions().catch(() => this.testStorage.listAssessments()),
       ]);
 
       this.users = this.uniqueSorted(users);
-      this.trainings = Array.from(new Map(
-        tests
-          .filter((test) => String(test.trainingId || '').trim())
-          .map((test) => [
-            String(test.trainingId),
-            {
-              id: String(test.trainingId),
-              label: test.displayName || test.trainingName || test.testName
-            }
-          ])
-      ).values()).sort((a, b) => a.label.localeCompare(b.label));
+      this.trainings = Array.from(
+        new Map(
+          tests
+            .filter((test) => String(test.trainingId || '').trim())
+            .map((test) => [
+              String(test.trainingId),
+              {
+                id: String(test.trainingId),
+                label: test.displayName || test.trainingName || test.testName,
+              },
+            ]),
+        ).values(),
+      ).sort((a, b) => a.label.localeCompare(b.label));
     } catch {
       this.resultMessage = 'Users and trainings could not be loaded.';
     } finally {
@@ -132,7 +129,7 @@ export class ResultComponent implements OnInit {
       const submission = await this.testStorage.loadSubmissionFileFromServer(
         selectedTestType,
         this.selectedTraining,
-        this.selectedUsername
+        this.selectedUsername,
       );
 
       if (!submission) {
@@ -171,10 +168,13 @@ export class ResultComponent implements OnInit {
 
   retakeTest(): void {
     if (this.submission) {
-      sessionStorage.setItem(START_TEST_KEY, JSON.stringify({
-        testName: this.submission.testName,
-        username: this.submission.username
-      }));
+      sessionStorage.setItem(
+        START_TEST_KEY,
+        JSON.stringify({
+          testName: this.submission.testName,
+          username: this.submission.username,
+        }),
+      );
     }
 
     this.router.navigate(['/test']);
@@ -190,7 +190,7 @@ export class ResultComponent implements OnInit {
       wrong: 'Wrong',
       skipped: 'Skipped',
       manualReview: 'Manual Review Required',
-      notAnswered: 'Not Answered'
+      notAnswered: 'Not Answered',
     };
 
     return labels[answer?.evaluationStatus || 'notAnswered'];
@@ -205,13 +205,14 @@ export class ResultComponent implements OnInit {
       return answer.essayAnswer?.trim() || 'Not answered';
     }
 
-    const selectedIds = question.questionType === 'MCMA'
-      ? answer.selectedOptionIds || []
-      : answer.selectedOptionId ? [answer.selectedOptionId] : [];
+    const selectedIds =
+      question.questionType === 'MCMA'
+        ? answer.selectedOptionIds || []
+        : answer.selectedOptionId
+          ? [answer.selectedOptionId]
+          : [];
 
-    return selectedIds.length
-      ? this.getOptionTexts(question, selectedIds).join(', ')
-      : 'Not answered';
+    return selectedIds.length ? this.getOptionTexts(question, selectedIds).join(', ') : 'Not answered';
   }
 
   getCorrectAnswerText(question: TestQuestion): string {
@@ -221,7 +222,9 @@ export class ResultComponent implements OnInit {
 
     const correctIds = question.correctOptionIds?.length
       ? question.correctOptionIds
-      : question.correctOptionId ? [question.correctOptionId] : [];
+      : question.correctOptionId
+        ? [question.correctOptionId]
+        : [];
 
     return this.getOptionTexts(question, correctIds).join(', ');
   }
@@ -254,7 +257,9 @@ export class ResultComponent implements OnInit {
   isCorrectOption(question: TestQuestion, optionId: string): boolean {
     const correctOptionIds = question.correctOptionIds?.length
       ? question.correctOptionIds
-      : question.correctOptionId ? [question.correctOptionId] : [];
+      : question.correctOptionId
+        ? [question.correctOptionId]
+        : [];
 
     return correctOptionIds.includes(optionId);
   }
@@ -272,14 +277,12 @@ export class ResultComponent implements OnInit {
   }
 
   private getOptionTexts(question: TestQuestion, optionIds: string[]): string[] {
-    return optionIds.map((id) =>
-      question.options?.find((option) => option.id === id)?.text || id
-    );
+    return optionIds.map((id) => question.options?.find((option) => option.id === id)?.text || id);
   }
 
   private uniqueSorted(values: string[]): string[] {
-    return Array.from(new Set(
-      values.map((value) => (value || '').trim()).filter(Boolean)
-    )).sort((a, b) => a.localeCompare(b));
+    return Array.from(new Set(values.map((value) => (value || '').trim()).filter(Boolean))).sort((a, b) =>
+      a.localeCompare(b),
+    );
   }
 }

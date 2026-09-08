@@ -1,0 +1,239 @@
+<section class="page">
+  <header class="page-head">
+    <div>
+      <small>ZEISS / INVENTORY</small>
+      <h1>Inventory & QC</h1>
+      <p>Opening stock + approved GRN inward - delivered item outward = current quantity.</p>
+    </div>
+    <button class="primary" (click)="openGrn()">+ New GRN</button>
+  </header>
+<app-list-pager [page]="instrumentsPage" (changed)="reloadinstrumentsPage()"></app-list-pager>
+<app-list-pager [page]="grnsPage" (changed)="reloadgrnsPage()"></app-list-pager>
+<app-list-pager [page]="inventoryTransactionsPage" (changed)="reloadinventoryTransactionsPage()"></app-list-pager>
+
+  <div class="metric-grid">
+    <article class="metric">
+      <span>Items</span>
+      <b>{{ totals.totalInstruments }}</b>
+    </article>
+    <article class="metric">
+      <span>Total Quantity</span>
+      <b>{{ totalQty }}</b>
+    </article>
+    <article class="metric warning">
+      <span>Low / Out Stock ≤ 5</span>
+      <b>{{ totals.lowStockItems }}</b>
+    </article>
+    <article class="metric warning">
+      <span>Non-Moving 15 Days</span>
+      <b>{{ totals.nonMovingItems }}</b>
+    </article>
+  </div>
+
+  <nav class="tabs">
+    <button [class.active]="tab === 'stock'" (click)="tab = 'stock'">Stock</button>
+    <button [class.active]="tab === 'grn'" (click)="tab = 'grn'">GRN & QC</button>
+    <button [class.active]="tab === 'transactions'" (click)="tab = 'transactions'">Transaction Ledger</button>
+  </nav>
+
+  <div *ngIf="tab === 'stock'" class="panel table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Part No.</th>
+          <th>Instrument / Item</th>
+          <th>Qty</th>
+          <th>Reorder</th>
+          <th>Last Movement</th>
+          <th>Catalogue</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let x of instruments">
+          <td>{{ x.category }}</td>
+          <td>{{ x.partNumber }}</td>
+          <td>{{ x.partDescription }}</td>
+          <td>
+            <b [class.stock-low]="x.currentQuantity <= 5">{{ x.currentQuantity }}</b>
+          </td>
+          <td>{{ x.reorderLevel }}</td>
+          <td>{{ x.lastTransactionOnUtc | date: 'dd-MMM-yyyy' }}</td>
+          <td>
+            <button class="icon" [disabled]="!x.catalogueFile" (click)="viewCatalogue(x)" title="View catalogue">
+              <i class="fas fa-eye"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="tab === 'grn'" class="panel table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>GRN</th>
+          <th>Date</th>
+          <th>Supplier</th>
+          <th>Part No.</th>
+          <th>Item</th>
+          <th>Qty</th>
+          <th>QC</th>
+          <th>Stock Posted</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let x of grns">
+          <td>{{ x.grnNo }}</td>
+          <td>{{ x.dateReceived | date: 'dd-MMM-yyyy' }}</td>
+          <td>{{ x.supplier }}</td>
+          <td>{{ x.partNumber }}</td>
+          <td>{{ x.partDescription }}</td>
+          <td>{{ x.qtyReceived }}</td>
+          <td>
+            <span class="badge">{{ x.qcStatus }}</span>
+          </td>
+          <td>{{ x.stockPosted ? 'Yes' : 'No' }}</td>
+          <td><button class="secondary" (click)="openQc(x)">QC</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="tab === 'transactions'" class="panel table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Reference</th>
+          <th>Part No.</th>
+          <th>Item</th>
+          <th>Change</th>
+          <th>Balance</th>
+          <th>Remarks</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let x of transactions">
+          <td>{{ x.createdOnUtc | date: 'dd-MMM-yyyy HH:mm' }}</td>
+          <td>{{ x.transactionType }}</td>
+          <td>{{ x.referenceNo }}</td>
+          <td>{{ x.partNumber }}</td>
+          <td>{{ x.partDescription }}</td>
+          <td>{{ x.quantityChange }}</td>
+          <td>
+            <b>{{ x.balanceQuantity }}</b>
+          </td>
+          <td>{{ x.remarks }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="modal-backdrop" *ngIf="showGrnForm">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3>New Goods Receipt (GRN)</h3>
+      <button (click)="showGrnForm = false">×</button>
+    </div>
+    <div class="form-grid">
+      <label>
+        Date
+        <input type="date" [(ngModel)]="grnForm.dateReceived" />
+      </label>
+      <label>
+        Supplier
+        <input [(ngModel)]="grnForm.supplier" />
+      </label>
+      <label>
+        Supplier PO Ref
+        <input [(ngModel)]="grnForm.supplierPoRef" />
+      </label>
+      <label>
+        Instrument
+        <select [(ngModel)]="grnForm.instrumentId">
+          <option [ngValue]="0">Select</option>
+          <option *ngFor="let x of instruments" [ngValue]="x.instrumentId">
+            {{ x.partNumber }} - {{ x.partDescription }}
+          </option>
+        </select>
+      </label>
+      <label>
+        Quantity
+        <input type="number" min="1" [(ngModel)]="grnForm.qtyReceived" />
+      </label>
+      <label>
+        Received By
+        <input [(ngModel)]="grnForm.receivedBy" />
+      </label>
+      <label>
+        QC Status
+        <select [(ngModel)]="grnForm.qcStatus">
+          <option>Pending Inspection</option>
+          <option>Approved</option>
+          <option>Rejected</option>
+        </select>
+      </label>
+      <label>
+        QC Inspector
+        <input [(ngModel)]="grnForm.qcInspectedBy" />
+      </label>
+      <label class="check">
+        <input type="checkbox" [(ngModel)]="grnForm.calibrationCertReceived" />
+        Calibration Certificate Received
+      </label>
+      <label class="full">
+        Remarks
+        <textarea [(ngModel)]="grnForm.remarks"></textarea>
+      </label>
+    </div>
+    <div class="actions">
+      <button class="secondary" (click)="showGrnForm = false">Cancel</button>
+      <button [disabled]="saving" class="primary" (click)="saveGrn()">Save GRN</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="editingQc">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3>QC - {{ editingQc.grnNo }}</h3>
+      <button (click)="editingQc = undefined">×</button>
+    </div>
+    <div class="form-grid">
+      <label>
+        QC Status
+        <select [(ngModel)]="qcForm.qcStatus">
+          <option>Pending Inspection</option>
+          <option>Approved</option>
+          <option>Rejected</option>
+        </select>
+      </label>
+      <label>
+        Inspected By
+        <input [(ngModel)]="qcForm.qcInspectedBy" />
+      </label>
+      <label class="check">
+        <input type="checkbox" [(ngModel)]="qcForm.calibrationCertReceived" />
+        Calibration Certificate Received
+      </label>
+      <label class="full">
+        Remarks
+        <textarea [(ngModel)]="qcForm.remarks"></textarea>
+      </label>
+    </div>
+    <p class="hint">
+      When status becomes
+      <b>Approved</b>
+      , received quantity is added to stock once. Re-saving an approved GRN will not duplicate stock.
+    </p>
+    <div class="actions">
+      <button class="secondary" (click)="editingQc = undefined">Cancel</button>
+      <button [disabled]="saving" class="primary" (click)="saveQc()">Update QC</button>
+    </div>
+  </div>
+</div>

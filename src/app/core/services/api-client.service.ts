@@ -15,62 +15,74 @@ export class ApiClientService {
   constructor(private readonly http: HttpClient) {}
 
   get<T>(endpoint: string, params?: QueryParams): Observable<T> {
-    return this.http.get<ApiResponse<T> | T>(this.url(endpoint), {
-      params: this.toHttpParams(params)
-    }).pipe(
-      map((response) => this.unwrap<T>(response)),
-      catchError((error) => this.handleError(error))
-    );
+    return this.http
+      .get<ApiResponse<T> | T>(this.url(endpoint), {
+        params: this.toHttpParams(params),
+      })
+      .pipe(
+        map((response) => this.unwrap<T>(response)),
+        catchError((error) => this.handleError(error)),
+      );
   }
 
   getBlob(endpoint: string): Observable<HttpResponse<Blob>> {
-    return this.http.get(this.url(endpoint), {
-      observe: 'response',
-      responseType: 'blob'
-    }).pipe(catchError((error) => this.handleError(error)));
+    return this.http
+      .get(this.url(endpoint), {
+        observe: 'response',
+        responseType: 'blob',
+      })
+      .pipe(catchError((error) => this.handleError(error)));
   }
 
   post<T>(endpoint: string, body: unknown, params?: QueryParams): Observable<T> {
-    return this.http.post<ApiResponse<T> | T>(this.url(endpoint), body, {
-      params: this.toHttpParams(params)
-    }).pipe(
-      map((response) => this.unwrap<T>(response)),
-      catchError((error) => this.handleError(error))
-    );
+    return this.http
+      .post<ApiResponse<T> | T>(this.url(endpoint), body, {
+        params: this.toHttpParams(params),
+      })
+      .pipe(
+        map((response) => this.unwrap<T>(response)),
+        catchError((error) => this.handleError(error)),
+      );
   }
 
   postWithProgress<T>(endpoint: string, body: unknown): Observable<HttpEvent<T>> {
-    return this.http.post<ApiResponse<T> | T>(this.url(endpoint), body, {
-      observe: 'events',
-      reportProgress: true
-    }).pipe(
-      map((event) => {
-        if (event instanceof HttpResponse) {
-          return event.clone({ body: this.unwrap<T>(event.body as ApiResponse<T> | T) });
-        }
-        return event as HttpEvent<T>;
-      }),
-      catchError((error) => this.handleError(error))
-    );
+    return this.http
+      .post<ApiResponse<T> | T>(this.url(endpoint), body, {
+        observe: 'events',
+        reportProgress: true,
+      })
+      .pipe(
+        map((event) => {
+          if (event instanceof HttpResponse) {
+            return event.clone({ body: this.unwrap<T>(event.body as ApiResponse<T> | T) });
+          }
+          return event as HttpEvent<T>;
+        }),
+        catchError((error) => this.handleError(error)),
+      );
   }
 
   put<T>(endpoint: string, body: unknown, params?: QueryParams): Observable<T> {
-    return this.http.put<ApiResponse<T> | T>(this.url(endpoint), body, {
-      params: this.toHttpParams(params)
-    }).pipe(
-      map((response) => this.unwrap<T>(response)),
-      catchError((error) => this.handleError(error))
-    );
+    return this.http
+      .put<ApiResponse<T> | T>(this.url(endpoint), body, {
+        params: this.toHttpParams(params),
+      })
+      .pipe(
+        map((response) => this.unwrap<T>(response)),
+        catchError((error) => this.handleError(error)),
+      );
   }
 
   delete<T>(endpoint: string, body?: unknown, params?: QueryParams): Observable<T> {
-    return this.http.delete<ApiResponse<T> | T>(this.url(endpoint), {
-      body,
-      params: this.toHttpParams(params)
-    }).pipe(
-      map((response) => this.unwrap<T>(response)),
-      catchError((error) => this.handleError(error))
-    );
+    return this.http
+      .delete<ApiResponse<T> | T>(this.url(endpoint), {
+        body,
+        params: this.toHttpParams(params),
+      })
+      .pipe(
+        map((response) => this.unwrap<T>(response)),
+        catchError((error) => this.handleError(error)),
+      );
   }
 
   upload<T>(endpoint: string, file: File, fields: Record<string, string | Blob> = {}): Observable<T> {
@@ -115,7 +127,7 @@ export class ApiClientService {
     console.error('[ApiClientService] API request failed.', {
       status: normalized.status,
       message: normalized.error?.message,
-      traceId: normalized.error?.traceId
+      traceId: normalized.error?.traceId,
     });
     return throwError(() => normalized);
   }

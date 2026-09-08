@@ -11,7 +11,7 @@ type CertificationFilterKey = 'name' | 'certificationNumber' | 'date' | 'trainin
 @Component({
   selector: 'app-certification-admin',
   templateUrl: './certification.component.html',
-  styleUrls: ['./certification.component.scss']
+  styleUrls: ['./certification.component.scss'],
 })
 export class CertificationComponent implements OnInit {
   form!: FormGroup;
@@ -28,13 +28,19 @@ export class CertificationComponent implements OnInit {
   pageSize = 10;
   readonly pageSizes = [10, 25, 50, 100];
   filters: Record<CertificationFilterKey, string> = {
-    name: '', certificationNumber: '', date: '', training: '', email: '', location: '', status: ''
+    name: '',
+    certificationNumber: '',
+    date: '',
+    training: '',
+    email: '',
+    location: '',
+    status: '',
   };
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly notifier: NotifierService,
-    private readonly certificationService: CertificationFormService
+    private readonly certificationService: CertificationFormService,
   ) {}
 
   ngOnInit(): void {
@@ -60,19 +66,23 @@ export class CertificationComponent implements OnInit {
       isComplete: [false],
       isPaid: [false],
       paymentId: [''],
-      paymentDate: [null]
+      paymentDate: [null],
     });
   }
 
   loadRecords(): void {
     this.isLoading = true;
-    this.certificationService.getAll().pipe(finalize(() => (this.isLoading = false))).subscribe({
-      next: (records) => {
-        this.records = records || [];
-        this.ensureValidPage();
-      },
-      error: (error) => this.notifier.warningToastr(error?.error?.message || 'Certification data could not be loaded.')
-    });
+    this.certificationService
+      .getAll()
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (records) => {
+          this.records = records || [];
+          this.ensureValidPage();
+        },
+        error: (error) =>
+          this.notifier.warningToastr(error?.error?.message || 'Certification data could not be loaded.'),
+      });
   }
 
   edit(record: CertificationForm): void {
@@ -80,7 +90,7 @@ export class CertificationComponent implements OnInit {
     this.form.patchValue({
       ...record,
       date: this.dateInputValue(record.date),
-      paymentDate: record.paymentDate ? this.dateInputValue(record.paymentDate) : null
+      paymentDate: record.paymentDate ? this.dateInputValue(record.paymentDate) : null,
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -99,20 +109,24 @@ export class CertificationComponent implements OnInit {
     const payload = {
       ...(this.selectedRecord || {}),
       ...this.form.getRawValue(),
-      certificationDate: this.form.value.date || ''
+      certificationDate: this.form.value.date || '',
     } as CertificationForm;
 
     this.isSaving = true;
-    const save$: any = this.selectedRecord?.recordSource === 'legacy'
-      ? this.certificationService.saveLegacy(payload)
-      : this.certificationService.save(payload);
+    const save$: any =
+      this.selectedRecord?.recordSource === 'legacy'
+        ? this.certificationService.saveLegacy(payload)
+        : this.certificationService.save(payload);
     save$.pipe(finalize(() => (this.isSaving = false))).subscribe({
       next: () => {
-        this.notifier.successToastr(this.selectedRecord ? 'Certification updated successfully.' : 'Certification added successfully.');
+        this.notifier.successToastr(
+          this.selectedRecord ? 'Certification updated successfully.' : 'Certification added successfully.',
+        );
         this.resetForm();
         this.loadRecords();
       },
-      error: (error) => this.notifier.warningToastr(error?.error?.message || error?.message || 'Certification could not be saved.')
+      error: (error) =>
+        this.notifier.warningToastr(error?.error?.message || error?.message || 'Certification could not be saved.'),
     });
   }
 
@@ -126,15 +140,21 @@ export class CertificationComponent implements OnInit {
   }
 
   get filteredRecords(): CertificationForm[] {
-    const values = Object.fromEntries(Object.entries(this.filters).map(([key, value]) => [key, value.trim().toLowerCase()])) as Record<CertificationFilterKey, string>;
-    return this.records.filter((record) =>
-      this.includes(record.name, values.name) &&
-      this.includes(record.certificationNumber, values.certificationNumber) &&
-      this.includes(record.date, values.date) &&
-      this.includes(`${record.trainingName || ''} ${record.trainingId || ''}`, values.training) &&
-      this.includes(record.email, values.email) &&
-      this.includes(`${record.location || ''} ${record.locationName || ''} ${record.clientName || ''} ${record.cityName || ''}`, values.location) &&
-      this.includes(record.isComplete ? 'complete completed yes' : 'pending incomplete no', values.status)
+    const values = Object.fromEntries(
+      Object.entries(this.filters).map(([key, value]) => [key, value.trim().toLowerCase()]),
+    ) as Record<CertificationFilterKey, string>;
+    return this.records.filter(
+      (record) =>
+        this.includes(record.name, values.name) &&
+        this.includes(record.certificationNumber, values.certificationNumber) &&
+        this.includes(record.date, values.date) &&
+        this.includes(`${record.trainingName || ''} ${record.trainingId || ''}`, values.training) &&
+        this.includes(record.email, values.email) &&
+        this.includes(
+          `${record.location || ''} ${record.locationName || ''} ${record.clientName || ''} ${record.cityName || ''}`,
+          values.location,
+        ) &&
+        this.includes(record.isComplete ? 'complete completed yes' : 'pending incomplete no', values.status),
     );
   }
 
@@ -143,9 +163,15 @@ export class CertificationComponent implements OnInit {
     return this.filteredRecords.slice(start, start + this.pageSize);
   }
 
-  get totalPages(): number { return Math.max(1, Math.ceil(this.filteredRecords.length / this.pageSize)); }
-  get firstRecordNumber(): number { return this.filteredRecords.length ? (this.currentPage - 1) * this.pageSize + 1 : 0; }
-  get lastRecordNumber(): number { return Math.min(this.currentPage * this.pageSize, this.filteredRecords.length); }
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredRecords.length / this.pageSize));
+  }
+  get firstRecordNumber(): number {
+    return this.filteredRecords.length ? (this.currentPage - 1) * this.pageSize + 1 : 0;
+  }
+  get lastRecordNumber(): number {
+    return Math.min(this.currentPage * this.pageSize, this.filteredRecords.length);
+  }
 
   get visiblePages(): number[] {
     const start = Math.max(1, Math.min(this.currentPage - 2, this.totalPages - 4));
@@ -153,14 +179,23 @@ export class CertificationComponent implements OnInit {
     return Array.from({ length: end - start + 1 }, (_, index) => start + index);
   }
 
-  filtersChanged(): void { this.currentPage = 1; }
+  filtersChanged(): void {
+    this.currentPage = 1;
+  }
   clearFilters(): void {
     Object.keys(this.filters).forEach((key) => (this.filters[key as CertificationFilterKey] = ''));
     this.currentPage = 1;
   }
-  changePageSize(value: string): void { this.pageSize = Number(value) || 10; this.currentPage = 1; }
-  goToPage(page: number): void { this.currentPage = Math.max(1, Math.min(page, this.totalPages)); }
-  private ensureValidPage(): void { this.currentPage = Math.min(this.currentPage, this.totalPages); }
+  changePageSize(value: string): void {
+    this.pageSize = Number(value) || 10;
+    this.currentPage = 1;
+  }
+  goToPage(page: number): void {
+    this.currentPage = Math.max(1, Math.min(page, this.totalPages));
+  }
+  private ensureValidPage(): void {
+    this.currentPage = Math.min(this.currentPage, this.totalPages);
+  }
 
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -199,18 +234,24 @@ export class CertificationComponent implements OnInit {
 
     this.isUploading = true;
     this.uploadMessage = '';
-    this.certificationService.import(payload).pipe(finalize(() => (this.isUploading = false))).subscribe({
-      next: (result) => {
-        this.notifier.successToastr(`${result.importedCount} certification record(s) uploaded to Certifications_Data.`);
-        this.excelData = [];
-        this.selectedFileName = '';
-        this.loadRecords();
-      },
-      error: (error) => {
-        this.uploadMessage = error?.error?.message || error?.message || 'Certification records could not be uploaded.';
-        this.notifier.warningToastr(this.uploadMessage);
-      }
-    });
+    this.certificationService
+      .import(payload)
+      .pipe(finalize(() => (this.isUploading = false)))
+      .subscribe({
+        next: (result) => {
+          this.notifier.successToastr(
+            `${result.importedCount} certification record(s) uploaded to Certifications_Data.`,
+          );
+          this.excelData = [];
+          this.selectedFileName = '';
+          this.loadRecords();
+        },
+        error: (error) => {
+          this.uploadMessage =
+            error?.error?.message || error?.message || 'Certification records could not be uploaded.';
+          this.notifier.warningToastr(this.uploadMessage);
+        },
+      });
   }
 
   private configureValidators(isDataRecord: boolean): void {
@@ -249,7 +290,7 @@ export class CertificationComponent implements OnInit {
       isComplete: this.getExcelBoolean(row, 'IsComplete', 'Complete'),
       isPaid: this.getExcelBoolean(row, 'IsPaid', 'Paid'),
       paymentId: this.getExcelValue(row, 'PaymentId'),
-      paymentDate: this.getExcelDate(row, 'PaymentDate') || null
+      paymentDate: this.getExcelDate(row, 'PaymentDate') || null,
     };
   }
 
@@ -258,9 +299,12 @@ export class CertificationComponent implements OnInit {
     const key = Object.keys(row).find((candidate) => expected.includes(this.normalizeHeader(candidate)));
     return key == null ? '' : String(row[key] ?? '').trim();
   }
-  private getExcelNumber(row: Record<string, unknown>, ...headers: string[]): number { return Number(this.getExcelValue(row, ...headers)) || 0; }
+  private getExcelNumber(row: Record<string, unknown>, ...headers: string[]): number {
+    return Number(this.getExcelValue(row, ...headers)) || 0;
+  }
   private getExcelNullableNumber(row: Record<string, unknown>, ...headers: string[]): number | null {
-    const value = this.getExcelValue(row, ...headers); return value === '' ? null : Number(value) || null;
+    const value = this.getExcelValue(row, ...headers);
+    return value === '' ? null : Number(value) || null;
   }
   private getExcelBoolean(row: Record<string, unknown>, ...headers: string[]): boolean {
     return ['true', 'yes', '1', 'complete', 'paid'].includes(this.getExcelValue(row, ...headers).toLowerCase());
@@ -275,15 +319,22 @@ export class CertificationComponent implements OnInit {
     if (value && Number.isFinite(serial)) return XLSX.SSF.format('yyyy-mm-dd', serial);
     return this.dateInputValue(value);
   }
-  private normalizeHeader(header: string): string { return header.replace(/[\s_-]/g, '').toLowerCase(); }
-  private includes(value: unknown, filter: string): boolean { return !filter || String(value ?? '').toLowerCase().includes(filter); }
-  private dateInputValue(value: string): string { return value ? String(value).slice(0, 10) : ''; }
+  private normalizeHeader(header: string): string {
+    return header.replace(/[\s_-]/g, '').toLowerCase();
+  }
+  private includes(value: unknown, filter: string): boolean {
+    return (
+      !filter ||
+      String(value ?? '')
+        .toLowerCase()
+        .includes(filter)
+    );
+  }
+  private dateInputValue(value: string): string {
+    return value ? String(value).slice(0, 10) : '';
+  }
 
   trackByRecordId(index: number, record: CertificationForm): string | number {
     return `${record.recordSource || 'data'}-${record.certificationDataId || record.certificationNumber || index}`;
   }
 }
-
-
-
-

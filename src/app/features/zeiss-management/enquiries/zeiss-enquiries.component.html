@@ -1,0 +1,151 @@
+<section class="page">
+  <header>
+    <div>
+      <small>SALES / ENQUIRY</small>
+      <h1>Enquiries</h1>
+      <p>
+        Manage customer enquiries and requested items. A draft quotation is created when you save a new enquiry.
+      </p>
+    </div>
+    <button class="btn primary" (click)="add()">
+      <i class="fas fa-plus"></i>
+      New Enquiry
+    </button>
+  </header>
+
+
+
+  <div class="split">
+    <article class="panel listPane">
+      <app-list-pager [compact]="true" [page]="enquiriesPage" (changed)="reloadenquiriesPage()"></app-list-pager>
+      <button
+        class="listRow"
+        *ngFor="let x of filtered"
+        [class.active]="selected?.enquiryId === x.enquiryId"
+        (click)="select(x)"
+      >
+        <div>
+          <strong>{{ x.enquiryNo }}</strong>
+          <span>{{ x.customerName }}</span>
+        </div>
+        <small>{{ x.enquiryDate | date: 'dd-MMM-yyyy' }}</small>
+        <span class="stage">{{ x.status }}</span>
+      </button>
+    </article>
+    <article class="panel detail" *ngIf="selected as x">
+      <div class="detailHead">
+        <div>
+          <small>ENQUIRY</small>
+          <h2>{{ x.enquiryNo }}</h2>
+          <p>{{ x.customerName }}</p>
+        </div>
+        <button class="btn secondary" (click)="edit(x)">
+          <i class="fas fa-pen"></i>
+          Edit
+        </button>
+      </div>
+      <div class="facts">
+        <div>
+          <small>Date</small>
+          <b>{{ x.enquiryDate | date: 'dd-MMM-yyyy' }}</b>
+        </div>
+        <div>
+          <small>Contact</small>
+          <b>{{ x.contactPerson || '-' }}</b>
+        </div>
+        <div>
+          <small>Email</small>
+          <b>{{ x.email || '-' }}</b>
+        </div>
+        <div>
+          <small>Status</small>
+          <b>{{ x.status }}</b>
+        </div>
+      </div>
+      <h3>Requirement</h3>
+      <p>{{ x.requirement || '-' }}</p>
+      <h3>Selected Zeiss Items</h3>
+      <div class="table">
+        <table>
+          <thead>
+            <tr>
+              <th>Part No.</th>
+              <th>Description</th>
+              <th>Qty</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let i of x.items">
+              <td>{{ i.partNumber }}</td>
+              <td>{{ i.partDescription }}</td>
+              <td>{{ i.quantity }}</td>
+              <td>{{ i.note || '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="nextBox">
+        <i class="fas fa-arrow-right"></i>
+        <div>
+          <strong>Next: Quotation</strong>
+          <span>The draft quotation is created automatically and appears in the Quotation workspace.</span>
+        </div>
+      </div>
+    </article>
+    <article class="panel empty" *ngIf="!selected">Create or select an enquiry.</article>
+  </div>
+</section>
+<div class="modal" *ngIf="show">
+  <div class="dialog" role="dialog" aria-modal="true" aria-label="Enquiry form">
+    <header>
+      <div>
+        <small>ZEISS ENQUIRY</small>
+        <h2>{{ editId ? 'Edit Enquiry' : 'New Enquiry' }}</h2>
+      </div>
+      <button class="btn secondary" (click)="show = false">Close</button>
+    </header>
+    <div class="lookup-tools"><app-list-pager [compact]="true" [page]="customersPage" (changed)="loadCustomers()"></app-list-pager></div>
+    <div class="form">
+      <label class="span2">
+        Customer
+        <select [(ngModel)]="form.customerId">
+          <option [ngValue]="null">Select customer</option>
+          <option *ngFor="let c of customers" [ngValue]="c.customerId">{{ c.customerName }} - {{ c.iBaseId }}</option>
+        </select>
+      </label>
+      <label>
+        Enquiry Date
+        <input type="date" [(ngModel)]="form.enquiryDate" />
+      </label>
+      <label class="span4">
+        Requirement
+        <textarea rows="2" [(ngModel)]="form.requirement"></textarea>
+      </label>
+      <label class="span4">
+        Remarks
+        <textarea rows="2" [(ngModel)]="form.remarks"></textarea>
+      </label>
+    </div>
+    <div class="itemTitle">
+      <h3>Instruments / Items</h3>
+      <button class="btn secondary" (click)="addItem()">+ Add Item</button>
+    </div>
+    <div class="lookup-tools"><app-list-pager [compact]="true" [page]="instrumentsPage" (changed)="loadInstruments()"></app-list-pager></div>
+    <div class="itemline" *ngFor="let item of form.items; let i = index">
+      <select [(ngModel)]="item.instrumentId">
+        <option [ngValue]="null">Select item</option>
+        <option *ngFor="let z of instruments" [ngValue]="z.instrumentId">
+          {{ z.partNumber }} - {{ z.partDescription }} (Stock {{ z.currentQuantity }})
+        </option>
+      </select>
+      <input aria-label="Quantity" type="number" min="1" [(ngModel)]="item.quantity" placeholder="Qty" />
+      <input [(ngModel)]="item.note" placeholder="Note" />
+      <button class="btn danger" (click)="removeItem(i)" aria-label="Remove item" title="Remove item">&times;</button>
+    </div>
+    <div class="actions">
+      <button class="btn secondary" (click)="show = false">Cancel</button>
+      <button [disabled]="saving" class="btn primary" (click)="save()">Save Enquiry</button>
+    </div>
+  </div>
+</div>

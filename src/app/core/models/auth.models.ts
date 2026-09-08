@@ -44,4 +44,3 @@ export interface ChangePasswordRequest {
   confirmPassword: string;
   token?: string | null;
 }
-

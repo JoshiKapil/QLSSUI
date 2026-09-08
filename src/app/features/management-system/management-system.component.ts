@@ -5,18 +5,18 @@ import { SiteInteractionsService } from '../../core/services/site-interactions.s
 @Component({
   selector: 'app-management-system',
   templateUrl: './management-system.component.html',
-  styleUrls: ['./management-system.component.scss']
+  styleUrls: ['./management-system.component.scss'],
 })
 export class ManagementSystemComponent implements AfterViewInit, OnDestroy {
   constructor(
     private interactions: SiteInteractionsService,
     private title: Title,
-    private meta: Meta
+    private meta: Meta,
   ) {
     this.title.setTitle('Management System Implementation - QLSS Business Consulting');
     this.meta.updateTag({
       name: 'description',
-      content: 'QLSS management system implementation services for ISO and integrated management systems.'
+      content: 'QLSS management system implementation services for ISO and integrated management systems.',
     });
   }
 

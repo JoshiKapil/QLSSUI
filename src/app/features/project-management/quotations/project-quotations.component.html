@@ -3,217 +3,623 @@
     <div>
       <div class="pm-head__eyebrow">Commercial workflow</div>
       <h1>Quotation Command Centre</h1>
-      <p>Prepare, approve, send, follow up and convert a confirmed quotation into an operational project without leaving the workspace.</p>
+      <p>
+        Prepare, approve, send, follow up and convert a confirmed quotation into an operational project without leaving
+        the workspace.
+      </p>
     </div>
-    <div class="pm-actions"><button class="pm-btn pm-btn--ghost" (click)="refresh()"><i class="fas fa-rotate"></i> Refresh</button></div>
+    <div class="pm-actions">
+      <button class="pm-btn pm-btn--ghost" (click)="refresh()">
+        <i class="fas fa-rotate"></i>
+        Refresh
+      </button>
+    </div>
   </header>
+<details><summary>Search selection options</summary>
+<app-list-pager [page]="categoriesOptionsPage" (changed)="loadcategoriesOptions()"></app-list-pager>
+<app-list-pager [page]="usersOptionsPage" (changed)="loadusersOptions()"></app-list-pager>
+<app-list-pager [page]="quotationTemplatesOptionsPage" (changed)="loadquotationTemplatesOptions()"></app-list-pager>
+<app-list-pager [page]="projectTemplatesOptionsPage" (changed)="loadprojectTemplatesOptions()"></app-list-pager>
+<app-list-pager [page]="clientsOptionsPage" (changed)="loadclientsOptions()"></app-list-pager>
+<app-list-pager [page]="trainingsOptionsPage" (changed)="loadtrainingsOptions()"></app-list-pager>
+</details>
+<app-list-pager [page]="projectTemplatesPage" (changed)="reloadprojectTemplatesPage()"></app-list-pager>
+<app-list-pager [page]="quotationsPage" (changed)="reloadquotationsPage()"></app-list-pager>
 
-  <p *ngIf="error" class="pm-error">{{error}}</p>
-  <p *ngIf="success" class="pm-success">{{success}}</p>
+  <p *ngIf="error" class="pm-error">{{ error }}</p>
+  <p *ngIf="success" class="pm-success">{{ success }}</p>
 
   <!-- PM_SPLIT_WATERGLASS_V1 -->
-  <div class="pm-split-workspace pm-split-workspace--quotations">
-    <aside class="pm-list-pane" aria-label="Quotation list">
+  <div #splitWorkspace class="pm-split-workspace pm-split-workspace--quotations">
+    <aside #listPane class="pm-list-pane" aria-label="Quotation list">
       <section class="pm-card quote-list-card">
-          <div class="pm-list-pane__title"><div><small>QUOTATION LIST</small><strong>All Quotations</strong></div><span>{{filteredItems.length}} / {{items.length}}</span></div>
-          <div class="pm-filterbar pm-filterbar--stacked">
-            <input class="pm-filterbar__grow" [(ngModel)]="search" placeholder="Search quotation, customer, service or status…">
-            <select [(ngModel)]="statusFilter"><option value="">All statuses</option><option *ngFor="let s of statuses" [value]="s">{{s}}</option></select>
+        <div class="pm-list-pane__title">
+          <div>
+            <small>QUOTATION LIST</small>
+            <strong>All Quotations</strong>
           </div>
+          <span>{{ filteredItems.length }} / {{ items.length }}</span>
+        </div>
+        <div class="pm-filterbar pm-filterbar--stacked">
+          <input
+            class="pm-filterbar__grow"
+            [(ngModel)]="search"
+            placeholder="Filter this page quotation, customer, service or status…"
+          />
+          <select [(ngModel)]="statusFilter">
+            <option value="">All statuses</option>
+            <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+          </select>
+        </div>
 
-          <div class="quote-grid">
-            <button *ngFor="let q of filteredItems" type="button" class="quote-card" [class.quote-card--active]="selected?.quotationId===q.quotationId" (click)="open(q)">
-              <div class="quote-card__top"><span class="quote-no">{{q.quotationNo}}</span><span [class]="badge(q.status)">{{q.status}}</span></div>
-              <div *ngIf="q.enquiryStatus && q.enquiryStatus !== q.status" class="quote-outcome"><i class="fas fa-route"></i> Customer flow: {{q.enquiryStatus}}</div>
-              <strong>{{q.customerName}}</strong>
-              <small>{{q.serviceType}}</small>
-              <div class="quote-card__meta"><span>V{{q.versionNo}}</span><span>{{q.quotationDate|date:'dd-MM-yyyy'}}</span><b>{{money(q.totalAmount)}}</b></div>
-            </button>
-          </div>
-          <div *ngIf="!filteredItems.length" class="pm-empty">No quotations match the selected filters.</div>
-        </section>
+        <div class="quote-grid">
+          <button
+            *ngFor="let q of filteredItems"
+            type="button"
+            class="quote-card"
+            [class.quote-card--active]="selected?.quotationId === q.quotationId"
+            (click)="open(q)"
+          >
+            <div class="quote-card__top">
+              <span class="quote-no">{{ q.quotationNo }}</span>
+              <span [class]="badge(q.status)">{{ q.status }}</span>
+            </div>
+            <div *ngIf="q.enquiryStatus && q.enquiryStatus !== q.status" class="quote-outcome">
+              <i class="fas fa-route"></i>
+              Customer flow: {{ q.enquiryStatus }}
+            </div>
+            <strong>{{ q.customerName }}</strong>
+            <small>{{ q.serviceType }}</small>
+            <div class="quote-card__meta">
+              <span>V{{ q.versionNo }}</span>
+              <span>{{ q.quotationDate | date: 'dd-MM-yyyy' }}</span>
+              <b>{{ money(q.totalAmount) }}</b>
+            </div>
+          </button>
+        </div>
+        <div *ngIf="!filteredItems.length" class="pm-empty">No quotations match the selected filters.</div>
+      </section>
     </aside>
 
-    <main class="pm-detail-pane">
+    <main #detailPane class="pm-detail-pane">
       <section class="simple-flow" aria-label="Quotation workflow">
-          <div><b>1</b><span>Enquiry</span></div><i class="fas fa-chevron-right"></i>
-          <div><b>2</b><span>Prepare quotation</span></div><i class="fas fa-chevron-right"></i>
-          <div><b>3</b><span>Get approval</span></div><i class="fas fa-chevron-right"></i>
-          <div><b>4</b><span>Send to customer</span></div><i class="fas fa-chevron-right"></i>
-          <div><b>5</b><span>Create project</span></div>
-        </section>
+        <div [class.completed]="currentStep > 1" [class.active]="currentStep === 1">
+          <b>1</b>
+          <span>Enquiry</span>
+        </div>
+        <i class="fas fa-chevron-right"></i>
+        <div [class.completed]="currentStep > 2" [class.active]="currentStep === 2">
+          <b>2</b>
+          <span>Prepare quotation</span>
+        </div>
+        <i class="fas fa-chevron-right"></i>
+        <div [class.completed]="currentStep > 3" [class.active]="currentStep === 3">
+          <b>3</b>
+          <span>Get approval</span>
+        </div>
+        <i class="fas fa-chevron-right"></i>
+        <div [class.completed]="currentStep > 4" [class.active]="currentStep === 4">
+          <b>4</b>
+          <span>Send to customer</span>
+        </div>
+        <i class="fas fa-chevron-right"></i>
+        <div [class.completed]="currentStep > 5" [class.active]="currentStep === 5">
+          <b>5</b>
+          <span>Create project</span>
+        </div>
+      </section>
 
       <ng-container *ngIf="selected">
-          <section class="pm-card quote-workbench">
-            <div class="quote-workbench__head">
-              <div>
-                <small>Selected quotation</small>
-                <h2>{{selected.quotationNo}} · {{selected.customerName}}</h2>
-                <p>{{selected.serviceType}} · Prepared by {{selected.preparedByName || 'QLSS Team'}}</p>
+        <section class="pm-card quote-workbench">
+          <div class="quote-workbench__head">
+            <div>
+              <small>Selected quotation</small>
+              <h2>{{ selected.quotationNo }} · {{ selected.customerName }}</h2>
+              <p>{{ selected.serviceType }} · Prepared by {{ selected.preparedByName || 'QLSS Team' }}</p>
+            </div>
+            <div class="pm-actions">
+              <div class="quote-status-stack">
+                <span [class]="badge(selected.status)">{{ selected.status }}</span>
+                <span
+                  *ngIf="selected.enquiryStatus && selected.enquiryStatus !== selected.status"
+                  class="pm-badge pm-badge--neutral"
+                >
+                  Customer: {{ selected.enquiryStatus }}
+                </span>
+              </div>
+              <button class="pm-btn pm-btn--ghost pm-btn--sm" [disabled]="preparingPdf" (click)="download(selected)">
+                <i class="fas fa-file-pdf"></i>
+                {{ preparingPdf ? 'Preparing...' : 'Preview / Download PDF' }}
+              </button>
+              <button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="selected = undefined">
+                <i class="fas fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="quote-financials">
+            <div>
+              <span>Professional fees</span>
+              <strong>{{ money(displayedProfessionalFees) }}</strong>
+            </div>
+            <div>
+              <span>Travel / stay</span>
+              <strong>* As per bill provided</strong>
+            </div>
+            <div>
+              <span>Tax</span>
+              <strong>{{ selected.taxPercent }}%</strong>
+            </div>
+            <div class="quote-financials__total">
+              <span>Total value</span>
+              <strong>{{ money(displayedTotalAmount) }}</strong>
+            </div>
+          </div>
+
+          <div *ngIf="hasUnsavedPriceChanges" class="unsaved-price-note">
+            <i class="fas fa-circle-info"></i>
+            <span>
+              This is a preview. Click
+              <strong>Save changes</strong>
+              to store the amount and recalculate the quotation.
+            </span>
+          </div>
+
+          <div class="template-info-card">
+            <div class="template-info-card__icon"><i class="fas fa-file-pdf"></i></div>
+            <div>
+              <small>QLSS BRANDED PDF TEMPLATE</small>
+              <strong>
+                {{ selected.serviceType }} {{ selected.categoryValueName ? '· ' + selected.categoryValueName : '' }}
+              </strong>
+              <p>
+                The final PDF uses the supplied QLSS Word design converted once to a static PDF background. Customer,
+                scope, price and the live Client Master list are added dynamically - no LibreOffice is required.
+              </p>
+            </div>
+          </div>
+
+          <div class="next-action-card">
+            <div class="next-action-card__number">{{ currentStep }}</div>
+            <div>
+              <small>WHAT TO DO NEXT</small>
+              <strong>{{ nextActionTitle }}</strong>
+              <p>{{ nextActionHelp }}</p>
+            </div>
+          </div>
+
+          <div class="pm-tabs quote-tabs">
+            <button class="pm-tab" [class.active]="activePanel === 'details'" (click)="selectPanel('details')">
+              1. Prepare & approve
+            </button>
+            <button class="pm-tab" [class.active]="activePanel === 'followup'" (click)="selectPanel('followup')">
+              Follow-ups
+              <b>{{ followUps.length }}</b>
+            </button>
+            <button class="pm-tab" [class.active]="activePanel === 'files'" (click)="selectPanel('files')">
+              Attachments
+              <b>{{ attachments.length }}</b>
+            </button>
+            <button
+              *ngIf="isSuperAdmin && (selected.status === 'Quotation Sent' || selected.status === 'Quotation Approved')"
+              class="pm-tab"
+              [class.active]="activePanel === 'confirm'"
+              (click)="selectPanel('confirm')"
+            >
+              2. Create project
+            </button>
+          </div>
+
+          <div *ngIf="activePanel === 'details'" class="quote-tab-body">
+            <div class="pm-form">
+              <div class="pm-field pm-field--full">
+                <label>Scope</label>
+                <textarea [(ngModel)]="form.scope" [disabled]="!editable(selected)"></textarea>
+              </div>
+              <div class="pm-field">
+                <label>Training / Consulting days</label>
+                <input type="number" min="0" [(ngModel)]="form.consultingDays" [disabled]="!editable(selected)" />
+              </div>
+              <div class="pm-field">
+                <label>Participants</label>
+                <input type="number" min="0" [(ngModel)]="form.numberOfParticipants" [disabled]="!editable(selected)" />
+              </div>
+              <div class="pm-field">
+                <label>Professional fees</label>
+                <input type="number" min="1" [(ngModel)]="form.professionalFees" [disabled]="!editable(selected)" />
+              </div>
+              <div class="pm-field">
+                <label>Travel / stay</label>
+                <input
+                  value="* As per bill provided"
+                  disabled
+                  title="Travel and stay are billed at actuals and are not included in the quotation total."
+                />
+              </div>
+              <div class="pm-field">
+                <label>Tax %</label>
+                <input type="number" min="0" max="100" [(ngModel)]="form.taxPercent" [disabled]="!editable(selected)" />
+              </div>
+              <div class="pm-field">
+                <label>Validity days</label>
+                <input type="number" min="1" [(ngModel)]="form.validityDays" [disabled]="!editable(selected)" />
+              </div>
+              <div class="pm-field pm-field--full">
+                <label>Payment terms</label>
+                <textarea [(ngModel)]="form.paymentTerms" [disabled]="!editable(selected)"></textarea>
+              </div>
+              <div class="pm-field pm-field--full">
+                <label>Special conditions</label>
+                <textarea [(ngModel)]="form.specialConditions" [disabled]="!editable(selected)"></textarea>
+              </div>
+              <div class="pm-field pm-field--full">
+                <label>Customer-specific changes</label>
+                <textarea
+                  [(ngModel)]="form.customerSpecificChanges"
+                  [disabled]="!editable(selected)"
+                  placeholder="Record any customer-specific commercial/scope changes for this quotation version."
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="quote-action-strip">
+              <div class="pm-actions" *ngIf="editable(selected)">
+                <button class="pm-btn pm-btn--ghost" [disabled]="saving" (click)="save()">
+                  <i class="fas fa-floppy-disk"></i>
+                  Save changes
+                </button>
+                <button
+                  *ngIf="selected.status !== 'Quotation Approved' && selected.status !== 'Quotation Sent'"
+                  class="pm-btn pm-btn--primary"
+                  [disabled]="preparingPdf"
+                  (click)="submit(selected)"
+                >
+                  <i class="fas fa-paper-plane"></i>
+                  Send for approval
+                </button>
+              </div>
+
+              <div *ngIf="isSuperAdmin && selected.status === 'Approval Pending'" class="approval-actions">
+                <span>SuperAdmin decision</span>
+                <div class="pm-actions">
+                  <button class="pm-btn pm-btn--primary" (click)="decide(selected, 'Approve')">
+                    <i class="fas fa-check"></i>
+                    Approve
+                  </button>
+                  <button class="pm-btn pm-btn--ghost" (click)="decide(selected, 'Return')">
+                    <i class="fas fa-rotate-left"></i>
+                    Return
+                  </button>
+                  <button class="pm-btn pm-btn--danger" (click)="decide(selected, 'Reject')">
+                    <i class="fas fa-ban"></i>
+                    Reject
+                  </button>
+                </div>
+              </div>
+
+              <div *ngIf="canManage && selected.status === 'Quotation Approved'" class="send-box">
+                <div>
+                  <strong>Send approved quotation</strong>
+                  <small>
+                    The branded PDF is prepared first, saved, attached to email and then the follow-up is scheduled.
+                  </small>
+                </div>
+                <input
+                  type="number"
+                  min="1"
+                  [(ngModel)]="sendForm.followUpDays"
+                  title="Follow-up days"
+                  placeholder="Days"
+                />
+                <input [(ngModel)]="sendForm.cc" placeholder="CC emails (optional)" />
+                <button class="pm-btn pm-btn--primary" [disabled]="preparingPdf" (click)="send(selected)">
+                  <i class="fas fa-envelope"></i>
+                  {{ preparingPdf ? 'Preparing PDF...' : 'Send PDF' }}
+                </button>
+              </div>
+
+              <div *ngIf="selected.status === 'Quotation Sent'" class="outcome-box">
+                <span>Customer response / quotation outcome</span>
+                <div class="pm-actions">
+                  <button class="pm-btn pm-btn--soft" (click)="setOutcome('Quotation Under Discussion')">
+                    Under discussion
+                  </button>
+                  <button class="pm-btn pm-btn--ghost" (click)="setOutcome('Project Not Received')">
+                    Project not received
+                  </button>
+                  <button class="pm-btn pm-btn--danger" (click)="setOutcome('Lost / Closed')">Lost / Closed</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="approval-history">
+              <div class="pm-section-head">
+                <div>
+                  <h3>Approval trail</h3>
+                  <p>Every submit, approve, reject or return decision is retained with user, time and remark.</p>
+                </div>
+                <span class="pm-badge">{{ approvalHistory.length }} actions</span>
+              </div>
+              <div class="approval-history__row" *ngFor="let h of approvalHistory">
+                <div class="approval-history__mark">
+                  <i
+                    class="fas"
+                    [ngClass]="
+                      h.action === 'Approve' ? 'fa-check' : h.action === 'Reject' ? 'fa-ban' : 'fa-rotate-left'
+                    "
+                  ></i>
+                </div>
+                <div>
+                  <strong>{{ h.action }}</strong>
+                  <span>{{ h.fromStatus || '—' }} → {{ h.toStatus || '—' }}</span>
+                  <small>{{ h.actionByName || 'QLSS User' }} · {{ h.actionOnUtc | date: 'dd-MM-yyyy HH:mm' }}</small>
+                  <p *ngIf="h.remark">{{ h.remark }}</p>
+                </div>
+              </div>
+              <div *ngIf="!approvalHistory.length" class="pm-empty">No approval action recorded yet.</div>
+            </div>
+          </div>
+
+          <div *ngIf="activePanel === 'followup'" class="quote-tab-body">
+            <div class="followup-compose">
+              <div class="pm-field">
+                <label>Schedule after days</label>
+                <input type="number" min="1" [(ngModel)]="followUpForm.daysFromNow" />
+              </div>
+              <div class="pm-field">
+                <label>CC</label>
+                <input [(ngModel)]="followUpForm.cc" placeholder="Optional CC emails" />
+              </div>
+              <div class="pm-field pm-field--full">
+                <label>Follow-up note / email context</label>
+                <textarea
+                  [(ngModel)]="followUpForm.notes"
+                  placeholder="Clarification, revision request or follow-up note…"
+                ></textarea>
               </div>
               <div class="pm-actions">
-                <div class="quote-status-stack"><span [class]="badge(selected.status)">{{selected.status}}</span><span *ngIf="selected.enquiryStatus && selected.enquiryStatus !== selected.status" class="pm-badge pm-badge--neutral">Customer: {{selected.enquiryStatus}}</span></div>
-                <button class="pm-btn pm-btn--ghost pm-btn--sm" [disabled]="preparingPdf" (click)="download(selected)"><i class="fas fa-file-pdf"></i> {{preparingPdf ? 'Preparing...' : 'Preview / Download PDF'}}</button>
-                <button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="selected=undefined"><i class="fas fa-xmark"></i></button>
+                <button class="pm-btn pm-btn--ghost" (click)="scheduleFollowUp()">Schedule follow-up</button>
+                <button class="pm-btn pm-btn--primary" (click)="sendFollowUp()">Send follow-up now</button>
               </div>
             </div>
-
-            <div class="quote-financials">
-              <div><span>Professional fees</span><strong>{{money(displayedProfessionalFees)}}</strong></div>
-              <div><span>Travel / stay</span><strong>* As per bill provided</strong></div>
-              <div><span>Tax</span><strong>{{selected.taxPercent}}%</strong></div>
-              <div class="quote-financials__total"><span>Total value</span><strong>{{money(displayedTotalAmount)}}</strong></div>
+            <div class="followup-timeline">
+              <article *ngFor="let f of followUps" class="followup-item">
+                <div class="followup-item__dot"></div>
+                <div>
+                  <strong>Follow-up #{{ f.followUpNo }}</strong>
+                  <span>Due {{ f.dueOnUtc | date: 'dd-MM-yyyy HH:mm' }}</span>
+                  <p>{{ f.notes || 'No note recorded.' }}</p>
+                </div>
+                <span [class]="badge(f.status)">{{ f.status }}</span>
+                <div class="pm-actions">
+                  <button
+                    *ngIf="f.status !== 'Completed'"
+                    class="pm-btn pm-btn--ghost pm-btn--sm"
+                    (click)="sendFollowUp(f)"
+                  >
+                    Send
+                  </button>
+                  <button
+                    *ngIf="f.status !== 'Completed'"
+                    class="pm-btn pm-btn--soft pm-btn--sm"
+                    (click)="completeFollowUp(f)"
+                  >
+                    Complete
+                  </button>
+                </div>
+              </article>
+              <div *ngIf="!followUps.length" class="pm-empty">No follow-ups scheduled yet.</div>
             </div>
+            <div class="communication-log">
+              <div class="pm-section-head">
+                <div>
+                  <h3>Email Communication Log</h3>
+                  <p>Recipient, CC, quotation version, delivery status and sent time are retained automatically.</p>
+                </div>
+                <span class="pm-badge">{{ emailLogs.length }} emails</span>
+              </div>
+              <div class="communication-row" *ngFor="let log of emailLogs">
+                <div>
+                  <strong>{{ log.emailType }}</strong>
+                  <span>{{ log.subject }}</span>
+                </div>
+                <div>
+                  <span>To</span>
+                  <strong>{{ log.recipientEmail }}</strong>
+                  <small *ngIf="log.ccEmail">CC: {{ log.ccEmail }}</small>
+                </div>
+                <div>
+                  <span>Sent</span>
+                  <strong>{{ log.sentOnUtc | date: 'dd-MM-yyyy HH:mm' }}</strong>
+                  <small *ngIf="log.quotationVersion">Version {{ log.quotationVersion }}</small>
+                </div>
+                <span [class]="log.deliveryStatus === 'Sent' ? 'pm-badge pm-badge--ok' : 'pm-badge pm-badge--danger'">
+                  {{ log.deliveryStatus }}
+                </span>
+              </div>
+              <div *ngIf="!emailLogs.length" class="pm-empty">
+                No customer email has been logged for this quotation yet.
+              </div>
+            </div>
+          </div>
 
-            <div *ngIf="hasUnsavedPriceChanges" class="unsaved-price-note"><i class="fas fa-circle-info"></i><span>This is a preview. Click <strong>Save changes</strong> to store the amount and recalculate the quotation.</span></div>
-
-            <div class="template-info-card">
-              <div class="template-info-card__icon"><i class="fas fa-file-pdf"></i></div>
+          <div *ngIf="activePanel === 'files'" class="quote-tab-body">
+            <div class="pm-upload">
+              <i class="fas fa-cloud-arrow-up"></i>
               <div>
-                <small>QLSS BRANDED PDF TEMPLATE</small>
-                <strong>{{selected.serviceType}} {{selected.categoryValueName ? '· ' + selected.categoryValueName : ''}}</strong>
-                <p>The final PDF uses the supplied QLSS Word design converted once to a static PDF background. Customer, scope, price and the live Client Master list are added dynamically - no LibreOffice is required.</p>
+                <strong>Add quotation supporting document</strong>
+                <small>PDF, Word, Excel, image or other approved file · max 10 MB</small>
               </div>
+              <input type="file" (change)="upload($event)" />
             </div>
-
-            <div class="next-action-card">
-              <div class="next-action-card__number">{{currentStep}}</div>
-              <div><small>WHAT TO DO NEXT</small><strong>{{nextActionTitle}}</strong><p>{{nextActionHelp}}</p></div>
-            </div>
-
-            <div class="pm-tabs quote-tabs">
-              <button class="pm-tab" [class.active]="activePanel==='details'" (click)="activePanel='details'">1. Prepare & approve</button>
-              <button class="pm-tab" [class.active]="activePanel==='followup'" (click)="activePanel='followup'">Follow-ups <b>{{followUps.length}}</b></button>
-              <button class="pm-tab" [class.active]="activePanel==='files'" (click)="activePanel='files'">Attachments <b>{{attachments.length}}</b></button>
-              <button *ngIf="isSuperAdmin && (selected.status==='Quotation Sent' || selected.status==='Quotation Approved')" class="pm-tab" [class.active]="activePanel==='confirm'" (click)="activePanel='confirm'">2. Create project</button>
-            </div>
-
-            <div *ngIf="activePanel==='details'" class="quote-tab-body">
-              <div class="pm-form">
-                <div class="pm-field pm-field--full"><label>Scope</label><textarea [(ngModel)]="form.scope" [disabled]="!editable(selected)"></textarea></div>
-                <div class="pm-field"><label>Training / Consulting days</label><input type="number" min="0" [(ngModel)]="form.consultingDays" [disabled]="!editable(selected)"></div>
-                <div class="pm-field"><label>Participants</label><input type="number" min="0" [(ngModel)]="form.numberOfParticipants" [disabled]="!editable(selected)"></div>
-                <div class="pm-field"><label>Professional fees</label><input type="number" min="1" [(ngModel)]="form.professionalFees" [disabled]="!editable(selected)"></div>
-                <div class="pm-field"><label>Travel / stay</label><input value="* As per bill provided" disabled title="Travel and stay are billed at actuals and are not included in the quotation total."></div>
-                <div class="pm-field"><label>Tax %</label><input type="number" min="0" max="100" [(ngModel)]="form.taxPercent" [disabled]="!editable(selected)"></div>
-                <div class="pm-field"><label>Validity days</label><input type="number" min="1" [(ngModel)]="form.validityDays" [disabled]="!editable(selected)"></div>
-                <div class="pm-field pm-field--full"><label>Payment terms</label><textarea [(ngModel)]="form.paymentTerms" [disabled]="!editable(selected)"></textarea></div>
-                <div class="pm-field pm-field--full"><label>Special conditions</label><textarea [(ngModel)]="form.specialConditions" [disabled]="!editable(selected)"></textarea></div>
-                <div class="pm-field pm-field--full"><label>Customer-specific changes</label><textarea [(ngModel)]="form.customerSpecificChanges" [disabled]="!editable(selected)" placeholder="Record any customer-specific commercial/scope changes for this quotation version."></textarea></div>
-              </div>
-
-              <div class="quote-action-strip">
-                <div class="pm-actions" *ngIf="editable(selected)">
-                  <button class="pm-btn pm-btn--ghost" [disabled]="saving" (click)="save()"><i class="fas fa-floppy-disk"></i> Save changes</button>
-                  <button *ngIf="selected.status!=='Quotation Approved' && selected.status!=='Quotation Sent'" class="pm-btn pm-btn--primary" [disabled]="preparingPdf" (click)="submit(selected)"><i class="fas fa-paper-plane"></i> Send for approval</button>
+            <div class="pm-file-list">
+              <div class="pm-file" *ngFor="let f of attachments">
+                <div>
+                  <strong>{{ f.originalFileName }}</strong>
+                  <small>
+                    {{ f.fileSizeBytes / 1024 | number: '1.0-0' }} KB · {{ f.uploadedOnUtc | date: 'dd-MM-yyyy HH:mm' }}
+                  </small>
                 </div>
-
-                <div *ngIf="isSuperAdmin && selected.status==='Approval Pending'" class="approval-actions">
-                  <span>SuperAdmin decision</span>
-                  <div class="pm-actions">
-                    <button class="pm-btn pm-btn--primary" (click)="decide(selected,'Approve')"><i class="fas fa-check"></i> Approve</button>
-                    <button class="pm-btn pm-btn--ghost" (click)="decide(selected,'Return')"><i class="fas fa-rotate-left"></i> Return</button>
-                    <button class="pm-btn pm-btn--danger" (click)="decide(selected,'Reject')"><i class="fas fa-ban"></i> Reject</button>
-                  </div>
-                </div>
-
-                <div *ngIf="canManage && selected.status==='Quotation Approved'" class="send-box">
-                  <div><strong>Send approved quotation</strong><small>The branded PDF is prepared first, saved, attached to email and then the follow-up is scheduled.</small></div>
-                  <input type="number" min="1" [(ngModel)]="sendForm.followUpDays" title="Follow-up days" placeholder="Days">
-                  <input [(ngModel)]="sendForm.cc" placeholder="CC emails (optional)">
-                  <button class="pm-btn pm-btn--primary" [disabled]="preparingPdf" (click)="send(selected)"><i class="fas fa-envelope"></i> {{preparingPdf ? "Preparing PDF..." : "Send PDF"}}</button>
-                </div>
-
-                <div *ngIf="selected.status==='Quotation Sent'" class="outcome-box">
-                  <span>Customer response / quotation outcome</span>
-                  <div class="pm-actions">
-                    <button class="pm-btn pm-btn--soft" (click)="setOutcome('Quotation Under Discussion')">Under discussion</button>
-                    <button class="pm-btn pm-btn--ghost" (click)="setOutcome('Project Not Received')">Project not received</button>
-                    <button class="pm-btn pm-btn--danger" (click)="setOutcome('Lost / Closed')">Lost / Closed</button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="approval-history">
-                <div class="pm-section-head"><div><h3>Approval trail</h3><p>Every submit, approve, reject or return decision is retained with user, time and remark.</p></div><span class="pm-badge">{{approvalHistory.length}} actions</span></div>
-                <div class="approval-history__row" *ngFor="let h of approvalHistory">
-                  <div class="approval-history__mark"><i class="fas" [ngClass]="h.action==='Approve'?'fa-check':(h.action==='Reject'?'fa-ban':'fa-rotate-left')"></i></div>
-                  <div><strong>{{h.action}}</strong><span>{{h.fromStatus || '—'}} → {{h.toStatus || '—'}}</span><small>{{h.actionByName || 'QLSS User'}} · {{h.actionOnUtc|date:'dd-MM-yyyy HH:mm'}}</small><p *ngIf="h.remark">{{h.remark}}</p></div>
-                </div>
-                <div *ngIf="!approvalHistory.length" class="pm-empty">No approval action recorded yet.</div>
+                <button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="downloadAttachment(f)">Download</button>
               </div>
             </div>
+            <div *ngIf="!attachments.length" class="pm-empty">No quotation attachments uploaded.</div>
+          </div>
 
-            <div *ngIf="activePanel==='followup'" class="quote-tab-body">
-              <div class="followup-compose">
-                <div class="pm-field"><label>Schedule after days</label><input type="number" min="1" [(ngModel)]="followUpForm.daysFromNow"></div>
-                <div class="pm-field"><label>CC</label><input [(ngModel)]="followUpForm.cc" placeholder="Optional CC emails"></div>
-                <div class="pm-field pm-field--full"><label>Follow-up note / email context</label><textarea [(ngModel)]="followUpForm.notes" placeholder="Clarification, revision request or follow-up note…"></textarea></div>
-                <div class="pm-actions"><button class="pm-btn pm-btn--ghost" (click)="scheduleFollowUp()">Schedule follow-up</button><button class="pm-btn pm-btn--primary" (click)="sendFollowUp()">Send follow-up now</button></div>
-              </div>
-              <div class="followup-timeline">
-                <article *ngFor="let f of followUps" class="followup-item">
-                  <div class="followup-item__dot"></div>
-                  <div><strong>Follow-up #{{f.followUpNo}}</strong><span>Due {{f.dueOnUtc|date:'dd-MM-yyyy HH:mm'}}</span><p>{{f.notes || 'No note recorded.'}}</p></div>
-                  <span [class]="badge(f.status)">{{f.status}}</span>
-                  <div class="pm-actions"><button *ngIf="f.status!=='Completed'" class="pm-btn pm-btn--ghost pm-btn--sm" (click)="sendFollowUp(f)">Send</button><button *ngIf="f.status!=='Completed'" class="pm-btn pm-btn--soft pm-btn--sm" (click)="completeFollowUp(f)">Complete</button></div>
-                </article>
-                <div *ngIf="!followUps.length" class="pm-empty">No follow-ups scheduled yet.</div>
-              </div>
-              <div class="communication-log">
-                <div class="pm-section-head"><div><h3>Email Communication Log</h3><p>Recipient, CC, quotation version, delivery status and sent time are retained automatically.</p></div><span class="pm-badge">{{emailLogs.length}} emails</span></div>
-                <div class="communication-row" *ngFor="let log of emailLogs"><div><strong>{{log.emailType}}</strong><span>{{log.subject}}</span></div><div><span>To</span><strong>{{log.recipientEmail}}</strong><small *ngIf="log.ccEmail">CC: {{log.ccEmail}}</small></div><div><span>Sent</span><strong>{{log.sentOnUtc|date:'dd-MM-yyyy HH:mm'}}</strong><small *ngIf="log.quotationVersion">Version {{log.quotationVersion}}</small></div><span [class]="log.deliveryStatus==='Sent'?'pm-badge pm-badge--ok':'pm-badge pm-badge--danger'">{{log.deliveryStatus}}</span></div>
-                <div *ngIf="!emailLogs.length" class="pm-empty">No customer email has been logged for this quotation yet.</div>
+          <div *ngIf="activePanel === 'confirm'" class="quote-tab-body project-confirm-panel">
+            <div class="project-confirm-intro">
+              <i class="fas fa-circle-check"></i>
+              <div>
+                <strong>Customer confirmed the project</strong>
+                <span>
+                  Create the confirmed project and its standard activity plan. Assignment can be done now or later from
+                  Project Delivery Studio, so “Yet to Assign” remains a real controlled workflow state.
+                </span>
               </div>
             </div>
-
-            <div *ngIf="activePanel==='files'" class="quote-tab-body">
-              <div class="pm-upload"><i class="fas fa-cloud-arrow-up"></i><div><strong>Add quotation supporting document</strong><small>PDF, Word, Excel, image or other approved file · max 10 MB</small></div><input type="file" (change)="upload($event)"></div>
-              <div class="pm-file-list"><div class="pm-file" *ngFor="let f of attachments"><div><strong>{{f.originalFileName}}</strong><small>{{(f.fileSizeBytes/1024)|number:'1.0-0'}} KB · {{f.uploadedOnUtc|date:'dd-MM-yyyy HH:mm'}}</small></div><button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="downloadAttachment(f)">Download</button></div></div>
-              <div *ngIf="!attachments.length" class="pm-empty">No quotation attachments uploaded.</div>
-            </div>
-
-            <div *ngIf="activePanel==='confirm'" class="quote-tab-body project-confirm-panel">
-              <div class="project-confirm-intro"><i class="fas fa-circle-check"></i><div><strong>Customer confirmed the project</strong><span>Create the confirmed project and its standard activity plan. Assignment can be done now or later from Project Delivery Studio, so “Yet to Assign” remains a real controlled workflow state.</span></div></div>
-              <div class="pm-form">
-                <div class="pm-field"><label>Project activity template</label><pm-search-select [ngModel]="projectForm.projectTemplateId" (ngModelChange)="projectTemplateChanged($event)" [options]="projectTemplates" valueKey="projectTemplateId" labelKey="templateName" placeholder="No template / build manually"></pm-search-select></div>
-                <div class="pm-field"><label>Project Leader <small>optional now</small></label><pm-search-select [(ngModel)]="projectForm.projectLeaderUserId" (ngModelChange)="saveProjectDraft()" [options]="lookups?.users || []" labelKey="name" detailKey="email" placeholder="Assign after project confirmation"></pm-search-select></div>
-                <div class="pm-field"><label>Project start date</label><input type="date" [(ngModel)]="projectForm.projectStartDate" (ngModelChange)="saveProjectDraft()"></div>
-                <div class="pm-field"><label>Target completion date</label><input type="date" [(ngModel)]="projectForm.targetCompletionDate" (ngModelChange)="saveProjectDraft()"></div>
-                <div class="pm-field"><label>Project location</label><input [(ngModel)]="projectForm.projectLocation" (ngModelChange)="saveProjectDraft()" placeholder="Customer / site location"></div>
-                <div class="pm-field"><label>PO / WO reference</label><input [(ngModel)]="projectForm.poWoReference" (ngModelChange)="saveProjectDraft()" placeholder="PO or Work Order reference"></div>
-                <div class="pm-field pm-field--full"><label>Assigned Team Members <small>optional now · SuperAdmin can assign later</small></label><pm-search-select [(ngModel)]="projectForm.memberUserIds" (ngModelChange)="saveProjectDraft()" [options]="lookups?.users || []" [multiple]="true" labelKey="name" detailKey="email" placeholder="Select team member(s)"></pm-search-select></div>
+            <div class="pm-form">
+              <div class="pm-field">
+                <label>Project activity template</label>
+                <pm-search-select
+                  [ngModel]="projectForm.projectTemplateId"
+                  (ngModelChange)="projectTemplateChanged($event)"
+                  [options]="projectTemplates"
+                  valueKey="projectTemplateId"
+                  labelKey="templateName"
+                  placeholder="No template / build manually"
+                ></pm-search-select>
               </div>
-              <div class="project-confirm-footer"><span>Quotation value <strong>{{money(selected.totalAmount)}}</strong> becomes the initial project value.</span><button class="pm-btn pm-btn--primary" (click)="confirmProject(selected)"><i class="fas fa-diagram-project"></i> Confirm & Create Project</button></div>
+              <div class="pm-field">
+                <label>
+                  Project Leader
+                  <small>optional now</small>
+                </label>
+                <pm-search-select
+                  [(ngModel)]="projectForm.projectLeaderUserId"
+                  (ngModelChange)="saveProjectDraft()"
+                  [options]="lookups?.users || []"
+                  labelKey="name"
+                  detailKey="email"
+                  placeholder="Assign after project confirmation"
+                ></pm-search-select>
+              </div>
+              <div class="pm-field">
+                <label>Project start date</label>
+                <input type="date" [(ngModel)]="projectForm.projectStartDate" (ngModelChange)="saveProjectDraft()" />
+              </div>
+              <div class="pm-field">
+                <label>Target completion date</label>
+                <input
+                  type="date"
+                  [(ngModel)]="projectForm.targetCompletionDate"
+                  (ngModelChange)="saveProjectDraft()"
+                />
+              </div>
+              <div class="pm-field">
+                <label>Project location</label>
+                <input
+                  [(ngModel)]="projectForm.projectLocation"
+                  (ngModelChange)="saveProjectDraft()"
+                  placeholder="Customer / site location"
+                />
+              </div>
+              <div class="pm-field">
+                <label>PO / WO reference</label>
+                <input
+                  [(ngModel)]="projectForm.poWoReference"
+                  (ngModelChange)="saveProjectDraft()"
+                  placeholder="PO or Work Order reference"
+                />
+              </div>
+              <div class="pm-field pm-field--full">
+                <label>
+                  Assigned Team Members
+                  <small>optional now · SuperAdmin can assign later</small>
+                </label>
+                <pm-search-select
+                  [(ngModel)]="projectForm.memberUserIds"
+                  (ngModelChange)="saveProjectDraft()"
+                  [options]="lookups?.users || []"
+                  [multiple]="true"
+                  labelKey="name"
+                  detailKey="email"
+                  placeholder="Select team member(s)"
+                ></pm-search-select>
+              </div>
             </div>
-          </section>
-        </ng-container>
+            <div class="project-confirm-footer">
+              <span>
+                Quotation value
+                <strong>{{ money(selected.totalAmount) }}</strong>
+                becomes the initial project value.
+              </span>
+              <button class="pm-btn pm-btn--primary" (click)="confirmProject(selected)">
+                <i class="fas fa-diagram-project"></i>
+                Confirm & Create Project
+              </button>
+            </div>
+          </div>
+        </section>
+      </ng-container>
 
       <section *ngIf="!selected" class="pm-card pm-select-placeholder">
         <div class="pm-select-placeholder__drop"><i class="fas fa-droplet"></i></div>
         <h2>Select a quotation</h2>
-        <p>Use the searchable Quotation List on the left. Preparation, approval, PDF, follow-up and project conversion stay in this right-hand work area.</p>
+        <p>
+          Use the searchable Quotation List on the left. Preparation, approval, PDF, follow-up and project conversion
+          stay in this right-hand work area.
+        </p>
       </section>
     </main>
   </div>
 
-  <section *ngIf="submitConfirmation as quote" class="pm-panel pm-modal pm-modal--compact approval-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="approvalConfirmTitle">
+  <section
+    *ngIf="submitConfirmation as quote"
+    class="pm-panel pm-modal pm-modal--compact approval-confirm-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="approvalConfirmTitle"
+  >
     <div class="pm-panel__head">
-      <div><small>APPROVAL REQUEST</small><h2 id="approvalConfirmTitle">Send quotation for approval?</h2></div>
-      <button type="button" class="pm-btn pm-btn--ghost pm-btn--sm" aria-label="Close" (click)="submitConfirmation=undefined"><i class="fas fa-xmark"></i></button>
+      <div>
+        <small>APPROVAL REQUEST</small>
+        <h2 id="approvalConfirmTitle">Send quotation for approval?</h2>
+      </div>
+      <button
+        type="button"
+        class="pm-btn pm-btn--ghost pm-btn--sm"
+        aria-label="Close"
+        (click)="submitConfirmation = undefined"
+      >
+        <i class="fas fa-xmark"></i>
+      </button>
     </div>
     <div class="approval-confirm-modal__body">
       <div class="approval-confirm-modal__icon"><i class="fas fa-paper-plane"></i></div>
-      <p>Please confirm that the scope and amount are correct. The SuperAdmin will receive this quotation for review.</p>
+      <p>
+        Please confirm that the scope and amount are correct. The SuperAdmin will receive this quotation for review.
+      </p>
       <div class="approval-confirm-modal__summary">
-        <div><span>Quotation</span><strong>{{quote.quotationNo}}</strong></div>
-        <div><span>Customer</span><strong>{{quote.customerName}}</strong></div>
-        <div><span>Total value</span><strong>{{money(quote.totalAmount)}}</strong></div>
+        <div>
+          <span>Quotation</span>
+          <strong>{{ quote.quotationNo }}</strong>
+        </div>
+        <div>
+          <span>Customer</span>
+          <strong>{{ quote.customerName }}</strong>
+        </div>
+        <div>
+          <span>Total value</span>
+          <strong>{{ money(quote.totalAmount) }}</strong>
+        </div>
       </div>
     </div>
     <div class="pm-panel__foot">
-      <button type="button" class="pm-btn pm-btn--ghost" (click)="submitConfirmation=undefined">Cancel</button>
-      <button type="button" class="pm-btn pm-btn--primary" (click)="confirmSubmit()"><i class="fas fa-paper-plane"></i> Yes, send for approval</button>
+      <button type="button" class="pm-btn pm-btn--ghost" (click)="submitConfirmation = undefined">Cancel</button>
+      <button type="button" class="pm-btn pm-btn--primary" (click)="confirmSubmit()">
+        <i class="fas fa-paper-plane"></i>
+        Yes, send for approval
+      </button>
     </div>
   </section>
 </div>

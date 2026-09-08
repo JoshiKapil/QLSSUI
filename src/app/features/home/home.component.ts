@@ -10,7 +10,7 @@ import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements AfterViewInit {
   excelData: any[] = [];
@@ -27,12 +27,12 @@ export class HomeComponent implements AfterViewInit {
     private title: Title,
     private meta: Meta,
     private http: HttpClient,
-    private notifierService: NotifierService
+    private notifierService: NotifierService,
   ) {
     this.title.setTitle('QLSS Consulting - Empowering Organizations');
     this.meta.updateTag({
       name: 'description',
-      content: 'QLSS Business Consulting services, training, operational excellence and business transformation.'
+      content: 'QLSS Business Consulting services, training, operational excellence and business transformation.',
     });
   }
 
@@ -76,17 +76,16 @@ export class HomeComponent implements AfterViewInit {
       BatchNo: String(x.BatchNo ?? x['Batch No'] ?? '').trim(),
       ContactNo: String(x.ContactNo ?? x['Contact No'] ?? '').trim(),
       Email: String(x.Email ?? '').trim(),
-      Location: String(x.Location ?? x.Loacation ?? '').trim()
+      Location: String(x.Location ?? x.Loacation ?? '').trim(),
     }));
     this.http.post(this.saveUrl, certifications).subscribe({
       next: () => this.notifierService.warningToastr('Saved Successfully'),
       error: (err) => {
         console.error('Certificate upload failed.', { status: err.status });
         this.notifierService.warningToastr('Save failed');
-      }
+      },
     });
   }
-
 
   //     'TrainingId': 0,
   //     'Name': Number(localStorage.getItem('SubDurationId')),
@@ -97,6 +96,5 @@ export class HomeComponent implements AfterViewInit {
   //     next: () => this.notifierService.warningToastr('Saved Successfully'),
   //     error: () => undefined
 
-
-  async sendToMe(): Promise<void> { }
+  async sendToMe(): Promise<void> {}
 }

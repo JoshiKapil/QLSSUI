@@ -1,0 +1,103 @@
+<section class="admin-section">
+  <div class="container admin-shell">
+    <div class="admin-header">
+      <div>
+        <span class="auth-eyebrow">Admin &middot; Fulfilment</span>
+        <h1>Ghar 9001 Bookings</h1>
+        <p>Verify payments and manage every order through delivery.</p>
+      </div>
+      <button class="btn btn-outline" type="button" (click)="load()" [disabled]="isLoading">
+        <i class="fa-solid" [ngClass]="isLoading ? 'fa-spinner fa-spin' : 'fa-rotate'"></i>
+        {{ isLoading ? 'Loading...' : 'Refresh' }}
+      </button>
+    </div>
+
+    <div class="status-overview" *ngIf="records.length">
+      <button type="button" [class.active]="statusFilter === 'All'" (click)="statusFilter = 'All'">
+        <strong>{{ records.length }}</strong><span>All</span>
+      </button>
+      <button type="button" *ngFor="let status of statuses" [class.active]="statusFilter === status" (click)="statusFilter = status">
+        <strong>{{ countStatus(status) }}</strong><span>{{ statusLabel(status) }}</span>
+      </button>
+    </div>
+
+    <div class="admin-table-wrap">
+      <div class="admin-loading" *ngIf="isLoading">
+        <i class="fa-solid fa-spinner fa-spin"></i> Loading bookings...
+      </div>
+
+      <table class="admin-table" *ngIf="!isLoading && visibleRecords.length; else emptyState">
+        <thead>
+          <tr>
+            <th>Booking</th>
+            <th>Customer</th>
+            <th>Order &amp; Payment</th>
+            <th>Shipping Address</th>
+            <th>Payment Proof</th>
+            <th>Delivery Stage</th>
+            <th>Dates</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of visibleRecords; trackBy: trackByBookingId">
+            <td>
+              <strong>#{{ row.bookingId }}</strong>
+              <span class="status-pill" [attr.data-status]="row.status">{{ statusLabel(row.status) }}</span>
+            </td>
+            <td>
+              <strong>{{ row.name }}</strong>
+              <a [href]="'https://wa.me/' + row.whatsAppNumber" target="_blank" rel="noopener">
+                <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> {{ row.whatsAppNumber }}
+              </a>
+            </td>
+            <td>
+              <div class="order-lines">
+                <span>Quantity <strong>{{ row.quantity }}</strong></span>
+                <span>Book price <s>&#8377;{{ row.listPricePerCopy }}</s></span>
+                <span>Discounted <strong>&#8377;{{ row.discountedPricePerCopy }}</strong></span>
+                <span>Delivery <strong>&#8377;{{ row.deliveryCharge }}</strong></span>
+                <span class="order-total">Paid amount <strong>&#8377;{{ row.finalAmount }}</strong></span>
+                <span>Transaction <code>{{ row.transactionId || 'Not provided' }}</code></span>
+              </div>
+            </td>
+            <td>
+              <address>{{ row.shippingAddress }}<br />{{ row.city }}, {{ row.state }} &ndash; {{ row.pinCode }}</address>
+            </td>
+            <td>
+              <button class="proof-button" type="button" (click)="viewPaymentProof(row)" [disabled]="!row.paymentScreenshotOriginalName || downloadingBookingId === row.bookingId">
+                <i class="fa-solid" [ngClass]="downloadingBookingId === row.bookingId ? 'fa-spinner fa-spin' : 'fa-image'"></i>
+                {{ downloadingBookingId === row.bookingId ? 'Opening...' : 'View screenshot' }}
+              </button>
+              <small>{{ row.paymentScreenshotOriginalName || 'Not uploaded' }}</small>
+            </td>
+            <td>
+              <div class="status-editor">
+                <select [(ngModel)]="statusDraft[row.bookingId]" [ngModelOptions]="{ standalone: true }">
+                  <option *ngFor="let status of statuses" [value]="status">{{ statusLabel(status) }}</option>
+                </select>
+                <textarea [(ngModel)]="remarkDraft[row.bookingId]" [ngModelOptions]="{ standalone: true }" maxlength="500" rows="2" placeholder="Admin remark (optional)"></textarea>
+                <button class="save-status" type="button" (click)="saveStatus(row)" [disabled]="savingBookingId !== null">
+                  <i class="fa-solid" [ngClass]="savingBookingId === row.bookingId ? 'fa-spinner fa-spin' : 'fa-check'"></i>
+                  {{ savingBookingId === row.bookingId ? 'Saving...' : 'Update stage' }}
+                </button>
+              </div>
+            </td>
+            <td>
+              <span>Created</span>
+              <strong>{{ row.createdDate | date: 'dd MMM yyyy, h:mm a' }}</strong>
+              <span *ngIf="row.updatedDate">Last updated</span>
+              <strong *ngIf="row.updatedDate">{{ row.updatedDate | date: 'dd MMM yyyy, h:mm a' }}</strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #emptyState>
+        <div class="admin-loading" *ngIf="!isLoading">
+          {{ loadError || (records.length ? 'No bookings in this status.' : 'No bookings found.') }}
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</section>
+

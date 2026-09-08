@@ -12,7 +12,10 @@ export class ResultApiService {
     return this.api.post<TestResultDto>('results/submit', this.normalizeSubmissionPayload(submission));
   }
 
-  getResults(filter?: { username?: string | null; testId?: string | number | null }): Observable<SavedResultListItemDto[]> {
+  getResults(filter?: {
+    username?: string | null;
+    testId?: string | number | null;
+  }): Observable<SavedResultListItemDto[]> {
     return this.api.get<SavedResultListItemDto[]>('results', filter);
   }
 
@@ -43,7 +46,9 @@ export class ResultApiService {
     return {
       submissionId: String(submission.submissionId ?? ''),
       username: String(submission.username ?? ''),
-      normalizedUsername: String(submission.normalizedUsername ?? submission.username ?? '').trim().toLowerCase(),
+      normalizedUsername: String(submission.normalizedUsername ?? submission.username ?? '')
+        .trim()
+        .toLowerCase(),
       testId: this.toNullableNumber(submission.testId),
       testName: String(submission.testName ?? ''),
       displayName: String(submission.displayName ?? submission.testName ?? ''),
@@ -73,11 +78,11 @@ export class ResultApiService {
         percentage: 0,
         passed: false,
         totalTimeUsedSeconds: 0,
-        averageTimePerQuestionSeconds: 0
+        averageTimePerQuestionSeconds: 0,
       },
       userAnswers: submission.userAnswers ?? [],
       questionResults: submission.questionResults ?? [],
-      breakdowns: submission.breakdowns ?? []
+      breakdowns: submission.breakdowns ?? [],
     };
   }
 

@@ -1,0 +1,453 @@
+<div class="master-page">
+  <div class="busy" *ngIf="loading || saving">
+    <div>
+      <i class="fas fa-spinner fa-spin"></i>
+      <span>{{ saving ? 'Saving changes…' : 'Loading setup…' }}</span>
+    </div>
+  </div>
+  <header class="hero">
+    <div>
+      <span>SUPERADMIN ONLY</span>
+      <h1>Onboarding Master Setup & Mapping</h1>
+      <p>
+        Create departments, videos and questions, then map published content by existing Training, Department, both, or
+        neither for common rules such as Safety.
+      </p>
+    </div>
+    <a routerLink="/admin/trainings">
+      <i class="fas fa-graduation-cap"></i>
+      <div>
+        <strong>Existing Training Master</strong>
+        <span>Open Training folder</span>
+      </div>
+      <i class="fas fa-arrow-up-right-from-square"></i>
+    </a>
+  </header>
+<app-list-pager [page]="departmentsPage" (changed)="loaddepartments()"></app-list-pager>
+<app-list-pager [page]="trainingsPage" (changed)="loadtrainings()"></app-list-pager>
+<app-list-pager [page]="videosPage" (changed)="loadvideos()"></app-list-pager>
+<app-list-pager [page]="questionsPage" (changed)="loadquestions()"></app-list-pager>
+<app-list-pager [page]="mappingsPage" (changed)="loadmappings()"></app-list-pager>
+
+  <section class="scope-guide">
+    <article>
+      <b>Common</b>
+      <span>No Training + No Department</span>
+      <small>Example: Safety rules for everyone</small>
+    </article>
+    <article>
+      <b>Training</b>
+      <span>Training + All Departments</span>
+      <small>For one Training across departments</small>
+    </article>
+    <article>
+      <b>Department</b>
+      <span>No Training + Department</span>
+      <small>Department-specific induction</small>
+    </article>
+    <article>
+      <b>Training + Department</b>
+      <span>Both selected</span>
+      <small>Most specific content</small>
+    </article>
+  </section>
+
+  <nav class="tabs">
+    <button [class.active]="tab === 'overview'" (click)="tab = 'overview'">
+      <i class="fas fa-table-cells-large"></i>
+      Overview
+    </button>
+    <button [class.active]="tab === 'departments'" (click)="tab = 'departments'">
+      <i class="fas fa-building"></i>
+      Departments
+    </button>
+    <button [class.active]="tab === 'content'" (click)="tab = 'content'">
+      <i class="fas fa-circle-play"></i>
+      Videos & Questions
+    </button>
+    <button [class.active]="tab === 'mapping'" (click)="tab = 'mapping'">
+      <i class="fas fa-diagram-project"></i>
+      Content Mapping
+    </button>
+  </nav>
+
+  <section *ngIf="tab === 'overview'" class="overview">
+    <article>
+      <i class="fas fa-building"></i>
+      <div>
+        <strong>{{ data.departments.length }}</strong>
+        <span>Departments</span>
+      </div>
+    </article>
+    <article>
+      <i class="fas fa-graduation-cap"></i>
+      <div>
+        <strong>{{ data.trainings.length }}</strong>
+        <span>Existing Trainings</span>
+      </div>
+    </article>
+    <article>
+      <i class="fas fa-video"></i>
+      <div>
+        <strong>{{ data.videos.length }}</strong>
+        <span>Videos</span>
+      </div>
+    </article>
+    <article>
+      <i class="fas fa-circle-question"></i>
+      <div>
+        <strong>{{ data.questions.length }}</strong>
+        <span>Questions</span>
+      </div>
+    </article>
+    <article>
+      <i class="fas fa-diagram-project"></i>
+      <div>
+        <strong>{{ data.mappings.length }}</strong>
+        <span>Content mappings</span>
+      </div>
+    </article>
+    <div class="flow-card">
+      <small>AUTHORING FLOW</small>
+      <div class="flow">
+        <span>
+          <b>1</b>
+          Video
+        </span>
+        <i class="fas fa-arrow-right"></i>
+        <span>
+          <b>2</b>
+          Questions
+        </span>
+        <i class="fas fa-arrow-right"></i>
+        <span>
+          <b>3</b>
+          Training / Department scope
+        </span>
+        <i class="fas fa-arrow-right"></i>
+        <span>
+          <b>4</b>
+          Publish
+        </span>
+        <i class="fas fa-arrow-right"></i>
+        <span>
+          <b>5</b>
+          Assign employee
+        </span>
+      </div>
+      <p>
+        Questions stay linked to the Video. When that Video is mapped to a Training/Department scope, its questions
+        follow automatically. Existing employee progress is never rewritten.
+      </p>
+    </div>
+  </section>
+
+  <section *ngIf="tab === 'departments'" class="split">
+    <aside class="list">
+      <div class="list-head">
+        <div>
+          <small>DEPARTMENT MASTER</small>
+          <strong>{{ data.departments.length }} departments</strong>
+        </div>
+        <button (click)="resetDepartment()">New</button>
+      </div>
+      <button class="row" *ngFor="let row of data.departments" (click)="editDepartment(row)">
+        <span>
+          <strong>{{ row.departmentName }}</strong>
+          <small>{{ row.departmentCode }}</small>
+        </span>
+        <b [class.off]="!row.isActive">{{ row.isActive ? 'Active' : 'Off' }}</b>
+      </button>
+    </aside>
+    <article class="editor">
+      <div class="section-head">
+        <div>
+          <small>{{ departmentId ? 'EDIT' : 'NEW' }} DEPARTMENT</small>
+          <h2>{{ departmentId ? 'Update department' : 'Create department' }}</h2>
+        </div>
+      </div>
+      <div class="form-grid">
+        <label>
+          <span>Department code *</span>
+          <input [(ngModel)]="departmentForm.departmentCode" />
+        </label>
+        <label>
+          <span>Department name *</span>
+          <input [(ngModel)]="departmentForm.departmentName" />
+        </label>
+        <label class="wide">
+          <span>Description</span>
+          <textarea rows="4" [(ngModel)]="departmentForm.description"></textarea>
+        </label>
+        <label class="check wide">
+          <input type="checkbox" [(ngModel)]="departmentForm.isActive" />
+          <span>Active department</span>
+        </label>
+      </div>
+      <div class="actions">
+        <button (click)="resetDepartment()">Clear</button>
+        <button class="primary" (click)="saveDepartment()">Save Department</button>
+      </div>
+    </article>
+  </section>
+
+  <section *ngIf="tab === 'content'" class="content-grid">
+    <article class="editor video-editor">
+      <div class="section-head">
+        <div>
+          <small>{{ videoId ? 'EDIT VIDEO' : 'NEW VIDEO' }}</small>
+          <h2>Video master</h2>
+        </div>
+        <button (click)="resetVideo()">New</button>
+      </div>
+      <div class="form-grid">
+        <label>
+          <span>Video code *</span>
+          <input [(ngModel)]="videoForm.videoCode" />
+        </label>
+        <label>
+          <span>Title *</span>
+          <input [(ngModel)]="videoForm.title" />
+        </label>
+        <label class="wide">
+          <span>Video URL *</span>
+          <input [(ngModel)]="videoForm.videoUrl" placeholder="https://..." />
+        </label>
+        <label>
+          <span>Duration (seconds)</span>
+          <input type="number" [(ngModel)]="videoForm.durationSeconds" />
+        </label>
+        <label>
+          <span>Max attempts</span>
+          <input type="number" min="1" max="20" [(ngModel)]="videoForm.maxAttempts" />
+        </label>
+        <label class="wide">
+          <span>Description</span>
+          <textarea rows="3" [(ngModel)]="videoForm.description"></textarea>
+        </label>
+        <label class="check">
+          <input type="checkbox" [(ngModel)]="videoForm.isActive" />
+          <span>Active</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" [(ngModel)]="videoForm.showResultAfterSubmit" />
+          <span>Show result after submit</span>
+        </label>
+      </div>
+      <div class="actions"><button class="primary" (click)="saveVideo()">Save Video</button></div>
+    </article>
+
+    <aside class="list content-list">
+      <div class="list-head">
+        <div>
+          <small>VIDEO LIBRARY</small>
+          <strong>Select to edit</strong>
+        </div>
+      </div>
+      <div class="search">
+        <i class="fas fa-search"></i>
+        <input [(ngModel)]="search" placeholder="Search video/question" />
+      </div>
+      <button class="row" *ngFor="let row of filteredVideos" (click)="editVideo(row)">
+        <span>
+          <strong>{{ row.title }}</strong>
+          <small>{{ row.videoCode }} · {{ row.questionCount }} question(s)</small>
+        </span>
+        <b [class.off]="!row.isActive">{{ row.isActive ? 'Active' : 'Off' }}</b>
+      </button>
+    </aside>
+
+    <article class="editor question-editor">
+      <div class="section-head">
+        <div>
+          <small>{{ questionId ? 'EDIT QUESTION' : 'NEW QUESTION' }}</small>
+          <h2>Question → Video mapping</h2>
+        </div>
+        <button (click)="resetQuestion()">New</button>
+      </div>
+      <div class="form-grid">
+        <label class="wide">
+          <span>Map question to Video *</span>
+          <select [(ngModel)]="questionForm.videoId">
+            <option [ngValue]="0">Select video</option>
+            <option *ngFor="let v of data.videos" [ngValue]="v.videoId">{{ v.videoCode }} · {{ v.title }}</option>
+          </select>
+        </label>
+        <label class="wide">
+          <span>Question *</span>
+          <textarea rows="3" [(ngModel)]="questionForm.questionText"></textarea>
+        </label>
+        <label>
+          <span>Type</span>
+          <select [(ngModel)]="questionForm.questionType">
+            <option>SingleChoice</option>
+            <option>TrueFalse</option>
+          </select>
+        </label>
+        <label>
+          <span>Marks</span>
+          <input type="number" min="0.01" [(ngModel)]="questionForm.marks" />
+        </label>
+        <label class="wide">
+          <span>Explanation</span>
+          <textarea rows="2" [(ngModel)]="questionForm.explanation"></textarea>
+        </label>
+      </div>
+      <div class="options">
+        <div class="options-head">
+          <strong>Answer options</strong>
+          <button (click)="addOption()">+ Option</button>
+        </div>
+        <div class="option" *ngFor="let option of questionForm.options; let i = index">
+          <button class="correct" [class.selected]="option.isCorrect" (click)="chooseCorrect(i)" title="Mark correct">
+            <i class="fas fa-check"></i>
+          </button>
+          <input [(ngModel)]="option.optionText" [placeholder]="'Option ' + (i + 1)" />
+          <button class="remove" (click)="removeOption(i)" [disabled]="questionForm.options.length <= 2">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <small>Select exactly one correct answer.</small>
+      </div>
+      <div class="actions"><button class="primary" (click)="saveQuestion()">Save Question Mapping</button></div>
+    </article>
+
+    <aside class="list question-list">
+      <div class="list-head">
+        <div>
+          <small>QUESTION BANK</small>
+          <strong>{{ filteredQuestions.length }} question(s)</strong>
+        </div>
+      </div>
+      <button class="row question-row" *ngFor="let row of filteredQuestions" (click)="editQuestion(row)">
+        <span>
+          <strong>{{ row.questionText }}</strong>
+          <small>{{ row.videoTitle }} · {{ row.options.length }} options</small>
+        </span>
+      </button>
+    </aside>
+  </section>
+
+  <section *ngIf="tab === 'mapping'" class="split mapping-layout">
+    <aside class="list">
+      <div class="list-head">
+        <div>
+          <small>PUBLISHED / DRAFT</small>
+          <strong>{{ data.mappings.length }} mapping(s)</strong>
+        </div>
+        <button (click)="resetMapping()">New</button>
+      </div>
+      <button class="row mapping-record" *ngFor="let row of data.mappings" (click)="editMapping(row)">
+        <span>
+          <strong>{{ row.planName }}</strong>
+          <small>
+            {{ row.trainingName || 'No Training' }} · {{ row.departmentName || 'All Departments' }} ·
+            {{ row.items.length }} video(s)
+          </small>
+        </span>
+        <b [class.published]="row.planStatus === 'Published'">{{ row.planStatus }}</b>
+      </button>
+    </aside>
+    <article class="editor">
+      <div class="section-head">
+        <div>
+          <small>CONTENT MAPPING</small>
+          <h2>{{ mappingId ? 'Update mapping' : 'Create mapping' }}</h2>
+        </div>
+        <span class="scope-chip">{{ scopeLabel }}</span>
+      </div>
+      <div class="form-grid">
+        <label>
+          <span>Mapping code *</span>
+          <input [(ngModel)]="mappingForm.planCode" placeholder="SAFETY-COMMON" />
+        </label>
+        <label>
+          <span>Mapping name *</span>
+          <input [(ngModel)]="mappingForm.planName" placeholder="Workplace Safety" />
+        </label>
+        <label>
+          <span>
+            Training
+            <small>optional</small>
+          </span>
+          <select [(ngModel)]="mappingForm.trainingId">
+            <option [ngValue]="null">No Training / Common</option>
+            <option *ngFor="let t of data.trainings" [ngValue]="t.trainingId">{{ t.trainingName }}</option>
+          </select>
+        </label>
+        <label>
+          <span>
+            Department
+            <small>optional</small>
+          </span>
+          <select [(ngModel)]="mappingForm.departmentId">
+            <option [ngValue]="null">All Departments / Common</option>
+            <option *ngFor="let d of data.departments" [ngValue]="d.departmentId">{{ d.departmentName }}</option>
+          </select>
+        </label>
+        <label>
+          <span>Completion days</span>
+          <input type="number" min="1" max="365" [(ngModel)]="mappingForm.completionDays" />
+        </label>
+        <label class="check">
+          <input type="checkbox" [(ngModel)]="mappingForm.isActive" />
+          <span>Active mapping</span>
+        </label>
+      </div>
+      <div class="scope-box">
+        <i class="fas fa-bullseye"></i>
+        <div>
+          <strong>{{ scopeLabel }}</strong>
+          <span>{{ trainingName(mappingForm.trainingId) }} · {{ departmentName(mappingForm.departmentId) }}</span>
+          <small *ngIf="!mappingForm.trainingId && !mappingForm.departmentId">
+            Example: Safety Rules for all employees without selecting any Training.
+          </small>
+        </div>
+      </div>
+      <div class="mapping-items">
+        <div class="options-head">
+          <strong>Mapped Videos</strong>
+          <button (click)="addMappingVideo()">+ Video</button>
+        </div>
+        <div class="map-row" *ngFor="let item of mappingForm.items; let i = index">
+          <b>{{ i + 1 }}</b>
+          <select [(ngModel)]="item.videoId">
+            <option [ngValue]="0">Select video</option>
+            <option *ngFor="let v of data.videos" [ngValue]="v.videoId">{{ v.title }} ({{ v.questionCount }} Q)</option>
+          </select>
+          <input type="number" [(ngModel)]="item.minimumWatchPercent" title="Watch %" />
+          <input type="number" [(ngModel)]="item.passingPercent" title="Pass %" />
+          <label title="Must pass">
+            <input type="checkbox" [(ngModel)]="item.mustPassAssignment" />
+            <span>Pass</span>
+          </label>
+          <div>
+            <button (click)="moveMappingVideo(i, -1)" [disabled]="i === 0"><i class="fas fa-arrow-up"></i></button>
+            <button (click)="moveMappingVideo(i, 1)" [disabled]="i === mappingForm.items.length - 1">
+              <i class="fas fa-arrow-down"></i>
+            </button>
+            <button class="remove" (click)="removeMappingVideo(i)" [disabled]="mappingForm.items.length <= 1">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button (click)="resetMapping()">Clear</button>
+        <button class="primary" (click)="saveMapping()">Save as Draft</button>
+      </div>
+    </article>
+  </section>
+
+  <section class="mapping-actions" *ngIf="tab === 'mapping' && data.mappings.length">
+    <article *ngFor="let row of data.mappings">
+      <div>
+        <strong>{{ row.planName }}</strong>
+        <span>{{ row.trainingName || 'No Training' }} · {{ row.departmentName || 'All Departments' }}</span>
+      </div>
+      <b>{{ row.planStatus }}</b>
+      <button *ngIf="row.planStatus !== 'Published'" (click)="publish(row)">Publish</button>
+      <button *ngIf="row.planStatus === 'Published'" (click)="draft(row)">Move to Draft</button>
+    </article>
+  </section>
+</div>

@@ -4,7 +4,7 @@
 //  Breakpoints: utilities/_breakpoints.scss
 // ================================================================
 
-@use "../utilities/breakpoints" as *;
+@use '../utilities/breakpoints' as *;
 
 // â”€â”€ Keyframes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -49,33 +49,25 @@
   }
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: -120px;
     right: -120px;
     width: 480px;
     height: 480px;
-    background: radial-gradient(
-      circle,
-      rgba(87, 144, 225, 0.07) 0%,
-      transparent 70%
-    );
+    background: radial-gradient(circle, rgba(87, 144, 225, 0.07) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none;
   }
 
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     bottom: -80px;
     left: -80px;
     width: 360px;
     height: 360px;
-    background: radial-gradient(
-      circle,
-      rgba(87, 144, 225, 0.05) 0%,
-      transparent 70%
-    );
+    background: radial-gradient(circle, rgba(87, 144, 225, 0.05) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none;
   }
@@ -356,7 +348,7 @@
     max-width: 160px;
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       top: 100%;
       left: 50%;

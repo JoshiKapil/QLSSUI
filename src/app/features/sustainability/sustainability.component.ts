@@ -5,18 +5,18 @@ import { SiteInteractionsService } from '../../core/services/site-interactions.s
 @Component({
   selector: 'app-sustainability',
   templateUrl: './sustainability.component.html',
-  styleUrls: ['./sustainability.component.scss']
+  styleUrls: ['./sustainability.component.scss'],
 })
 export class SustainabilityComponent implements AfterViewInit, OnDestroy {
   constructor(
     private interactions: SiteInteractionsService,
     private title: Title,
-    private meta: Meta
+    private meta: Meta,
   ) {
     this.title.setTitle('Sustainability - QLSS Consulting');
     this.meta.updateTag({
       name: 'description',
-      content: 'QLSS Business Consulting services, training, operational excellence and business transformation.'
+      content: 'QLSS Business Consulting services, training, operational excellence and business transformation.',
     });
   }
 

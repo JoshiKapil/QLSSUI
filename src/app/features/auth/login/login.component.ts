@@ -1,6 +1,6 @@
 ﻿import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotifierService } from '../../../core/services/notifier.service';
 import { firstError } from '../auth-form.helpers';
@@ -8,7 +8,7 @@ import { firstError } from '../auth-form.helpers';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
   isSubmitting = false;
@@ -18,14 +18,15 @@ export class LoginComponent {
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
-    rememberMe: [true]
+    rememberMe: [true],
   });
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private notifier: NotifierService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
   ) {}
 
   submit(): void {
@@ -36,20 +37,32 @@ export class LoginComponent {
     }
 
     this.isSubmitting = true;
-    const value = this.form.value;   
+    const value = this.form.value;
     this.authService
       .login({
         email: value.email || '',
         password: value.password || '',
-        rememberMe: !!value.rememberMe
+        rememberMe: !!value.rememberMe,
       })
       .subscribe({
         next: (response) => {
           this.notifier.successToastr('Logged in successfully.');
           const role = (response.user?.role || '').trim().toLowerCase();
 
-          if (role === 'employee' && response.onboardingRequired && (response.onboardingStatus || '').toLowerCase() !== 'completed') {
+          if (
+            role === 'employee' &&
+            response.onboardingRequired &&
+            (response.onboardingStatus || '').toLowerCase() !== 'completed'
+          ) {
             this.router.navigate(['/onboarding/my-learning']);
+            return;
+          }
+
+          const requestedUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '';
+          const returnUrl = requestedUrl.startsWith('/') && !requestedUrl.startsWith('//') ? requestedUrl : '';
+
+          if (returnUrl) {
+            this.router.navigateByUrl(returnUrl);
             return;
           }
 
@@ -66,8 +79,8 @@ export class LoginComponent {
             this.router.navigate(['/onboarding/access-request'], {
               queryParams: {
                 email,
-                pending: details.hasPendingAccessRequest ? '1' : undefined
-              }
+                pending: details.hasPendingAccessRequest ? '1' : undefined,
+              },
             });
             return;
           }
@@ -75,8 +88,7 @@ export class LoginComponent {
           this.errorMessage = error?.error?.message || 'Invalid email or password.';
           this.isSubmitting = false;
         },
-        complete: () => (this.isSubmitting = false)
+        complete: () => (this.isSubmitting = false),
       });
   }
 }
-

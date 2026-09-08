@@ -1,4 +1,4 @@
-@use "../utilities/breakpoints" as *;
+@use '../utilities/breakpoints' as *;
 .training-hero {
   position: relative;
   padding-top: 100px;
@@ -6,21 +6,9 @@
   text-align: center;
   overflow: hidden;
   background:
-    radial-gradient(
-      circle at 15% 20%,
-      rgba(88, 60, 211, 0.22),
-      transparent 32%
-    ),
-    radial-gradient(
-      circle at 85% 15%,
-      rgba(37, 117, 252, 0.22),
-      transparent 34%
-    ),
-    radial-gradient(
-      circle at 50% 100%,
-      rgba(56, 239, 125, 0.16),
-      transparent 38%
-    ),
+    radial-gradient(circle at 15% 20%, rgba(88, 60, 211, 0.22), transparent 32%),
+    radial-gradient(circle at 85% 15%, rgba(37, 117, 252, 0.22), transparent 34%),
+    radial-gradient(circle at 50% 100%, rgba(56, 239, 125, 0.16), transparent 38%),
     linear-gradient(160deg, #e8effe 0%, #f4f6fb 52%, #edf2ff 100%);
   box-shadow: inset 0 -35px 70px rgba(88, 60, 211, 0.08);
 }
@@ -276,7 +264,7 @@
 }
 
 .card-top-banner::after {
-  content: "";
+  content: '';
   position: absolute;
   width: 130px;
   height: 130px;
@@ -288,37 +276,37 @@
 
 .card-dev {
   background:
-    radial-gradient(circle at 90% 15%, rgba(255,255,255,.35), transparent 28%),
+    radial-gradient(circle at 90% 15%, rgba(255, 255, 255, 0.35), transparent 28%),
     linear-gradient(135deg, #2575fc 0%, #3a97ff 55%, #583cd3 100%);
   box-shadow: inset 0 -20px 35px rgba(37, 117, 252, 0.28);
 }
 
 .card-design {
   background:
-    radial-gradient(circle at 90% 15%, rgba(255,255,255,.35), transparent 28%),
+    radial-gradient(circle at 90% 15%, rgba(255, 255, 255, 0.35), transparent 28%),
     linear-gradient(135deg, #ff416c 0%, #ff4b2b 60%, #583cd3 100%);
   box-shadow: inset 0 -20px 35px rgba(255, 65, 108, 0.28);
 }
 
 .card-data {
   background:
-    radial-gradient(circle at 90% 15%, rgba(255,255,255,.35), transparent 28%),
+    radial-gradient(circle at 90% 15%, rgba(255, 255, 255, 0.35), transparent 28%),
     linear-gradient(135deg, #11998e 0%, #38ef7d 70%, #2575fc 100%);
   box-shadow: inset 0 -20px 35px rgba(17, 153, 142, 0.28);
 }
 
 .card-devc {
-  color: #3a97ff !important; 
+  color: #3a97ff !important;
   box-shadow: inset 0 -20px 35px rgba(37, 117, 252, 0.28);
 }
 
 .card-designc {
-  color: #ff416c !important; 
+  color: #ff416c !important;
   box-shadow: inset 0 -20px 35px rgba(255, 65, 108, 0.28);
 }
 
 .card-datac {
-  color: #11998e !important; 
+  color: #11998e !important;
   box-shadow: inset 0 -20px 35px rgba(17, 153, 142, 0.28);
 }
 
@@ -505,7 +493,7 @@
     padding-bottom: 60px;
   }
 }
- /* ================================================================
+/* ================================================================
    MODAL CSS - KEEP FOR INTERESTED + PDF POPUP
 ================================================================ */
 

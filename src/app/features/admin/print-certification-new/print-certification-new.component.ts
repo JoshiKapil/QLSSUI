@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { ApiClientService } from '../../../core/services/api-client.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { CertificatePdfService } from '../../../core/services/certificate-pdf.service';
@@ -15,9 +16,7 @@ import { VectorCertificatePdfService } from './vector-certificate-pdf.service';
   selector: 'app-print-certification-new',
   templateUrl: '../print-certificate/print-certificate.component.html',
   styleUrls: ['../print-certificate/print-certificate.component.scss'],
-  providers: [
-    { provide: CertificatePdfService, useClass: VectorCertificatePdfService }
-  ]
+  providers: [{ provide: CertificatePdfService, useClass: VectorCertificatePdfService }],
 })
 export class PrintCertificationNewComponent extends PrintCertificateComponent {
   constructor(
@@ -29,7 +28,8 @@ export class PrintCertificationNewComponent extends PrintCertificateComponent {
     trainingService: TrainingManagementService,
     apiClient: ApiClientService,
     authService: AuthService,
-    clientService: ClientManagementService
+    clientService: ClientManagementService,
+    router: Router,
   ) {
     super(
       http,
@@ -40,8 +40,8 @@ export class PrintCertificationNewComponent extends PrintCertificateComponent {
       trainingService,
       apiClient,
       authService,
-      clientService
+      clientService,
+      router,
     );
   }
 }
-

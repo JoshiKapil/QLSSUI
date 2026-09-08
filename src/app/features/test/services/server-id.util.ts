@@ -10,5 +10,8 @@ export function normalizeServerId(value: unknown): string {
 }
 
 export function invalidServerId<T>(field: string, value: unknown): Observable<T> {
-  return throwError(() => new Error('A numeric server ' + field + ' is required before calling the API. Received: ' + String(value ?? '')));
+  return throwError(
+    () =>
+      new Error('A numeric server ' + field + ' is required before calling the API. Received: ' + String(value ?? '')),
+  );
 }

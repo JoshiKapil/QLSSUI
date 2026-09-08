@@ -5,11 +5,11 @@ import { ResultComponent } from './result.component';
 
 const routes: Routes = [
   { path: 'result', component: ResultComponent },
-  { path: '', component: TestComponent }
+  { path: '', component: TestComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class TestRoutingModule {}

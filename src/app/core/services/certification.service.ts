@@ -12,28 +12,35 @@ export class CertificationService {
 
   constructor(
     private adminService: AdminManagementService,
-    private apiClient: ApiClientService
+    private apiClient: ApiClientService,
   ) {}
 
   getAll(): Observable<Certification[]> {
     return this.apiClient.get<CertificationData[]>(this.certificationDataEndpoint).pipe(
-      map((records) => records.map((record) => ({
-        userName: record.name,
-        certificationNumber: record.certificationNumber,
-        issuedDate: record.date,
-        topic: record.displayName || record.trainingName || String(record.trainingId),
-        description: ''
-      })))
+      map((records) =>
+        records.map((record) => ({
+          userName: record.name,
+          certificationNumber: record.certificationNumber,
+          issuedDate: record.date,
+          topic: record.displayName || record.trainingName || String(record.trainingId),
+          description: '',
+        })),
+      ),
     );
   }
 
   search(query: string): Observable<Certification[]> {
     const search = query.trim().toLowerCase();
-    return this.getAll().pipe(map((records) => records.filter((record) =>
-      !search ||
-      record.certificationNumber.toLowerCase().includes(search) ||
-      record.userName.toLowerCase().includes(search)
-    )));
+    return this.getAll().pipe(
+      map((records) =>
+        records.filter(
+          (record) =>
+            !search ||
+            record.certificationNumber.toLowerCase().includes(search) ||
+            record.userName.toLowerCase().includes(search),
+        ),
+      ),
+    );
   }
 
   save(record: Certification): Observable<Certification> {
@@ -49,15 +56,16 @@ export class CertificationService {
   }
 
   getByNumber(certificationNumber: string): Observable<CertificationData> {
-    const searchNumber = certificationNumber
-      .trim()
-      .split('/')
-      .map((part) => part.trim())
-      .filter(Boolean)
-      .pop() ?? '';
+    const searchNumber =
+      certificationNumber
+        .trim()
+        .split('/')
+        .map((part) => part.trim())
+        .filter(Boolean)
+        .pop() ?? '';
 
     return this.apiClient.get<CertificationData>(
-      `${this.certificationDataEndpoint}/by-number/${encodeURIComponent(searchNumber)}`
+      `${this.certificationDataEndpoint}/by-number/${encodeURIComponent(searchNumber)}`,
     );
   }
 }

@@ -12,7 +12,7 @@ import {
   QuestionImportItem,
   QuestionImportPreview,
   QuestionImportResult,
-  QuestionImportRow
+  QuestionImportRow,
 } from './test-excel-import.model';
 
 @Injectable({ providedIn: 'root' })
@@ -25,7 +25,10 @@ export class TestExcelImportService {
 
   constructor(private storage: TestStorageService) {}
 
-  async parseQuestionExcel(file: File, duplicateAction: ImportDuplicateAction = 'skip'): Promise<QuestionImportPreview> {
+  async parseQuestionExcel(
+    file: File,
+    duplicateAction: ImportDuplicateAction = 'skip',
+  ): Promise<QuestionImportPreview> {
     const rows = await this.readRows<QuestionImportRow>(file);
     const questionBank = await this.storage.loadQuestionBank([]);
     const items: QuestionImportItem[] = [];
@@ -46,9 +49,10 @@ export class TestExcelImportService {
       if (errors.length) {
         action = 'failed';
       } else if (duplicate) {
-        duplicateReason = question?.questionId && this.storage.getQuestionKey(duplicate) === question.questionId
-          ? 'Matching questionId already exists.'
-          : 'Matching question text, subject, topic, and type already exists.';
+        duplicateReason =
+          question?.questionId && this.storage.getQuestionKey(duplicate) === question.questionId
+            ? 'Matching questionId already exists.'
+            : 'Matching question text, subject, topic, and type already exists.';
         action = duplicateAction === 'update' ? 'update' : duplicateAction === 'clone' ? 'import' : 'skip';
         if (duplicateAction === 'clone' && question) {
           question.questionId = this.generateQuestionId();
@@ -81,14 +85,16 @@ export class TestExcelImportService {
       }
 
       if (item.action === 'update' && item.existingQuestionId) {
-        const existingIndex = questionBank.findIndex((question) => this.storage.getQuestionKey(question) === item.existingQuestionId);
+        const existingIndex = questionBank.findIndex(
+          (question) => this.storage.getQuestionKey(question) === item.existingQuestionId,
+        );
         if (existingIndex > -1) {
           questionBank[existingIndex] = {
             ...questionBank[existingIndex],
             ...item.question,
             id: questionBank[existingIndex].id,
             questionId: item.existingQuestionId,
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
           };
           updated += 1;
           return;
@@ -107,7 +113,8 @@ export class TestExcelImportService {
     const workbook = await this.readWorkbook(file);
     const detailRows = this.getSheetRows<AssessmentImportRow>(workbook, 'TestDetails');
     const questionRows = this.getSheetRows<AssessmentImportRow>(workbook, 'Questions');
-    const fallbackRows = !detailRows.length && !questionRows.length ? this.getFirstSheetRows<AssessmentImportRow>(workbook) : [];
+    const fallbackRows =
+      !detailRows.length && !questionRows.length ? this.getFirstSheetRows<AssessmentImportRow>(workbook) : [];
     const metadata = (detailRows[0] || fallbackRows[0] || {}) as AssessmentImportRow;
     const rows = questionRows.length ? questionRows : fallbackRows;
     const questionBank = await this.storage.loadQuestionBank([]);
@@ -121,12 +128,20 @@ export class TestExcelImportService {
 
     const durationMinutes = this.positiveNumber(metadata.durationMinutes, 0);
     if (!durationMinutes) {
-      errors.push({ rowNumber: 2, field: 'durationMinutes', message: 'durationMinutes is required and must be greater than 0.' });
+      errors.push({
+        rowNumber: 2,
+        field: 'durationMinutes',
+        message: 'durationMinutes is required and must be greater than 0.',
+      });
     }
 
     const passingPercentage = this.positiveNumber(metadata.passingPercentage, this.defaultPassingPercentage);
     if (passingPercentage <= 0 || passingPercentage > 100) {
-      errors.push({ rowNumber: 2, field: 'passingPercentage', message: 'passingPercentage must be between 1 and 100.' });
+      errors.push({
+        rowNumber: 2,
+        field: 'passingPercentage',
+        message: 'passingPercentage must be between 1 and 100.',
+      });
     }
 
     const items: AssessmentImportItem[] = [];
@@ -141,7 +156,9 @@ export class TestExcelImportService {
 
       const rowNumber = index + 2;
       const question = this.buildQuestionFromRow(row, rowNumber);
-      const existingById = this.clean(row.questionId) ? questionBank.find((item) => this.storage.getQuestionKey(item) === this.clean(row.questionId)) || null : null;
+      const existingById = this.clean(row.questionId)
+        ? questionBank.find((item) => this.storage.getQuestionKey(item) === this.clean(row.questionId)) || null
+        : null;
       const existing = existingById || (question ? this.findDuplicate(question, questionBank) : null);
       const rowErrors = existingById ? [] : this.validateQuestion(question, rowNumber);
       const questionId = existing ? this.storage.getQuestionKey(existing) : question?.questionId || '';
@@ -169,7 +186,7 @@ export class TestExcelImportService {
         questionOrder: order,
         action,
         existingQuestionId: existing ? this.storage.getQuestionKey(existing) : undefined,
-        errors: rowErrors
+        errors: rowErrors,
       });
     });
 
@@ -181,29 +198,31 @@ export class TestExcelImportService {
       errors.push({ rowNumber: 2, field: 'questions', message: 'At least one valid mapped question is required.' });
     }
 
-    const testDefinition: TestDefinition | null = testName ? {
-      testId: `test-${this.storage.normalizeFileName(testName)}`,
-      testName,
-      displayName: testName,
-      fileName: this.storage.normalizeFileName(testName),
-      testTitle: this.clean(metadata.testTitle) || testName,
-      description: this.clean(metadata.description),
-      trainingId: this.clean(metadata.trainingId),
-      trainingName: this.clean(metadata.trainingName),
-      subject: this.clean(metadata.subject),
-      topic: this.clean(metadata.topic),
-      durationMinutes: durationMinutes || this.defaultDurationMinutes,
-      passingPercentage,
-      instructions: this.clean(metadata.instructions),
-      status: this.clean(metadata.status) || 'Active',
-      mappedQuestionIds: validItems.map((item) => item.questionId),
-      questionOrder: validItems.map((item) => item.questionId),
-      totalQuestions: validItems.length,
-      totalMarks: finalTotalMarks,
-      createdAt: now,
-      updatedAt: now,
-      version: 1
-    } : null;
+    const testDefinition: TestDefinition | null = testName
+      ? {
+          testId: `test-${this.storage.normalizeFileName(testName)}`,
+          testName,
+          displayName: testName,
+          fileName: this.storage.normalizeFileName(testName),
+          testTitle: this.clean(metadata.testTitle) || testName,
+          description: this.clean(metadata.description),
+          trainingId: this.clean(metadata.trainingId),
+          trainingName: this.clean(metadata.trainingName),
+          subject: this.clean(metadata.subject),
+          topic: this.clean(metadata.topic),
+          durationMinutes: durationMinutes || this.defaultDurationMinutes,
+          passingPercentage,
+          instructions: this.clean(metadata.instructions),
+          status: this.clean(metadata.status) || 'Active',
+          mappedQuestionIds: validItems.map((item) => item.questionId),
+          questionOrder: validItems.map((item) => item.questionId),
+          totalQuestions: validItems.length,
+          totalMarks: finalTotalMarks,
+          createdAt: now,
+          updatedAt: now,
+          version: 1,
+        }
+      : null;
 
     return {
       fileName: file.name,
@@ -217,7 +236,7 @@ export class TestExcelImportService {
       finalMappedQuestionCount: validItems.length,
       finalTotalMarks,
       errors,
-      items
+      items,
     };
   }
 
@@ -268,7 +287,7 @@ export class TestExcelImportService {
       questionOrder: mappedQuestionIds,
       totalQuestions: mappedQuestionIds.length,
       totalMarks,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     await this.storage.saveQuestionBank(questionBank);
@@ -285,34 +304,101 @@ export class TestExcelImportService {
       failedRows: preview.items.filter((item) => item.action === 'failed').length + failedRows,
       totalMappedQuestions: mappedQuestionIds.length,
       totalMarks,
-      questionBankTotal: questionBank.length
+      questionBankTotal: questionBank.length,
     };
   }
 
   buildQuestionTemplate(): Blob {
     const rows = [
-      this.questionTemplateRow({ questionType: 'MCSA', questionText: 'Which item is a quality tool?', optionA: 'Fishbone diagram', optionB: 'Invoice', optionC: 'Payroll', correctOption: 'A' }),
-      this.questionTemplateRow({ questionType: 'MCMA', questionText: 'Select front-end technologies.', optionA: 'HTML', optionB: 'CSS', optionC: 'JavaScript', optionD: 'SQL Agent', correctOptions: 'A,B,C', marks: 3 }),
-      this.questionTemplateRow({ questionType: 'ESSAY', questionText: 'Define continuous improvement.', expectedAnswer: 'Ongoing improvement of products or processes.', sampleAnswer: 'Small repeated improvements over time.' })
+      this.questionTemplateRow({
+        questionType: 'MCSA',
+        questionText: 'Which item is a quality tool?',
+        optionA: 'Fishbone diagram',
+        optionB: 'Invoice',
+        optionC: 'Payroll',
+        correctOption: 'A',
+      }),
+      this.questionTemplateRow({
+        questionType: 'MCMA',
+        questionText: 'Select front-end technologies.',
+        optionA: 'HTML',
+        optionB: 'CSS',
+        optionC: 'JavaScript',
+        optionD: 'SQL Agent',
+        correctOptions: 'A,B,C',
+        marks: 3,
+      }),
+      this.questionTemplateRow({
+        questionType: 'ESSAY',
+        questionText: 'Define continuous improvement.',
+        expectedAnswer: 'Ongoing improvement of products or processes.',
+        sampleAnswer: 'Small repeated improvements over time.',
+      }),
     ];
     return this.workbookBlob([{ name: 'Questions', rows }]);
   }
 
   buildAssessmentTemplate(): Blob {
-    const testRows = [{
-      testName: 'Test 1', testTitle: 'Demo Assessment', description: 'Practice test created from Excel', trainingId: '1', trainingName: 'Angular Training', subject: 'Angular', topic: 'Components', durationMinutes: 30, passingPercentage: 40, instructions: 'Read all questions carefully', status: 'Active'
-    }];
-    const questionRows = [
-      this.assessmentTemplateRow({ questionId: 'q-1', questionOrder: 1, questionType: 'MCSA', questionText: 'Existing mapped question by id.', optionA: 'A', optionB: 'B', correctOption: 'A' }),
-      this.assessmentTemplateRow({ questionOrder: 2, questionType: 'MCSA', questionText: 'New single-answer question.', optionA: 'Correct', optionB: 'Wrong', correctOption: 'A' }),
-      this.assessmentTemplateRow({ questionOrder: 3, questionType: 'MCMA', questionText: 'New multiple-answer question.', optionA: 'One', optionB: 'Two', optionC: 'Three', correctOptions: 'A,C' }),
-      this.assessmentTemplateRow({ questionOrder: 4, questionType: 'ESSAY', questionText: 'Explain component lifecycle.', expectedAnswer: 'Lifecycle hooks describe component changes.', sampleAnswer: 'ngOnInit runs after initialization.' })
+    const testRows = [
+      {
+        testName: 'Test 1',
+        testTitle: 'Demo Assessment',
+        description: 'Practice test created from Excel',
+        trainingId: '1',
+        trainingName: 'Angular Training',
+        subject: 'Angular',
+        topic: 'Components',
+        durationMinutes: 30,
+        passingPercentage: 40,
+        instructions: 'Read all questions carefully',
+        status: 'Active',
+      },
     ];
-    return this.workbookBlob([{ name: 'TestDetails', rows: testRows }, { name: 'Questions', rows: questionRows }]);
+    const questionRows = [
+      this.assessmentTemplateRow({
+        questionId: 'q-1',
+        questionOrder: 1,
+        questionType: 'MCSA',
+        questionText: 'Existing mapped question by id.',
+        optionA: 'A',
+        optionB: 'B',
+        correctOption: 'A',
+      }),
+      this.assessmentTemplateRow({
+        questionOrder: 2,
+        questionType: 'MCSA',
+        questionText: 'New single-answer question.',
+        optionA: 'Correct',
+        optionB: 'Wrong',
+        correctOption: 'A',
+      }),
+      this.assessmentTemplateRow({
+        questionOrder: 3,
+        questionType: 'MCMA',
+        questionText: 'New multiple-answer question.',
+        optionA: 'One',
+        optionB: 'Two',
+        optionC: 'Three',
+        correctOptions: 'A,C',
+      }),
+      this.assessmentTemplateRow({
+        questionOrder: 4,
+        questionType: 'ESSAY',
+        questionText: 'Explain component lifecycle.',
+        expectedAnswer: 'Lifecycle hooks describe component changes.',
+        sampleAnswer: 'ngOnInit runs after initialization.',
+      }),
+    ];
+    return this.workbookBlob([
+      { name: 'TestDetails', rows: testRows },
+      { name: 'Questions', rows: questionRows },
+    ]);
   }
 
   normalizeQuestionType(value: string): TestQuestionType {
-    const cleanValue = this.clean(value).replace(/[\s/_-]+/g, '').toUpperCase();
+    const cleanValue = this.clean(value)
+      .replace(/[\s/_-]+/g, '')
+      .toUpperCase();
     if (cleanValue === 'MCMA') return 'MCMA';
     if (cleanValue === 'TRUEFALSE') return 'TRUE_FALSE';
     if (cleanValue === 'ESSAY' || cleanValue === 'DEFINITION') return 'ESSAY';
@@ -380,13 +466,16 @@ export class TestExcelImportService {
       isActive: this.booleanValue(row.isActive, true),
       version: 1,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
   }
 
   private buildOptionsFromRow(row: QuestionImportRow, questionType: TestQuestionType): TestOption[] {
     if (questionType === 'TRUE_FALSE') {
-      return [{ id: 'true', text: 'True' }, { id: 'false', text: 'False' }];
+      return [
+        { id: 'true', text: 'True' },
+        { id: 'false', text: 'False' },
+      ];
     }
 
     if (questionType === 'ESSAY') {
@@ -402,7 +491,11 @@ export class TestExcelImportService {
       .filter((option): option is TestOption => !!option);
   }
 
-  private resolveCorrectAnswers(row: QuestionImportRow, questionType: TestQuestionType, options: TestOption[]): string[] {
+  private resolveCorrectAnswers(
+    row: QuestionImportRow,
+    questionType: TestQuestionType,
+    options: TestOption[],
+  ): string[] {
     if (questionType === 'ESSAY') {
       return [];
     }
@@ -425,21 +518,42 @@ export class TestExcelImportService {
       return errors;
     }
 
-    if (!question.trainingName && !question.trainingId) errors.push({ rowNumber, field: 'trainingName', message: 'trainingName or trainingId is required.' });
+    if (!question.trainingName && !question.trainingId)
+      errors.push({ rowNumber, field: 'trainingName', message: 'trainingName or trainingId is required.' });
     if (!question.subject) errors.push({ rowNumber, field: 'subject', message: 'subject is required.' });
     if (!question.topic) errors.push({ rowNumber, field: 'topic', message: 'topic is required.' });
     if (!question.questionText) errors.push({ rowNumber, field: 'questionText', message: 'questionText is required.' });
 
     const options = question.options || [];
-    if (question.questionType === 'MCSA' && (options.length < 2 || !question.correctOptionId)) errors.push({ rowNumber, field: 'correctOption', message: 'MCSA requires at least 2 options and correctOption.' });
-    if (question.questionType === 'MCMA' && (options.length < 2 || !question.correctOptionIds?.length)) errors.push({ rowNumber, field: 'correctOptions', message: 'MCMA requires at least 2 options and correctOptions.' });
-    if (question.questionType === 'TRUE_FALSE' && question.correctOptionId !== 'true' && question.correctOptionId !== 'false') errors.push({ rowNumber, field: 'correctOption', message: 'TRUE_FALSE requires correctOption True or False.' });
-    if (question.questionType === 'ESSAY' && !question.expectedAnswer && !question.sampleAnswer) errors.push({ rowNumber, field: 'expectedAnswer', message: 'ESSAY requires expectedAnswer or sampleAnswer.' });
+    if (question.questionType === 'MCSA' && (options.length < 2 || !question.correctOptionId))
+      errors.push({
+        rowNumber,
+        field: 'correctOption',
+        message: 'MCSA requires at least 2 options and correctOption.',
+      });
+    if (question.questionType === 'MCMA' && (options.length < 2 || !question.correctOptionIds?.length))
+      errors.push({
+        rowNumber,
+        field: 'correctOptions',
+        message: 'MCMA requires at least 2 options and correctOptions.',
+      });
+    if (
+      question.questionType === 'TRUE_FALSE' &&
+      question.correctOptionId !== 'true' &&
+      question.correctOptionId !== 'false'
+    )
+      errors.push({ rowNumber, field: 'correctOption', message: 'TRUE_FALSE requires correctOption True or False.' });
+    if (question.questionType === 'ESSAY' && !question.expectedAnswer && !question.sampleAnswer)
+      errors.push({ rowNumber, field: 'expectedAnswer', message: 'ESSAY requires expectedAnswer or sampleAnswer.' });
 
     return errors;
   }
 
-  private buildQuestionPreview(fileName: string, duplicateAction: ImportDuplicateAction, items: QuestionImportItem[]): QuestionImportPreview {
+  private buildQuestionPreview(
+    fileName: string,
+    duplicateAction: ImportDuplicateAction,
+    items: QuestionImportItem[],
+  ): QuestionImportPreview {
     return {
       fileName,
       duplicateAction,
@@ -451,26 +565,65 @@ export class TestExcelImportService {
       updateQuestions: items.filter((item) => item.action === 'update').length,
       skippedRows: items.filter((item) => item.action === 'skip').length,
       failedRows: items.filter((item) => item.action === 'failed').length,
-      items
+      items,
     };
   }
 
   private findDuplicate(question: TestQuestion, questionBank: TestQuestion[]): TestQuestion | null {
-    const byId = question.questionId ? questionBank.find((item) => this.storage.getQuestionKey(item) === question.questionId) : null;
+    const byId = question.questionId
+      ? questionBank.find((item) => this.storage.getQuestionKey(item) === question.questionId)
+      : null;
     if (byId) {
       return byId;
     }
 
-    return questionBank.find((item) =>
-      this.clean(item.questionText).toLowerCase() === this.clean(question.questionText).toLowerCase() &&
-      this.clean(item.subject).toLowerCase() === this.clean(question.subject).toLowerCase() &&
-      this.clean(item.topic).toLowerCase() === this.clean(question.topic).toLowerCase() &&
-      item.questionType === question.questionType
-    ) || null;
+    return (
+      questionBank.find(
+        (item) =>
+          this.clean(item.questionText).toLowerCase() === this.clean(question.questionText).toLowerCase() &&
+          this.clean(item.subject).toLowerCase() === this.clean(question.subject).toLowerCase() &&
+          this.clean(item.topic).toLowerCase() === this.clean(question.topic).toLowerCase() &&
+          item.questionType === question.questionType,
+      ) || null
+    );
   }
 
   private questionTemplateRow(overrides: Partial<QuestionImportRow>): QuestionImportRow {
-    return { trainingId: '1', trainingName: 'Demo Training', subject: 'Quality', topic: 'Basics', questionType: 'MCSA', difficulty: 'Easy', questionText: '', questionImageUrl: '', audioUrl: '', videoUrl: '', optionA: '', optionB: '', optionC: '', optionD: '', optionE: '', optionF: '', optionAImageUrl: '', optionBImageUrl: '', optionCImageUrl: '', optionDImageUrl: '', optionEImageUrl: '', optionFImageUrl: '', correctOption: '', correctOptions: '', expectedAnswer: '', sampleAnswer: '', explanation: 'Explanation text', explanationImageUrl: '', marks: this.defaultQuestionMarks, negativeMarks: 0, estimatedTimeSeconds: this.defaultEstimatedTimeSeconds, isActive: true, ...overrides };
+    return {
+      trainingId: '1',
+      trainingName: 'Demo Training',
+      subject: 'Quality',
+      topic: 'Basics',
+      questionType: 'MCSA',
+      difficulty: 'Easy',
+      questionText: '',
+      questionImageUrl: '',
+      audioUrl: '',
+      videoUrl: '',
+      optionA: '',
+      optionB: '',
+      optionC: '',
+      optionD: '',
+      optionE: '',
+      optionF: '',
+      optionAImageUrl: '',
+      optionBImageUrl: '',
+      optionCImageUrl: '',
+      optionDImageUrl: '',
+      optionEImageUrl: '',
+      optionFImageUrl: '',
+      correctOption: '',
+      correctOptions: '',
+      expectedAnswer: '',
+      sampleAnswer: '',
+      explanation: 'Explanation text',
+      explanationImageUrl: '',
+      marks: this.defaultQuestionMarks,
+      negativeMarks: 0,
+      estimatedTimeSeconds: this.defaultEstimatedTimeSeconds,
+      isActive: true,
+      ...overrides,
+    };
   }
 
   private assessmentTemplateRow(overrides: Partial<AssessmentImportRow>): AssessmentImportRow {
@@ -519,4 +672,3 @@ export class TestExcelImportService {
     return `q-${Date.now()}${rowNumber ? `-${rowNumber}` : ''}`;
   }
 }
-

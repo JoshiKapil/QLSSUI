@@ -5,6 +5,6 @@ import { InformationSecurityComponent } from './information-security.component';
 
 @NgModule({
   declarations: [InformationSecurityComponent],
-  imports: [SharedModule, InformationSecurityRoutingModule]
+  imports: [SharedModule, InformationSecurityRoutingModule],
 })
 export class InformationSecurityModule {}

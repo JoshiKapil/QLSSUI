@@ -6,6 +6,6 @@ const routes: Routes = [{ path: '', component: SustainabilityComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class SustainabilityRoutingModule {}

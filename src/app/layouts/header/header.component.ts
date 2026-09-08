@@ -5,13 +5,14 @@ import { AuthService } from '../../core/services/auth.service';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnDestroy {
   menuOpen = false;
   isLoggedIn = false;
   isAdmin = false;
   hasWorkspaceAccess = false;
+  hasZeissAccess = false;
   userMenuOpen = false;
   adminMenuOpen = false;
   userName = 'User';
@@ -23,6 +24,7 @@ export class HeaderComponent implements OnDestroy {
       this.isAdmin = this.authService.isAdmin();
       // Workspace visibility follows the dedicated role rule. Admin is excluded there temporarily.
       this.hasWorkspaceAccess = this.authService.hasWorkspaceAccess();
+      this.hasZeissAccess = (user?.role || '').toLowerCase() === 'superadmin' || (user?.email || '').toLowerCase() === 'consultant@qlssconsulting.com';
       this.userName = user?.name || user?.email || 'User';
     });
   }
@@ -76,5 +78,6 @@ export class HeaderComponent implements OnDestroy {
     this.destroy$.complete();
   }
 }
+
 
 

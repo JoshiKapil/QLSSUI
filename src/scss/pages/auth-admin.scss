@@ -60,7 +60,7 @@
 .auth-grid,
 .admin-layout {
   display: grid;
-  grid-template-columns: 5fr 7fr;// repeat(2, minmax(0, 1fr));
+  grid-template-columns: 5fr 7fr; // repeat(2, minmax(0, 1fr));
   gap: 1rem;
 }
 
@@ -163,7 +163,7 @@
 
 .btn-outline {
   border: 1px solid var(--primary);
-  background: #ffffff;  
+  background: #ffffff;
   color: var(--primary);
 }
 

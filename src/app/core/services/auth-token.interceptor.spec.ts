@@ -10,7 +10,7 @@ describe('AuthTokenInterceptor', () => {
       'getToken',
       'isServerAuthenticated',
       'refreshAccessToken',
-      'logout'
+      'logout',
     ]);
     auth.getToken.and.returnValue('expired-token');
     auth.isServerAuthenticated.and.returnValue(true);
@@ -19,7 +19,7 @@ describe('AuthTokenInterceptor', () => {
     const handler = jasmine.createSpyObj<HttpHandler>('HttpHandler', ['handle']);
     handler.handle.and.returnValues(
       throwError(() => new HttpErrorResponse({ status: 401 })),
-      of(new HttpResponse({ status: 200 }))
+      of(new HttpResponse({ status: 200 })),
     );
 
     const interceptor = new AuthTokenInterceptor(auth);

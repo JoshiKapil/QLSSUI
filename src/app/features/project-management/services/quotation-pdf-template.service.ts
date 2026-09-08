@@ -1,23 +1,38 @@
 import { Injectable } from '@angular/core';
-import { PDFDocument, PDFFont, PDFPage, StandardFonts, rgb } from 'pdf-lib';
+import { PDFDocument, PDFPage, rgb } from 'pdf-lib';
 import { PmLookup, PmQuotation } from '../models/project-management.models';
+
+interface TextZoneOptions {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fontSize: number;
+  bold?: boolean;
+  lineHeight?: number;
+  maxLines?: number;
+  align?: 'left' | 'center';
+  paddingX?: number;
+  paddingTop?: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class QuotationPdfTemplateService {
+  private readonly textFont = 'Calibri, Carlito, Arial, sans-serif';
+  private readonly renderScale = 4;
+
   async build(quotation: PmQuotation, clients: PmLookup[]): Promise<Uint8Array> {
     const template = this.templateFor(quotation);
     const response = await fetch(template, { cache: 'no-store' });
     if (!response.ok) throw new Error('Quotation PDF template could not be loaded.');
 
     const pdf = await PDFDocument.load(await response.arrayBuffer());
-    const regular = await pdf.embedFont(StandardFonts.Helvetica);
-    const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
     const pages = pdf.getPages();
     if (pages.length < 3) throw new Error('Quotation template must contain 3 pages.');
 
-    this.drawPageOne(pages[0], regular, bold, quotation);
-    this.drawPageTwo(pages[1], regular, bold, quotation);
-    this.drawClients(pages[2], regular, bold, clients);
+    await this.drawPageOne(pdf, pages[0], quotation);
+    await this.drawPageTwo(pdf, pages[1], quotation);
+    await this.drawClients(pdf, pages[2], clients);
     return pdf.save();
   }
 
@@ -33,59 +48,172 @@ export class QuotationPdfTemplateService {
     return 'assets/pm-templates/quotation/OtherQuotationTemplate.pdf';
   }
 
-  private drawPageOne(page: PDFPage, regular: PDFFont, bold: PDFFont, q: PmQuotation): void {
+  private async drawPageOne(pdf: PDFDocument, page: PDFPage, q: PmQuotation): Promise<void> {
     const categoryCode = (q.categoryCode || '').toUpperCase();
     const isTraining = categoryCode === 'TRAINING' || (q.serviceType || '').toLowerCase().includes('training');
 
-    // Cover only the dynamic zones of the approved Word/PDF design.
-    this.erase(page, 204, 727, 112, 18);
-    this.erase(page, 68, 638, 455, 23);
-    this.erase(page, 68, 616, 470, 23);
-    this.erase(page, 176, 592, 355, 21);
-    this.erase(page, 200, 196, 42, 25);
-    this.erase(page, 68, 102, 472, 47);
-    if (isTraining) this.erase(page, 68, 535, 470, 30);
-    else this.erase(page, 199, 534, 340, 43);
+    // Redraw complete logical rows instead of replacing only the placeholder text.
+    // This prevents old template text remaining beside dynamic values.
+    this.erase(page, 67, 721, 455, 28);
+    await this.drawZone(
+      pdf,
+      page,
+      `QUOTATION DATE/NUMBER: ${this.date(q.quotationDate)} - ${this.text(q.quotationNo)}`,
+      { x: 72.45, y: 724, width: 430, height: 20, fontSize: 11, bold: true, maxLines: 1, paddingTop: 2.7 },
+    );
 
-    page.drawText(`${this.date(q.quotationDate)} - ${this.text(q.quotationNo)}`, { x: 207, y: 730, size: 10, font: bold, color: rgb(0, 0, 0) });
-    page.drawText(this.fit(this.text(q.customerName), bold, 11, 430), { x: 71, y: 645, size: 11, font: bold });
+    this.erase(page, 67, 606, 475, 67);
+    await this.drawZone(pdf, page, this.text(q.customerName), {
+      x: 72.45,
+      y: 636,
+      width: 455,
+      height: 22,
+      fontSize: 13,
+      bold: true,
+      maxLines: 1,
+      paddingTop: 2,
+    });
 
-    const address = this.lines(this.text(q.customerAddress || ''), regular, 9.5, 445, 2);
-    address.forEach((line, i) => page.drawText(line, { x: 71, y: 628 - (i * 12), size: 9.5, font: regular }));
-
-    page.drawText(this.fit(this.text(q.contactPerson || ''), bold, 9.5, 320), { x: 179, y: 598, size: 9.5, font: bold });
-
-    const scopeValue = this.text(q.categoryValueName || q.scope || q.serviceType);
-    const scope = this.text(q.scope || scopeValue);
-    if (isTraining) {
-      const title = this.fit(scopeValue, bold, 11, 450);
-      page.drawText(title, { x: 71, y: 548, size: 11, font: bold });
-      const extra = scopeValue.trim().toLowerCase() === scope.trim().toLowerCase() ? '' : scope;
-      this.lines(extra, regular, 8.5, 450, 3).forEach((line, i) => page.drawText(line, { x: 71, y: 532 - (i * 10), size: 8.5, font: regular }));
-    } else {
-      const scopeLines = this.lines(scope, bold, 10.5, 350, 4);
-      scopeLines.forEach((line, i) => page.drawText(line, { x: i === 0 ? 205 : 71, y: 561 - (i * 12), size: 10.5, font: bold }));
+    const address = this.text(q.customerAddress || '');
+    if (address) {
+      await this.drawZone(pdf, page, address, {
+        x: 72.45,
+        y: 610,
+        width: 455,
+        height: 33,
+        fontSize: 12,
+        lineHeight: 14.2,
+        maxLines: 2,
+        paddingTop: 2.5,
+      });
     }
 
-    page.drawText(this.money(q.professionalFees), { x: 204, y: 205, size: 10.5, font: bold });
+    this.erase(page, 67, 582, 475, 29);
+    const attention = this.text(q.contactPerson || '');
+    await this.drawZone(pdf, page, `Kind Attention: Mr. ${attention}`.trim(), {
+      x: 72.45,
+      y: 590,
+      width: 455,
+      height: 22,
+      fontSize: 13,
+      bold: true,
+      maxLines: 1,
+      paddingTop: 2.1,
+    });
 
-    const payment = this.text(q.paymentTerms || (isTraining
-      ? '100% of the total contract value is due and payable immediately upon receipt of the invoice.'
-      : '50% of the total contract value shall be payable in advance upon project confirmation, and the remaining 50% shall be payable after completion of the agreed scope of activities.'));
-    this.lines(payment, regular, 9.2, 455, 4).forEach((line, i) => page.drawText(line, { x: 71, y: 132 - (i * 11), size: 9.2, font: regular }));
+    // Scope area: keep the approved heading but give long dynamic scope its own clean lines.
+    this.erase(page, 67, 491, 480, 93);
+    await this.drawZone(pdf, page, 'Scope of Services:', {
+      x: 72.45,
+      y: 554,
+      width: 455,
+      height: 24,
+      fontSize: 16,
+      bold: true,
+      maxLines: 1,
+      paddingTop: 0.5,
+    });
+
+    const serviceTitle = this.text(q.categoryValueName || q.serviceType || '');
+    const scope = this.text(q.scope || serviceTitle);
+    if (serviceTitle) {
+      await this.drawZone(pdf, page, serviceTitle, {
+        x: 72.45,
+        y: 535,
+        width: 455,
+        height: 25,
+        fontSize: isTraining ? 14 : 13,
+        bold: true,
+        maxLines: 1,
+        paddingTop: 2,
+      });
+    }
+    if (scope && scope.toLowerCase() !== serviceTitle.toLowerCase()) {
+      await this.drawZone(pdf, page, scope, {
+        x: 72.45,
+        y: 496,
+        width: 455,
+        height: 45,
+        fontSize: 10.8,
+        lineHeight: 12.2,
+        maxLines: 3,
+        paddingTop: 3,
+      });
+    } else if (scope && !serviceTitle) {
+      await this.drawZone(pdf, page, scope, {
+        x: 72.45,
+        y: 506,
+        width: 455,
+        height: 48,
+        fontSize: 11.5,
+        lineHeight: 13,
+        maxLines: 3,
+        paddingTop: 3,
+      });
+    }
+
+    this.erase(page, 85, 194, 430, 31);
+    await this.drawZone(pdf, page, `1.  Total Project Cost - ${this.money(q.professionalFees)} + Taxes`, {
+      x: 90.45,
+      y: 197,
+      width: 410,
+      height: 22,
+      fontSize: 12,
+      bold: true,
+      maxLines: 1,
+      paddingTop: 3,
+    });
+
+    this.erase(page, 67, 105, 480, 82);
+    const payment = this.text(
+      q.paymentTerms ||
+        (isTraining
+          ? '100% of the total contract value is due and payable immediately upon receipt of the invoice.'
+          : '50% of the total contract value shall be payable in advance upon project confirmation, and the remaining 50% shall be payable after completion of the agreed scope of activities.'),
+    );
+    await this.drawZone(pdf, page, 'Payment Terms:', {
+      x: 72.45,
+      y: 157,
+      width: 455,
+      height: 21,
+      fontSize: 12,
+      bold: true,
+      maxLines: 1,
+      paddingTop: 3.5,
+    });
+    await this.drawZone(pdf, page, payment, {
+      x: 72.45,
+      y: 106,
+      width: 455,
+      height: 49,
+      fontSize: 12,
+      lineHeight: 14.6,
+      maxLines: 3,
+      paddingTop: 6.5,
+    });
   }
 
-  private drawPageTwo(page: PDFPage, regular: PDFFont, bold: PDFFont, q: PmQuotation): void {
-    this.erase(page, 309, 349, 128, 20);
-    this.erase(page, 276, 334, 128, 20);
-    const company = this.fit(this.text(q.customerName), bold, 8.8, 110);
-    page.drawText(company, { x: 313, y: 357, size: 8.8, font: bold });
-    page.drawText(company, { x: 280, y: 342, size: 8.8, font: bold });
+  private async drawPageTwo(pdf: PDFDocument, page: PDFPage, q: PmQuotation): Promise<void> {
+    // Replace the complete paragraph. Replacing only "Company Name" caused long names
+    // to overlap the fixed sentence around the placeholder.
+    this.erase(page, 67, 314, 485, 67);
+    const company = this.text(q.customerName || 'Customer');
+    const paragraph = `We look forward to a long-term cooperation with ${company} that will prove to be rewarding for both QLSS Business Consulting LLP and ${company}, and guarantee our full commitment and execution of the project within the set time frame.`;
+    await this.drawZone(pdf, page, paragraph, {
+      x: 72.45,
+      y: 316,
+      width: 470,
+      height: 60,
+      fontSize: 12,
+      lineHeight: 14.6,
+      maxLines: 4,
+      paddingTop: 7.5,
+    });
   }
 
-  private drawClients(page: PDFPage, regular: PDFFont, bold: PDFFont, clients: PmLookup[]): void {
+  private async drawClients(pdf: PDFDocument, page: PDFPage, clients: PmLookup[]): Promise<void> {
     this.erase(page, 12, 105, 565, 650);
-    const names = (clients || []).map(x => this.text(x.name)).filter(Boolean);
+    const names = (clients || []).map((x) => this.text(x.name)).filter(Boolean);
     const rows = Math.max(1, Math.ceil(names.length / 2));
     const left = 18;
     const right = 577;
@@ -95,18 +223,68 @@ export class QuotationPdfTemplateService {
     const rowHeight = Math.max(10.5, Math.min(15, (top - bottomLimit) / rows));
     const fontSize = rowHeight <= 11 ? 6.6 : rowHeight <= 12.5 ? 7.1 : 7.6;
 
-    page.drawText('Our Clients:', { x: 28, y: 720, size: 10.5, font: bold });
-    page.drawRectangle({ x: left, y: top - (rows * rowHeight), width: right - left, height: rows * rowHeight, borderWidth: 0.7, borderColor: rgb(0.2, 0.2, 0.2) });
-    page.drawLine({ start: { x: middle, y: top }, end: { x: middle, y: top - (rows * rowHeight) }, thickness: 0.7, color: rgb(0.2, 0.2, 0.2) });
+    await this.drawZone(pdf, page, 'Our Clients:', {
+      x: 28,
+      y: 710,
+      width: 240,
+      height: 20,
+      fontSize: 10.5,
+      bold: true,
+      maxLines: 1,
+    });
+
+    page.drawRectangle({
+      x: left,
+      y: top - rows * rowHeight,
+      width: right - left,
+      height: rows * rowHeight,
+      borderWidth: 0.7,
+      borderColor: rgb(0.2, 0.2, 0.2),
+    });
+    page.drawLine({
+      start: { x: middle, y: top },
+      end: { x: middle, y: top - rows * rowHeight },
+      thickness: 0.7,
+      color: rgb(0.2, 0.2, 0.2),
+    });
 
     for (let row = 0; row < rows; row++) {
-      const yTop = top - (row * rowHeight);
-      if (row > 0) page.drawLine({ start: { x: left, y: yTop }, end: { x: right, y: yTop }, thickness: 0.45, color: rgb(0.35, 0.35, 0.35) });
+      const yTop = top - row * rowHeight;
+      if (row > 0) {
+        page.drawLine({
+          start: { x: left, y: yTop },
+          end: { x: right, y: yTop },
+          thickness: 0.45,
+          color: rgb(0.35, 0.35, 0.35),
+        });
+      }
       const leftName = names[row * 2] || '';
-      const rightName = names[(row * 2) + 1] || '';
-      const yText = yTop - rowHeight + Math.max(2.2, (rowHeight - fontSize) / 2);
-      if (leftName) page.drawText(this.fit(leftName.toUpperCase(), bold, fontSize, 268), { x: 22, y: yText, size: fontSize, font: bold });
-      if (rightName) page.drawText(this.fit(rightName.toUpperCase(), bold, fontSize, 268), { x: 302, y: yText, size: fontSize, font: bold });
+      const rightName = names[row * 2 + 1] || '';
+      const y = yTop - rowHeight + 0.8;
+      if (leftName) {
+        await this.drawZone(pdf, page, leftName.toUpperCase(), {
+          x: 22,
+          y,
+          width: 268,
+          height: rowHeight - 1,
+          fontSize,
+          bold: true,
+          maxLines: 1,
+          paddingTop: 1.3,
+        });
+      }
+      if (rightName) {
+        await this.drawZone(pdf, page, rightName.toUpperCase(), {
+          x: 302,
+          y,
+          width: 268,
+          height: rowHeight - 1,
+          fontSize,
+          bold: true,
+          maxLines: 1,
+          paddingTop: 1.3,
+        });
+      }
     }
   }
 
@@ -114,34 +292,82 @@ export class QuotationPdfTemplateService {
     page.drawRectangle({ x, y, width, height, color: rgb(1, 1, 1), borderWidth: 0 });
   }
 
-  private lines(value: string, font: PDFFont, size: number, maxWidth: number, maxLines: number): string[] {
-    if (!value) return [];
-    const words = value.replace(/\s+/g, ' ').trim().split(' ');
-    const result: string[] = [];
+  private async drawZone(pdf: PDFDocument, page: PDFPage, value: string, options: TextZoneOptions): Promise<void> {
+    const clean = this.text(value);
+    if (!clean) return;
+
+    const scale = this.renderScale;
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.ceil(options.width * scale));
+    canvas.height = Math.max(1, Math.ceil(options.height * scale));
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Browser canvas is unavailable for quotation PDF rendering.');
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#000000';
+    ctx.textBaseline = 'top';
+
+    const paddingX = (options.paddingX || 0) * scale;
+    const paddingTop = (options.paddingTop || 0) * scale;
+    const usableWidth = Math.max(1, canvas.width - paddingX * 2);
+    const maxLines = Math.max(1, options.maxLines || 1);
+
+    let fontSize = options.fontSize * scale;
+    let lineHeight = (options.lineHeight || options.fontSize * 1.2) * scale;
+    let lines: string[] = [];
+
+    // Shrink only when necessary. This keeps normal values at the exact template size.
+    for (let attempt = 0; attempt < 8; attempt++) {
+      ctx.font = `${options.bold ? 700 : 400} ${fontSize}px ${this.textFont}`;
+      lines = this.wrapCanvas(ctx, clean, usableWidth, maxLines);
+      const tooWide = lines.some((line) => ctx.measureText(line).width > usableWidth + 1);
+      const tooTall = lines.length * lineHeight > canvas.height - paddingTop;
+      if (!tooWide && !tooTall) break;
+      fontSize *= 0.94;
+      lineHeight *= 0.94;
+    }
+
+    ctx.font = `${options.bold ? 700 : 400} ${fontSize}px ${this.textFont}`;
+    lines.forEach((line, index) => {
+      const measured = ctx.measureText(line).width;
+      const x = options.align === 'center' ? Math.max(paddingX, (canvas.width - measured) / 2) : paddingX;
+      ctx.fillText(line, x, paddingTop + index * lineHeight);
+    });
+
+    const png = await pdf.embedPng(canvas.toDataURL('image/png'));
+    page.drawImage(png, { x: options.x, y: options.y, width: options.width, height: options.height });
+    canvas.width = 1;
+    canvas.height = 1;
+  }
+
+  private wrapCanvas(ctx: CanvasRenderingContext2D, value: string, maxWidth: number, maxLines: number): string[] {
+    const words = value.replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
+    const lines: string[] = [];
     let line = '';
+
     for (const word of words) {
       const next = line ? `${line} ${word}` : word;
-      if (font.widthOfTextAtSize(next, size) <= maxWidth) {
+      if (ctx.measureText(next).width <= maxWidth || !line) {
         line = next;
         continue;
       }
-      if (line) result.push(line);
-      line = word;
-      if (result.length === maxLines - 1) break;
-    }
-    if (line && result.length < maxLines) result.push(line);
-    if (result.length === maxLines && words.join(' ').length > result.join(' ').length) {
-      let last = result[maxLines - 1];
-      while (last.length > 3 && font.widthOfTextAtSize(`${last}...`, size) > maxWidth) last = last.slice(0, -1);
-      result[maxLines - 1] = `${last}...`;
-    }
-    return result;
-  }
 
-  private fit(value: string, font: PDFFont, size: number, maxWidth: number): string {
-    let result = value || '';
-    while (result.length > 3 && font.widthOfTextAtSize(result, size) > maxWidth) result = result.slice(0, -1);
-    return result.length < (value || '').length ? `${result.slice(0, -3)}...` : result;
+      lines.push(line);
+      line = word;
+      if (lines.length >= maxLines - 1) break;
+    }
+
+    if (line && lines.length < maxLines) lines.push(line);
+
+    const consumed = lines.join(' ');
+    if (consumed.length < value.length && lines.length) {
+      let last = lines[lines.length - 1];
+      while (last.length > 1 && ctx.measureText(`${last}...`).width > maxWidth) {
+        last = last.slice(0, -1);
+      }
+      lines[lines.length - 1] = `${last.replace(/[\s.,;:-]+$/g, '')}...`;
+    }
+    return lines;
   }
 
   private date(value: string): string {
@@ -156,6 +382,10 @@ export class QuotationPdfTemplateService {
   }
 
   private text(value: any): string {
-    return `${value ?? ''}`.replace(/[\u2010-\u2015]/g, '-').replace(/[^\x20-\x7E]/g, ' ').replace(/\s+/g, ' ').trim();
+    return `${value ?? ''}`
+      .replace(/[\u2010-\u2015]/g, '-')
+      .replace(/[^\x20-\x7E]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 }

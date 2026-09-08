@@ -1,0 +1,42 @@
+<section class="page">
+  <header>
+    <div>
+      <small>MASTER</small>
+      <h1>Customer List</h1>
+      <p>Imported from Pune BP Customer List QLSS with Area.</p>
+    </div>
+  </header>
+<app-list-pager [page]="customersPage" (changed)="reloadcustomersPage()"></app-list-pager>
+  <p *ngIf="error" role="alert">{{ error }}</p>
+  
+  <article class="panel table">
+    <table>
+      <thead>
+        <tr>
+          <th>Source</th>
+          <th>Customer</th>
+          <th>Code</th>
+          <th>Area</th>
+          <th>IBase ID</th>
+          <th>SIP</th>
+          <th>Contact</th>
+          <th>Email</th>
+          <th>Phone</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let x of filtered">
+          <td>{{ x.sourceSheet }}</td>
+          <td>{{ x.customerName }}</td>
+          <td>{{ x.customerCode }}</td>
+          <td>{{ x.area || '-' }}</td>
+          <td>{{ x.iBaseId }}</td>
+          <td>{{ x.sipNumber }}</td>
+          <td>{{ x.contactPerson }}</td>
+          <td>{{ x.email }}</td>
+          <td>{{ x.contactNumber }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </article>
+</section>

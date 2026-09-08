@@ -12,7 +12,7 @@ describe('auth form helpers', () => {
   it('returns password mismatch errors when confirmation differs', () => {
     const form = new FormGroup({
       password: new FormControl('abc123'),
-      confirmPassword: new FormControl('abc124')
+      confirmPassword: new FormControl('abc124'),
     });
 
     expect(passwordMatchValidator()(form)).toEqual({ passwordMismatch: true });

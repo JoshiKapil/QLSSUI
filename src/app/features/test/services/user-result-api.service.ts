@@ -12,7 +12,9 @@ export class UserResultApiService {
     return this.api.post<{ usersResultId: number }>('UserResult/save', this.normalizeSaveRequest(request));
   }
 
-  saveUserResultViaSaveRoute(request: Partial<SaveUserResultRequest> & Record<string, any>): Observable<{ usersResultId: number }> {
+  saveUserResultViaSaveRoute(
+    request: Partial<SaveUserResultRequest> & Record<string, any>,
+  ): Observable<{ usersResultId: number }> {
     return this.saveUserResult(request);
   }
 
@@ -46,7 +48,7 @@ export class UserResultApiService {
       percentage: this.toNullableNumber(request.percentage),
       passed: request.passed ?? null,
       isAutoSubmitted: !!request.isAutoSubmitted,
-      submittedAt: request.submittedAt ? String(request.submittedAt) : null
+      submittedAt: request.submittedAt ? String(request.submittedAt) : null,
     };
   }
 

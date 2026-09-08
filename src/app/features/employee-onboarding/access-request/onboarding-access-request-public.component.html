@@ -1,3 +1,75 @@
-<section class="access-page"><div class="access-card"><div class="visual"><div class="lock"><i class="fas fa-user-lock"></i></div><span>MANDATORY ONBOARDING</span><h1>Login temporarily restricted</h1><p>Your induction deadline and final grace period have passed. Tell the SuperAdmin why the mandatory training could not be completed.</p><div class="flow"><div><b>1</b><span>Submit reason</span></div><i class="fas fa-arrow-right"></i><div><b>2</b><span>SuperAdmin review</span></div><i class="fas fa-arrow-right"></i><div><b>3</b><span>Access restored</span></div></div></div>
-<div class="form-side" *ngIf="!submitted; else success"><div class="pending" *ngIf="pendingAlready"><i class="fas fa-clock"></i><span>An access request is already pending. You can return to login after SuperAdmin approval.</span></div><h2>Request login access</h2><p>For security, confirm your login credentials and provide a clear explanation.</p><label><span>Email</span><input type="email" [(ngModel)]="email" autocomplete="username"></label><label><span>Password</span><input type="password" [(ngModel)]="password" autocomplete="current-password"></label><label><span>Why was onboarding not completed?</span><textarea rows="6" maxlength="3000" [(ngModel)]="reason" placeholder="Explain the reason, any issue you faced, and your plan to complete the pending modules..."></textarea><small>{{ reason.length }}/3000 · minimum 20 characters</small></label><div class="error" *ngIf="error"><i class="fas fa-circle-exclamation"></i>{{ error }}</div><button (click)="submit()" [disabled]="submitting || pendingAlready"><i class="fas fa-paper-plane"></i>{{ submitting ? 'Submitting...' : 'Submit for SuperAdmin approval' }}</button><a (click)="goLogin()">Back to login</a></div>
-<ng-template #success><div class="form-side success"><div class="success-icon"><i class="fas fa-check"></i></div><h2>Request submitted</h2><p>Your reason has been sent to the SuperAdmin. After approval, use your normal email and password to sign in and complete the remaining onboarding.</p><button (click)="goLogin()">Return to login</button></div></ng-template></div></section>
+<section class="access-page">
+  <div class="access-card">
+    <div class="visual">
+      <div class="lock"><i class="fas fa-user-lock"></i></div>
+      <span>MANDATORY ONBOARDING</span>
+      <h1>Login temporarily restricted</h1>
+      <p>
+        Your induction deadline and final grace period have passed. Tell the SuperAdmin why the mandatory training could
+        not be completed.
+      </p>
+      <div class="flow">
+        <div>
+          <b>1</b>
+          <span>Submit reason</span>
+        </div>
+        <i class="fas fa-arrow-right"></i>
+        <div>
+          <b>2</b>
+          <span>SuperAdmin review</span>
+        </div>
+        <i class="fas fa-arrow-right"></i>
+        <div>
+          <b>3</b>
+          <span>Access restored</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-side" *ngIf="!submitted; else success">
+      <div class="pending" *ngIf="pendingAlready">
+        <i class="fas fa-clock"></i>
+        <span>An access request is already pending. You can return to login after SuperAdmin approval.</span>
+      </div>
+      <h2>Request login access</h2>
+      <p>For security, confirm your login credentials and provide a clear explanation.</p>
+      <label>
+        <span>Email</span>
+        <input type="email" [(ngModel)]="email" autocomplete="username" />
+      </label>
+      <label>
+        <span>Password</span>
+        <input type="password" [(ngModel)]="password" autocomplete="current-password" />
+      </label>
+      <label>
+        <span>Why was onboarding not completed?</span>
+        <textarea
+          rows="6"
+          maxlength="3000"
+          [(ngModel)]="reason"
+          placeholder="Explain the reason, any issue you faced, and your plan to complete the pending modules..."
+        ></textarea>
+        <small>{{ reason.length }}/3000 · minimum 20 characters</small>
+      </label>
+      <div class="error" *ngIf="error">
+        <i class="fas fa-circle-exclamation"></i>
+        {{ error }}
+      </div>
+      <button (click)="submit()" [disabled]="submitting || pendingAlready">
+        <i class="fas fa-paper-plane"></i>
+        {{ submitting ? 'Submitting...' : 'Submit for SuperAdmin approval' }}
+      </button>
+      <a (click)="goLogin()">Back to login</a>
+    </div>
+    <ng-template #success>
+      <div class="form-side success">
+        <div class="success-icon"><i class="fas fa-check"></i></div>
+        <h2>Request submitted</h2>
+        <p>
+          Your reason has been sent to the SuperAdmin. After approval, use your normal email and password to sign in and
+          complete the remaining onboarding.
+        </p>
+        <button (click)="goLogin()">Return to login</button>
+      </div>
+    </ng-template>
+  </div>
+</section>

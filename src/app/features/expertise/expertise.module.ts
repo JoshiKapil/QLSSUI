@@ -5,6 +5,6 @@ import { ExpertiseRoutingModule } from './expertise-routing.module';
 
 @NgModule({
   declarations: [ExpertiseComponent],
-  imports: [SharedModule, ExpertiseRoutingModule]
+  imports: [SharedModule, ExpertiseRoutingModule],
 })
 export class ExpertiseModule {}

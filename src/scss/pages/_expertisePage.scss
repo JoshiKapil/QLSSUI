@@ -1,9 +1,9 @@
-// 
+//
 // _services.scss    Services / Our Expertise Page
 // Path: scss/sections/_services.scss
 // Usage: @use "sections/services";  (in your main style.scss)
-// 
-@use "../utilities/breakpoints" as *;
+//
+@use '../utilities/breakpoints' as *;
 
 // â”€â”€ Keyframes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -87,9 +87,9 @@
   }
 }
 
-// 
+//
 // BREADCRUMB
-// 
+//
 
 .breadcrumb {
   padding: 14px 0;
@@ -124,9 +124,9 @@
   font-weight: 600;
 }
 
-// 
+//
 // HERO
-// 
+//
 
 .svc-hero {
   background: #fff;
@@ -136,14 +136,10 @@
 
   // Dot-grid background
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(
-      circle,
-      rgba(43, 123, 255, 0.07) 1px,
-      transparent 1px
-    );
+    background-image: radial-gradient(circle, rgba(43, 123, 255, 0.07) 1px, transparent 1px);
     background-size: 36px 36px;
     pointer-events: none;
   }
@@ -381,14 +377,10 @@
   }
 
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      135deg,
-      rgba(11, 61, 145, 0.18) 0%,
-      transparent 55%
-    );
+    background: linear-gradient(135deg, rgba(11, 61, 145, 0.18) 0%, transparent 55%);
     pointer-events: none;
   }
 }
@@ -453,9 +445,9 @@
   }
 }
 
-// 
+//
 // SERVICES SECTION
-// 
+//
 
 .svc-section {
   background: var(--bg-light);
@@ -464,7 +456,7 @@
 
   // Wave top divider
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: -1px;
     left: 0;
@@ -529,9 +521,9 @@
   }
 }
 
-// 
+//
 // CARDS GRID
-// 
+//
 
 .card-grid {
   display: grid;
@@ -637,14 +629,10 @@
 
   // Gradient overlay
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      to bottom,
-      transparent 35%,
-      rgba(7, 30, 80, 0.62) 100%
-    );
+    background: linear-gradient(to bottom, transparent 35%, rgba(7, 30, 80, 0.62) 100%);
     transition: opacity 0.32s ease;
   }
 }
@@ -776,9 +764,9 @@
   box-shadow: 0 4px 14px rgba(43, 123, 255, 0.42);
 }
 
-// 
+//
 // CTA STRIP
-// 
+//
 
 .svc-cta {
   background: linear-gradient(135deg, var(--bg-dark) 0%, #0e2259 100%);
@@ -788,13 +776,10 @@
   text-align: center;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(
-      rgba(255, 255, 255, 0.04) 1px,
-      transparent 1px
-    );
+    background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
     background-size: 30px 30px;
     pointer-events: none;
   }

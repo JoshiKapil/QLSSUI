@@ -31,7 +31,7 @@ export function normalizeApiError(error: HttpErrorResponse): HttpErrorResponse {
     headers: error.headers,
     status: error.status,
     statusText: error.statusText,
-    url: error.url || undefined
+    url: error.url || undefined,
   });
 }
 

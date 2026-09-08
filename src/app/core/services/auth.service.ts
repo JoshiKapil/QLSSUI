@@ -8,7 +8,7 @@ import { ApiResponse, unwrapApiResponse } from '../models/api-response.model';
 import { AuthResponse, ChangePasswordRequest, LoginRequest, RegisterRequest, User } from '../models/auth.models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private readonly apiUrl = `${environment.apiBaseUrl}/Auth`;
@@ -23,14 +23,17 @@ export class AuthService {
 
   currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {
     this.clearLegacyLocalAuth();
   }
 
   login(request: LoginRequest): Observable<AuthResponse> {
     return this.http.post<ApiResponse<AuthResponse> | AuthResponse>(`${this.apiUrl}/login`, request).pipe(
       map((response) => unwrapApiResponse<AuthResponse>(response)),
-      tap((response) => this.storeSession(response, request.rememberMe))
+      tap((response) => this.storeSession(response, request.rememberMe)),
     );
   }
 
@@ -51,15 +54,15 @@ export class AuthService {
         tap((response) => this.storeRefreshedSession(response)),
         map((response) => response.token),
         finalize(() => (this.refreshRequest$ = null)),
-        shareReplay({ bufferSize: 1, refCount: false })
+        shareReplay({ bufferSize: 1, refCount: false }),
       );
 
     return this.refreshRequest$;
   }
   register(request: RegisterRequest): Observable<User> {
-    return this.http.post<ApiResponse<User> | User>(`${this.apiUrl}/register`, request).pipe(
-      map((response) => unwrapApiResponse<User>(response))
-    );
+    return this.http
+      .post<ApiResponse<User> | User>(`${this.apiUrl}/register`, request)
+      .pipe(map((response) => unwrapApiResponse<User>(response)));
   }
 
   forgotPassword(email: string): Observable<void> {
@@ -77,14 +80,14 @@ export class AuthService {
   updateProfile(profile: Partial<User>): Observable<User> {
     return this.http.put<ApiResponse<User> | User>(`${this.userApiUrl}/profile`, profile).pipe(
       map((response) => unwrapApiResponse<User>(response)),
-      tap((user) => this.updateStoredUser(user))
+      tap((user) => this.updateStoredUser(user)),
     );
   }
 
   emailExists(email: string): Observable<boolean> {
-    return this.http.get<ApiResponse<boolean> | boolean>(`${this.apiUrl}/email-exists`, { params: { email } }).pipe(
-      map((response) => unwrapApiResponse<boolean>(response))
-    );
+    return this.http
+      .get<ApiResponse<boolean> | boolean>(`${this.apiUrl}/email-exists`, { params: { email } })
+      .pipe(map((response) => unwrapApiResponse<boolean>(response)));
   }
 
   logout(): void {
@@ -236,6 +239,4 @@ export class AuthService {
     sessionStorage.removeItem(this.refreshExpiryKey);
     this.currentUserSubject.next(null);
   }
-
 }
-

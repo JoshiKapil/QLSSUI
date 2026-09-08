@@ -12,7 +12,7 @@ export class SiteInteractionsService {
     @Inject(DOCUMENT) private document: Document,
     rendererFactory: RendererFactory2,
     private zone: NgZone,
-    router: Router
+    router: Router,
   ) {
     this.renderer = rendererFactory.createRenderer(null, null);
     router.events.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd)).subscribe(() => {
@@ -37,7 +37,12 @@ export class SiteInteractionsService {
     });
   }
 
-  private listen(target: EventTarget, event: string, handler: EventListenerOrEventListenerObject, options?: AddEventListenerOptions): void {
+  private listen(
+    target: EventTarget,
+    event: string,
+    handler: EventListenerOrEventListenerObject,
+    options?: AddEventListenerOptions,
+  ): void {
     target.addEventListener(event, handler, options);
     this.cleanup.push(() => target.removeEventListener(event, handler, options));
   }
@@ -45,14 +50,17 @@ export class SiteInteractionsService {
   private initReveal(): void {
     const els = Array.from(this.document.querySelectorAll('.reveal, .svc-card'));
     if (!els.length) return;
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        const el = entry.target as HTMLElement;
-        el.classList.add('active', 'in-view', 'visible');
-        observer.unobserve(el);
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target as HTMLElement;
+          el.classList.add('active', 'in-view', 'visible');
+          observer.unobserve(el);
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' },
+    );
     els.forEach((el) => observer.observe(el));
     this.cleanup.push(() => observer.disconnect());
   }
@@ -74,14 +82,17 @@ export class SiteInteractionsService {
       }, 16);
       this.cleanup.push(() => clearInterval(timer));
     };
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          animate(entry.target as HTMLElement);
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.5 });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            animate(entry.target as HTMLElement);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.5 },
+    );
     counters.forEach((el) => observer.observe(el));
     this.cleanup.push(() => observer.disconnect());
   }
@@ -93,7 +104,10 @@ export class SiteInteractionsService {
     const prev = this.document.getElementById('heroPrev');
     const next = this.document.getElementById('heroNext');
     const carousel = this.document.getElementById('heroCarousel');
-    let current = Math.max(0, slides.findIndex((slide) => slide.classList.contains('active')));
+    let current = Math.max(
+      0,
+      slides.findIndex((slide) => slide.classList.contains('active')),
+    );
     let timer: ReturnType<typeof setInterval> | undefined;
     let touchStartX = 0;
 
@@ -111,25 +125,58 @@ export class SiteInteractionsService {
       dots[current]?.classList.add('active');
       setTimeout(() => triggerText(slides[current]), 50);
     };
-    const stop = () => { if (timer) clearInterval(timer); };
-    const start = () => { stop(); timer = setInterval(() => goTo(current + 1), 5000); };
-    const reset = () => { stop(); start(); };
+    const stop = () => {
+      if (timer) clearInterval(timer);
+    };
+    const start = () => {
+      stop();
+      timer = setInterval(() => goTo(current + 1), 5000);
+    };
+    const reset = () => {
+      stop();
+      start();
+    };
 
     triggerText(slides[current]);
-    if (prev) this.listen(prev, 'click', () => { goTo(current - 1); reset(); });
-    if (next) this.listen(next, 'click', () => { goTo(current + 1); reset(); });
-    dots.forEach((dot, index) => this.listen(dot, 'click', () => { goTo(index); reset(); }));
+    if (prev)
+      this.listen(prev, 'click', () => {
+        goTo(current - 1);
+        reset();
+      });
+    if (next)
+      this.listen(next, 'click', () => {
+        goTo(current + 1);
+        reset();
+      });
+    dots.forEach((dot, index) =>
+      this.listen(dot, 'click', () => {
+        goTo(index);
+        reset();
+      }),
+    );
     if (carousel) {
       this.listen(carousel, 'mouseenter', stop);
       this.listen(carousel, 'mouseleave', start);
-      this.listen(carousel, 'touchstart', ((event: TouchEvent) => { touchStartX = event.touches[0].clientX; }) as EventListener, { passive: true });
-      this.listen(carousel, 'touchend', ((event: TouchEvent) => {
-        const diff = touchStartX - event.changedTouches[0].clientX;
-        if (Math.abs(diff) > 50) {
-          goTo(current + (diff > 0 ? 1 : -1));
-          reset();
-        }
-      }) as EventListener, { passive: true });
+      this.listen(
+        carousel,
+        'touchstart',
+        ((event: TouchEvent) => {
+          touchStartX = event.touches[0].clientX;
+        }) as EventListener,
+        { passive: true },
+      );
+      this.listen(
+        carousel,
+        'touchend',
+        ((event: TouchEvent) => {
+          const diff = touchStartX - event.changedTouches[0].clientX;
+          if (Math.abs(diff) > 50) {
+            goTo(current + (diff > 0 ? 1 : -1));
+            reset();
+          }
+        }) as EventListener,
+        { passive: true },
+      );
     }
     start();
     this.cleanup.push(stop);
@@ -159,7 +206,10 @@ export class SiteInteractionsService {
         const item = button.closest('.faq-item');
         const answer = (button.nextElementSibling || item?.querySelector('.faq-a')) as HTMLElement | null;
         const inner = item?.querySelector<HTMLElement>('.faq-a__inner');
-        const isOpen = button.classList.contains('open') || button.getAttribute('aria-expanded') === 'true' || item?.classList.contains('open');
+        const isOpen =
+          button.classList.contains('open') ||
+          button.getAttribute('aria-expanded') === 'true' ||
+          item?.classList.contains('open');
         this.document.querySelectorAll<HTMLElement>('.faq-item.open').forEach((openItem) => {
           openItem.classList.remove('open');
           openItem.querySelector<HTMLElement>('.faq-q')?.setAttribute('aria-expanded', 'false');
@@ -191,7 +241,9 @@ export class SiteInteractionsService {
     if (grid && logos.length) {
       const reveal = () => {
         if (grid.getBoundingClientRect().top < window.innerHeight - 60) {
-          logos.filter((el) => !el.classList.contains('hidden')).forEach((el, index) => setTimeout(() => el.classList.add('visible'), index * 30));
+          logos
+            .filter((el) => !el.classList.contains('hidden'))
+            .forEach((el, index) => setTimeout(() => el.classList.add('visible'), index * 30));
         }
       };
       this.listen(window, 'scroll', reveal, { passive: true });
@@ -200,7 +252,9 @@ export class SiteInteractionsService {
     this.document.querySelectorAll<HTMLElement>('.filter-btn').forEach((button) => {
       this.listen(button, 'click', () => {
         const filter = button.dataset['filter'] || 'all';
-        this.document.querySelectorAll<HTMLElement>('.filter-btn').forEach((btn) => btn.classList.toggle('active', btn === button));
+        this.document
+          .querySelectorAll<HTMLElement>('.filter-btn')
+          .forEach((btn) => btn.classList.toggle('active', btn === button));
         logos.forEach((logo) => {
           const show = filter === 'all' || logo.dataset['category'] === filter;
           logo.classList.toggle('hidden', !show);
@@ -216,8 +270,12 @@ export class SiteInteractionsService {
         const tabs = button.closest('.ctabs');
         const tab = button.dataset['tab'];
         if (!tabs || !tab) return;
-        tabs.querySelectorAll<HTMLElement>('.ctabs__btn').forEach((btn) => btn.classList.toggle('active', btn === button));
-        tabs.querySelectorAll<HTMLElement>('.ctabs__panel').forEach((panel) => panel.classList.toggle('active', panel.dataset['panel'] === tab));
+        tabs
+          .querySelectorAll<HTMLElement>('.ctabs__btn')
+          .forEach((btn) => btn.classList.toggle('active', btn === button));
+        tabs
+          .querySelectorAll<HTMLElement>('.ctabs__panel')
+          .forEach((panel) => panel.classList.toggle('active', panel.dataset['panel'] === tab));
       });
     });
   }
@@ -230,14 +288,18 @@ export class SiteInteractionsService {
     const setName = () => {
       hint.textContent = input.files?.length ? input.files[0].name : 'PDF, DOC, DOCX up to 10MB';
     };
-    ['dragenter', 'dragover'].forEach((eventName) => this.listen(zone, eventName, (event) => {
-      event.preventDefault();
-      zone.classList.add('dragging');
-    }));
-    ['dragleave', 'drop'].forEach((eventName) => this.listen(zone, eventName, (event) => {
-      event.preventDefault();
-      zone.classList.remove('dragging');
-    }));
+    ['dragenter', 'dragover'].forEach((eventName) =>
+      this.listen(zone, eventName, (event) => {
+        event.preventDefault();
+        zone.classList.add('dragging');
+      }),
+    );
+    ['dragleave', 'drop'].forEach((eventName) =>
+      this.listen(zone, eventName, (event) => {
+        event.preventDefault();
+        zone.classList.remove('dragging');
+      }),
+    );
     this.listen(zone, 'drop', ((event: DragEvent) => {
       if (event.dataTransfer?.files.length) {
         input.files = event.dataTransfer.files;
@@ -375,7 +437,8 @@ export class SiteInteractionsService {
     this.renderer.setAttribute(link, 'rel', 'noopener noreferrer');
     this.renderer.setAttribute(link, 'aria-label', 'Chat with QLSS on WhatsApp');
     this.renderer.addClass(link, 'wa-btn');
-    link.innerHTML = '<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="14" fill="#25D366"/><path fill="#fff" d="M22.6 9.4A9.5 9.5 0 0 0 7.3 20.9L6 26l5.3-1.4a9.5 9.5 0 0 0 4.7 1.2 9.5 9.5 0 0 0 9.5-9.5 9.5 9.5 0 0 0-2.9-6.9zm-6.6 14.6a7.9 7.9 0 0 1-4-1.1l-.3-.2-3.1.8.8-3-.2-.3a7.9 7.9 0 0 1-1.2-4.2 7.9 7.9 0 0 1 7.9-7.9 7.9 7.9 0 0 1 7.9 7.9 7.9 7.9 0 0 1-7.8 8zm4.3-5.9c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8.9-.1.2-.3.2-.5.1a6.4 6.4 0 0 1-1.9-1.2 7 7 0 0 1-1.3-1.6c-.1-.2 0-.4.1-.5l.4-.4.2-.4v-.4l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3a2.8 2.8 0 0 0-.9 2.1 5 5 0 0 0 1 2.6 11.4 11.4 0 0 0 4.3 3.8c.6.3 1.1.4 1.4.5.6.2 1.1.2 1.6.1.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1-.1-.2-.3-.2-.6-.3z"/></svg>';
+    link.innerHTML =
+      '<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="14" fill="#25D366"/><path fill="#fff" d="M22.6 9.4A9.5 9.5 0 0 0 7.3 20.9L6 26l5.3-1.4a9.5 9.5 0 0 0 4.7 1.2 9.5 9.5 0 0 0 9.5-9.5 9.5 9.5 0 0 0-2.9-6.9zm-6.6 14.6a7.9 7.9 0 0 1-4-1.1l-.3-.2-3.1.8.8-3-.2-.3a7.9 7.9 0 0 1-1.2-4.2 7.9 7.9 0 0 1 7.9-7.9 7.9 7.9 0 0 1 7.9 7.9 7.9 7.9 0 0 1-7.8 8zm4.3-5.9c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8.9-.1.2-.3.2-.5.1a6.4 6.4 0 0 1-1.9-1.2 7 7 0 0 1-1.3-1.6c-.1-.2 0-.4.1-.5l.4-.4.2-.4v-.4l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3a2.8 2.8 0 0 0-.9 2.1 5 5 0 0 0 1 2.6 11.4 11.4 0 0 0 4.3 3.8c.6.3 1.1.4 1.4.5.6.2 1.1.2 1.6.1.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1-.1-.2-.3-.2-.6-.3z"/></svg>';
     this.renderer.appendChild(wrap, tip);
     this.renderer.appendChild(wrap, link);
     this.renderer.appendChild(this.document.body, wrap);

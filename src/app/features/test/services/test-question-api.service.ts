@@ -1,7 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiClientService } from '../../../core/services/api-client.service';
-import { AffectedRowsDto, BulkMapQuestionsRequest, MapQuestionRequest, QuestionDto, UnmapQuestionRequest } from './test-api.models';
+import {
+  AffectedRowsDto,
+  BulkMapQuestionsRequest,
+  MapQuestionRequest,
+  QuestionDto,
+  UnmapQuestionRequest,
+} from './test-api.models';
 import { invalidServerId, isServerNumericId, normalizeServerId } from './server-id.util';
 
 @Injectable({ providedIn: 'root' })
@@ -12,7 +18,11 @@ export class TestQuestionApiService {
     const serverTestId = normalizeServerId(request.testId);
     const serverQuestionId = normalizeServerId(request.questionId);
     return serverTestId && serverQuestionId
-      ? this.api.post<unknown>('TestQuestion/map', { ...request, testId: Number(serverTestId), questionId: serverQuestionId })
+      ? this.api.post<unknown>('TestQuestion/map', {
+          ...request,
+          testId: Number(serverTestId),
+          questionId: serverQuestionId,
+        })
       : invalidServerId<unknown>('testId/questionId', `${request.testId}/${request.questionId}`);
   }
 

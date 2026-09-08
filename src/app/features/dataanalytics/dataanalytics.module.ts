@@ -5,6 +5,6 @@ import { DataanalyticsRoutingModule } from './dataanalytics-routing.module';
 
 @NgModule({
   declarations: [DataanalyticsComponent],
-  imports: [SharedModule, DataanalyticsRoutingModule]
+  imports: [SharedModule, DataanalyticsRoutingModule],
 })
 export class DataanalyticsModule {}

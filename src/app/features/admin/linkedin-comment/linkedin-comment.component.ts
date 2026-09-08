@@ -7,7 +7,7 @@ import { NotifierService } from '../../../core/services/notifier.service';
 @Component({
   selector: 'app-linkedin-comment-admin',
   templateUrl: './linkedin-comment.component.html',
-  styleUrls: ['./linkedin-comment.component.scss']
+  styleUrls: ['./linkedin-comment.component.scss'],
 })
 export class LinkedinCommentComponent implements OnInit {
   readonly title = 'LinkedInComment';
@@ -24,7 +24,7 @@ export class LinkedinCommentComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private notifier: NotifierService,
-    private linkedInCommentService: LinkedInCommentService
+    private linkedInCommentService: LinkedInCommentService,
   ) {}
 
   ngOnInit(): void {
@@ -38,7 +38,7 @@ export class LinkedinCommentComponent implements OnInit {
       postId: ['', Validators.required],
       commentText: ['', Validators.required],
       createdDate: ['', Validators.required],
-      author: ['', Validators.required]
+      author: ['', Validators.required],
     });
   }
 
@@ -46,7 +46,7 @@ export class LinkedinCommentComponent implements OnInit {
     this.isLoading = true;
     this.linkedInCommentService.getAll().subscribe({
       next: (records) => (this.records = records || []),
-      complete: () => (this.isLoading = false)
+      complete: () => (this.isLoading = false),
     });
   }
 
@@ -54,7 +54,7 @@ export class LinkedinCommentComponent implements OnInit {
     this.isLoading = true;
     this.linkedInCommentService.search(this.searchTerm).subscribe({
       next: (records) => (this.records = records || []),
-      complete: () => (this.isLoading = false)
+      complete: () => (this.isLoading = false),
     });
   }
 
@@ -83,7 +83,7 @@ export class LinkedinCommentComponent implements OnInit {
         this.resetForm();
         this.loadRecords();
       },
-      complete: () => (this.isSaving = false)
+      complete: () => (this.isSaving = false),
     });
   }
 

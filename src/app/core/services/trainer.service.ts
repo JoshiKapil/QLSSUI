@@ -1,12 +1,12 @@
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { Trainer } from "../models/trainer.model";
-import { AdminManagementService } from "./admin-management.service";
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Trainer } from '../models/trainer.model';
+import { AdminManagementService } from './admin-management.service';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class TrainerService {
-  private readonly endpoint = "trainer";
-  private readonly idKey = "trainerId";
+  private readonly endpoint = 'trainer';
+  private readonly idKey = 'trainerId';
 
   constructor(private adminService: AdminManagementService) {}
 
@@ -15,19 +15,11 @@ export class TrainerService {
   }
 
   getById(trainerId: number | string): Observable<Trainer> {
-    return this.adminService.getById<Trainer>(
-      this.endpoint,
-      this.idKey,
-      trainerId,
-    );
+    return this.adminService.getById<Trainer>(this.endpoint, this.idKey, trainerId);
   }
 
   search(query: string): Observable<Trainer[]> {
-    return this.adminService.search<Trainer>(
-      this.endpoint,
-      ["name", "mobile", "email"],
-      query,
-    );
+    return this.adminService.search<Trainer>(this.endpoint, ['name', 'mobile', 'email'], query);
   }
 
   save(record: Trainer): Observable<Trainer> {

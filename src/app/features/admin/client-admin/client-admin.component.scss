@@ -64,11 +64,7 @@
 .client-search-option:hover,
 .client-search-option:focus-visible {
   outline: none;
-  background: linear-gradient(
-    90deg,
-    rgba(37, 99, 235, 0.12),
-    rgba(14, 165, 233, 0.07)
-  );
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.12), rgba(14, 165, 233, 0.07));
   color: #1d4ed8;
 }
 .client-search-empty {
@@ -91,7 +87,7 @@
   background: #fee2e2;
   color: #991b1b;
 }
-.row-actions { 
+.row-actions {
   flex-wrap: wrap;
   gap: 8px;
 }
@@ -121,7 +117,9 @@
   align-items: center;
 }
 
-.city-manager__entry input { flex: 1; }
+.city-manager__entry input {
+  flex: 1;
+}
 
 .city-manager__list {
   display: grid;
@@ -161,7 +159,9 @@
   white-space: nowrap;
 }
 
-.client-pagination__summary strong { color: #1e293b; }
+.client-pagination__summary strong {
+  color: #1e293b;
+}
 
 .client-pagination__dot {
   width: 8px;
@@ -193,7 +193,10 @@
   color: #334155;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 .client-pagination__page:hover,
@@ -239,8 +242,14 @@
   outline: none;
 }
 
-.client-pagination__tools select { padding: 0 0.45rem; }
-.client-pagination__jump input { width: 58px; padding: 0 0.5rem; text-align: center; }
+.client-pagination__tools select {
+  padding: 0 0.45rem;
+}
+.client-pagination__jump input {
+  width: 58px;
+  padding: 0 0.5rem;
+  text-align: center;
+}
 
 .client-pagination__jump button {
   height: 36px;
@@ -254,12 +263,20 @@
 }
 
 @media (max-width: 1100px) {
-  .client-pagination { grid-template-columns: 1fr; }
+  .client-pagination {
+    grid-template-columns: 1fr;
+  }
   .client-pagination__summary,
-  .client-pagination__tools { justify-content: center; }
+  .client-pagination__tools {
+    justify-content: center;
+  }
 }
 
 @media (max-width: 600px) {
-  .client-pagination__tools { flex-wrap: wrap; }
-  .client-pagination__summary { white-space: normal; }
+  .client-pagination__tools {
+    flex-wrap: wrap;
+  }
+  .client-pagination__summary {
+    white-space: normal;
+  }
 }

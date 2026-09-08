@@ -5,11 +5,13 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   selector: 'pm-search-select',
   templateUrl: './pm-search-select.component.html',
   styleUrls: ['./pm-search-select.component.scss'],
-  providers: [{
-    provide: NG_VALUE_ACCESSOR,
-    useExisting: forwardRef(() => PmSearchSelectComponent),
-    multi: true
-  }]
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => PmSearchSelectComponent),
+      multi: true,
+    },
+  ],
 })
 export class PmSearchSelectComponent implements ControlValueAccessor {
   @Input() options: any[] = [];
@@ -32,10 +34,14 @@ export class PmSearchSelectComponent implements ControlValueAccessor {
   constructor(private elementRef: ElementRef<HTMLElement>) {}
 
   @HostBinding('class.dropdown-open')
-  get dropdownOpen(): boolean { return this.open; }
+  get dropdownOpen(): boolean {
+    return this.open;
+  }
 
   @HostBinding('class.drop-up')
-  get opensUpward(): boolean { return this.open && this.dropUp; }
+  get opensUpward(): boolean {
+    return this.open && this.dropUp;
+  }
 
   @HostListener('document:click', ['$event.target'])
   closeWhenClickingOutside(target: EventTarget | null): void {
@@ -49,22 +55,21 @@ export class PmSearchSelectComponent implements ControlValueAccessor {
     this.open = false;
   }
 
-
   get filteredOptions(): any[] {
     const search = this.search.trim().toLowerCase();
     if (!search) return this.options || [];
-    return (this.options || []).filter(option =>
-      `${this.label(option)} ${this.detail(option)}`.toLowerCase().includes(search)
+    return (this.options || []).filter((option) =>
+      `${this.label(option)} ${this.detail(option)}`.toLowerCase().includes(search),
     );
   }
 
   get selectedOptions(): any[] {
-    const values = this.multiple ? (this.value || []) : [this.value];
-    return (this.options || []).filter(option => values.includes(this.optionValue(option)));
+    const values = this.multiple ? this.value || [] : [this.value];
+    return (this.options || []).filter((option) => values.includes(this.optionValue(option)));
   }
 
   get displayText(): string {
-    const labels = this.selectedOptions.map(option => this.label(option));
+    const labels = this.selectedOptions.map((option) => this.label(option));
     return labels.length ? labels.join(', ') : this.placeholder;
   }
 
@@ -72,9 +77,15 @@ export class PmSearchSelectComponent implements ControlValueAccessor {
     this.value = this.multiple ? (Array.isArray(value) ? value : []) : value;
   }
 
-  registerOnChange(fn: (value: any) => void): void { this.onChange = fn; }
-  registerOnTouched(fn: () => void): void { this.onTouched = fn; }
-  setDisabledState(disabled: boolean): void { this.disabled = disabled; }
+  registerOnChange(fn: (value: any) => void): void {
+    this.onChange = fn;
+  }
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+  setDisabledState(disabled: boolean): void {
+    this.disabled = disabled;
+  }
 
   toggleDropdown(): void {
     if (this.disabled) return;
@@ -91,7 +102,7 @@ export class PmSearchSelectComponent implements ControlValueAccessor {
     if (this.multiple) {
       const values = [...(this.value || [])];
       this.value = values.includes(optionValue)
-        ? values.filter(value => value !== optionValue)
+        ? values.filter((value) => value !== optionValue)
         : [...values, optionValue];
     } else {
       this.value = optionValue;
@@ -110,8 +121,13 @@ export class PmSearchSelectComponent implements ControlValueAccessor {
     return this.selectedOptions.includes(option);
   }
 
-  label(option: any): string { return String(option?.[this.labelKey] ?? ''); }
-  detail(option: any): string { return this.detailKey ? String(option?.[this.detailKey] ?? '') : ''; }
-  private optionValue(option: any): any { return option?.[this.valueKey]; }
+  label(option: any): string {
+    return String(option?.[this.labelKey] ?? '');
+  }
+  detail(option: any): string {
+    return this.detailKey ? String(option?.[this.detailKey] ?? '') : '';
+  }
+  private optionValue(option: any): any {
+    return option?.[this.valueKey];
+  }
 }
-

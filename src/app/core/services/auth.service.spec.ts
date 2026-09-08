@@ -18,7 +18,7 @@ describe('AuthService', () => {
     address: 'Main Street',
     role: 'Admin',
     createdAt: '2026-01-01',
-    updatedAt: '2026-01-01'
+    updatedAt: '2026-01-01',
   };
 
   beforeEach(() => {
@@ -28,10 +28,7 @@ describe('AuthService', () => {
 
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [
-        AuthService,
-        { provide: Router, useValue: router }
-      ]
+      providers: [AuthService, { provide: Router, useValue: router }],
     });
     service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -53,7 +50,7 @@ describe('AuthService', () => {
     const response: AuthResponse = {
       token: 'token-1',
       expiresAt: new Date(Date.now() + 100000).toISOString(),
-      user
+      user,
     };
 
     service.login({ email: user.email, password: 'abc123', rememberMe: true }).subscribe((result) => {
@@ -74,7 +71,7 @@ describe('AuthService', () => {
     let status = 0;
 
     service.login({ email: 'ADMIN@example.com', password: 'abc123', rememberMe: false }).subscribe({
-      error: (error) => status = error.status
+      error: (error) => (status = error.status),
     });
 
     httpMock.expectOne(`${environment.apiBaseUrl}/Auth/login`).flush(null, { status: 500, statusText: 'Server Error' });
@@ -91,7 +88,7 @@ describe('AuthService', () => {
       address: user.address,
       role: 'User',
       createdAt: user.createdAt,
-      updatedAt: user.updatedAt
+      updatedAt: user.updatedAt,
     };
 
     service.register(request).subscribe((result) => expect(result).toEqual({ ...user, role: 'User' }));
@@ -102,7 +99,6 @@ describe('AuthService', () => {
     req.flush({ ...user, role: 'User' });
 
     expect(localStorage.getItem('qlss_registered_users')).toBeNull();
-
   });
 
   it('rotates and stores refresh tokens through the API', () => {
@@ -111,7 +107,7 @@ describe('AuthService', () => {
       expiresAtUtc: new Date(Date.now() + 60_000).toISOString(),
       refreshToken: 'refresh-token-2',
       refreshTokenExpiresAtUtc: new Date(Date.now() + 86_400_000).toISOString(),
-      user
+      user,
     };
     localStorage.setItem('qlss_auth_token', 'access-token-1');
     localStorage.setItem('qlss_auth_refresh_token', 'refresh-token-1');

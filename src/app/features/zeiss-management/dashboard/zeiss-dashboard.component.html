@@ -1,0 +1,120 @@
+<section class="page">
+  <header>
+    <div>
+      <small>ZEISS MODULE</small>
+      <h1>Dashboard</h1>
+      <p>Same PM-style command view, adapted to Zeiss product sales, stock, PI/TI and customer acknowledgement.</p>
+    </div>
+    <button class="btn primary" (click)="load()">
+      <i class="fas fa-rotate"></i>
+      Refresh
+    </button>
+  </header>
+  <div *ngIf="error" class="errorBox">{{ error }}</div>
+  <ng-container *ngIf="data as d">
+    <div class="cards">
+      <article>
+        <span>Instruments</span>
+        <strong>{{ d.totalInstruments }}</strong>
+        <small>{{ d.totalStockQuantity }} stock qty</small>
+      </article>
+      <article>
+        <span>Customers</span>
+        <strong>{{ d.totalCustomers }}</strong>
+      </article>
+      <article>
+        <span>Open Enquiries</span>
+        <strong>{{ d.openEnquiries }}</strong>
+      </article>
+      <article>
+        <span>Pending Quotations</span>
+        <strong>{{ d.quotationsPending }}</strong>
+      </article>
+      <article>
+        <span>Active Sales</span>
+        <strong>{{ d.activeSales }}</strong>
+      </article>
+      <article>
+        <span>Pipeline</span>
+        <strong>₹ {{ d.pipelineValue | number: '1.0-0' }}</strong>
+      </article>
+      <article>
+        <span>PI Pending</span>
+        <strong>{{ d.piPending }}</strong>
+      </article>
+      <article>
+        <span>Payment Pending</span>
+        <strong>{{ d.paymentPending }}</strong>
+      </article>
+      <article>
+        <span>Delivery Pending</span>
+        <strong>{{ d.deliveryPending }}</strong>
+      </article>
+      <article>
+        <span>Acknowledgement</span>
+        <strong>{{ d.acknowledgementPending }}</strong>
+      </article>
+      <article class="warn">
+        <span>Low Stock (&lt; 5)</span>
+        <strong>{{ d.lowStockItems }}</strong>
+      </article>
+      <article class="warn">
+        <span>Non-Moving 15 Days</span>
+        <strong>{{ d.nonMovingItems }}</strong>
+      </article>
+    </div>
+    <div class="grid">
+      <article class="panel">
+        <h3>Sales Stage Summary</h3>
+        <div class="row" *ngFor="let x of d.stageCounts">
+          <span>{{ x.stage }}</span>
+          <b>{{ x.count }}</b>
+        </div>
+        <p *ngIf="!d.stageCounts.length">No confirmed sales yet.</p>
+      </article>
+      <article class="panel">
+        <h3>Stock Attention</h3>
+        <div class="row" *ngFor="let x of d.lowStock">
+          <div>
+            <strong>{{ x.partDescription }}</strong>
+            <small>{{ x.partNumber }}</small>
+          </div>
+          <b class="stock-low">{{ x.currentQuantity }}</b>
+        </div>
+        <p *ngIf="!d.lowStock.length">No low-stock items.</p>
+      </article>
+    </div>
+    <article class="panel table">
+      <h3>Recent Confirmed Sales</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Enquiry</th>
+            <th>Quotation</th>
+            <th>Customer</th>
+            <th>Stage</th>
+            <th>Value</th>
+            <th>PO</th>
+            <th>PI</th>
+            <th>TI</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let x of d.recentSales">
+            <td>{{ x.enquiryNo }}</td>
+            <td>{{ x.quotationNo }}</td>
+            <td>{{ x.customerName }}</td>
+            <td>
+              <span class="stage">{{ x.currentStage }}</span>
+            </td>
+            <td>₹ {{ x.quoteValue | number: '1.2-2' }}</td>
+            <td>{{ x.clientPoNo || '-' }}</td>
+            <td>{{ x.piNo || '-' }}</td>
+            <td>{{ x.tiNo || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p *ngIf="!d.recentSales.length">Confirmed sales will appear here after quotation confirmation.</p>
+    </article>
+  </ng-container>
+</section>

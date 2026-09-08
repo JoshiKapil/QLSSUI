@@ -20,7 +20,7 @@
 //    --transition all 0.3s ease
 // ================================================================
 
-@use "../utilities/breakpoints" as *;
+@use '../utilities/breakpoints' as *;
 
 // ================================================================
 // KEYFRAMES
@@ -291,27 +291,27 @@
   &__bg {
     position: absolute;
     inset: 0;
-    background-image: url("../../assets/img/opexce.png");
+    background-image: url('../../assets/img/opexce.png');
     background-size: cover;
     background-position: center;
     z-index: 0;
     opacity: 0.2;
   }
 
-    &__bg1 {
+  &__bg1 {
     position: absolute;
     inset: 0;
-    background-image: url("../../assets/img/Sustainability.png");
+    background-image: url('../../assets/img/Sustainability.png');
     background-size: cover;
     background-position: center;
     z-index: 0;
     opacity: 0.2;
   }
 
-    &__bg2{
+  &__bg2 {
     position: absolute;
     inset: 0;
-    background-image: url("../../assets/img/Supply.png");
+    background-image: url('../../assets/img/Supply.png');
     background-size: cover;
     background-position: center;
     z-index: 0;
@@ -341,11 +341,7 @@
     &--1 {
       width: 400px;
       height: 400px;
-      background: radial-gradient(
-        circle,
-        rgba(87, 144, 225, 0.2),
-        transparent 65%
-      );
+      background: radial-gradient(circle, rgba(87, 144, 225, 0.2), transparent 65%);
       top: -100px;
       right: -100px;
       animation-delay: 0s;
@@ -353,11 +349,7 @@
     &--2 {
       width: 250px;
       height: 250px;
-      background: radial-gradient(
-        circle,
-        rgba(206, 225, 252, 0.12),
-        transparent 65%
-      );
+      background: radial-gradient(circle, rgba(206, 225, 252, 0.12), transparent 65%);
       bottom: 10%;
       left: -60px;
       animation-delay: 3s;
@@ -365,11 +357,7 @@
     &--3 {
       width: 160px;
       height: 160px;
-      background: radial-gradient(
-        circle,
-        rgba(131, 170, 227, 0.15),
-        transparent 65%
-      );
+      background: radial-gradient(circle, rgba(131, 170, 227, 0.15), transparent 65%);
       top: 40%;
       right: 20%;
       animation-delay: 5s;
@@ -658,23 +646,14 @@
   &__bg {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      145deg,
-      var(--bg-dark) 0%,
-      #1a2d5a 45%,
-      var(--primary) 100%
-    );
+    background: linear-gradient(145deg, var(--bg-dark) 0%, #1a2d5a 45%, var(--primary) 100%);
     z-index: 0;
 
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       inset: 0;
-      background-image: radial-gradient(
-        circle,
-        rgba(255, 255, 255, 0.03) 1px,
-        transparent 1px
-      );
+      background-image: radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
       background-size: 30px 30px;
     }
   }
@@ -725,7 +704,7 @@
   }
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
@@ -1016,14 +995,10 @@
     z-index: 0;
 
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       inset: 0;
-      background-image: radial-gradient(
-        circle,
-        rgba(255, 255, 255, 0.03) 1px,
-        transparent 1px
-      );
+      background-image: radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
       background-size: 24px 24px;
     }
   }
@@ -1245,28 +1220,20 @@
     z-index: 0;
 
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       inset: 0;
-      background-image: radial-gradient(
-        circle,
-        rgba(255, 255, 255, 0.03) 1px,
-        transparent 1px
-      );
+      background-image: radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
       background-size: 22px 22px;
     }
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       width: 600px;
       height: 600px;
       border-radius: 50%;
-      background: radial-gradient(
-        circle,
-        rgba(206, 225, 252, 0.07),
-        transparent 70%
-      );
+      background: radial-gradient(circle, rgba(206, 225, 252, 0.07), transparent 70%);
       right: -180px;
       top: -280px;
       pointer-events: none;

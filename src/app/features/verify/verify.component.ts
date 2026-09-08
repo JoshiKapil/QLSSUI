@@ -9,7 +9,7 @@ import { CertificationService } from '../../core/services/certification.service'
 @Component({
   selector: 'app-verify',
   templateUrl: './verify.component.html',
-  styleUrls: ['./verify.component.scss']
+  styleUrls: ['./verify.component.scss'],
 })
 export class VerifyComponent implements OnInit, AfterViewInit {
   CertificateNo = '';
@@ -22,12 +22,12 @@ export class VerifyComponent implements OnInit, AfterViewInit {
     private title: Title,
     private meta: Meta,
     private certificationService: CertificationService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {
     this.title.setTitle('Verify Certificate - QLSS Consulting');
     this.meta.updateTag({
       name: 'description',
-      content: 'QLSS Business Consulting services, training, operational excellence and business transformation.'
+      content: 'QLSS Business Consulting services, training, operational excellence and business transformation.',
     });
   }
 
@@ -42,7 +42,7 @@ export class VerifyComponent implements OnInit, AfterViewInit {
     this.interactions.initPage();
   }
 
-  Validate(): void { 
+  Validate(): void {
     this.ValidateFromApi();
   }
 
@@ -58,14 +58,14 @@ export class VerifyComponent implements OnInit, AfterViewInit {
     // Certificates may be entered as either the complete value
     // (for example QLSS/IATF/IA/23011) or only their numeric part.
     const searchNumber = this.getCertificateSearchNumber(certificationNumber);
-  
+
     this.certificationService.getByNumber(searchNumber).subscribe({
       next: (item: CertificationData) => {
         const certificate = {
           ...item,
           UserName: item.name,
           IssuedDate: item.date,
-          TrainingName: item.displayName || item.trainingName || String(item.trainingId)
+          TrainingName: item.displayName || item.trainingName || String(item.trainingId),
         };
         this.UserData = [certificate];
         this.Certificate = true;
@@ -76,30 +76,32 @@ export class VerifyComponent implements OnInit, AfterViewInit {
         this.UserData = [];
         this.Certificate = false;
         this.resultMessage = error.status === 404 ? 'Certificate Not Found.' : 'Unable to verify certificate.';
-      }
+      },
     });
   }
 
   private getCertificateSearchNumber(certificationNumber: string): string {
-    return certificationNumber
-      .split('/')
-      .map((part) => part.trim())
-      .filter(Boolean)
-      .pop() ?? certificationNumber;
+    return (
+      certificationNumber
+        .split('/')
+        .map((part) => part.trim())
+        .filter(Boolean)
+        .pop() ?? certificationNumber
+    );
   }
 
   formatIssuedDate(value: string | null | undefined): string {
-  if (!value) {
-    return '';
+    if (!value) {
+      return '';
+    }
+    // Match format: yyyy-MM-dd or yyyy-MM-dd HH:mm:ss
+    const sqlDatePattern = /^\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}:\d{2})?$/;
+    if (sqlDatePattern.test(value.trim())) {
+      const datePart = value.trim().substring(0, 10);
+      const [year, month, day] = datePart.split('-');
+      return `${day}-${month}-${year}`;
+    }
+    // Keep old descriptive dates as they are
+    return value;
   }
-  // Match format: yyyy-MM-dd or yyyy-MM-dd HH:mm:ss
-  const sqlDatePattern = /^\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}:\d{2})?$/;
-  if (sqlDatePattern.test(value.trim())) {
-    const datePart = value.trim().substring(0, 10);
-    const [year, month, day] = datePart.split('-');
-    return `${day}-${month}-${year}`;
-  }
-  // Keep old descriptive dates as they are
-  return value;
-}
 }

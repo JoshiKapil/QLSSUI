@@ -30,7 +30,9 @@
           <label class="form-field">
             Confirm Password
             <input type="password" formControlName="confirmPassword" />
-            <small *ngIf="form.hasError('passwordMismatch') && form.get('confirmPassword')?.touched">Passwords must match.</small>
+            <small *ngIf="form.hasError('passwordMismatch') && form.get('confirmPassword')?.touched">
+              Passwords must match.
+            </small>
           </label>
 
           <label class="form-field">

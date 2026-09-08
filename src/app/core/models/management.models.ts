@@ -55,4 +55,3 @@ export interface LinkedInCommentRecord {
   createdDate: string;
   author: string;
 }
-

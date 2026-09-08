@@ -1,4 +1,4 @@
-@use "../utilities/breakpoints" as *;
+@use '../utilities/breakpoints' as *;
 
 /* =========================
    NAVBAR BASE
@@ -94,7 +94,10 @@
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.2),
     0 8px 30px rgba(0, 0, 0, 0.25);
-  transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s;
+  transition:
+    opacity 0.35s ease,
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0.35s;
 
   a {
     color: #000;
@@ -105,7 +108,9 @@
     border-radius: 10px;
     font-family: var(--font-body);
     font-weight: 600;
-    transition: color 0.3s ease, transform 0.2s ease;
+    transition:
+      color 0.3s ease,
+      transform 0.2s ease;
     text-wrap: nowrap;
 
     &:hover,
@@ -115,7 +120,7 @@
     }
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       left: 0;
       bottom: -6px;
@@ -151,7 +156,7 @@
 
     // Decorative blob  top right
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       top: -110px;
       right: -90px;
@@ -164,14 +169,14 @@
 
     // Decorative blob  bottom left
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       bottom: -90px;
       left: -70px;
       width: 300px;
       height: 300px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(87, 144, 225, 0.10) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(87, 144, 225, 0.1) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -196,7 +201,7 @@
       max-width: 310px;
       text-align: center;
       color: #1a2a4a;
-      background: rgba(255, 255, 255, 0.80);
+      background: rgba(255, 255, 255, 0.8);
       border: 1.5px solid rgba(47, 124, 232, 0.13);
       border-radius: 50px;
       backdrop-filter: blur(8px);
@@ -214,7 +219,7 @@
       &.active-link {
         color: var(--primary);
         background: rgba(47, 124, 232, 0.09);
-        border-color: rgba(47, 124, 232, 0.30);
+        border-color: rgba(47, 124, 232, 0.3);
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(47, 124, 232, 0.13);
       }
@@ -347,11 +352,13 @@
   box-shadow:
     0 4px 18px rgba(0, 0, 0, 0.14),
     inset 0 1px 0 rgba(255, 255, 255, 1);
-  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
 
   &:hover {
     box-shadow:
-      0 6px 24px rgba(0, 0, 0, 0.20),
+      0 6px 24px rgba(0, 0, 0, 0.2),
       inset 0 1px 0 rgba(255, 255, 255, 1);
     transform: translateY(-1px);
   }
@@ -362,7 +369,9 @@
     background: #1a2a4a;
     border-radius: 3px;
     display: block;
-    transition: transform 0.32s ease, opacity 0.2s ease;
+    transition:
+      transform 0.32s ease,
+      opacity 0.2s ease;
   }
 
   &.active {

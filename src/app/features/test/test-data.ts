@@ -13,12 +13,13 @@ export const TEST_QUESTIONS: TestQuestion[] = [
       { id: 'a', text: 'Fishbone diagram' },
       { id: 'b', text: 'Sales forecast' },
       { id: 'c', text: 'Payroll register' },
-      { id: 'd', text: 'Invoice tracker' }
+      { id: 'd', text: 'Invoice tracker' },
     ],
     correctOptionId: 'a',
-    explanation: 'A fishbone diagram helps teams organize possible causes and trace them back to the likely root cause.',
+    explanation:
+      'A fishbone diagram helps teams organize possible causes and trace them back to the likely root cause.',
     negativeMarks: 0.25,
-    estimatedTimeSeconds: 30
+    estimatedTimeSeconds: 30,
   },
   {
     id: 2,
@@ -34,13 +35,13 @@ export const TEST_QUESTIONS: TestQuestion[] = [
       { id: 'a', text: 'Collecting reliable process performance data' },
       { id: 'b', text: 'Changing all controls immediately' },
       { id: 'c', text: 'Closing the project charter' },
-      { id: 'd', text: 'Preparing a sales presentation' }
+      { id: 'd', text: 'Preparing a sales presentation' },
     ],
     correctOptionId: 'a',
     explanation: 'The Measure phase establishes current performance using dependable data before analysis begins.',
     marks: 1,
     negativeMarks: 0.25,
-    estimatedTimeSeconds: 45
+    estimatedTimeSeconds: 45,
   },
   {
     id: 3,
@@ -55,13 +56,13 @@ export const TEST_QUESTIONS: TestQuestion[] = [
       { id: 'a', text: 'DPMO' },
       { id: 'b', text: 'EBITDA' },
       { id: 'c', text: 'Market share' },
-      { id: 'd', text: 'Inventory value' }
+      { id: 'd', text: 'Inventory value' },
     ],
     correctOptionId: 'a',
     explanation: 'DPMO tracks defects per million opportunities and is useful for comparing defect rates.',
     marks: 2,
     negativeMarks: 0.5,
-    estimatedTimeSeconds: 45
+    estimatedTimeSeconds: 45,
   },
   {
     id: 4,
@@ -76,13 +77,13 @@ export const TEST_QUESTIONS: TestQuestion[] = [
       { id: 'a', text: 'Maintain stable process performance after improvements' },
       { id: 'b', text: 'Increase the number of approvals' },
       { id: 'c', text: 'Replace customer feedback' },
-      { id: 'd', text: 'Remove all measurement activity' }
+      { id: 'd', text: 'Remove all measurement activity' },
     ],
     correctOptionId: 'a',
     explanation: 'A control plan defines checks, owners, and actions that keep the improved process stable.',
     marks: 2,
     negativeMarks: 0.5,
-    estimatedTimeSeconds: 60
+    estimatedTimeSeconds: 60,
   },
   {
     id: 5,
@@ -93,16 +94,27 @@ export const TEST_QUESTIONS: TestQuestion[] = [
     difficulty: 'Easy',
     questionText: 'Which option image best represents waste reduction in a Lean process?',
     options: [
-      { id: 'a', text: 'Streamlined flow', imageUrl: 'assets/tests/images/option-a.jpg', imageAlt: 'Streamlined process flow' },
-      { id: 'b', text: 'Repeated handoffs', imageUrl: 'assets/tests/images/option-b.jpg', imageAlt: 'Repeated handoffs' },
+      {
+        id: 'a',
+        text: 'Streamlined flow',
+        imageUrl: 'assets/tests/images/option-a.jpg',
+        imageAlt: 'Streamlined process flow',
+      },
+      {
+        id: 'b',
+        text: 'Repeated handoffs',
+        imageUrl: 'assets/tests/images/option-b.jpg',
+        imageAlt: 'Repeated handoffs',
+      },
       { id: 'c', text: 'Delayed feedback', imageUrl: 'assets/tests/images/option-c.jpg', imageAlt: 'Delayed feedback' },
-      { id: 'd', text: 'Excess waiting', imageUrl: 'assets/tests/images/option-d.jpg', imageAlt: 'Excess waiting' }
+      { id: 'd', text: 'Excess waiting', imageUrl: 'assets/tests/images/option-d.jpg', imageAlt: 'Excess waiting' },
     ],
     correctOptionId: 'a',
-    explanation: 'Lean waste reduction improves flow by removing delays, rework, excess movement, and unnecessary handoffs.',
+    explanation:
+      'Lean waste reduction improves flow by removing delays, rework, excess movement, and unnecessary handoffs.',
     marks: 1,
     negativeMarks: 0.25,
-    estimatedTimeSeconds: 45
+    estimatedTimeSeconds: 45,
   },
   {
     id: 6,
@@ -116,7 +128,7 @@ export const TEST_QUESTIONS: TestQuestion[] = [
       { id: 'a', text: 'Control chart' },
       { id: 'b', text: 'Organization chart' },
       { id: 'c', text: 'Invoice aging chart' },
-      { id: 'd', text: 'Product catalog' }
+      { id: 'd', text: 'Product catalog' },
     ],
     correctOptionId: 'a',
     explanation: 'A control chart helps teams see whether process variation remains within expected limits.',
@@ -124,7 +136,7 @@ export const TEST_QUESTIONS: TestQuestion[] = [
     explanationImageAlt: 'Control chart explanation',
     marks: 2,
     negativeMarks: 0.5,
-    estimatedTimeSeconds: 60
+    estimatedTimeSeconds: 60,
   },
   {
     id: 7,
@@ -140,13 +152,13 @@ export const TEST_QUESTIONS: TestQuestion[] = [
       { id: 'a', text: 'The step with the longest queue time' },
       { id: 'b', text: 'The step with the newest owner' },
       { id: 'c', text: 'The step nearest the meeting room' },
-      { id: 'd', text: 'The step with the shortest name' }
+      { id: 'd', text: 'The step with the shortest name' },
     ],
     correctOptionId: 'a',
     explanation: 'A long queue time often signals a bottleneck and should be reviewed before changing other steps.',
     marks: 2,
     negativeMarks: 0.5,
-    estimatedTimeSeconds: 60
+    estimatedTimeSeconds: 60,
   },
   {
     id: 8,
@@ -161,13 +173,13 @@ export const TEST_QUESTIONS: TestQuestion[] = [
       { id: 'a', text: 'Define the defect clearly and measure its frequency' },
       { id: 'b', text: 'Skip measurement and implement a random fix' },
       { id: 'c', text: 'Ignore the complaint until the next quarter' },
-      { id: 'd', text: 'Change the project team name' }
+      { id: 'd', text: 'Change the project team name' },
     ],
     correctOptionId: 'a',
     explanation: 'Improvement work starts with a clear defect definition and reliable frequency data.',
     marks: 1,
     negativeMarks: 0.25,
-    estimatedTimeSeconds: 45
+    estimatedTimeSeconds: 45,
   },
   {
     id: 9,
@@ -182,13 +194,13 @@ export const TEST_QUESTIONS: TestQuestion[] = [
       { id: 'a', text: 'Document the control owner and review frequency' },
       { id: 'b', text: 'Remove all audit evidence' },
       { id: 'c', text: 'Delay corrective actions indefinitely' },
-      { id: 'd', text: 'Use verbal updates only' }
+      { id: 'd', text: 'Use verbal updates only' },
     ],
     correctOptionId: 'a',
     explanation: 'Clear ownership and review cadence make compliance controls easier to maintain and verify.',
     marks: 3,
     negativeMarks: 1,
-    estimatedTimeSeconds: 90
+    estimatedTimeSeconds: 90,
   },
   {
     id: 10,
@@ -201,10 +213,20 @@ export const TEST_QUESTIONS: TestQuestion[] = [
     questionImageUrl: 'assets/tests/images/question-3.jpg',
     questionImageAlt: 'Visual workplace reference',
     options: [
-      { id: 'a', text: 'Daily performance board', imageUrl: 'assets/tests/images/option-a.jpg', imageAlt: 'Daily performance board' },
+      {
+        id: 'a',
+        text: 'Daily performance board',
+        imageUrl: 'assets/tests/images/option-a.jpg',
+        imageAlt: 'Daily performance board',
+      },
       { id: 'b', text: 'Blank wall', imageUrl: 'assets/tests/images/option-b.jpg', imageAlt: 'Blank wall' },
-      { id: 'c', text: 'Closed storage cabinet', imageUrl: 'assets/tests/images/option-c.jpg', imageAlt: 'Closed cabinet' },
-      { id: 'd', text: 'Unlabeled files', imageUrl: 'assets/tests/images/option-d.jpg', imageAlt: 'Unlabeled files' }
+      {
+        id: 'c',
+        text: 'Closed storage cabinet',
+        imageUrl: 'assets/tests/images/option-c.jpg',
+        imageAlt: 'Closed cabinet',
+      },
+      { id: 'd', text: 'Unlabeled files', imageUrl: 'assets/tests/images/option-d.jpg', imageAlt: 'Unlabeled files' },
     ],
     correctOptionId: 'a',
     explanation: 'A visual management board makes performance, issues, and actions easy to review at a glance.',
@@ -212,7 +234,7 @@ export const TEST_QUESTIONS: TestQuestion[] = [
     explanationImageAlt: 'Visual management explanation',
     marks: 2,
     negativeMarks: 0.5,
-    estimatedTimeSeconds: 60
+    estimatedTimeSeconds: 60,
   },
   {
     id: 11,
@@ -224,13 +246,13 @@ export const TEST_QUESTIONS: TestQuestion[] = [
     questionText: 'The number 2 is the only even prime number.',
     options: [
       { id: 'true', text: 'True' },
-      { id: 'false', text: 'False' }
+      { id: 'false', text: 'False' },
     ],
     correctOptionId: 'true',
     explanation: 'A prime number has exactly two factors. The number 2 is even and has only 1 and 2 as factors.',
     marks: 1,
     negativeMarks: 0.25,
-    estimatedTimeSeconds: 30
+    estimatedTimeSeconds: 30,
   },
   {
     id: 12,
@@ -244,13 +266,13 @@ export const TEST_QUESTIONS: TestQuestion[] = [
     questionImageAlt: 'Map reference',
     options: [
       { id: 'true', text: 'True' },
-      { id: 'false', text: 'False' }
+      { id: 'false', text: 'False' },
     ],
     correctOptionId: 'true',
     explanation: 'Australia is commonly referred to as both a country and a continent in school geography contexts.',
     marks: 1,
     negativeMarks: 0.25,
-    estimatedTimeSeconds: 30
+    estimatedTimeSeconds: 30,
   },
   {
     id: 13,
@@ -263,13 +285,13 @@ export const TEST_QUESTIONS: TestQuestion[] = [
     audioUrl: 'assets/tests/audio/audio-question-1.mp3',
     options: [
       { id: 'true', text: 'True' },
-      { id: 'false', text: 'False' }
+      { id: 'false', text: 'False' },
     ],
     correctOptionId: 'false',
     explanation: 'Sound needs a material medium such as air, liquid, or solid to travel.',
     marks: 2,
     negativeMarks: 0.5,
-    estimatedTimeSeconds: 45
+    estimatedTimeSeconds: 45,
   },
   {
     id: 14,
@@ -283,13 +305,13 @@ export const TEST_QUESTIONS: TestQuestion[] = [
       { id: 'a', text: 'HTML' },
       { id: 'b', text: 'CSS' },
       { id: 'c', text: 'SQL Server Agent' },
-      { id: 'd', text: 'JavaScript' }
+      { id: 'd', text: 'JavaScript' },
     ],
     correctOptionIds: ['a', 'b', 'd'],
     explanation: 'HTML, CSS, and JavaScript are core browser technologies used to build front-end interfaces.',
     marks: 3,
     negativeMarks: 1,
-    estimatedTimeSeconds: 60
+    estimatedTimeSeconds: 60,
   },
   {
     id: 15,
@@ -303,13 +325,13 @@ export const TEST_QUESTIONS: TestQuestion[] = [
       { id: 'a', text: 'Component card', imageUrl: 'assets/tests/images/option-a.jpg', imageAlt: 'Component card' },
       { id: 'b', text: 'Template block', imageUrl: 'assets/tests/images/option-b.jpg', imageAlt: 'Template block' },
       { id: 'c', text: 'Database backup', imageUrl: 'assets/tests/images/option-c.jpg', imageAlt: 'Database backup' },
-      { id: 'd', text: 'Style module', imageUrl: 'assets/tests/images/option-d.jpg', imageAlt: 'Style module' }
+      { id: 'd', text: 'Style module', imageUrl: 'assets/tests/images/option-d.jpg', imageAlt: 'Style module' },
     ],
     correctOptionIds: ['a', 'b', 'd'],
     explanation: 'Angular UI is commonly composed from components, templates, and styles.',
     marks: 3,
     negativeMarks: 0.5,
-    estimatedTimeSeconds: 75
+    estimatedTimeSeconds: 75,
   },
   {
     id: 16,
@@ -325,13 +347,13 @@ export const TEST_QUESTIONS: TestQuestion[] = [
       { id: 'a', text: 'Use clear route names' },
       { id: 'b', text: 'Validate request models' },
       { id: 'c', text: 'Ignore error responses' },
-      { id: 'd', text: 'Keep controller logic focused' }
+      { id: 'd', text: 'Keep controller logic focused' },
     ],
     correctOptionIds: ['a', 'b', 'd'],
     explanation: 'Readable routes, validation, and focused controller logic make APIs easier to maintain.',
     marks: 5,
     negativeMarks: 1,
-    estimatedTimeSeconds: 120
+    estimatedTimeSeconds: 120,
   },
   {
     id: 17,
@@ -346,7 +368,7 @@ export const TEST_QUESTIONS: TestQuestion[] = [
     explanation: 'An antonym is a word opposite in meaning to another word, such as hot and cold.',
     marks: 2,
     negativeMarks: 0,
-    estimatedTimeSeconds: 60
+    estimatedTimeSeconds: 60,
   },
   {
     id: 18,
@@ -360,7 +382,7 @@ export const TEST_QUESTIONS: TestQuestion[] = [
     explanation: 'This descriptive response requires manual review because many valid answers are possible.',
     marks: 5,
     negativeMarks: 0,
-    estimatedTimeSeconds: 120
+    estimatedTimeSeconds: 120,
   },
   {
     id: 19,
@@ -372,12 +394,13 @@ export const TEST_QUESTIONS: TestQuestion[] = [
     questionText: 'Study the image and describe the pattern you observe in one or two sentences.',
     questionImageUrl: 'assets/tests/images/question-3.jpg',
     questionImageAlt: 'Pattern observation prompt',
-    sampleAnswer: 'The pattern repeats visual elements in a structured sequence and can be described by position and grouping.',
+    sampleAnswer:
+      'The pattern repeats visual elements in a structured sequence and can be described by position and grouping.',
     explanation: 'Image-based descriptive answers are marked manually to account for wording differences.',
     explanationImageUrl: 'assets/tests/images/explanation-1.jpg',
     marks: 5,
     negativeMarks: 0,
-    estimatedTimeSeconds: 120
+    estimatedTimeSeconds: 120,
   },
   {
     id: 20,
@@ -386,20 +409,22 @@ export const TEST_QUESTIONS: TestQuestion[] = [
     subject: 'SQL Server',
     topic: 'Data Integrity',
     difficulty: 'Hard',
-    questionText: 'Use the comprehensive mixed prompt and select all SQL Server features that help maintain data integrity.',
+    questionText:
+      'Use the comprehensive mixed prompt and select all SQL Server features that help maintain data integrity.',
     questionImageUrl: 'assets/tests/images/question-2.jpg',
     videoUrl: 'assets/tests/video/video-question-1.mp4',
     options: [
       { id: 'a', text: 'Primary keys' },
       { id: 'b', text: 'Foreign keys' },
       { id: 'c', text: 'Check constraints' },
-      { id: 'd', text: 'Unrestricted duplicate rows' }
+      { id: 'd', text: 'Unrestricted duplicate rows' },
     ],
     correctOptionIds: ['a', 'b', 'c'],
-    explanation: 'Primary keys, foreign keys, and check constraints are common SQL Server tools for enforcing data integrity.',
+    explanation:
+      'Primary keys, foreign keys, and check constraints are common SQL Server tools for enforcing data integrity.',
     explanationImageUrl: 'assets/tests/images/explanation-2.jpg',
     marks: 5,
     negativeMarks: 1,
-    estimatedTimeSeconds: 120
-  }
+    estimatedTimeSeconds: 120,
+  },
 ];

@@ -24,8 +24,8 @@ describe('RegisterComponent', () => {
       providers: [
         { provide: AuthService, useValue: authService },
         { provide: NotifierService, useValue: notifier },
-        { provide: Router, useValue: router }
-      ]
+        { provide: Router, useValue: router },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RegisterComponent);
@@ -49,7 +49,7 @@ describe('RegisterComponent', () => {
       confirmPassword: 'abc123',
       phone: '9876543210',
       address: 'Main Street',
-      role: 'User'
+      role: 'User',
     });
 
     component.submit();
@@ -68,7 +68,7 @@ describe('RegisterComponent', () => {
       confirmPassword: 'abc123',
       phone: '9876543210',
       address: 'Main Street',
-      role: 'User'
+      role: 'User',
     });
 
     component.submit();

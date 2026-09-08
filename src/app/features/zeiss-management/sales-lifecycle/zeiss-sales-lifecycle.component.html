@@ -1,0 +1,216 @@
+<section class="page">
+  <header>
+    <div>
+      <small>PRIMARY FLOW</small>
+      <h1>Sales Lifecycle Tracker</h1>
+      <p>
+        This is the fulfilment tracker after client confirms the quotation — not the enquiry/quotation screen. Vendor ID
+        → Client PO → PI → Payment → Delivery → Client Acknowledgement → Tax Invoice → Close.
+      </p>
+    </div>
+  </header>
+
+  <div class="split">
+    <article class="panel listPane">
+      <app-list-pager [compact]="true" [page]="lifecyclesPage" (changed)="reloadlifecyclesPage()"></app-list-pager>
+      <button
+        class="listRow"
+        *ngFor="let x of filtered"
+        [class.active]="selected?.lifecycleId === x.lifecycleId"
+        (click)="select(x)"
+      >
+        <div>
+          <strong>{{ x.enquiryNo }}</strong>
+          <span>{{ x.customerName }}</span>
+        </div>
+        <small>{{ x.quotationNo }}</small>
+        <span class="stage">{{ x.currentStage }}</span>
+      </button>
+    </article>
+    <article class="panel" *ngIf="selected as x">
+      <div class="detailHead">
+        <div>
+          <small>{{ x.quotationNo }}</small>
+          <h2>{{ x.customerName }}</h2>
+          <p>{{ x.enquiryNo }} · ₹ {{ x.quoteValue | number: '1.2-2' }}</p>
+        </div>
+        <div class="command">
+          <button class="btn secondary" (click)="openEdit()">Vendor / PO / Payment</button>
+          <button class="btn primary" [disabled]="!x.paymentReceivedDate || !!x.deliveryDate" (click)="openDelivery()">
+            Post Delivery
+          </button>
+          <button class="btn success" [disabled]="!x.deliveryDate || x.acknowledgementReceived" (click)="openAck()">
+            Client Acknowledgement
+          </button>
+        </div>
+      </div>
+      <div class="flow">
+        <div *ngFor="let s of stages" [class.current]="s === x.currentStage" [class.done]="x.currentStage === s">
+          <span></span>
+          <small>{{ s }}</small>
+        </div>
+      </div>
+      <div class="facts">
+        <div>
+          <small>Client Confirmation</small>
+          <b>{{ x.clientConfirmedOn | date: 'dd-MMM-yyyy' }}</b>
+        </div>
+        <div>
+          <small>Vendor ID</small>
+          <b>{{ x.vendorCode || 'Pending' }}</b>
+        </div>
+        <div>
+          <small>Client PO</small>
+          <b>{{ x.clientPoNo || 'Pending' }}</b>
+          <span>{{ x.poDate | date: 'dd-MMM-yyyy' }}</span>
+        </div>
+        <div>
+          <small>PI</small>
+          <b>{{ x.piNo || 'Pending' }}</b>
+        </div>
+        <div>
+          <small>Payment</small>
+          <b>{{ x.paymentStatus || 'Pending' }}</b>
+          <span>{{ x.paymentReceivedDate | date: 'dd-MMM-yyyy' }}</span>
+        </div>
+        <div>
+          <small>Delivery</small>
+          <b>{{ x.deliveryDate ? (x.deliveryDate | date: 'dd-MMM-yyyy') : 'Pending' }}</b>
+        </div>
+        <div>
+          <small>Acknowledgement</small>
+          <b>{{ x.acknowledgementReceived ? 'Received' : 'Pending' }}</b>
+        </div>
+        <div>
+          <small>Tax Invoice</small>
+          <b>{{ x.tiNo || 'Pending' }}</b>
+        </div>
+      </div>
+      <h3>Zeiss Items</h3>
+      <div class="table">
+        <table>
+          <thead>
+            <tr>
+              <th>Part No.</th>
+              <th>Description</th>
+              <th>Qty</th>
+              <th>Unit Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let i of x.items">
+              <td>{{ i.partNumber }}</td>
+              <td>{{ i.partDescription }}</td>
+              <td>{{ i.quantity }}</td>
+              <td>₹ {{ i.unitPrice | number: '1.2-2' }}</td>
+              <td>₹ {{ i.lineTotal | number: '1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="ruleBox">
+        <b>Document rule</b>
+        <span>
+          PI is generated from the Invoices page after Vendor ID + Client PO. Delivery deducts item stock. TI stays
+          blocked until client acknowledgement.
+        </span>
+      </div>
+    </article>
+  </div>
+</section>
+<div class="modal" *ngIf="edit && selected">
+  <div class="dialog" role="dialog" aria-modal="true" aria-label="Quotation and sales form">
+    <header>
+      <h2>Update {{ selected.enquiryNo }}</h2>
+      <button class="btn secondary" (click)="edit = false">Close</button>
+    </header>
+    <div class="form">
+      <label>
+        Vendor ID / Code
+        <input [(ngModel)]="form.vendorCode" />
+      </label>
+      <label>
+        Client PO No.
+        <input [(ngModel)]="form.clientPoNo" />
+      </label>
+      <label>
+        PO Date
+        <input type="date" [(ngModel)]="form.poDate" />
+      </label>
+      <label>
+        Payment Status
+        <select [(ngModel)]="form.paymentStatus">
+          <option>Pending</option>
+          <option>Partial Advance</option>
+          <option>100% Advance</option>
+          <option>Paid Post-Delivery</option>
+        </select>
+      </label>
+      <label>
+        Payment Received Date
+        <input type="date" [(ngModel)]="form.paymentReceivedDate" />
+      </label>
+      <label>
+        Follow-up Call
+        <input type="date" [(ngModel)]="form.followUpCallOn" />
+      </label>
+      <label>
+        Follow-up Mail
+        <input type="date" [(ngModel)]="form.followUpMailOn" />
+      </label>
+      <label class="span4">
+        Remarks
+        <textarea [(ngModel)]="form.remarks"></textarea>
+      </label>
+    </div>
+    <div class="actions"><button [disabled]="saving" class="btn primary" (click)="save()">Save</button></div>
+  </div>
+</div>
+<div class="modal" *ngIf="delivery && selected">
+  <div class="dialog small" role="dialog" aria-modal="true" aria-label="Quotation and sales form">
+    <header>
+      <h2>Deliver Zeiss Items</h2>
+      <button class="btn secondary" (click)="delivery = false">Close</button>
+    </header>
+    <p>Stock will be deducted once only for the quantities shown in this sale.</p>
+    <div class="form">
+      <label>
+        Delivery Date
+        <input type="date" [(ngModel)]="deliveryForm.deliveryDate" />
+      </label>
+      <label>
+        Delivery Mode
+        <input [(ngModel)]="deliveryForm.deliveryMode" />
+      </label>
+      <label class="span4">
+        Remarks
+        <textarea [(ngModel)]="deliveryForm.remarks"></textarea>
+      </label>
+    </div>
+    <div class="actions">
+      <button [disabled]="saving" class="btn primary" (click)="deliver()">Confirm Delivery & Deduct Stock</button>
+    </div>
+  </div>
+</div>
+<div class="modal" *ngIf="ack && selected">
+  <div class="dialog small" role="dialog" aria-modal="true" aria-label="Quotation and sales form">
+    <header>
+      <h2>Client Acknowledgement</h2>
+      <button class="btn secondary" (click)="ack = false">Close</button>
+    </header>
+    <div class="form">
+      <label>
+        Acknowledgement Date
+        <input type="date" [(ngModel)]="ackForm.acknowledgementDate" />
+      </label>
+      <label class="span4">
+        Acknowledgement Remarks
+        <textarea [(ngModel)]="ackForm.remarks"></textarea>
+      </label>
+    </div>
+    <div class="actions">
+      <button [disabled]="saving" class="btn success" (click)="acknowledge()">Save Acknowledgement</button>
+    </div>
+  </div>
+</div>

@@ -1,42 +1,145 @@
 <section class="onb-shell" [ngClass]="themeClass">
   <button class="onb-scrim" *ngIf="menuOpen" (click)="close()" aria-label="Close menu"></button>
+
+  <!-- Aurora Nav mirrors SystemUI behaviour: desktop navigation moves to the top. -->
+  <div class="onb-aurora-bar" aria-label="Employee onboarding top navigation">
+    <div class="onb-aurora-brand">
+      <span><i class="fas fa-user-graduate"></i></span>
+      <div>
+        <strong>QLSS Onboarding</strong>
+        <small>Learn · Validate · Ready</small>
+      </div>
+    </div>
+    <nav class="onb-aurora-nav">
+      <a routerLink="my-learning" routerLinkActive="active">
+        <i class="fas fa-circle-play"></i>
+        My Learning
+      </a>
+      <a *ngIf="isAdmin" routerLink="dashboard" routerLinkActive="active">
+        <i class="fas fa-gauge-high"></i>
+        Dashboard
+      </a>
+      <a *ngIf="isAdmin" routerLink="employees" routerLinkActive="active">
+        <i class="fas fa-users-gear"></i>
+        Employees
+      </a>
+      <a *ngIf="canSetupOnboarding" routerLink="setup-studio" routerLinkActive="active">
+        <i class="fas fa-screwdriver-wrench"></i>
+        Setup Studio
+      </a>
+      <a *ngIf="canSetupOnboarding" routerLink="master-setup" routerLinkActive="active">
+        <i class="fas fa-diagram-project"></i>
+        Master Setup
+      </a>
+      <a *ngIf="isSuperAdmin" routerLink="access-requests" routerLinkActive="active">
+        <i class="fas fa-user-shield"></i>
+        Login Approvals
+      </a>
+      <a routerLink="/workspace/dashboard">
+        <i class="fas fa-briefcase"></i>
+        Projects
+      </a>
+    </nav>
+    <label class="onb-aurora-theme">
+      <i class="fas fa-palette"></i>
+      <select [ngModel]="theme" (ngModelChange)="setTheme($event)" aria-label="Onboarding theme">
+        <option *ngFor="let option of themeOptions" [ngValue]="option.id">{{ option.name }}</option>
+      </select>
+    </label>
+  </div>
+
   <aside class="onb-rail" [class.open]="menuOpen">
     <div class="onb-brand">
       <div class="onb-brand__mark"><i class="fas fa-user-graduate"></i></div>
-      <div><strong>QLSS Onboarding</strong><span>Learn · Validate · Ready</span></div>
-      <button class="onb-close" (click)="close()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="onb-person"><div class="onb-avatar">{{ name.charAt(0) }}</div><div><strong>{{ name }}</strong><span>{{ role }}</span></div></div>
-    <section class="onb-theme" aria-label="Employee Onboarding theme">
-      <div class="onb-theme__head"><div><small>Workspace theme</small><strong>{{ themeName }}</strong></div><i class="fas fa-wand-magic-sparkles"></i></div>
-      <div class="onb-theme__options">
-        <button type="button" *ngFor="let option of themeOptions" [class.active]="theme === option.id" [attr.aria-pressed]="theme === option.id" [attr.title]="option.name + ' - ' + option.description" (click)="setTheme(option.id)">
-          <span class="onb-theme__swatch" [ngClass]="'onb-theme__swatch--' + option.id"></span>
-          <span>{{ option.name }}</span>
-        </button>
+      <div class="onb-brand__copy">
+        <strong>QLSS Onboarding</strong>
+        <span>Learn · Validate · Ready</span>
       </div>
-    </section>
-    <nav>
+      <button class="onb-close" (click)="close()" aria-label="Close menu"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="onb-person">
+      <div class="onb-avatar">{{ name.charAt(0) }}</div>
+      <div>
+        <strong>{{ name }}</strong>
+        <span>{{ role }}</span>
+      </div>
+    </div>
+
+    <label class="onb-theme" aria-label="Employee Onboarding theme">
+      <span class="onb-theme__icon"><i class="fas fa-palette"></i></span>
+      <span class="onb-theme__copy">
+        <small>Workspace theme</small>
+        <strong>{{ themeName }}</strong>
+      </span>
+      <select [ngModel]="theme" (ngModelChange)="setTheme($event)" aria-label="Select onboarding theme">
+        <option *ngFor="let option of themeOptions" [ngValue]="option.id">{{ option.name }}</option>
+      </select>
+    </label>
+
+    <nav class="onb-nav">
       <small>MY INDUCTION</small>
-      <a routerLink="my-learning" routerLinkActive="active" (click)="close()"><i class="fas fa-circle-play"></i><span>My Learning Path</span></a>
+      <a routerLink="my-learning" routerLinkActive="active" (click)="close()">
+        <i class="fas fa-circle-play"></i>
+        <span>My Learning Path</span>
+      </a>
       <ng-container *ngIf="isAdmin">
         <small>ADMIN CONTROL</small>
-        <a routerLink="dashboard" routerLinkActive="active" (click)="close()"><i class="fas fa-gauge-high"></i><span>Onboarding Dashboard</span></a>
-        <a routerLink="employees" routerLinkActive="active" (click)="close()"><i class="fas fa-users-gear"></i><span>Employee Assignment</span></a>
+        <a routerLink="dashboard" routerLinkActive="active" (click)="close()">
+          <i class="fas fa-gauge-high"></i>
+          <span>Onboarding Dashboard</span>
+        </a>
+        <a routerLink="employees" routerLinkActive="active" (click)="close()">
+          <i class="fas fa-users-gear"></i>
+          <span>Employee Assignment</span>
+        </a>
       </ng-container>
-      <!-- FUTURE ADMIN SETUP: canSetupOnboarding can include Admin when approved later. -->
       <ng-container *ngIf="canSetupOnboarding">
         <small>SUPERADMIN SETUP</small>
-        <a routerLink="setup-studio" routerLinkActive="active" (click)="close()"><i class="fas fa-screwdriver-wrench"></i><span>Setup Studio</span><b>SA</b></a>
+        <a routerLink="setup-studio" routerLinkActive="active" (click)="close()">
+          <i class="fas fa-screwdriver-wrench"></i>
+          <span>Setup Studio</span>
+          <b>SA</b>
+        </a>
+        <a routerLink="master-setup" routerLinkActive="active" (click)="close()">
+          <i class="fas fa-diagram-project"></i>
+          <span>Master Setup & Mapping</span>
+          <b>SA</b>
+        </a>
       </ng-container>
-      <a *ngIf="isSuperAdmin" routerLink="access-requests" routerLinkActive="active" (click)="close()"><i class="fas fa-user-shield"></i><span>Login Approvals</span><b>SA</b></a>
+      <a *ngIf="isSuperAdmin" routerLink="access-requests" routerLinkActive="active" (click)="close()">
+        <i class="fas fa-user-shield"></i>
+        <span>Login Approvals</span>
+        <b>SA</b>
+      </a>
       <small>OTHER WORKSPACE</small>
-      <a routerLink="/workspace/dashboard" (click)="close()"><i class="fas fa-diagram-project"></i><span>Project Workspace</span></a>
+      <a routerLink="/workspace/dashboard" (click)="close()">
+        <i class="fas fa-briefcase"></i>
+        <span>Project Workspace</span>
+      </a>
     </nav>
-    <div class="onb-rail-note"><i class="fas fa-shield-heart"></i><div><strong>Mandatory induction</strong><span>Progress and attempts are saved automatically.</span></div></div>
+
+    <div class="onb-rail-note">
+      <i class="fas fa-shield-heart"></i>
+      <div>
+        <strong>Mandatory induction</strong>
+        <span>Progress and attempts are saved automatically.</span>
+      </div>
+    </div>
   </aside>
+
   <main class="onb-main">
-    <div class="onb-mobilebar"><button (click)="menuOpen = !menuOpen"><i class="fas fa-bars"></i> Employee Onboarding</button><span>{{ role }}</span></div>
+    <div class="onb-mobilebar">
+      <button (click)="menuOpen = !menuOpen">
+        <i class="fas fa-bars"></i>
+        <span>Employee Onboarding</span>
+      </button>
+      <label>
+        <select [ngModel]="theme" (ngModelChange)="setTheme($event)" aria-label="Onboarding theme">
+          <option *ngFor="let option of themeOptions" [ngValue]="option.id">{{ option.name }}</option>
+        </select>
+      </label>
+    </div>
     <router-outlet></router-outlet>
   </main>
 </section>

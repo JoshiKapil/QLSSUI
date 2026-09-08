@@ -101,13 +101,15 @@ export class TestApiService {
     const serverTestId = normalizeServerId(testId);
     const serverQuestionId = normalizeServerId(questionId);
     return serverTestId && serverQuestionId
-      ? this.api.delete<null>(`Test/${encodeURIComponent(serverTestId)}/questions/${encodeURIComponent(serverQuestionId)}`)
+      ? this.api.delete<null>(
+          `Test/${encodeURIComponent(serverTestId)}/questions/${encodeURIComponent(serverQuestionId)}`,
+        )
       : invalidServerId<null>('testId/questionId', `${testId}/${questionId}`);
   }
 
   importTests(tests: TestDto[]): Observable<ImportResultDto> {
     return this.api.post<ImportResultDto>('Test/import', {
-      tests: tests.map((test) => this.normalizeTestPayload(test))
+      tests: tests.map((test) => this.normalizeTestPayload(test)),
     });
   }
 
@@ -150,7 +152,7 @@ export class TestApiService {
       updatedAt: String(test.updatedAt ?? new Date().toISOString()),
       mappedQuestionIds: this.toStringArray(test.mappedQuestionIds),
       questionOrder: this.toStringArray(test.questionOrder),
-      questions: test.questions ?? []
+      questions: test.questions ?? [],
     };
   }
 

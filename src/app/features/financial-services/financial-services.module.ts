@@ -5,6 +5,6 @@ import { FinancialServicesRoutingModule } from './financial-services-routing.mod
 
 @NgModule({
   declarations: [FinancialServicesComponent],
-  imports: [SharedModule, FinancialServicesRoutingModule]
+  imports: [SharedModule, FinancialServicesRoutingModule],
 })
 export class FinancialServicesModule {}

@@ -1,0 +1,195 @@
+<section class="certification-form-page">
+  <div class="container certification-form-shell">
+    <div class="certification-form-header">
+      <span class="auth-eyebrow">Ghar 9001</span>
+      <h1>Book Your <span class="heading-highlight">Copy</span></h1>
+      <p>Complete your delivery details, pay securely and submit your payment proof.</p>
+    </div>
+
+    <div class="booking-layout">
+      <aside class="booking-visual" aria-label="Ghar 9001 book preview">
+        <div class="booking-visual__topline">
+          <span><i class="fa-solid fa-book-open" aria-hidden="true"></i> Ghar 9001</span>
+          <span class="booking-visual__badge">Special price</span>
+        </div>
+        <img src="/assets/img/ghar9001.jpg" alt="Ghar 9001 book" />
+        <div class="book-offer">
+          <div>
+            <span class="book-offer__label">Price per copy</span>
+            <strong>&#8377;{{ discountedPricePerCopy }}</strong>
+            <s>&#8377;{{ listPricePerCopy }}</s>
+          </div>
+          <span class="book-offer__saving">Save &#8377;{{ listPricePerCopy - discountedPricePerCopy }}</span>
+        </div>
+        <div class="booking-benefits" aria-label="Booking benefits">
+          <span><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Secure booking</span>
+          <span><i class="fa-solid fa-truck-fast" aria-hidden="true"></i> Doorstep delivery</span>
+        </div>
+      </aside>
+
+      <form class="certification-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="form-intro">
+          <span class="form-intro__icon"><i class="fa-solid fa-box-open" aria-hidden="true"></i></span>
+          <div>
+            <h2>Delivery details</h2>
+            <p>Tell us where we should send your copy.</p>
+          </div>
+          <span class="form-step">Step 1 of 2</span>
+        </div>
+
+        <div class="form-grid">
+          <label class="form-field">
+            Full Name <span class="req">*</span>
+            <input type="text" formControlName="name" maxlength="200" placeholder="Enter full name" autocomplete="name" />
+            <small>{{ fieldError('name', 'Full Name') }}</small>
+          </label>
+
+          <label class="form-field">
+            WhatsApp Number <span class="req">*</span>
+            <input type="tel" formControlName="whatsAppNumber" maxlength="16" placeholder="Enter WhatsApp number" autocomplete="tel" />
+            <small>{{ fieldError('whatsAppNumber', 'WhatsApp Number') }}</small>
+          </label>
+
+          <div class="form-field quantity-field">
+            Quantity <span class="req">*</span>
+            <div class="quantity-stepper">
+              <button type="button" class="quantity-button" (click)="changeQuantity(-1)" [disabled]="quantity === 1" aria-label="Decrease quantity">
+                <i class="fa-solid fa-minus" aria-hidden="true"></i>
+              </button>
+              <input type="number" formControlName="quantity" min="1" aria-label="Quantity" />
+              <button type="button" class="quantity-button" (click)="changeQuantity(1)" aria-label="Increase quantity">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>
+              </button>
+            </div>
+            <small>{{ fieldError('quantity', 'Quantity') }}</small>
+          </div>
+
+          <div class="price-summary" aria-live="polite">
+            <div class="price-summary__heading">
+              <span>Order summary</span>
+              <span class="saving-pill">You save &#8377;{{ savings }}</span>
+            </div>
+            <div class="price-row price-row--muted">
+              <span>Book price (&#8377;{{ listPricePerCopy }} &times; {{ quantity }})</span>
+              <s>&#8377;{{ listTotal }}</s>
+            </div>
+            <div class="price-row">
+              <span>Discounted price (&#8377;{{ discountedPricePerCopy }} &times; {{ quantity }})</span>
+              <strong>&#8377;{{ discountedBooksTotal }}</strong>
+            </div>
+            <div class="price-row">
+              <span>Delivery charges</span>
+              <strong>&#8377;{{ deliveryCharge }}</strong>
+            </div>
+            <div class="price-row price-row--total">
+              <span>Final amount</span>
+              <strong>&#8377;{{ finalAmount }}</strong>
+            </div>
+          </div>
+
+          <div class="address-field">
+            <h3>Shipping Address</h3>
+            <div class="form-grid">
+              <label class="form-field address-field">
+                Home / Apartment <span class="req">*</span>
+                <input type="text" formControlName="homeApartment" maxlength="160" placeholder="House number, apartment or building" autocomplete="address-line1" required />
+                <small>{{ fieldError('homeApartment', 'Home / Apartment') }}</small>
+              </label>
+              <label class="form-field">
+                Street <span class="req">*</span>
+                <input type="text" formControlName="street" maxlength="160" placeholder="Enter street" autocomplete="address-line2" required />
+                <small>{{ fieldError('street', 'Street') }}</small>
+              </label>
+              <label class="form-field">
+                Area <span class="req">*</span>
+                <input type="text" formControlName="area" maxlength="160" placeholder="Enter area" autocomplete="address-line3" required />
+                <small>{{ fieldError('area', 'Area') }}</small>
+              </label>
+            </div>
+          </div>
+
+          <label class="form-field">
+            City <span class="req">*</span>
+            <input type="text" formControlName="city" maxlength="100" placeholder="Enter city" autocomplete="address-level2" />
+            <small>{{ fieldError('city', 'City') }}</small>
+          </label>
+
+          <label class="form-field">
+            State <span class="req">*</span>
+            <input type="text" formControlName="state" maxlength="100" placeholder="Enter state" autocomplete="address-level1" />
+            <small>{{ fieldError('state', 'State') }}</small>
+          </label>
+
+          <label class="form-field">
+            PIN / ZIP Code <span class="req">*</span>
+            <input type="text" formControlName="pinCode" maxlength="10" placeholder="Enter PIN / ZIP code" autocomplete="postal-code" />
+            <small>{{ fieldError('pinCode', 'PIN / ZIP Code') }}</small>
+          </label>
+        </div>
+
+        <div class="payment-section">
+          <div class="form-intro payment-section__intro">
+            <span class="form-intro__icon form-intro__icon--phonepe"><i class="fa-solid fa-indian-rupee-sign" aria-hidden="true"></i></span>
+            <div>
+              <h2>Pay with PhonePe</h2>
+              <p>Scan the QR and pay exactly &#8377;{{ finalAmount }}.</p>
+            </div>
+            <span class="form-step">Step 2 of 2</span>
+          </div>
+
+          <div class="payment-grid">
+            <div class="qr-card">
+              <img src="/assets/img/phonepe-ghar9001-qr.jpeg" alt="PhonePe QR code for Ghar 9001 payment" />
+              <div class="qr-card__amount">
+                <span>Amount to pay</span>
+                <strong>&#8377;{{ finalAmount }}</strong>
+              </div>
+              <p><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Open PhonePe and scan this QR code</p>
+            </div>
+
+            <div class="payment-proof">
+              <div class="payment-note">
+                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                <span>After payment, upload the successful payment screenshot below.</span>
+              </div>
+
+              <label class="form-field">
+                Transaction ID <span class="optional">(recommended)</span>
+                <input type="text" formControlName="transactionId" maxlength="64" placeholder="Example: T260905123456789" autocomplete="off" />
+                <small>{{ fieldError('transactionId', 'Transaction ID') }}</small>
+              </label>
+
+              <label class="upload-zone" [class.upload-zone--selected]="paymentScreenshot">
+                <input type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" (change)="onPaymentScreenshotSelected($event)" />
+                <ng-container *ngIf="!paymentScreenshotPreview; else screenshotPreview">
+                  <i class="fa-solid fa-cloud-arrow-up upload-zone__icon" aria-hidden="true"></i>
+                  <strong>Upload payment screenshot <span class="req">*</span></strong>
+                  <span>JPG, PNG or WebP &middot; Maximum 5 MB</span>
+                  <span class="upload-zone__action">Choose image</span>
+                </ng-container>
+                <ng-template #screenshotPreview>
+                  <img class="payment-preview" [src]="paymentScreenshotPreview" alt="Selected payment screenshot preview" />
+                  <strong>{{ paymentScreenshot?.name }}</strong>
+                  <span class="upload-zone__action">Change image</span>
+                </ng-template>
+              </label>
+              <small class="upload-error">{{ paymentScreenshotError }}</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <div class="submit-total">
+            <span>Total payable</span>
+            <strong>&#8377;{{ finalAmount }}</strong>
+          </div>
+          <button class="btn btn-primary" type="submit" [disabled]="isSubmitting">
+            <i class="fa-solid" [ngClass]="isSubmitting ? 'fa-spinner fa-spin' : 'fa-lock'"></i>
+            {{ isSubmitting ? 'Submitting...' : 'Submit Booking & Payment' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+

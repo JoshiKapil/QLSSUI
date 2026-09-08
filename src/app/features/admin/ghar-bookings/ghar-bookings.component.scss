@@ -1,0 +1,226 @@
+.admin-header p {
+  margin: 6px 0 0;
+  color: #64748b;
+}
+
+.status-overview {
+  display: flex;
+  gap: 10px;
+  margin: 24px 0;
+  padding-bottom: 5px;
+  overflow-x: auto;
+}
+
+.status-overview button {
+  display: grid;
+  min-width: 112px;
+  padding: 12px 14px;
+  border: 1px solid #dce5f2;
+  border-radius: 13px;
+  background: #fff;
+  color: #66758d;
+  text-align: left;
+  cursor: pointer;
+  transition: 160ms ease;
+}
+
+.status-overview button:hover,
+.status-overview button.active {
+  border-color: var(--primary, #0b3d91);
+  background: #eef5ff;
+  color: var(--primary, #0b3d91);
+  transform: translateY(-2px);
+}
+
+.status-overview strong {
+  font-size: 20px;
+}
+
+.status-overview span {
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #e2e8f2;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 32px rgba(15, 45, 85, 0.08);
+}
+
+.admin-table {
+  min-width: 1580px;
+}
+
+.admin-table th {
+  white-space: nowrap;
+}
+
+.admin-table td {
+  max-width: 260px;
+  vertical-align: top;
+}
+
+.admin-table td:first-child,
+.admin-table td:nth-child(2),
+.admin-table td:last-child {
+  display: table-cell;
+}
+
+.admin-table td > strong,
+.admin-table td > span,
+.admin-table td > small,
+.admin-table td > a {
+  display: block;
+  margin-bottom: 7px;
+}
+
+.admin-table a {
+  color: #188754;
+  font-size: 13px;
+}
+
+.admin-table address {
+  margin: 0;
+  color: #526174;
+  font-size: 13px;
+  font-style: normal;
+  line-height: 1.6;
+}
+
+.order-lines {
+  display: grid;
+  min-width: 210px;
+  gap: 6px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.order-lines span {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.order-total {
+  margin-top: 3px;
+  padding-top: 7px;
+  border-top: 1px dashed #ccd8e8;
+  color: #17233d;
+}
+
+.order-lines code {
+  max-width: 130px;
+  overflow-wrap: anywhere;
+  color: #5f259f;
+}
+
+.status-pill {
+  display: inline-flex !important;
+  width: fit-content;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #eaf2ff;
+  color: #245ca8;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.status-pill[data-status='Delivered'] {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-pill[data-status='PaymentRejected'],
+.status-pill[data-status='Cancelled'] {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status-pill[data-status='Shipped'],
+.status-pill[data-status='OutForDelivery'] {
+  background: #fff4d6;
+  color: #8a5700;
+}
+
+.proof-button,
+.save-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 0;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.proof-button {
+  padding: 9px 12px;
+  background: #f2eafa;
+  color: #5f259f;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.proof-button:disabled,
+.save-status:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.admin-table td > small {
+  max-width: 180px;
+  margin-top: 8px;
+  color: #8290a4;
+  overflow-wrap: anywhere;
+}
+
+.status-editor {
+  display: grid;
+  min-width: 205px;
+  gap: 8px;
+}
+
+.status-editor select,
+.status-editor textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ced9e8;
+  border-radius: 8px;
+  background: #fff;
+  color: #263750;
+  font: inherit;
+  font-size: 12px;
+}
+
+.status-editor textarea {
+  resize: vertical;
+}
+
+.status-editor select:focus,
+.status-editor textarea:focus {
+  outline: 0;
+  border-color: var(--secondary, #2b7bff);
+  box-shadow: 0 0 0 3px rgba(43, 123, 255, 0.1);
+}
+
+.save-status {
+  min-height: 36px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, var(--primary, #0b3d91), var(--secondary, #2b7bff));
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+@media (max-width: 720px) {
+  .status-overview {
+    margin-top: 18px;
+  }
+
+  .admin-table-wrap {
+    border-radius: 12px;
+  }
+}
+

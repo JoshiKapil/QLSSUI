@@ -16,7 +16,7 @@ describe('AdminManagementService', () => {
     localStorage.clear();
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [AdminManagementService]
+      providers: [AdminManagementService],
     });
     service = TestBed.inject(AdminManagementService);
     httpMock = TestBed.inject(HttpTestingController);

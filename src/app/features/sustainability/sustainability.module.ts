@@ -5,6 +5,6 @@ import { SustainabilityRoutingModule } from './sustainability-routing.module';
 
 @NgModule({
   declarations: [SustainabilityComponent],
-  imports: [SharedModule, SustainabilityRoutingModule]
+  imports: [SharedModule, SustainabilityRoutingModule],
 })
 export class SustainabilityModule {}

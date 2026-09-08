@@ -24,8 +24,8 @@ describe('LoginComponent', () => {
       providers: [
         { provide: AuthService, useValue: authService },
         { provide: NotifierService, useValue: notifier },
-        { provide: Router, useValue: router }
-      ]
+        { provide: Router, useValue: router },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(LoginComponent);

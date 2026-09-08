@@ -1,29 +1,564 @@
 <div class="pm-page management-page">
-  <header class="pm-head"><div><div class="pm-head__eyebrow">Configuration</div><h1>Workspace Management</h1><p>Maintain ready quotation formats, reusable project activity plans and role access without changing the existing application masters.</p></div></header>
-  <p *ngIf="error" class="pm-error">{{error}}</p><p *ngIf="success" class="pm-success">{{success}}</p>
+  <header class="pm-head">
+    <div>
+      <div class="pm-head__eyebrow">Configuration</div>
+      <h1>PM Metadata & Workspace Management</h1>
+      <p>
+        Control enquiry categories, database-driven service values, default scope, quotation formats, project plans and
+        role access from one place.
+      </p>
+    </div>
+  </header>
+<details><summary>Search selection options</summary>
+<app-list-pager [page]="categoriesOptionsPage" (changed)="loadcategoriesOptions()"></app-list-pager>
+<app-list-pager [page]="usersOptionsPage" (changed)="loadusersOptions()"></app-list-pager>
+<app-list-pager [page]="quotationTemplatesOptionsPage" (changed)="loadquotationTemplatesOptions()"></app-list-pager>
+<app-list-pager [page]="projectTemplatesOptionsPage" (changed)="loadprojectTemplatesOptions()"></app-list-pager>
+<app-list-pager [page]="clientsOptionsPage" (changed)="loadclientsOptions()"></app-list-pager>
+<app-list-pager [page]="trainingsOptionsPage" (changed)="loadtrainingsOptions()"></app-list-pager>
+</details>
+<app-list-pager [page]="quotationTemplatesPage" (changed)="reloadquotationTemplatesPage()"></app-list-pager>
+<app-list-pager [page]="projectTemplatesPage" (changed)="reloadprojectTemplatesPage()"></app-list-pager>
+<app-list-pager [page]="usersPage" (changed)="reloadusersPage()"></app-list-pager>
+  <p *ngIf="error" class="pm-error">{{ error }}</p>
+  <p *ngIf="success" class="pm-success">{{ success }}</p>
 
-  <div class="management-banner"><i class="fas fa-layer-group"></i><div><strong>Safe additive master configuration</strong><span>Customer data continues to use the existing Client master. Training/Test/Certification/DMS/Competency/Audit remain linked, not duplicated.</span></div></div>
+  <div class="management-banner">
+    <i class="fas fa-layer-group"></i>
+    <div>
+      <strong>Safe additive master configuration</strong>
+      <span>
+        Customer data continues to use the existing Client master. Training/Test/Certification/DMS/Competency/Audit
+        remain linked, not duplicated.
+      </span>
+    </div>
+  </div>
 
-  <div class="pm-tabs management-tabs"><button class="pm-tab" [class.active]="activeTab==='quotation'" (click)="activeTab='quotation'">Quotation Templates <b>{{quotationTemplates.length}}</b></button><button class="pm-tab" [class.active]="activeTab==='project'" (click)="activeTab='project'">Project Templates <b>{{projectTemplates.length}}</b></button><button class="pm-tab" [class.active]="activeTab==='roles'" (click)="activeTab='roles'">Users & Roles <b>{{users.length}}</b></button></div>
+  <div class="pm-tabs management-tabs">
+    <button class="pm-tab" [class.active]="activeTab === 'metadata'" (click)="activeTab = 'metadata'">
+      Enquiry Metadata
+      <b>{{ metadataCategories.length }}</b>
+    </button>
+    <button class="pm-tab" [class.active]="activeTab === 'quotation'" (click)="activeTab = 'quotation'">
+      Quotation Templates
+      <b>{{ quotationTemplates.length }}</b>
+    </button>
+    <button class="pm-tab" [class.active]="activeTab === 'project'" (click)="activeTab = 'project'">
+      Project Templates
+      <b>{{ projectTemplates.length }}</b>
+    </button>
+    <button class="pm-tab" [class.active]="activeTab === 'roles'" (click)="activeTab = 'roles'">
+      Users & Roles
+      <b>{{ users.length }}</b>
+    </button>
+  </div>
 
-  <section *ngIf="activeTab==='quotation'" class="master-layout">
-    <article class="pm-card master-list"><div class="pm-section-head"><div><h2>Ready Quotation Formats</h2><p>Training, implementation, audit and customized commercial templates.</p></div><button class="pm-btn pm-btn--primary pm-btn--sm" (click)="newQuote()">+ New</button></div><button *ngFor="let t of quotationTemplates" class="master-row" [class.active]="quoteId===t.quotationTemplateId" (click)="editQuote(t)"><div><strong>{{t.templateName}}</strong><span>{{t.templateCode}}</span></div><small>{{categoryName(t.categoryId)}}</small><span [class]="t.isActive?'pm-badge pm-badge--ok':'pm-badge pm-badge--neutral'">{{t.isActive?'Active':'Inactive'}}</span></button><div *ngIf="!quotationTemplates.length" class="pm-empty">No quotation templates available.</div></article>
-    <article *ngIf="showQuoteEditor" class="pm-card master-editor pm-modal pm-modal--wide" role="dialog" aria-modal="true"><div class="pm-section-head"><div><h2>{{quoteId ? 'Edit' : 'New'}} Quotation Template</h2><p>Pre-fill scope, terms, tax and validity to make quotation preparation faster and consistent.</p></div><button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="closeQuoteEditor()">Close</button></div><div class="pm-form">
-      <div class="pm-field"><label>Template Code *</label><input [(ngModel)]="quoteForm.templateCode"></div><div class="pm-field"><label>Template Name *</label><input [(ngModel)]="quoteForm.templateName"></div>
-      <div class="pm-field"><label>Enquiry Category</label><pm-search-select [(ngModel)]="quoteForm.categoryId" [options]="lookups?.categories || []" placeholder="Generic / Any"></pm-search-select></div><div class="pm-field"><label>Training <small>optional</small></label><pm-search-select [(ngModel)]="quoteForm.trainingId" [options]="lookups?.trainings || []" placeholder="Not linked"></pm-search-select></div>
-      <div class="pm-field pm-field--full"><label>Default Scope</label><textarea [(ngModel)]="quoteForm.scopeTemplate"></textarea></div><div class="pm-field pm-field--full"><label>Payment Terms</label><textarea [(ngModel)]="quoteForm.paymentTerms"></textarea></div><div class="pm-field pm-field--full"><label>Special Conditions</label><textarea [(ngModel)]="quoteForm.specialConditions"></textarea></div>
-      <div class="pm-field"><label>Default Tax %</label><input type="number" min="0" max="100" [(ngModel)]="quoteForm.defaultTaxPercent"></div><div class="pm-field"><label>Default Validity Days</label><input type="number" min="1" [(ngModel)]="quoteForm.defaultValidityDays"></div><div class="pm-field"><label>Status</label><select [(ngModel)]="quoteForm.isActive"><option [ngValue]="true">Active</option><option [ngValue]="false">Inactive</option></select></div>
-    </div><div class="pm-actions editor-actions"><button class="pm-btn pm-btn--primary" (click)="saveQuote()">Save Template</button><button class="pm-btn pm-btn--ghost" (click)="closeQuoteEditor()">Cancel</button></div></article>
-  </section>
+  <section *ngIf="activeTab === 'metadata'" class="metadata-workspace">
+    <article class="pm-card metadata-category-list">
+      <div class="pm-section-head">
+        <div>
+          <h2>Enquiry Categories</h2>
+          <p>Choose how each category gets its next selection and Requirement / Scope.</p>
+        </div>
+        <button *ngIf="isSuperAdmin" class="pm-btn pm-btn--primary pm-btn--sm" (click)="newMetadataCategory()">
+          + Category
+        </button>
+      </div>
+      <button
+        *ngFor="let c of metadataCategories"
+        class="metadata-category-row"
+        [class.active]="selectedMetadataCategory?.categoryId === c.categoryId"
+        (click)="selectMetadataCategory(c)"
+      >
+        <div>
+          <strong>{{ c.categoryName }}</strong>
+          <span>{{ c.categoryCode }}</span>
+        </div>
+        <small>{{ valueSourceLabel(c.valueSource) }}</small>
+        <span [class]="c.isActive ? 'pm-badge pm-badge--ok' : 'pm-badge pm-badge--neutral'">
+          {{ c.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </button>
+      <div *ngIf="!metadataCategories.length" class="pm-empty">No enquiry categories available.</div>
+    </article>
 
-  <section *ngIf="activeTab==='project'" class="master-layout">
-    <article class="pm-card master-list"><div class="pm-section-head"><div><h2>Reusable Project Plans</h2><p>Standard activities are copied into a new project at confirmation.</p></div><button class="pm-btn pm-btn--primary pm-btn--sm" (click)="newProjectTemplate()">+ New</button></div><button *ngFor="let t of projectTemplates" class="master-row" [class.active]="projectId===t.projectTemplateId" (click)="editProjectTemplate(t)"><div><strong>{{t.templateName}}</strong><span>{{t.templateCode}}</span></div><small>{{t.activities?.length || 0}} activities</small><span [class]="t.isActive?'pm-badge pm-badge--ok':'pm-badge pm-badge--neutral'">{{t.isActive?'Active':'Inactive'}}</span></button><div *ngIf="!projectTemplates.length" class="pm-empty">No project templates available.</div></article>
-    <article *ngIf="showProjectEditor" class="pm-card master-editor pm-modal pm-modal--wide" role="dialog" aria-modal="true"><div class="pm-section-head"><div><h2>{{projectId ? 'Edit' : 'New'}} Project Template</h2><p>Build a standard plan for implementation, training, audit, documentation, certification support or consultancy.</p></div><button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="closeProjectEditor()">Close</button></div><div class="pm-form"><div class="pm-field"><label>Template Code *</label><input [(ngModel)]="projectForm.templateCode"></div><div class="pm-field"><label>Template Name *</label><input [(ngModel)]="projectForm.templateName"></div><div class="pm-field"><label>Category</label><pm-search-select [(ngModel)]="projectForm.categoryId" [options]="lookups?.categories || []" placeholder="Generic"></pm-search-select></div><div class="pm-field"><label>Status</label><select [(ngModel)]="projectForm.isActive"><option [ngValue]="true">Active</option><option [ngValue]="false">Inactive</option></select></div><div class="pm-field pm-field--full"><label>Description</label><textarea [(ngModel)]="projectForm.description"></textarea></div></div>
-      <div class="template-activity-head"><strong>Template Activities</strong><button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="addTemplateActivity()">+ Add Activity</button></div>
-      <div class="template-activities"><div class="template-activity" *ngFor="let a of projectForm.activities; let i=index"><input class="seq" type="number" [(ngModel)]="a.sequenceNo"><input class="name" [(ngModel)]="a.activityName" placeholder="Activity name"><input type="number" [(ngModel)]="a.defaultDurationDays" placeholder="Days"><label><input type="checkbox" [(ngModel)]="a.isRequired"> Required</label><label><input type="checkbox" [(ngModel)]="a.isActive"> Active</label><button class="icon-delete" (click)="removeTemplateActivity(i)" title="Remove"><i class="fas fa-trash"></i></button><textarea [(ngModel)]="a.description" placeholder="Activity description"></textarea></div><div *ngIf="!projectForm.activities.length" class="pm-empty">Add standard activities such as confirmation, planning, execution, report, corrective action and closure.</div></div>
-      <div class="pm-actions editor-actions"><button class="pm-btn pm-btn--primary" (click)="saveProjectTemplate()">Save Project Template</button><button class="pm-btn pm-btn--ghost" (click)="closeProjectEditor()">Cancel</button></div>
+    <article class="pm-card metadata-category-editor" *ngIf="categoryEditorOpen">
+      <div class="pm-section-head">
+        <div>
+          <h2>{{ selectedMetadataCategory ? 'Category Setup' : 'New Enquiry Category' }}</h2>
+          <p>No code change is needed when business values change later.</p>
+        </div>
+      </div>
+      <div class="pm-form">
+        <div class="pm-field">
+          <label>Category Code *</label>
+          <input
+            [(ngModel)]="categoryForm.categoryCode"
+            [readonly]="!!selectedMetadataCategory && !isSuperAdmin"
+            placeholder="ISO_IMPLEMENTATION"
+          />
+        </div>
+        <div class="pm-field">
+          <label>Category Name *</label>
+          <input [(ngModel)]="categoryForm.categoryName" [readonly]="!isSuperAdmin" />
+        </div>
+        <div class="pm-field">
+          <label>Sub-value Source</label>
+          <select [(ngModel)]="categoryForm.valueSource" [disabled]="!isSuperAdmin">
+            <option value="NONE">Category Only</option>
+            <option value="LIST">Database List</option>
+            <option value="TRAINING">Existing Training Master</option>
+            <option value="FREE_TEXT">Free Text</option>
+          </select>
+        </div>
+        <div class="pm-field">
+          <label>Sub-value Label</label>
+          <input [(ngModel)]="categoryForm.valueLabel" [readonly]="!isSuperAdmin" placeholder="Standard / Service" />
+        </div>
+        <div class="pm-field">
+          <label>Display Order</label>
+          <input type="number" [(ngModel)]="categoryForm.displayOrder" [readonly]="!isSuperAdmin" />
+        </div>
+        <div class="pm-field">
+          <label>Status</label>
+          <select [(ngModel)]="categoryForm.isActive" [disabled]="!isSuperAdmin">
+            <option [ngValue]="true">Active</option>
+            <option [ngValue]="false">Inactive</option>
+          </select>
+        </div>
+        <div class="pm-field pm-field--full">
+          <label>Category Default Requirement / Scope</label>
+          <textarea
+            [(ngModel)]="categoryForm.defaultRequirementScope"
+            [readonly]="!isSuperAdmin"
+            placeholder="Used when this category does not need a specific sub-value, or as fallback."
+          ></textarea>
+        </div>
+        <div class="pm-field pm-field--full metadata-checkbox">
+          <label>
+            <input type="checkbox" [(ngModel)]="categoryForm.allowScopeEdit" [disabled]="!isSuperAdmin" />
+            Allow enquiry user to edit the prefilled Requirement / Scope
+          </label>
+        </div>
+      </div>
+      <div class="pm-actions editor-actions" *ngIf="isSuperAdmin">
+        <button class="pm-btn pm-btn--primary" (click)="saveMetadataCategory()">Save Category Setup</button>
+      </div>
+
+      <div class="metadata-source-note" *ngIf="selectedMetadataCategory?.valueSource === 'TRAINING'">
+        <i class="fas fa-graduation-cap"></i>
+        <div>
+          <strong>Training values are not duplicated.</strong>
+          <span>
+            The dropdown reads the existing
+            <code>dbo.Training</code>
+            master. Training Description is the fallback scope; click any training below to set a PM-specific scope
+            override without changing the Training master.
+          </span>
+          <a routerLink="/admin/trainings">Open Training Master</a>
+        </div>
+      </div>
+
+      <ng-container *ngIf="selectedMetadataCategory?.valueSource === 'LIST'">
+        <div class="metadata-values-head">
+          <div>
+            <h3>{{ selectedMetadataCategory?.valueLabel || 'Category Values' }}</h3>
+            <p>These records become the second dropdown on the Enquiry form.</p>
+          </div>
+          <button *ngIf="isSuperAdmin" class="pm-btn pm-btn--ghost pm-btn--sm" (click)="newMetadataValue()">
+            + Value
+          </button>
+        </div>
+        <div class="metadata-value-list">
+          <button *ngFor="let v of metadataValues" class="metadata-value-row" (click)="editMetadataValue(v)">
+            <div>
+              <strong>{{ v.name }}</strong>
+              <span>{{ v.code }}</span>
+            </div>
+            <small>{{ v.defaultRequirementScope || 'No default scope' }}</small>
+            <span [class]="v.isActive ? 'pm-badge pm-badge--ok' : 'pm-badge pm-badge--neutral'">
+              {{ v.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </button>
+          <div *ngIf="!metadataValues.length" class="pm-empty">
+            No values yet. Add values such as ISO 9001 Implementation, IATF 16949 Implementation, Internal Audit, Gap
+            Assessment, etc.
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="selectedMetadataCategory?.valueSource === 'TRAINING'">
+        <div class="metadata-values-head">
+          <div>
+            <h3>Training Master Preview</h3>
+            <p>Read-only here. Maintain the actual training names/descriptions in your existing Training screen.</p>
+          </div>
+        </div>
+        <div class="metadata-value-list">
+          <button *ngFor="let v of metadataValues" class="metadata-value-row" (click)="editMetadataValue(v)">
+            <div>
+              <strong>{{ v.name }}</strong>
+              <span>Training ID {{ v.sourceRefId }}</span>
+            </div>
+            <small>{{ v.defaultRequirementScope || 'Training description not set yet' }}</small>
+            <span class="pm-badge">{{ v.categoryValueId ? 'PM Scope Override' : 'Training Master' }}</span>
+          </button>
+        </div>
+      </ng-container>
+    </article>
+
+    <article class="pm-card metadata-empty-editor" *ngIf="!categoryEditorOpen">
+      <div class="pm-empty">
+        <i class="fas fa-list-check"></i>
+        <strong>Select an enquiry category</strong>
+        <span>Configure its source, label and default Requirement / Scope.</span>
+      </div>
     </article>
   </section>
 
-  <section *ngIf="activeTab==='roles'" class="pm-card role-card"><div class="pm-section-head"><div><h2>Workspace Users & Roles</h2><p>Existing Admin stays Admin. SuperAdmin has all Admin rights plus final Project Management approvals, assignment and closure.</p></div><span class="pm-badge">JWT role based</span></div><p class="pm-note" *ngIf="!isSuperAdmin">Role changes are read-only for Admin. Only SuperAdmin can promote or change a user role.</p><div class="pm-table-wrap"><table class="pm-table"><thead><tr><th>User</th><th>Email</th><th>Current Role</th><th>Workspace Role</th><th>Access Summary</th></tr></thead><tbody><tr *ngFor="let u of users"><td><strong>{{u.name}}</strong></td><td>{{u.email}}</td><td><span class="pm-badge">{{u.role}}</span></td><td><select class="role-select" [ngModel]="u.role" (ngModelChange)="roleChanged(u,$event)" [disabled]="!isSuperAdmin"><option>User</option><option>Employee</option><option>Manager</option><option>Admin</option><option>SuperAdmin</option></select></td><td><small *ngIf="u.role==='SuperAdmin'">All Admin access + approvals, assignment, final closure</small><small *ngIf="u.role==='Admin'">Existing Admin + project workspace / masters</small><small *ngIf="u.role==='Manager'">Operational project workspace + updates</small><small *ngIf="u.role==='Employee'">Assigned enquiries/projects/activities</small><small *ngIf="u.role==='User'">Existing application flow</small></td></tr></tbody></table></div></section>
+  <section
+    *ngIf="valueEditorOpen && selectedMetadataCategory"
+    class="pm-card pm-modal pm-modal--wide metadata-value-editor"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="pm-section-head">
+      <div>
+        <h2>
+          {{ editingCategoryValue ? 'Edit' : 'New' }} {{ selectedMetadataCategory.valueLabel || 'Category Value' }}
+        </h2>
+        <p>The default scope below is copied into a new enquiry when this value is selected.</p>
+      </div>
+      <button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="valueEditorOpen = false">Close</button>
+    </div>
+    <div class="pm-form">
+      <div class="pm-field">
+        <label>Value Code *</label>
+        <input
+          [(ngModel)]="valueForm.valueCode"
+          [readonly]="editingCategoryValue?.sourceType === 'TRAINING'"
+          placeholder="IMP_ISO9001"
+        />
+      </div>
+      <div class="pm-field">
+        <label>Display Name *</label>
+        <input
+          [(ngModel)]="valueForm.valueName"
+          [readonly]="editingCategoryValue?.sourceType === 'TRAINING'"
+          placeholder="ISO 9001 Implementation"
+        />
+      </div>
+      <div class="pm-field">
+        <label>Display Order</label>
+        <input type="number" [(ngModel)]="valueForm.displayOrder" />
+      </div>
+      <div class="pm-field">
+        <label>Status</label>
+        <select [(ngModel)]="valueForm.isActive">
+          <option [ngValue]="true">Active</option>
+          <option [ngValue]="false">Inactive</option>
+        </select>
+      </div>
+      <div class="pm-field">
+        <label>
+          Quotation Template
+          <small>optional mapping</small>
+        </label>
+        <pm-search-select
+          [(ngModel)]="valueForm.quotationTemplateId"
+          [options]="lookups?.quotationTemplates || []"
+          placeholder="Not linked"
+        ></pm-search-select>
+      </div>
+      <div class="pm-field">
+        <label>
+          Project Template
+          <small>optional mapping</small>
+        </label>
+        <pm-search-select
+          [(ngModel)]="valueForm.projectTemplateId"
+          [options]="lookups?.projectTemplates || []"
+          placeholder="Not linked"
+        ></pm-search-select>
+      </div>
+      <div class="pm-field pm-field--full">
+        <label>Default Requirement / Scope *</label>
+        <textarea
+          [(ngModel)]="valueForm.defaultRequirementScope"
+          placeholder="Default customer-facing requirement / scope for this selection."
+        ></textarea>
+      </div>
+    </div>
+    <div class="pm-actions editor-actions">
+      <button class="pm-btn pm-btn--primary" (click)="saveMetadataValue()">Save Value</button>
+      <button class="pm-btn pm-btn--ghost" (click)="valueEditorOpen = false">Cancel</button>
+    </div>
+  </section>
+
+  <section *ngIf="activeTab === 'quotation'" class="master-layout">
+    <article class="pm-card master-list">
+      <div class="pm-section-head">
+        <div>
+          <h2>Ready Quotation Formats</h2>
+          <p>Training, implementation, audit and customized commercial templates.</p>
+        </div>
+        <button class="pm-btn pm-btn--primary pm-btn--sm" (click)="newQuote()">+ New</button>
+      </div>
+      <button
+        *ngFor="let t of quotationTemplates"
+        class="master-row"
+        [class.active]="quoteId === t.quotationTemplateId"
+        (click)="editQuote(t)"
+      >
+        <div>
+          <strong>{{ t.templateName }}</strong>
+          <span>{{ t.templateCode }}</span>
+        </div>
+        <small>{{ categoryName(t.categoryId) }}</small>
+        <span [class]="t.isActive ? 'pm-badge pm-badge--ok' : 'pm-badge pm-badge--neutral'">
+          {{ t.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </button>
+      <div *ngIf="!quotationTemplates.length" class="pm-empty">No quotation templates available.</div>
+    </article>
+    <article
+      *ngIf="showQuoteEditor"
+      class="pm-card master-editor pm-modal pm-modal--wide"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div class="pm-section-head">
+        <div>
+          <h2>{{ quoteId ? 'Edit' : 'New' }} Quotation Template</h2>
+          <p>Pre-fill scope, terms, tax and validity to make quotation preparation faster and consistent.</p>
+        </div>
+        <button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="closeQuoteEditor()">Close</button>
+      </div>
+      <div class="pm-form">
+        <div class="pm-field">
+          <label>Template Code *</label>
+          <input [(ngModel)]="quoteForm.templateCode" />
+        </div>
+        <div class="pm-field">
+          <label>Template Name *</label>
+          <input [(ngModel)]="quoteForm.templateName" />
+        </div>
+        <div class="pm-field">
+          <label>Enquiry Category</label>
+          <pm-search-select
+            [(ngModel)]="quoteForm.categoryId"
+            [options]="lookups?.categories || []"
+            placeholder="Generic / Any"
+          ></pm-search-select>
+        </div>
+        <div class="pm-field">
+          <label>
+            Training
+            <small>optional</small>
+          </label>
+          <pm-search-select
+            [(ngModel)]="quoteForm.trainingId"
+            [options]="lookups?.trainings || []"
+            placeholder="Not linked"
+          ></pm-search-select>
+        </div>
+        <div class="pm-field pm-field--full">
+          <label>Default Scope</label>
+          <textarea [(ngModel)]="quoteForm.scopeTemplate"></textarea>
+        </div>
+        <div class="pm-field pm-field--full">
+          <label>Payment Terms</label>
+          <textarea [(ngModel)]="quoteForm.paymentTerms"></textarea>
+        </div>
+        <div class="pm-field pm-field--full">
+          <label>Special Conditions</label>
+          <textarea [(ngModel)]="quoteForm.specialConditions"></textarea>
+        </div>
+        <div class="pm-field">
+          <label>Default Tax %</label>
+          <input type="number" min="0" max="100" [(ngModel)]="quoteForm.defaultTaxPercent" />
+        </div>
+        <div class="pm-field">
+          <label>Default Validity Days</label>
+          <input type="number" min="1" [(ngModel)]="quoteForm.defaultValidityDays" />
+        </div>
+        <div class="pm-field">
+          <label>Status</label>
+          <select [(ngModel)]="quoteForm.isActive">
+            <option [ngValue]="true">Active</option>
+            <option [ngValue]="false">Inactive</option>
+          </select>
+        </div>
+      </div>
+      <div class="pm-actions editor-actions">
+        <button class="pm-btn pm-btn--primary" (click)="saveQuote()">Save Template</button>
+        <button class="pm-btn pm-btn--ghost" (click)="closeQuoteEditor()">Cancel</button>
+      </div>
+    </article>
+  </section>
+
+  <section *ngIf="activeTab === 'project'" class="master-layout">
+    <article class="pm-card master-list">
+      <div class="pm-section-head">
+        <div>
+          <h2>Reusable Project Plans</h2>
+          <p>Standard activities are copied into a new project at confirmation.</p>
+        </div>
+        <button class="pm-btn pm-btn--primary pm-btn--sm" (click)="newProjectTemplate()">+ New</button>
+      </div>
+      <button
+        *ngFor="let t of projectTemplates"
+        class="master-row"
+        [class.active]="projectId === t.projectTemplateId"
+        (click)="editProjectTemplate(t)"
+      >
+        <div>
+          <strong>{{ t.templateName }}</strong>
+          <span>{{ t.templateCode }}</span>
+        </div>
+        <small>{{ t.activities?.length || 0 }} activities</small>
+        <span [class]="t.isActive ? 'pm-badge pm-badge--ok' : 'pm-badge pm-badge--neutral'">
+          {{ t.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </button>
+      <div *ngIf="!projectTemplates.length" class="pm-empty">No project templates available.</div>
+    </article>
+    <article
+      *ngIf="showProjectEditor"
+      class="pm-card master-editor pm-modal pm-modal--wide"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div class="pm-section-head">
+        <div>
+          <h2>{{ projectId ? 'Edit' : 'New' }} Project Template</h2>
+          <p>
+            Build a standard plan for implementation, training, audit, documentation, certification support or
+            consultancy.
+          </p>
+        </div>
+        <button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="closeProjectEditor()">Close</button>
+      </div>
+      <div class="pm-form">
+        <div class="pm-field">
+          <label>Template Code *</label>
+          <input [(ngModel)]="projectForm.templateCode" />
+        </div>
+        <div class="pm-field">
+          <label>Template Name *</label>
+          <input [(ngModel)]="projectForm.templateName" />
+        </div>
+        <div class="pm-field">
+          <label>Category</label>
+          <pm-search-select
+            [(ngModel)]="projectForm.categoryId"
+            [options]="lookups?.categories || []"
+            placeholder="Generic"
+          ></pm-search-select>
+        </div>
+        <div class="pm-field">
+          <label>Status</label>
+          <select [(ngModel)]="projectForm.isActive">
+            <option [ngValue]="true">Active</option>
+            <option [ngValue]="false">Inactive</option>
+          </select>
+        </div>
+        <div class="pm-field pm-field--full">
+          <label>Description</label>
+          <textarea [(ngModel)]="projectForm.description"></textarea>
+        </div>
+      </div>
+      <div class="template-activity-head">
+        <strong>Template Activities</strong>
+        <button class="pm-btn pm-btn--ghost pm-btn--sm" (click)="addTemplateActivity()">+ Add Activity</button>
+      </div>
+      <div class="template-activities">
+        <div class="template-activity" *ngFor="let a of projectForm.activities; let i = index">
+          <input class="seq" type="number" [(ngModel)]="a.sequenceNo" />
+          <input class="name" [(ngModel)]="a.activityName" placeholder="Activity name" />
+          <input type="number" [(ngModel)]="a.defaultDurationDays" placeholder="Days" />
+          <label>
+            <input type="checkbox" [(ngModel)]="a.isRequired" />
+            Required
+          </label>
+          <label>
+            <input type="checkbox" [(ngModel)]="a.isActive" />
+            Active
+          </label>
+          <button class="icon-delete" (click)="removeTemplateActivity(i)" title="Remove">
+            <i class="fas fa-trash"></i>
+          </button>
+          <textarea [(ngModel)]="a.description" placeholder="Activity description"></textarea>
+        </div>
+        <div *ngIf="!projectForm.activities.length" class="pm-empty">
+          Add standard activities such as confirmation, planning, execution, report, corrective action and closure.
+        </div>
+      </div>
+      <div class="pm-actions editor-actions">
+        <button class="pm-btn pm-btn--primary" (click)="saveProjectTemplate()">Save Project Template</button>
+        <button class="pm-btn pm-btn--ghost" (click)="closeProjectEditor()">Cancel</button>
+      </div>
+    </article>
+  </section>
+
+  <section *ngIf="activeTab === 'roles'" class="pm-card role-card">
+    <div class="pm-section-head">
+      <div>
+        <h2>Workspace Users & Roles</h2>
+        <p>
+          Existing Admin stays Admin. SuperAdmin has all Admin rights plus final Project Management approvals,
+          assignment and closure.
+        </p>
+      </div>
+      <span class="pm-badge">JWT role based</span>
+    </div>
+    <p class="pm-note" *ngIf="!isSuperAdmin">
+      Role changes are read-only for Admin. Only SuperAdmin can promote or change a user role.
+    </p>
+    <div class="pm-table-wrap">
+      <table class="pm-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Current Role</th>
+            <th>Workspace Role</th>
+            <th>Access Summary</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of users">
+            <td>
+              <strong>{{ u.name }}</strong>
+            </td>
+            <td>{{ u.email }}</td>
+            <td>
+              <span class="pm-badge">{{ u.role }}</span>
+            </td>
+            <td>
+              <select
+                class="role-select"
+                [ngModel]="u.role"
+                (ngModelChange)="roleChanged(u, $event)"
+                [disabled]="!isSuperAdmin"
+              >
+                <option>User</option>
+                <option>Employee</option>
+                <option>Manager</option>
+                <option>Admin</option>
+                <option>SuperAdmin</option>
+              </select>
+            </td>
+            <td>
+              <small *ngIf="u.role === 'SuperAdmin'">All Admin access + approvals, assignment, final closure</small>
+              <small *ngIf="u.role === 'Admin'">Existing Admin + project workspace / masters</small>
+              <small *ngIf="u.role === 'Manager'">Operational project workspace + updates</small>
+              <small *ngIf="u.role === 'Employee'">Assigned enquiries/projects/activities</small>
+              <small *ngIf="u.role === 'User'">Existing application flow</small>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 </div>

@@ -97,7 +97,6 @@
 }
 
 @keyframes revealDotPulse {
-
   0%,
   100% {
     transform: scale(1);
@@ -150,12 +149,10 @@
 
   // Subtle dot grid texture
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle,
-        rgba(87, 144, 225, 0.06) 1px,
-        transparent 1px);
+    background-image: radial-gradient(circle, rgba(87, 144, 225, 0.06) 1px, transparent 1px);
     background-size: 28px 28px;
     pointer-events: none;
   }

@@ -6,6 +6,6 @@ import { AssessmentComponent } from './assessment.component';
 
 @NgModule({
   declarations: [AssessmentComponent, AssessmentAdminComponent],
-  imports: [SharedModule, AssessmentRoutingModule]
+  imports: [SharedModule, AssessmentRoutingModule],
 })
 export class AssessmentModule {}

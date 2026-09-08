@@ -16,6 +16,7 @@ export interface CertificateData {
   locationName?: string;
   trainerName: string;
   dateOfIssue: string | Date;
+  logoUrl?: string;
 }
 export interface CertificatePrintRecord {
   certificationDataId: number;

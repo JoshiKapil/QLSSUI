@@ -1,93 +1,308 @@
 ﻿<section class="admin-section certification-admin">
   <div class="container admin-shell">
     <div class="admin-header certification-header">
-      <div><span class="auth-eyebrow">Admin · Certification Data</span><h1>Certifications</h1><p>Upload, review, filter and maintain certificate records from one workspace.</p></div>
-      <div class="header-metric"><strong>{{ records.length }}</strong><span>Total records</span></div>
+      <div>
+        <span class="auth-eyebrow">Admin · Certification Data</span>
+        <h1>Certifications</h1>
+        <p>Upload, review, filter and maintain certificate records from one workspace.</p>
+      </div>
+      <div class="header-metric">
+        <strong>{{ records.length }}</strong>
+        <span>Total records</span>
+      </div>
     </div>
 
     <div class="admin-layout">
       <form class="admin-form certification-form" [formGroup]="form" (ngSubmit)="submit()">
-        <div class="panel-heading"><div><span class="panel-kicker">{{ selectedRecord ? 'Update record' : 'New record' }}</span><h2>{{ selectedRecord ? 'Edit Certification' : 'Add Certification' }}</h2></div><button *ngIf="selectedRecord" class="btn btn-outline" type="button" (click)="resetForm()">Cancel edit</button></div>
+        <div class="panel-heading">
+          <div>
+            <span class="panel-kicker">{{ selectedRecord ? 'Update record' : 'New record' }}</span>
+            <h2>{{ selectedRecord ? 'Edit Certification' : 'Add Certification' }}</h2>
+          </div>
+          <button *ngIf="selectedRecord" class="btn btn-outline" type="button" (click)="resetForm()">
+            Cancel edit
+          </button>
+        </div>
         <div class="form-grid">
-          <label class="form-field">Name<input type="text" formControlName="name" /><small>{{ fieldError('name', 'Name') }}</small></label>
-          <label class="form-field">Certification Number<input type="text" formControlName="certificationNumber" placeholder="Optional for a new pending record" /></label>
-          <label class="form-field" *ngIf="selectedRecord?.recordSource === 'legacy'; else trainingIdField">Training Name<input type="text" formControlName="trainingName" /></label><ng-template #trainingIdField><label class="form-field">Training ID<input type="number" min="1" formControlName="trainingId" /><small>{{ fieldError('trainingId', 'Training ID') }}</small></label></ng-template>
-          <label class="form-field">Trainer ID<input type="number" min="1" formControlName="trainerId" /><small>{{ fieldError('trainerId', 'Trainer ID') }}</small></label>
-          <label class="form-field">Certification Date<input type="date" formControlName="date" /><small>{{ fieldError('date', 'Date') }}</small></label>
-          <label class="form-field">Batch Number<input type="text" formControlName="batchNo" /></label>
-          <label class="form-field">Email<input type="email" formControlName="email" /><small>{{ fieldError('email', 'Email') }}</small></label>
-          <label class="form-field">Contact Number<input type="text" formControlName="contactNo" /></label>
-          <label class="form-field form-field--wide">Location<input type="text" formControlName="location" /></label>
-          <label class="form-field">City ID<input type="number" min="1" formControlName="cityId" /></label>
-          <label class="form-field">Days<input type="number" min="0" formControlName="days" /><small>{{ fieldError('days', 'Days') }}</small></label>
-          <label class="form-field">Total Points<input type="number" min="0" formControlName="totalPoints" /></label>
+          <label class="form-field">
+            Name
+            <input type="text" formControlName="name" />
+            <small>{{ fieldError('name', 'Name') }}</small>
+          </label>
+          <label class="form-field">
+            Certification Number
+            <input type="text" formControlName="certificationNumber" placeholder="Optional for a new pending record" />
+          </label>
+          <label class="form-field" *ngIf="selectedRecord?.recordSource === 'legacy'; else trainingIdField">
+            Training Name
+            <input type="text" formControlName="trainingName" />
+          </label>
+          <ng-template #trainingIdField>
+            <label class="form-field">
+              Training ID
+              <input type="number" min="1" formControlName="trainingId" />
+              <small>{{ fieldError('trainingId', 'Training ID') }}</small>
+            </label>
+          </ng-template>
+          <label class="form-field">
+            Trainer ID
+            <input type="number" min="1" formControlName="trainerId" />
+            <small>{{ fieldError('trainerId', 'Trainer ID') }}</small>
+          </label>
+          <label class="form-field">
+            Certification Date
+            <input type="date" formControlName="date" />
+            <small>{{ fieldError('date', 'Date') }}</small>
+          </label>
+          <label class="form-field">
+            Batch Number
+            <input type="text" formControlName="batchNo" />
+          </label>
+          <label class="form-field">
+            Email
+            <input type="email" formControlName="email" />
+            <small>{{ fieldError('email', 'Email') }}</small>
+          </label>
+          <label class="form-field">
+            Contact Number
+            <input type="text" formControlName="contactNo" />
+          </label>
+          <label class="form-field form-field--wide">
+            Location
+            <input type="text" formControlName="location" />
+          </label>
+          <label class="form-field">
+            City ID
+            <input type="number" min="1" formControlName="cityId" />
+          </label>
+          <label class="form-field">
+            Days
+            <input type="number" min="0" formControlName="days" />
+            <small>{{ fieldError('days', 'Days') }}</small>
+          </label>
+          <label class="form-field">
+            Total Points
+            <input type="number" min="0" formControlName="totalPoints" />
+          </label>
         </div>
         <div class="status-options">
-          <label><input type="checkbox" formControlName="isComplete" /> Completed</label>
-          <label><input type="checkbox" formControlName="isPaid" /> Paid</label>
+          <label>
+            <input type="checkbox" formControlName="isComplete" />
+            Completed
+          </label>
+          <label>
+            <input type="checkbox" formControlName="isPaid" />
+            Paid
+          </label>
         </div>
         <div class="form-grid payment-fields" *ngIf="form.get('isPaid')?.value">
-          <label class="form-field">Payment ID<input type="text" formControlName="paymentId" /></label>
-          <label class="form-field">Payment Date<input type="date" formControlName="paymentDate" /></label>
+          <label class="form-field">
+            Payment ID
+            <input type="text" formControlName="paymentId" />
+          </label>
+          <label class="form-field">
+            Payment Date
+            <input type="date" formControlName="paymentDate" />
+          </label>
         </div>
         <div class="admin-actions form-actions">
-          <button class="btn btn-primary" type="submit" [disabled]="isSaving"><i class="fa-solid" [ngClass]="isSaving ? 'fa-spinner fa-spin' : 'fa-floppy-disk'"></i>{{ isSaving ? 'Saving...' : (selectedRecord ? 'Update Certification' : 'Add Certification') }}</button>
+          <button class="btn btn-primary" type="submit" [disabled]="isSaving">
+            <i class="fa-solid" [ngClass]="isSaving ? 'fa-spinner fa-spin' : 'fa-floppy-disk'"></i>
+            {{ isSaving ? 'Saving...' : selectedRecord ? 'Update Certification' : 'Add Certification' }}
+          </button>
           <button class="btn btn-outline" type="button" (click)="resetForm()">Clear</button>
         </div>
       </form>
 
       <div class="admin-tools">
         <section class="cert-upload" aria-labelledby="certUploadTitle">
-          <div class="cert-upload__heading"><span class="cert-upload__icon"><i class="fa-solid fa-file-excel"></i></span><div><h2 id="certUploadTitle">Upload to Certifications_Data</h2><p>Required columns: Name, Email, TrainingId and TrainerId.</p></div></div>
-          <label class="cert-upload__dropzone" for="fileInput"><i class="fa-solid fa-cloud-arrow-up"></i><strong>{{ selectedFileName || 'Choose certification file' }}</strong><span>XLSX, XLS or CSV · maximum 5,000 rows</span><input class="cert-upload__input" type="file" id="fileInput" (change)="onFileChange($event)" accept=".xlsx,.xls,.csv" /></label>
-          <div class="cert-upload__status" *ngIf="excelData.length"><i class="fa-solid fa-circle-check"></i><span>{{ excelData.length }} {{ excelData.length === 1 ? 'row' : 'rows' }} ready for Certifications_Data</span></div>
-          <button class="btn btn-primary cert-upload__button" type="button" (click)="saveExcelToServer()" [disabled]="isUploading || !excelData.length"><i class="fa-solid" [ngClass]="isUploading ? 'fa-spinner fa-spin' : 'fa-cloud-arrow-up'"></i>{{ isUploading ? 'Uploading...' : 'Upload Records' }}</button>
-          <div *ngIf="uploadMessage" class="form-error cert-upload__error" role="alert"><i class="fa-solid fa-circle-exclamation"></i>{{ uploadMessage }}</div>
+          <div class="cert-upload__heading">
+            <span class="cert-upload__icon"><i class="fa-solid fa-file-excel"></i></span>
+            <div>
+              <h2 id="certUploadTitle">Upload to Certifications_Data</h2>
+              <p>Required columns: Name, Email, TrainingId and TrainerId.</p>
+            </div>
+          </div>
+          <label class="cert-upload__dropzone" for="fileInput">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <strong>{{ selectedFileName || 'Choose certification file' }}</strong>
+            <span>XLSX, XLS or CSV · maximum 5,000 rows</span>
+            <input
+              class="cert-upload__input"
+              type="file"
+              id="fileInput"
+              (change)="onFileChange($event)"
+              accept=".xlsx,.xls,.csv"
+            />
+          </label>
+          <div class="cert-upload__status" *ngIf="excelData.length">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>
+              {{ excelData.length }} {{ excelData.length === 1 ? 'row' : 'rows' }} ready for Certifications_Data
+            </span>
+          </div>
+          <button
+            class="btn btn-primary cert-upload__button"
+            type="button"
+            (click)="saveExcelToServer()"
+            [disabled]="isUploading || !excelData.length"
+          >
+            <i class="fa-solid" [ngClass]="isUploading ? 'fa-spinner fa-spin' : 'fa-cloud-arrow-up'"></i>
+            {{ isUploading ? 'Uploading...' : 'Upload Records' }}
+          </button>
+          <div *ngIf="uploadMessage" class="form-error cert-upload__error" role="alert">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            {{ uploadMessage }}
+          </div>
         </section>
-        <div class="upload-guide"><h3>Accepted optional columns</h3><p>CertificationNumber, Date, BatchNo, ContactNo, Location, CityId, Days, TotalPoints, IsComplete, IsPaid, PaymentId and PaymentDate.</p><strong>Existing Email + TrainingId combinations are skipped to prevent duplicates.</strong></div>
+        <div class="upload-guide">
+          <h3>Accepted optional columns</h3>
+          <p>
+            CertificationNumber, Date, BatchNo, ContactNo, Location, CityId, Days, TotalPoints, IsComplete, IsPaid,
+            PaymentId and PaymentDate.
+          </p>
+          <strong>Existing Email + TrainingId combinations are skipped to prevent duplicates.</strong>
+        </div>
       </div>
     </div>
 
     <section class="records-panel">
-      <div class="records-toolbar"><div><span class="panel-kicker">Database records</span><h2>Certification Register</h2></div><div class="records-actions"><button class="btn btn-outline" type="button" (click)="clearFilters()"><i class="fa-solid fa-filter-circle-xmark"></i> Clear filters</button><button class="btn btn-outline" type="button" (click)="loadRecords()"><i class="fa-solid fa-rotate"></i> Refresh</button></div></div>
-      <div class="admin-loading" *ngIf="isLoading"><i class="fa-solid fa-spinner fa-spin"></i> Loading certification records...</div>
+      <div class="records-toolbar">
+        <div>
+          <span class="panel-kicker">Database records</span>
+          <h2>Certification Register</h2>
+        </div>
+        <div class="records-actions">
+          <button class="btn btn-outline" type="button" (click)="clearFilters()">
+            <i class="fa-solid fa-filter-circle-xmark"></i>
+            Clear filters
+          </button>
+          <button class="btn btn-outline" type="button" (click)="loadRecords()">
+            <i class="fa-solid fa-rotate"></i>
+            Refresh
+          </button>
+        </div>
+      </div>
+      <div class="admin-loading" *ngIf="isLoading">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        Loading certification records...
+      </div>
       <div class="admin-table-wrap" *ngIf="!isLoading">
         <table class="admin-table certification-table">
           <thead>
-            <tr><th>Name</th><th>Certificate No.</th><th>Date</th><th>Training</th><th>Email</th><th>Location</th><th>Status</th><th>Action</th></tr>
+            <tr>
+              <th>Name</th>
+              <th>Certificate No.</th>
+              <th>Date</th>
+              <th>Training</th>
+              <th>Email</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
             <tr class="filter-row">
               <th><input [(ngModel)]="filters.name" (ngModelChange)="filtersChanged()" placeholder="Filter name" /></th>
-              <th><input [(ngModel)]="filters.certificationNumber" (ngModelChange)="filtersChanged()" placeholder="Filter number" /></th>
+              <th>
+                <input
+                  [(ngModel)]="filters.certificationNumber"
+                  (ngModelChange)="filtersChanged()"
+                  placeholder="Filter number"
+                />
+              </th>
               <th><input [(ngModel)]="filters.date" (ngModelChange)="filtersChanged()" placeholder="YYYY-MM-DD" /></th>
-              <th><input [(ngModel)]="filters.training" (ngModelChange)="filtersChanged()" placeholder="Name or ID" /></th>
-              <th><input [(ngModel)]="filters.email" (ngModelChange)="filtersChanged()" placeholder="Filter email" /></th>
-              <th><input [(ngModel)]="filters.location" (ngModelChange)="filtersChanged()" placeholder="Filter location" /></th>
-              <th><select [(ngModel)]="filters.status" (ngModelChange)="filtersChanged()"><option value="">All</option><option value="complete">Completed</option><option value="pending">Pending</option></select></th><th></th>
+              <th>
+                <input [(ngModel)]="filters.training" (ngModelChange)="filtersChanged()" placeholder="Name or ID" />
+              </th>
+              <th>
+                <input [(ngModel)]="filters.email" (ngModelChange)="filtersChanged()" placeholder="Filter email" />
+              </th>
+              <th>
+                <input
+                  [(ngModel)]="filters.location"
+                  (ngModelChange)="filtersChanged()"
+                  placeholder="Filter location"
+                />
+              </th>
+              <th>
+                <select [(ngModel)]="filters.status" (ngModelChange)="filtersChanged()">
+                  <option value="">All</option>
+                  <option value="complete">Completed</option>
+                  <option value="pending">Pending</option>
+                </select>
+              </th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let record of pagedRecords; trackBy: trackByRecordId">
-              <td><strong>{{ record.name }}</strong><small>{{ record.contactNo || 'No contact number' }}</small></td>
-              <td><span class="certificate-number">{{ record.certificationNumber || 'Pending approval' }}</span></td>
-              <td>{{ record.date | date:'dd MMM yyyy' }}</td>
-              <td><strong>{{ record.trainingName || ('Training #' + record.trainingId) }}</strong><small>Trainer: {{ record.trainerName || record.trainerId }}</small></td>
+              <td>
+                <strong>{{ record.name }}</strong>
+                <small>{{ record.contactNo || 'No contact number' }}</small>
+              </td>
+              <td>
+                <span class="certificate-number">{{ record.certificationNumber || 'Pending approval' }}</span>
+              </td>
+              <td>{{ record.date | date: 'dd MMM yyyy' }}</td>
+              <td>
+                <strong>{{ record.trainingName || 'Training #' + record.trainingId }}</strong>
+                <small>Trainer: {{ record.trainerName || record.trainerId }}</small>
+              </td>
               <td>{{ record.email }}</td>
               <td>{{ record.locationName || record.location || '—' }}</td>
-              <td><span class="status-chip" [class.complete]="record.isComplete">{{ record.isComplete ? 'Completed' : 'Pending' }}</span></td>
-              <td><button class="table-link" type="button" (click)="edit(record)"><i class="fa-solid fa-pen"></i> Edit</button></td>
+              <td>
+                <span class="status-chip" [class.complete]="record.isComplete">
+                  {{ record.isComplete ? 'Completed' : 'Pending' }}
+                </span>
+              </td>
+              <td>
+                <button class="table-link" type="button" (click)="edit(record)">
+                  <i class="fa-solid fa-pen"></i>
+                  Edit
+                </button>
+              </td>
             </tr>
-            <tr *ngIf="!pagedRecords.length"><td colspan="8" class="empty-table"><i class="fa-solid fa-inbox"></i><strong>No matching records</strong><span>Clear or adjust the column filters.</span></td></tr>
+            <tr *ngIf="!pagedRecords.length">
+              <td colspan="8" class="empty-table">
+                <i class="fa-solid fa-inbox"></i>
+                <strong>No matching records</strong>
+                <span>Clear or adjust the column filters.</span>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
 
       <div class="pagination-bar" *ngIf="!isLoading && filteredRecords.length">
-        <div class="page-summary">Showing <strong>{{ firstRecordNumber }}–{{ lastRecordNumber }}</strong> of <strong>{{ filteredRecords.length }}</strong></div>
-        <label class="page-size">Rows per page <select [value]="pageSize" (change)="changePageSize($any($event.target).value)"><option *ngFor="let size of pageSizes" [value]="size">{{ size }}</option></select></label>
-        <nav class="pagination" aria-label="Certification pages"><button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"><i class="fa-solid fa-chevron-left"></i></button><button type="button" *ngFor="let page of visiblePages" [class.active]="page === currentPage" (click)="goToPage(page)">{{ page }}</button><button type="button" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"><i class="fa-solid fa-chevron-right"></i></button></nav>
+        <div class="page-summary">
+          Showing
+          <strong>{{ firstRecordNumber }}–{{ lastRecordNumber }}</strong>
+          of
+          <strong>{{ filteredRecords.length }}</strong>
+        </div>
+        <label class="page-size">
+          Rows per page
+          <select [value]="pageSize" (change)="changePageSize($any($event.target).value)">
+            <option *ngFor="let size of pageSizes" [value]="size">{{ size }}</option>
+          </select>
+        </label>
+        <nav class="pagination" aria-label="Certification pages">
+          <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button
+            type="button"
+            *ngFor="let page of visiblePages"
+            [class.active]="page === currentPage"
+            (click)="goToPage(page)"
+          >
+            {{ page }}
+          </button>
+          <button type="button" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </nav>
         <span class="page-count">Page {{ currentPage }} of {{ totalPages }}</span>
       </div>
     </section>
   </div>
 </section>
-

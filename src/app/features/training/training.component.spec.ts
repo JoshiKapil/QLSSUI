@@ -26,13 +26,18 @@ describe('TrainingComponent', () => {
     interactions = jasmine.createSpyObj<SiteInteractionsService>('SiteInteractionsService', ['initPage']);
     sanitizer = jasmine.createSpyObj<DomSanitizer>('DomSanitizer', ['bypassSecurityTrustResourceUrl']);
     sanitizer.bypassSecurityTrustResourceUrl.and.callFake((url) => url as any);
-    trainingService = jasmine.createSpyObj<TrainingManagementService>('TrainingManagementService', ['getPaged', 'getDocument']);
-    trainingService.getPaged.and.returnValue(of({
-      items: [{ trainingId: 1, trainingName: 'Core Tools', displayOrder: 1 }],
-      totalCount: 1,
-      pageNumber: 1,
-      pageSize: 100
-    } as any));
+    trainingService = jasmine.createSpyObj<TrainingManagementService>('TrainingManagementService', [
+      'getPaged',
+      'getDocument',
+    ]);
+    trainingService.getPaged.and.returnValue(
+      of({
+        items: [{ trainingId: 1, trainingName: 'Core Tools', displayOrder: 1 }],
+        totalCount: 1,
+        pageNumber: 1,
+        pageSize: 100,
+      } as any),
+    );
 
     await TestBed.configureTestingModule({
       imports: [FormsModule, HttpClientTestingModule],
@@ -43,9 +48,9 @@ describe('TrainingComponent', () => {
         { provide: DomSanitizer, useValue: sanitizer },
         { provide: DataService, useValue: dataService },
         { provide: NotifierService, useValue: notifier },
-        { provide: SiteInteractionsService, useValue: interactions }
-        ,{ provide: TrainingManagementService, useValue: trainingService }
-      ]
+        { provide: SiteInteractionsService, useValue: interactions },
+        { provide: TrainingManagementService, useValue: trainingService },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TrainingComponent);
@@ -79,7 +84,7 @@ describe('TrainingComponent', () => {
     const event = jasmine.createSpyObj<KeyboardEvent>('KeyboardEvent', ['preventDefault', 'stopPropagation'], {
       key: 'p',
       ctrlKey: true,
-      metaKey: false
+      metaKey: false,
     });
 
     component.isReadMoreModalOpen = true;

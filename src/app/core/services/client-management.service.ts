@@ -1,13 +1,13 @@
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { Client } from "../models/client.model";
-import { AdminManagementService } from "./admin-management.service";
-import { ApiClientService } from "./api-client.service";
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Client } from '../models/client.model';
+import { AdminManagementService } from './admin-management.service';
+import { ApiClientService } from './api-client.service';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class ClientManagementService {
-  private readonly endpoint = "Client";
-  private readonly idKey = "clientId";
+  private readonly endpoint = 'Client';
+  private readonly idKey = 'clientId';
 
   constructor(
     private adminService: AdminManagementService,
@@ -23,18 +23,11 @@ export class ClientManagementService {
   }
 
   search(query: string): Observable<Client[]> {
-    return this.adminService.search<Client>(
-      this.endpoint,
-      ["clientName", "clientId"],
-      query,
-    );
+    return this.adminService.search<Client>(this.endpoint, ['clientName', 'clientId'], query);
   }
 
   uploadImage(file: File): Observable<{ fileName: string }> {
-    return this.apiClient.upload<{ fileName: string }>(
-      `${this.endpoint}/upload-image`,
-      file,
-    );
+    return this.apiClient.upload<{ fileName: string }>(`${this.endpoint}/upload-image`, file);
   }
   save(record: Client): Observable<Client> {
     return this.adminService.save<Client>(this.endpoint, this.idKey, record);

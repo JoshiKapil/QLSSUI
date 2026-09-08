@@ -1,0 +1,21 @@
+<section class="page">
+  <header>
+    <div>
+      <small>AUTOMATION</small>
+      <h1>Notifications</h1>
+      <p>Low-stock and 15-day non-moving alerts are created automatically and emailed to Zeiss users.</p>
+    </div>
+  </header>
+<app-list-pager [page]="notificationsPage" (changed)="reloadnotificationsPage()"></app-list-pager>
+  <p *ngIf="error" role="alert">{{ error }}</p>
+  <article class="panel">
+    <div class="row" *ngFor="let x of rows">
+      <div>
+        <strong>{{ x.title }}</strong>
+        <small>{{ x.message }}</small>
+      </div>
+      <small>{{ x.createdOnUtc | date: 'dd-MMM-yyyy HH:mm' }}</small>
+    </div>
+    <p *ngIf="!error && !rows.length">No notifications.</p>
+  </article>
+</section>

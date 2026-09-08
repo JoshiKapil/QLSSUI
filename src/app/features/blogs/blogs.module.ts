@@ -5,6 +5,6 @@ import { BlogsRoutingModule } from './blogs-routing.module';
 
 @NgModule({
   declarations: [BlogsComponent],
-  imports: [SharedModule, BlogsRoutingModule]
+  imports: [SharedModule, BlogsRoutingModule],
 })
 export class BlogsModule {}

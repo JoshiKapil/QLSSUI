@@ -1,4 +1,4 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
 import { ProjectApprovalsComponent } from './approvals/project-approvals.component';
 import { ProjectDashboardComponent } from './dashboard/project-dashboard.component';
@@ -13,6 +13,7 @@ import { ProjectReportsComponent } from './reports/project-reports.component';
 import { ProjectWorkspaceShellComponent } from './shell/project-workspace-shell.component';
 import { PmSearchSelectComponent } from './shared/pm-search-select.component';
 import { ProjectOperationsComponent } from './operations/project-operations.component';
+import { ProjectInvoicesComponent } from './invoices/project-invoices.component';
 
 @NgModule({
   declarations: [
@@ -27,9 +28,9 @@ import { ProjectOperationsComponent } from './operations/project-operations.comp
     ProjectReportsComponent,
     ProjectManagementAdminComponent,
     PmSearchSelectComponent,
-    ProjectOperationsComponent
+    ProjectOperationsComponent,
+    ProjectInvoicesComponent,
   ],
-  imports: [SharedModule, ProjectManagementRoutingModule]
+  imports: [SharedModule, ProjectManagementRoutingModule],
 })
 export class ProjectManagementModule {}
-

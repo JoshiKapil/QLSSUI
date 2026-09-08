@@ -7,17 +7,17 @@ import { CertificatePdfService } from '../../../core/services/certificate-pdf.se
 
 const PAGE = { width: 841.89, height: 595.28 };
 const COLORS = {
-  navy: rgb(0.02, 0.10, 0.32),
+  navy: rgb(0.02, 0.1, 0.32),
   blue: rgb(0.02, 0.42, 0.82),
-  green: rgb(0.00, 0.42, 0.16),
-  orange: rgb(1.00, 0.48, 0.02),
+  green: rgb(0.0, 0.42, 0.16),
+  orange: rgb(1.0, 0.48, 0.02),
   gold: rgb(0.96, 0.66, 0.02),
   red: rgb(0.88, 0.05, 0.08),
-  ink: rgb(0.08, 0.10, 0.15),
-  muted: rgb(0.38, 0.43, 0.50),
+  ink: rgb(0.08, 0.1, 0.15),
+  muted: rgb(0.38, 0.43, 0.5),
   paper: rgb(1, 1, 1),
   soft: rgb(0.97, 0.98, 0.99),
-  topic: rgb(0.99, 0.98, 0.94)
+  topic: rgb(0.99, 0.98, 0.94),
 };
 
 @Injectable()
@@ -37,6 +37,7 @@ export class VectorCertificatePdfService extends CertificatePdfService {
 
     this.drawFrame(page);
     this.drawBrand(page, regular, bold);
+    await this.drawVectorCompanyLogo(document, page, data.logoUrl);
     this.drawHeading(page, regular, bold);
     this.drawRecipient(page, data, regular, bold, italic);
     this.drawVectorTopics(page, data.coveredTopics, regular, bold);
@@ -54,12 +55,20 @@ export class VectorCertificatePdfService extends CertificatePdfService {
   private drawFrame(page: PDFPage): void {
     page.drawRectangle({ x: 0, y: 0, width: PAGE.width, height: PAGE.height, color: COLORS.paper });
     page.drawRectangle({
-      x: 18, y: 18, width: PAGE.width - 36, height: PAGE.height - 36,
-      borderColor: COLORS.navy, borderWidth: 2.4
+      x: 18,
+      y: 18,
+      width: PAGE.width - 36,
+      height: PAGE.height - 36,
+      borderColor: COLORS.navy,
+      borderWidth: 2.4,
     });
     page.drawRectangle({
-      x: 25, y: 25, width: PAGE.width - 50, height: PAGE.height - 50,
-      borderColor: COLORS.orange, borderWidth: 0.8
+      x: 25,
+      y: 25,
+      width: PAGE.width - 50,
+      height: PAGE.height - 50,
+      borderColor: COLORS.orange,
+      borderWidth: 0.8,
     });
 
     page.drawRectangle({ x: 18, y: PAGE.height - 46, width: 165, height: 28, color: COLORS.green });
@@ -76,7 +85,7 @@ export class VectorCertificatePdfService extends CertificatePdfService {
       { x, y: y + size + gap, color: COLORS.green, text: 'Q' },
       { x: x + size + gap, y: y + size + gap, color: COLORS.gold, text: 'L' },
       { x, y, color: COLORS.blue, text: '6' },
-      { x: x + size + gap, y, color: COLORS.red, text: 'S' }
+      { x: x + size + gap, y, color: COLORS.red, text: 'S' },
     ];
     blocks.forEach((block) => {
       page.drawRectangle({ x: block.x, y: block.y, width: size, height: size, color: block.color });
@@ -88,6 +97,24 @@ export class VectorCertificatePdfService extends CertificatePdfService {
     this.center(page, "LET'S IMPROVE", bold, 8, PAGE.width / 2, 497, COLORS.navy);
   }
 
+  private async drawVectorCompanyLogo(document: PDFDocument, page: PDFPage, logoUrl?: string): Promise<void> {
+    if (!logoUrl) return;
+
+    const mask = { x: 595, y: 502, width: 215, height: 68 };
+    const imageArea = { x: 605, y: 510, width: 195, height: 52 };
+    page.drawRectangle({ ...mask, color: COLORS.paper });
+    const logo = await this.embedCompanyLogo(document, logoUrl);
+    const scale = Math.min(imageArea.width / logo.width, imageArea.height / logo.height);
+    const width = logo.width * scale;
+    const height = logo.height * scale;
+    page.drawImage(logo, {
+      x: imageArea.x + (imageArea.width - width) / 2,
+      y: imageArea.y + (imageArea.height - height) / 2,
+      width,
+      height,
+    });
+  }
+
   private drawHeading(page: PDFPage, regular: PDFFont, bold: PDFFont): void {
     this.center(page, 'CERTIFICATE', bold, 38, 385, 450, COLORS.navy);
     page.drawLine({ start: { x: 215, y: 435 }, end: { x: 305, y: 435 }, thickness: 1, color: COLORS.orange });
@@ -96,13 +123,7 @@ export class VectorCertificatePdfService extends CertificatePdfService {
     this.center(page, 'THIS IS TO CERTIFY THAT', regular, 11, 385, 398, COLORS.ink);
   }
 
-  private drawRecipient(
-    page: PDFPage,
-    data: CertificateData,
-    regular: PDFFont,
-    bold: PDFFont,
-    italic: PDFFont
-  ): void {
+  private drawRecipient(page: PDFPage, data: CertificateData, regular: PDFFont, bold: PDFFont, italic: PDFFont): void {
     this.centerFitted(page, data.userName, italic, 35, 385, 354, COLORS.navy, 450, 23);
     this.center(page, this.completionText(data), regular, 10, 385, 326, COLORS.ink);
     this.centerFitted(page, data.trainingName.toUpperCase(), bold, 22, 385, 294, COLORS.green, 500, 14);
@@ -114,17 +135,20 @@ export class VectorCertificatePdfService extends CertificatePdfService {
       ...panel,
       color: COLORS.topic,
       borderColor: COLORS.gold,
-      borderWidth: 0.8
+      borderWidth: 0.8,
     });
     this.center(page, 'COVERED TOPICS', bold, 12, panel.x + panel.width / 2, 456, COLORS.navy);
     page.drawLine({
       start: { x: panel.x + 12, y: 447 },
       end: { x: panel.x + panel.width - 12, y: 447 },
       thickness: 1,
-      color: COLORS.orange
+      color: COLORS.orange,
     });
 
-    const visible = topics.map((topic) => topic.trim()).filter(Boolean).slice(0, 7);
+    const visible = topics
+      .map((topic) => topic.trim())
+      .filter(Boolean)
+      .slice(0, 7);
     const rowGap = visible.length > 1 ? Math.min(46, 235 / (visible.length - 1)) : 0;
     const bulletColors = [COLORS.green, COLORS.gold, COLORS.blue, COLORS.red];
 
@@ -138,7 +162,7 @@ export class VectorCertificatePdfService extends CertificatePdfService {
           y: rowY - lineIndex * 9,
           size: 8.2,
           font: regular,
-          color: COLORS.ink
+          color: COLORS.ink,
         });
       });
       page.drawLine({
@@ -146,7 +170,7 @@ export class VectorCertificatePdfService extends CertificatePdfService {
         end: { x: panel.x + panel.width - 12, y: rowY - 14 },
         thickness: 0.5,
         color: COLORS.gold,
-        dashArray: [1.2, 2]
+        dashArray: [1.2, 2],
       });
     });
   }
@@ -157,14 +181,14 @@ export class VectorCertificatePdfService extends CertificatePdfService {
       ...panel,
       color: COLORS.soft,
       borderColor: COLORS.orange,
-      borderWidth: 1.2
+      borderWidth: 1.2,
     });
 
     const fields = [
       { label: 'CERTIFICATE NO.', value: data.certificateNumber },
       { label: 'TRAINING HOURS', value: `${data.trainingHours} Hours` },
       { label: 'LOCATION', value: data.location },
-      { label: 'TRAINER NAME', value: data.trainerName }
+      { label: 'TRAINER NAME', value: data.trainerName },
     ];
     const columnWidth = panel.width / fields.length;
 
@@ -177,7 +201,7 @@ export class VectorCertificatePdfService extends CertificatePdfService {
           end: { x: separatorX, y: panel.y + panel.height - 10 },
           thickness: 0.5,
           color: COLORS.orange,
-          dashArray: [1.2, 2]
+          dashArray: [1.2, 2],
         });
       }
       this.center(page, field.label, bold, 7.2, centerX, 157, COLORS.navy);
@@ -195,14 +219,14 @@ export class VectorCertificatePdfService extends CertificatePdfService {
     page: PDFPage,
     document: PDFDocument,
     certificateNumber: string,
-    regular: PDFFont
+    regular: PDFFont,
   ): Promise<void> {
     const url = 'https://www.qlssconsulting.com/verify?certificate=' + encodeURIComponent(certificateNumber.trim());
     const dataUrl = await QRCode.toDataURL(url, {
       errorCorrectionLevel: 'M',
       margin: 4,
       width: 512,
-      color: { dark: '#000000', light: '#FFFFFF' }
+      color: { dark: '#000000', light: '#FFFFFF' },
     });
     const qr = await document.embedPng(dataUrl);
     page.drawImage(qr, { x: 650, y: 50, width: 58, height: 58 });
@@ -236,25 +260,28 @@ export class VectorCertificatePdfService extends CertificatePdfService {
     y: number,
     color: RGB,
     maxWidth: number,
-    minimumSize: number
+    minimumSize: number,
   ): void {
     const width = font.widthOfTextAtSize(text, preferredSize);
-    const size = width <= maxWidth ? preferredSize : Math.max(minimumSize, preferredSize * maxWidth / width);
+    const size = width <= maxWidth ? preferredSize : Math.max(minimumSize, (preferredSize * maxWidth) / width);
     this.center(page, text, font, size, x, y, color);
   }
 
   private wrap(text: string, font: PDFFont, size: number, maxWidth: number): string[] {
     const lines: string[] = [];
     let current = '';
-    text.split(/\s+/).filter(Boolean).forEach((word) => {
-      const next = current ? `${current} ${word}` : word;
-      if (!current || font.widthOfTextAtSize(next, size) <= maxWidth) {
-        current = next;
-      } else {
-        lines.push(current);
-        current = word;
-      }
-    });
+    text
+      .split(/\s+/)
+      .filter(Boolean)
+      .forEach((word) => {
+        const next = current ? `${current} ${word}` : word;
+        if (!current || font.widthOfTextAtSize(next, size) <= maxWidth) {
+          current = next;
+        } else {
+          lines.push(current);
+          current = word;
+        }
+      });
     if (current) lines.push(current);
     return lines;
   }
@@ -266,7 +293,7 @@ export class VectorCertificatePdfService extends CertificatePdfService {
       : new Intl.DateTimeFormat('en-GB', {
           day: '2-digit',
           month: 'long',
-          year: 'numeric'
+          year: 'numeric',
         }).format(date);
   }
 
@@ -277,7 +304,7 @@ export class VectorCertificatePdfService extends CertificatePdfService {
       'certificateNumber',
       'location',
       'trainerName',
-      'dateOfIssue'
+      'dateOfIssue',
     ];
     const missing = required.filter((key) => !String(data[key] ?? '').trim());
     if (missing.length) {

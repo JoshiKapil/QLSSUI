@@ -7,7 +7,7 @@ import {
   QuestionDto,
   QuestionTestImportRequestDto,
   QuestionTestImportResultDto,
-  QuestionUsageInfoDto
+  QuestionUsageInfoDto,
 } from './test-api.models';
 import { isServerNumericId } from './server-id.util';
 
@@ -48,10 +48,16 @@ export class QuestionApiService {
   }
 
   updateQuestion(questionId: string, question: Partial<QuestionDto> & Record<string, any>): Observable<QuestionDto> {
-    return this.api.put<QuestionDto>(`Question/update/${encodeURIComponent(questionId)}`, this.normalizeQuestionPayload(question));
+    return this.api.put<QuestionDto>(
+      `Question/update/${encodeURIComponent(questionId)}`,
+      this.normalizeQuestionPayload(question),
+    );
   }
 
-  updateQuestionViaUpdateRoute(questionId: string, question: Partial<QuestionDto> & Record<string, any>): Observable<QuestionDto> {
+  updateQuestionViaUpdateRoute(
+    questionId: string,
+    question: Partial<QuestionDto> & Record<string, any>,
+  ): Observable<QuestionDto> {
     return this.updateQuestion(questionId, question);
   }
 
@@ -63,17 +69,23 @@ export class QuestionApiService {
     return this.api.get<QuestionUsageInfoDto>(`Question/usage/${encodeURIComponent(questionId)}`);
   }
 
-  importQuestions(questions: QuestionDto[], duplicateAction: 'skip' | 'update' | string = 'skip'): Observable<ImportResultDto> {
+  importQuestions(
+    questions: QuestionDto[],
+    duplicateAction: 'skip' | 'update' | string = 'skip',
+  ): Observable<ImportResultDto> {
     return this.api.post<ImportResultDto>('Question/import', {
       questions: questions.map((question) => this.normalizeQuestionPayload(question)),
-      duplicateAction
+      duplicateAction,
     });
   }
 
-  bulkImportQuestions(questions: QuestionDto[], duplicateAction: 'skip' | 'update' | string = 'skip'): Observable<ImportResultDto> {
+  bulkImportQuestions(
+    questions: QuestionDto[],
+    duplicateAction: 'skip' | 'update' | string = 'skip',
+  ): Observable<ImportResultDto> {
     return this.api.post<ImportResultDto>('Question/bulk', {
       questions: questions.map((question) => this.normalizeQuestionPayload(question)),
-      duplicateAction
+      duplicateAction,
     });
   }
 
@@ -81,7 +93,10 @@ export class QuestionApiService {
     return this.api.upload<ImportResultDto>('Question/import-excel', file, { duplicateAction });
   }
 
-  importQuestionExcelPascal(file: File, duplicateAction: 'skip' | 'update' | string = 'skip'): Observable<ImportResultDto> {
+  importQuestionExcelPascal(
+    file: File,
+    duplicateAction: 'skip' | 'update' | string = 'skip',
+  ): Observable<ImportResultDto> {
     return this.api.upload<ImportResultDto>('Question/ImportExcel', file, { duplicateAction });
   }
 
@@ -117,7 +132,7 @@ export class QuestionApiService {
         videoUrl: String(option?.videoUrl ?? ''),
         imageAlt: String(option?.imageAlt ?? ''),
         displayOrder: Number(option?.displayOrder ?? index + 1),
-        isCorrect
+        isCorrect,
       };
     });
 
@@ -154,12 +169,14 @@ export class QuestionApiService {
       isActive: question.isActive ?? true,
       version: Number(question.version ?? 1),
       createdAt: String(question.createdAt ?? new Date().toISOString()),
-      updatedAt: String(question.updatedAt ?? new Date().toISOString())
+      updatedAt: String(question.updatedAt ?? new Date().toISOString()),
     };
   }
 
   private normalizeQuestionType(value: unknown): string {
-    const type = String(value ?? 'MCSA').trim().toUpperCase();
+    const type = String(value ?? 'MCSA')
+      .trim()
+      .toUpperCase();
     return type === 'MSCA' ? 'MCSA' : type;
   }
 
@@ -167,5 +184,3 @@ export class QuestionApiService {
     return Array.isArray(value) ? value.map((item) => String(item)).filter(Boolean) : [];
   }
 }
-
-

@@ -5,6 +5,6 @@ import { OperationalexcellenceRoutingModule } from './operationalexcellence-rout
 
 @NgModule({
   declarations: [OperationalexcellenceComponent],
-  imports: [SharedModule, OperationalexcellenceRoutingModule]
+  imports: [SharedModule, OperationalexcellenceRoutingModule],
 })
 export class OperationalexcellenceModule {}

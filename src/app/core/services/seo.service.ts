@@ -5,7 +5,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SeoService {
   private readonly fallbackSiteUrl = 'https://YOURDOMAIN.COM';
@@ -19,7 +19,7 @@ export class SeoService {
     private router: Router,
     private title: Title,
     private meta: Meta,
-    @Inject(DOCUMENT) private document: Document
+    @Inject(DOCUMENT) private document: Document,
   ) {}
 
   init(): void {

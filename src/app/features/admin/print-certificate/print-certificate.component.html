@@ -1,15 +1,21 @@
-﻿<section class="certificate-page">
+﻿<section class="certificate-page" [class.exam-only]="isExamDetailsRoute">
   <div class="container certificate-shell">
     <header class="page-header">
       <div>
         <span class="eyebrow">Admin Facility</span>
-        <h1>Certificate Center</h1>
-        <p>Create, download, print, or email professional A4 landscape certificates from one workspace.</p>
+        <h1>{{ isExamDetailsRoute ? 'Exam Details Export' : 'Certificate Center' }}</h1>
+        <p>
+          {{
+            isExamDetailsRoute
+              ? 'Generate or email exam detail reports for the selected company, training, test, and date.'
+              : 'Create, download, print, or email professional A4 landscape certificates from one workspace.'
+          }}
+        </p>
       </div>
-      <a class="btn btn-outline" routerLink="/admin/create-test">Create Test</a>
+      <a *ngIf="!isExamDetailsRoute" class="btn btn-outline" routerLink="/admin/create-test">Create Test</a>
     </header>
 
-    <section class="name-correction-card" aria-labelledby="nameCorrectionHeading">
+    <section class="name-correction-card" aria-labelledby="nameCorrectionHeading" *ngIf="!isExamDetailsRoute">
       <div class="name-correction-heading">
         <div class="name-correction-icon"><i class="fas fa-users-viewfinder" aria-hidden="true"></i></div>
         <div>
@@ -21,34 +27,74 @@
 
       <div class="correction-impact">
         <strong>One correction updates every certificate workflow</strong>
-        <span><i class="fas fa-file-arrow-down" aria-hidden="true"></i> Single download</span>
-        <span><i class="fas fa-file-zipper" aria-hidden="true"></i> Bulk download</span>
-        <span><i class="fas fa-envelope" aria-hidden="true"></i> Certificate email</span>
+        <span>
+          <i class="fas fa-file-arrow-down" aria-hidden="true"></i>
+          Single download
+        </span>
+        <span>
+          <i class="fas fa-file-zipper" aria-hidden="true"></i>
+          Bulk download
+        </span>
+        <span>
+          <i class="fas fa-envelope" aria-hidden="true"></i>
+          Certificate email
+        </span>
       </div>
 
       <ol class="correction-steps" aria-label="Name correction steps">
-        <li><span>1</span>Search and select the entered name</li>
-        <li><span>2</span>Review every matching certificate</li>
-        <li><span>3</span>Enter the correct name and update</li>
+        <li>
+          <span>1</span>
+          Search and select the entered name
+        </li>
+        <li>
+          <span>2</span>
+          Review every matching certificate
+        </li>
+        <li>
+          <span>3</span>
+          Enter the correct name and update
+        </li>
       </ol>
 
       <div class="name-correction-fields">
         <label>
           Search entered participant data
-          <input type="search" [(ngModel)]="currentCertificateName" (ngModelChange)="confirmNameCorrection = false" name="currentCertificateName" placeholder="Type name, email, or certificate number" autocomplete="off" />
+          <input
+            type="search"
+            [(ngModel)]="currentCertificateName"
+            (ngModelChange)="confirmNameCorrection = false"
+            name="currentCertificateName"
+            placeholder="Type name, email, or certificate number"
+            autocomplete="off"
+          />
         </label>
         <span class="name-change-arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></span>
         <label>
           Correct name
-          <input type="text" [(ngModel)]="correctedCertificateName" (ngModelChange)="confirmNameCorrection = false" name="correctedCertificateName" placeholder="Available after selecting a name" [disabled]="!matchingNameRecords.length" autocomplete="off" />
+          <input
+            type="text"
+            [(ngModel)]="correctedCertificateName"
+            (ngModelChange)="confirmNameCorrection = false"
+            name="correctedCertificateName"
+            placeholder="Available after selecting a name"
+            [disabled]="!matchingNameRecords.length"
+            autocomplete="off"
+          />
         </label>
       </div>
 
       <div class="name-suggestions" *ngIf="nameSearchSuggestions.length">
         <p>Select the participant name you want to review:</p>
-        <button type="button" *ngFor="let record of nameSearchSuggestions; trackBy: trackByUserId" (click)="selectCertificateName(record)">
+        <button
+          type="button"
+          *ngFor="let record of nameSearchSuggestions; trackBy: trackByUserId"
+          (click)="selectCertificateName(record)"
+        >
           <span class="recipient-avatar">{{ (record.userName || record.name || '?').charAt(0) | uppercase }}</span>
-          <span><strong>{{ record.userName || record.name }}</strong><small>{{ record.email || record.certificationNumber || 'No contact reference' }}</small></span>
+          <span>
+            <strong>{{ record.userName || record.name }}</strong>
+            <small>{{ record.email || record.certificationNumber || 'No contact reference' }}</small>
+          </span>
           <i class="fas fa-chevron-right" aria-hidden="true"></i>
         </button>
       </div>
@@ -56,7 +102,11 @@
       <div class="name-match-summary" *ngIf="matchingNameRecords.length">
         <i class="fas fa-circle-check" aria-hidden="true"></i>
         <strong>{{ matchingNameRecords.length }}</strong>
-        <span>{{ matchingNameRecords.length === 1 ? 'certificate uses this exact name' : 'certificates use this exact name' }}</span>
+        <span>
+          {{
+            matchingNameRecords.length === 1 ? 'certificate uses this exact name' : 'certificates use this exact name'
+          }}
+        </span>
       </div>
 
       <div class="name-match-list" *ngIf="matchingNameRecords.length">
@@ -73,16 +123,28 @@
       <p class="name-search-help" *ngIf="currentCertificateName.trim().length === 1">
         Type at least two characters to search participants.
       </p>
-      <p class="name-no-match" *ngIf="currentCertificateName.trim().length > 1 && !matchingNameRecords.length && !nameSearchSuggestions.length">
+      <p
+        class="name-no-match"
+        *ngIf="currentCertificateName.trim().length > 1 && !matchingNameRecords.length && !nameSearchSuggestions.length"
+      >
         No participant was found. Try part of the name, email, or certificate number.
       </p>
 
       <div class="name-correction-action" *ngIf="matchingNameRecords.length">
         <label class="name-confirmation">
           <input type="checkbox" [(ngModel)]="confirmNameCorrection" name="confirmNameCorrection" />
-          <span>I reviewed all {{ matchingNameRecords.length }} record(s) and want to replace <strong>{{ currentCertificateName }}</strong> everywhere.</span>
+          <span>
+            I reviewed all {{ matchingNameRecords.length }} record(s) and want to replace
+            <strong>{{ currentCertificateName }}</strong>
+            everywhere.
+          </span>
         </label>
-        <button class="btn btn-primary" type="button" (click)="correctCertificateName()" [disabled]="!canCorrectCertificateName">
+        <button
+          class="btn btn-primary"
+          type="button"
+          (click)="correctCertificateName()"
+          [disabled]="!canCorrectCertificateName"
+        >
           <i class="fas fa-check" aria-hidden="true"></i>
           {{ isCorrectingName ? 'Updating...' : 'Correct name everywhere' }}
         </button>
@@ -97,19 +159,49 @@
         </div>
       </div>
       <div class="bulk-email-grid">
-        <section class="form-card bulk-card" [class.dropdown-open]="isCompanyDropdownOpen || isBulkCityDropdownOpen || isBulkTrainingDropdownOpen">
+        <section
+          class="form-card bulk-card"
+          *ngIf="!isExamDetailsRoute"
+          [class.dropdown-open]="isCompanyDropdownOpen || isBulkCityDropdownOpen || isBulkTrainingDropdownOpen"
+        >
           <div class="section-heading">
-            <div><span class="card-kicker">Bulk Export</span><h2>Bulk Certificate Download</h2><p>Download organized certificate batches by company and training.</p></div>
-<button class="card-clear" type="button" (click)="clearBulkDownload()" [disabled]="isBulkGenerating" aria-label="Clear bulk certificate download selections"><i class="fas fa-rotate-left" aria-hidden="true"></i> Clear</button>
+            <div>
+              <span class="card-kicker">Bulk Export</span>
+              <h2>Bulk Certificate Download</h2>
+              <p>Download organized certificate batches by company and training.</p>
+            </div>
+            <button
+              class="card-clear"
+              type="button"
+              (click)="clearBulkDownload()"
+              [disabled]="isBulkGenerating"
+              aria-label="Clear bulk certificate download selections"
+            >
+              <i class="fas fa-rotate-left" aria-hidden="true"></i>
+              Clear
+            </button>
           </div>
 
           <label class="field-label">Company</label>
           <div class="search-select">
-            <button class="select-toggle" type="button" (click)="toggleCompanyDropdown()" [disabled]="isBulkGenerating" [attr.aria-expanded]="isCompanyDropdownOpen">
-              <span>{{ selectedCompany ? selectedCompany.clientName : 'Select Company' }}</span><span aria-hidden="true">&#9662;</span>
+            <button
+              class="select-toggle"
+              type="button"
+              (click)="toggleCompanyDropdown()"
+              [disabled]="isBulkGenerating"
+              [attr.aria-expanded]="isCompanyDropdownOpen"
+            >
+              <span>{{ selectedCompany ? selectedCompany.clientName : 'Select Company' }}</span>
+              <span aria-hidden="true">&#9662;</span>
             </button>
             <div class="select-menu" *ngIf="isCompanyDropdownOpen" role="listbox">
-              <input type="search" [(ngModel)]="companySearch" name="companySearch" placeholder="Search company" autocomplete="off" />
+              <input
+                type="search"
+                [(ngModel)]="companySearch"
+                name="companySearch"
+                placeholder="Search company"
+                autocomplete="off"
+              />
               <button type="button" *ngFor="let company of filteredBulkCompanies" (click)="selectCompany(company)">
                 <strong>{{ company.clientName }}</strong>
                 <small>{{ getBulkCompanyCertificateCount(company) }} certificates</small>
@@ -118,31 +210,93 @@
             </div>
           </div>
 
+          <label class="field-label" for="bulkCertificateLogo">Company logo (optional)</label>
+          <input
+            id="bulkCertificateLogo"
+            class="logo-file-input"
+            type="file"
+            accept="image/*"
+            (change)="onBulkLogoSelected($event)"
+            [disabled]="isBulkGenerating"
+          />
+          <small class="logo-file-name" *ngIf="bulkLogoName">Selected: {{ bulkLogoName }}</small>
+
           <label class="field-label">City (optional)</label>
           <div class="search-select">
-            <button class="select-toggle" type="button" (click)="toggleBulkCityDropdown()" [disabled]="!selectedCompanyId || isBulkGenerating" [attr.aria-expanded]="isBulkCityDropdownOpen">
-              <span>{{ selectedBulkCity ? selectedBulkCity.cityName : (selectedCompanyId ? 'All cities' : 'Select company first') }}</span><span aria-hidden="true">&#9662;</span>
+            <button
+              class="select-toggle"
+              type="button"
+              (click)="toggleBulkCityDropdown()"
+              [disabled]="!selectedCompanyId || isBulkGenerating"
+              [attr.aria-expanded]="isBulkCityDropdownOpen"
+            >
+              <span>
+                {{
+                  selectedBulkCity
+                    ? selectedBulkCity.cityName
+                    : selectedCompanyId
+                      ? 'All cities'
+                      : 'Select company first'
+                }}
+              </span>
+              <span aria-hidden="true">&#9662;</span>
             </button>
             <div class="select-menu" *ngIf="isBulkCityDropdownOpen" role="listbox">
-              <input type="search" [(ngModel)]="bulkCitySearch" name="bulkCitySearch" placeholder="Search city" autocomplete="off" />
-              <button type="button" (click)="selectBulkCity()"><strong>All cities</strong><small>Include every city for this company</small></button>
-              <button type="button" *ngFor="let city of filteredBulkCities" (click)="selectBulkCity(city)"><strong>{{ city.cityName }}</strong></button>
+              <input
+                type="search"
+                [(ngModel)]="bulkCitySearch"
+                name="bulkCitySearch"
+                placeholder="Search city"
+                autocomplete="off"
+              />
+              <button type="button" (click)="selectBulkCity()">
+                <strong>All cities</strong>
+                <small>Include every city for this company</small>
+              </button>
+              <button type="button" *ngFor="let city of filteredBulkCities" (click)="selectBulkCity(city)">
+                <strong>{{ city.cityName }}</strong>
+              </button>
               <p class="empty-option" *ngIf="!filteredBulkCities.length">No city with certificate data found.</p>
             </div>
           </div>
 
           <label class="field-label">Training (optional)</label>
           <div class="search-select">
-            <button class="select-toggle" type="button" (click)="toggleBulkTrainingDropdown()" [disabled]="!selectedCompanyId || isBulkGenerating" [attr.aria-expanded]="isBulkTrainingDropdownOpen">
-              <span>{{ selectedBulkTraining ? getTrainingLabel(selectedBulkTraining) : (selectedCompanyId ? 'All trainings' : 'Select company first') }}</span><span aria-hidden="true">&#9662;</span>
+            <button
+              class="select-toggle"
+              type="button"
+              (click)="toggleBulkTrainingDropdown()"
+              [disabled]="!selectedCompanyId || isBulkGenerating"
+              [attr.aria-expanded]="isBulkTrainingDropdownOpen"
+            >
+              <span>
+                {{
+                  selectedBulkTraining
+                    ? getTrainingLabel(selectedBulkTraining)
+                    : selectedCompanyId
+                      ? 'All trainings'
+                      : 'Select company first'
+                }}
+              </span>
+              <span aria-hidden="true">&#9662;</span>
             </button>
             <div class="select-menu" *ngIf="isBulkTrainingDropdownOpen" role="listbox">
-              <input type="search" [(ngModel)]="bulkTrainingSearch" name="bulkTrainingSearch" placeholder="Search training" autocomplete="off" />
+              <input
+                type="search"
+                [(ngModel)]="bulkTrainingSearch"
+                name="bulkTrainingSearch"
+                placeholder="Search training"
+                autocomplete="off"
+              />
               <button type="button" (click)="selectBulkTraining()">
                 <strong>All trainings</strong>
                 <small>Include every training for this company</small>
               </button>
-              <button type="button" *ngFor="let training of filteredBulkTrainingList; trackBy: trackByTrainingId" (click)="selectBulkTraining(training)">
+              <button
+                type="button"
+                *ngFor="let training of filteredBulkTrainingList; trackBy: trackByTrainingId"
+                (click)="selectBulkTraining(training)"
+              >
                 <strong>{{ getTrainingLabel(training) }}</strong>
                 <small>{{ getBulkTrainingCertificateCount(training) }} certificates</small>
               </button>
@@ -150,65 +304,163 @@
             </div>
           </div>
           <div class="bulk-detail-fields" [class.is-disabled]="!selectedBulkTrainingId">
-            <label class="field-label">Training name
-              <input type="text" [(ngModel)]="bulkTrainingName" name="bulkTrainingName" [disabled]="!selectedBulkTrainingId" />
+            <label class="field-label">
+              Training name
+              <input
+                type="text"
+                [(ngModel)]="bulkTrainingName"
+                name="bulkTrainingName"
+                [disabled]="!selectedBulkTrainingId"
+              />
             </label>
-            <label class="field-label">Covered topics
-              <textarea rows="4" [(ngModel)]="bulkCoveredTopics" name="bulkCoveredTopics" [disabled]="!selectedBulkTrainingId"></textarea>
+            <label class="field-label">
+              Covered topics
+              <textarea
+                rows="4"
+                [(ngModel)]="bulkCoveredTopics"
+                name="bulkCoveredTopics"
+                [disabled]="!selectedBulkTrainingId"
+              ></textarea>
               <small>Comma-separated topics used for the selected training batch.</small>
             </label>
           </div>
 
           <div class="bulk-progress" *ngIf="bulkStatus" role="status" aria-live="polite">
-            <p>{{ bulkStatus }} <strong *ngIf="bulkTotal">{{ bulkPercentage }}%</strong></p>
+            <p>
+              {{ bulkStatus }}
+              <strong *ngIf="bulkTotal">{{ bulkPercentage }}%</strong>
+            </p>
             <progress *ngIf="bulkTotal" [value]="bulkProcessed" [max]="bulkTotal"></progress>
           </div>
 
-          <button class="btn btn-primary bulk-download" type="button" (click)="downloadAllCertificates()" [disabled]="!selectedCompanyId || isBulkGenerating">
+          <button
+            class="btn btn-primary bulk-download"
+            type="button"
+            (click)="downloadAllCertificates()"
+            [disabled]="!selectedCompanyId || isBulkGenerating"
+          >
             {{ isBulkGenerating ? 'Generating...' : 'Download All Certificates' }}
           </button>
-
         </section>
-        <section class="form-card email-card" [class.dropdown-open]="isEmailCompanyDropdownOpen || isEmailTrainingDropdownOpen || isEmailDateDropdownOpen">
+        <section
+          class="form-card email-card"
+          [class.dropdown-open]="
+            isEmailCompanyDropdownOpen ||
+            isEmailTrainingDropdownOpen ||
+            isExamTestDropdownOpen ||
+            isEmailDateDropdownOpen
+          "
+        >
           <div class="section-heading email-heading">
             <span class="email-icon" aria-hidden="true"><i class="fas fa-envelope"></i></span>
-            <div><span class="card-kicker">Email Delivery</span><h2>Email Certificates</h2><p>Send personalized certificate PDFs to multiple participants for a selected company, training, and date.</p></div>
-<button class="card-clear" type="button" (click)="clearEmailCertificates()" [disabled]="isBulkEmailSending" aria-label="Clear email certificate selections"><i class="fas fa-rotate-left" aria-hidden="true"></i> Clear</button>
+            <div>
+              <span class="card-kicker">{{ isExamDetailsRoute ? 'Excel Export' : 'Email Delivery' }}</span>
+              <h2>{{ isExamDetailsRoute ? 'Exam Details Export' : 'Email Certificates' }}</h2>
+              <p>
+                {{
+                  isExamDetailsRoute
+                    ? 'Generate or email participant-wise test answers for a selected company, training, test, and date.'
+                    : 'Send personalized certificate PDFs to multiple participants for a selected company, training, and date.'
+                }}
+              </p>
+            </div>
+            <button
+              class="card-clear"
+              type="button"
+              (click)="clearEmailCertificates()"
+              [disabled]="isBulkEmailSending"
+              aria-label="Clear email certificate selections"
+            >
+              <i class="fas fa-rotate-left" aria-hidden="true"></i>
+              Clear
+            </button>
           </div>
 
-          <div class="email-step"><span>1</span><strong>Choose company, training &amp; date</strong></div>
+          <div class="email-step">
+            <span>1</span>
+            <strong>Choose company, training &amp; date</strong>
+          </div>
+          <label class="field-label" for="emailCertificateLogo">Company logo (optional)</label>
+          <input
+            id="emailCertificateLogo"
+            class="logo-file-input"
+            type="file"
+            accept="image/*"
+            (change)="onEmailLogoSelected($event)"
+            [disabled]="isBulkEmailSending"
+          />
+          <small class="logo-file-name" *ngIf="emailLogoName">Selected: {{ emailLogoName }}</small>
           <div class="email-selector-grid">
             <div>
               <label class="field-label">Company</label>
               <div class="search-select">
-                <button class="select-toggle" type="button" (click)="toggleEmailCompanyDropdown()" [disabled]="isBulkEmailSending" [attr.aria-expanded]="isEmailCompanyDropdownOpen">
-                  <span>{{ selectedEmailCompany ? selectedEmailCompany.clientName : 'Select company' }}</span><span aria-hidden="true">&#9662;</span>
+                <button
+                  class="select-toggle"
+                  type="button"
+                  (click)="toggleEmailCompanyDropdown()"
+                  [disabled]="isBulkEmailSending"
+                  [attr.aria-expanded]="isEmailCompanyDropdownOpen"
+                >
+                  <span>{{ selectedEmailCompany ? selectedEmailCompany.clientName : 'Select company' }}</span>
+                  <span aria-hidden="true">&#9662;</span>
                 </button>
                 <div class="select-menu" *ngIf="isEmailCompanyDropdownOpen" role="listbox">
-                  <input type="search" [(ngModel)]="emailCompanySearch" name="emailCompanySearch" placeholder="Search company" autocomplete="off" />
-                  <button type="button" *ngFor="let company of filteredEmailCompanies" (click)="selectEmailCompany(company)">
+                  <input
+                    type="search"
+                    [(ngModel)]="emailCompanySearch"
+                    name="emailCompanySearch"
+                    placeholder="Search company"
+                    autocomplete="off"
+                  />
+                  <button
+                    type="button"
+                    *ngFor="let company of filteredEmailCompanies"
+                    (click)="selectEmailCompany(company)"
+                  >
                     <strong>{{ company.clientName }}</strong>
                     <small>{{ getBulkCompanyCertificateCount(company) }} participants</small>
                   </button>
-                  <p class="empty-option" *ngIf="!filteredEmailCompanies.length">No company with certificate data found.</p>
+                  <p class="empty-option" *ngIf="!filteredEmailCompanies.length">
+                    No company with certificate data found.
+                  </p>
                 </div>
               </div>
             </div>
 
             <div>
-              <label class="field-label">Company</label>
-          <select class="select-toggle native-flow-select" [ngModel]="individualCompanyId" (ngModelChange)="selectIndividualCompany($event)" name="individualCompanyId">
-            <option value="">Select Company</option>
-            <option *ngFor="let company of individualCompanies" [value]="company.clientId">{{ company.clientName }}</option>
-          </select>
-          <label class="field-label">Training</label>
+              <label class="field-label">Training</label>
               <div class="search-select">
-                <button class="select-toggle" type="button" (click)="toggleEmailTrainingDropdown()" [disabled]="!emailCompanyId || isBulkEmailSending" [attr.aria-expanded]="isEmailTrainingDropdownOpen">
-                  <span>{{ selectedEmailTraining ? getTrainingLabel(selectedEmailTraining) : (emailCompanyId ? 'Select training' : 'Select company first') }}</span><span aria-hidden="true">&#9662;</span>
+                <button
+                  class="select-toggle"
+                  type="button"
+                  (click)="toggleEmailTrainingDropdown()"
+                  [disabled]="!emailCompanyId || isBulkEmailSending"
+                  [attr.aria-expanded]="isEmailTrainingDropdownOpen"
+                >
+                  <span>
+                    {{
+                      selectedEmailTraining
+                        ? getTrainingLabel(selectedEmailTraining)
+                        : emailCompanyId
+                          ? 'Select training'
+                          : 'Select company first'
+                    }}
+                  </span>
+                  <span aria-hidden="true">&#9662;</span>
                 </button>
                 <div class="select-menu" *ngIf="isEmailTrainingDropdownOpen" role="listbox">
-                  <input type="search" [(ngModel)]="emailTrainingSearch" name="emailTrainingSearch" placeholder="Search training" autocomplete="off" />
-                  <button type="button" *ngFor="let training of filteredEmailTrainingList; trackBy: trackByTrainingId" (click)="selectEmailTraining(training)">
+                  <input
+                    type="search"
+                    [(ngModel)]="emailTrainingSearch"
+                    name="emailTrainingSearch"
+                    placeholder="Search training"
+                    autocomplete="off"
+                  />
+                  <button
+                    type="button"
+                    *ngFor="let training of filteredEmailTrainingList; trackBy: trackByTrainingId"
+                    (click)="selectEmailTraining(training)"
+                  >
                     <strong>{{ getTrainingLabel(training) }}</strong>
                     <small>{{ getEmailTrainingCertificateCount(training) }} certificates</small>
                   </button>
@@ -216,56 +468,232 @@
                 </div>
               </div>
             </div>
-            <div class="email-date-field">
-              <label class="field-label">Certificate date <span class="required-label">Required</span></label>
+            <div class="exam-only-control">
+              <label class="field-label">Training / Test</label>
               <div class="search-select">
-                <button class="select-toggle" type="button" (click)="toggleEmailDateDropdown()" [disabled]="!emailTrainingId || isBulkEmailSending" [attr.aria-expanded]="isEmailDateDropdownOpen">
-                  <span>{{ selectedEmailDateLabel || (emailTrainingId ? 'Select certificate date' : 'Select training first') }}</span><span aria-hidden="true">&#9662;</span>
+                <button
+                  class="select-toggle"
+                  type="button"
+                  (click)="toggleExamTestDropdown()"
+                  [disabled]="!emailTrainingId || isExamExporting"
+                  [attr.aria-expanded]="isExamTestDropdownOpen"
+                >
+                  <span>
+                    {{
+                      selectedExamTest
+                        ? selectedExamTest.displayName || selectedExamTest.testTitle || selectedExamTest.testName
+                        : emailTrainingId
+                          ? 'Select training / test'
+                          : 'Select training first'
+                    }}
+                  </span>
+                  <span aria-hidden="true">&#9662;</span>
                 </button>
-                <div class="select-menu date-menu" *ngIf="isEmailDateDropdownOpen" role="listbox">
-                  <button type="button" *ngFor="let option of emailDateOptions" (click)="selectEmailDate(option.value)">
-                    <strong><i class="fas fa-calendar-day" aria-hidden="true"></i> {{ option.label }}</strong>
-                    <small>{{ option.count }} {{ option.count === 1 ? 'certificate' : 'certificates' }}</small>
+                <div class="select-menu" *ngIf="isExamTestDropdownOpen" role="listbox">
+                  <input
+                    type="search"
+                    [(ngModel)]="examTestSearch"
+                    name="examTestSearch"
+                    placeholder="Search training / test"
+                    autocomplete="off"
+                  />
+                  <button type="button" *ngFor="let test of filteredExamTests" (click)="selectExamTest(test)">
+                    <strong>{{ test.displayName || test.testTitle || test.testName }}</strong>
+                    <small>{{ test.totalQuestions || 0 }} questions</small>
                   </button>
-                  <p class="empty-option" *ngIf="!emailDateOptions.length">No certificate dates found for this training.</p>
+                  <p class="empty-option" *ngIf="!filteredExamTests.length">
+                    No saved test attempts found for this company and training.
+                  </p>
                 </div>
               </div>
             </div>
+            <div class="email-date-field">
+              <label class="field-label field-label1">
+                Certificate date
+                <span class="required-label1">*</span>
+              </label>
+              <div class="search-select">
+                <button
+                  class="select-toggle"
+                  type="button"
+                  (click)="toggleEmailDateDropdown()"
+                  [disabled]="!emailTrainingId || isBulkEmailSending"
+                  [attr.aria-expanded]="isEmailDateDropdownOpen"
+                >
+                  <span>
+                    {{
+                      selectedEmailDateLabel || (emailTrainingId ? 'Select certificate date' : 'Select training first')
+                    }}
+                  </span>
+                  <span aria-hidden="true">&#9662;</span>
+                </button>
+                <div class="select-menu date-menu" *ngIf="isEmailDateDropdownOpen" role="listbox">
+                  <button type="button" *ngFor="let option of emailDateOptions" (click)="selectEmailDate(option.value)">
+                    <strong>
+                      <i class="fas fa-calendar-day" aria-hidden="true"></i>
+                      {{ option.label }}
+                    </strong>
+                    <small>{{ option.count }} {{ option.count === 1 ? 'certificate' : 'certificates' }}</small>
+                  </button>
+                  <p class="empty-option" *ngIf="!emailDateOptions.length">
+                    No certificate dates found for this training.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="exam-generate-field exam-only-control" *ngIf="isExamDetailsRoute">
+              <label class="field-label">Excel report</label>
+              <button
+                class="btn btn-primary exam-generate"
+                type="button"
+                (click)="generateExamDetails()"
+                [disabled]="
+                  !emailCompanyId ||
+                  !emailTrainingId ||
+                  !examTestId ||
+                  !emailDateValue ||
+                  isExamExporting ||
+                  isExamEmailing
+                "
+              >
+                <i class="fas fa-file-excel" aria-hidden="true"></i>
+                {{ isExamExporting ? 'Generating...' : 'Generate' }}
+              </button>
+            </div>
+            <div class="exam-email-field exam-only-control" *ngIf="isExamDetailsRoute">
+              <label class="field-label" for="examRecipientEmail">Email</label>
+              <input
+                id="examRecipientEmail"
+                type="email"
+                [(ngModel)]="examRecipientEmail"
+                name="examRecipientEmail"
+                placeholder="Enter recipient email"
+                autocomplete="email"
+                [disabled]="isExamEmailing"
+              />
+            </div>
+            <div class="exam-generate-field" *ngIf="isExamDetailsRoute">
+              <label class="field-label">Email report</label>
+              <button
+                class="btn btn-email-report exam-generate"
+                type="button"
+                (click)="generateAndEmailExamDetails()"
+                [disabled]="
+                  !emailCompanyId ||
+                  !emailTrainingId ||
+                  !examTestId ||
+                  !emailDateValue ||
+                  !examRecipientEmail.trim() ||
+                  isExamExporting ||
+                  isExamEmailing
+                "
+              >
+                <i class="fas fa-envelope" aria-hidden="true"></i>
+                {{ isExamEmailing ? 'Sending...' : 'Generate and Email' }}
+              </button>
+            </div>
           </div>
 
+          <div
+            class="bulk-progress email-progress exam-export-progress"
+            *ngIf="isExamDetailsRoute && examExportStatus"
+            role="status"
+            aria-live="polite"
+          >
+            <p>
+              <span>{{ examExportStatus }}</span>
+              <strong>{{ examExportProgress }}%</strong>
+            </p>
+            <progress [value]="examExportProgress" max="100"></progress>
+          </div>
           <div class="email-recipient-section" *ngIf="emailDateValue">
-            <div class="email-step"><span>2</span><strong>Select participants</strong></div>
+            <div class="email-step">
+              <span>2</span>
+              <strong>Select participants</strong>
+            </div>
             <div class="recipient-toolbar">
-              <label class="recipient-search"><i class="fas fa-search" aria-hidden="true"></i><input type="search" [(ngModel)]="emailUserSearch" name="emailUserSearch" placeholder="Search name, email or certificate number" autocomplete="off" /></label>
-              <button class="selection-toggle" type="button" (click)="toggleAllEmailUsers()" [disabled]="!selectableEmailUsers.length || isBulkEmailSending">
+              <label class="recipient-search">
+                <i class="fas fa-search" aria-hidden="true"></i>
+                <input
+                  type="search"
+                  [(ngModel)]="emailUserSearch"
+                  name="emailUserSearch"
+                  placeholder="Search name, email or certificate number"
+                  autocomplete="off"
+                />
+              </label>
+              <button
+                class="selection-toggle"
+                type="button"
+                (click)="toggleAllEmailUsers()"
+                [disabled]="!selectableEmailUsers.length || isBulkEmailSending"
+              >
                 {{ allVisibleEmailUsersSelected ? 'Clear visible' : 'Select all visible' }}
               </button>
             </div>
 
             <div class="recipient-summary">
-              <span><strong>{{ selectedEmailUserCount }}</strong> selected</span>
+              <span>
+                <strong>{{ selectedEmailUserCount }}</strong>
+                selected
+              </span>
               <span>{{ emailUsers.length }} shown</span>
             </div>
 
             <div class="recipient-list" *ngIf="emailUsers.length; else noEmailUsers">
-              <label class="recipient-row" *ngFor="let user of emailUsers; trackBy: trackByUserId" [class.is-selected]="isEmailUserSelected(user.certificationDataId)" [class.is-unavailable]="!isEmailUserEligible(user)">
-                <input type="checkbox" [checked]="isEmailUserSelected(user.certificationDataId)" (change)="toggleEmailUser(user.certificationDataId)" [disabled]="!isEmailUserEligible(user) || isBulkEmailSending" />
+              <label
+                class="recipient-row"
+                *ngFor="let user of emailUsers; trackBy: trackByUserId"
+                [class.is-selected]="isEmailUserSelected(user.certificationDataId)"
+                [class.is-unavailable]="!isEmailUserEligible(user)"
+              >
+                <input
+                  type="checkbox"
+                  [checked]="isEmailUserSelected(user.certificationDataId)"
+                  (change)="toggleEmailUser(user.certificationDataId)"
+                  [disabled]="!isEmailUserEligible(user) || isBulkEmailSending"
+                />
                 <span class="recipient-avatar">{{ (user.userName || user.name || '?').charAt(0) | uppercase }}</span>
-                <span class="recipient-details"><strong>{{ formatPersonName(user.userName || user.name) }}</strong><small>{{ !user.email ? 'No email address available' : (!user.certificationNumber ? 'No certificate number available' : user.email) }}</small></span>
+                <span class="recipient-details">
+                  <strong>{{ formatPersonName(user.userName || user.name) }}</strong>
+                  <small>
+                    {{
+                      !user.email
+                        ? 'No email address available'
+                        : !user.certificationNumber
+                          ? 'No certificate number available'
+                          : user.email
+                    }}
+                  </small>
+                </span>
                 <span class="certificate-ref">{{ user.certificationNumber || 'No certificate no.' }}</span>
               </label>
             </div>
-            <ng-template #noEmailUsers><p class="recipient-empty">No participants match this selection.</p></ng-template>
+            <ng-template #noEmailUsers>
+              <p class="recipient-empty">No participants match this selection.</p>
+            </ng-template>
 
             <div class="email-send-bar">
-              <div><strong>Ready to send</strong><span>Each participant receives their own certificate PDF.</span></div>
-              <button class="btn btn-email" type="button" (click)="sendSelectedCertificates()" [disabled]="!selectedEmailUserCount || isBulkEmailSending">
-                <i class="fas fa-paper-plane" aria-hidden="true"></i> {{ isBulkEmailSending ? 'Sending...' : 'Send selected' }}
+              <div>
+                <strong>Ready to send</strong>
+                <span>Each participant receives their own certificate PDF.</span>
+              </div>
+              <button
+                class="btn btn-email"
+                type="button"
+                (click)="sendSelectedCertificates()"
+                [disabled]="!selectedEmailUserCount || isBulkEmailSending"
+              >
+                <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                {{ isBulkEmailSending ? 'Sending...' : 'Send selected' }}
               </button>
             </div>
 
             <div class="bulk-progress email-progress" *ngIf="emailStatus" role="status" aria-live="polite">
-              <p>{{ emailStatus }} <strong *ngIf="emailTotal">{{ emailPercentage }}%</strong></p>
+              <p>
+                {{ emailStatus }}
+                <strong *ngIf="emailTotal">{{ emailPercentage }}%</strong>
+              </p>
               <progress *ngIf="emailTotal" [value]="emailProcessed" [max]="emailTotal"></progress>
             </div>
           </div>
@@ -273,7 +701,7 @@
       </div>
     </section>
 
-    <div class="operations-heading workspace-heading">
+    <div class="operations-heading workspace-heading" *ngIf="!isExamDetailsRoute">
       <div>
         <span class="eyebrow">Individual Certificate</span>
         <h2 id="individualCertificateHeading">Create &amp; Preview Certificate</h2>
@@ -281,47 +709,117 @@
       </div>
     </div>
 
-    <div class="workspace-grid" aria-labelledby="individualCertificateHeading">
+    <div class="workspace-grid" aria-labelledby="individualCertificateHeading" *ngIf="!isExamDetailsRoute">
       <form class="certificate-form" (submit)="$event.preventDefault()">
         <section class="form-card training-card" [class.dropdown-open]="isTrainingDropdownOpen || isUserDropdownOpen">
           <div class="section-heading">
             <span class="step-badge" aria-label="Step 1">1</span>
-            <div><h2>Training &amp; participant</h2><p>Select Company, Training, Date, then Participant.</p></div>
+            <div>
+              <h2>Training &amp; participant</h2>
+              <p>Select Company, Training, Date, then Participant.</p>
+            </div>
           </div>
 
           <label class="field-label">Company</label>
-          <select class="select-toggle native-flow-select" [ngModel]="individualCompanyId" (ngModelChange)="selectIndividualCompany($event)" name="individualCompanyId">
+          <select
+            class="select-toggle native-flow-select"
+            [ngModel]="individualCompanyId"
+            (ngModelChange)="selectIndividualCompany($event)"
+            name="individualCompanyId"
+          >
             <option value="">Select Company</option>
-            <option *ngFor="let company of individualCompanies" [value]="company.clientId">{{ company.clientName }}</option>
+            <option *ngFor="let company of individualCompanies" [value]="company.clientId">
+              {{ company.clientName }}
+            </option>
           </select>
+          <label class="field-label" for="individualCertificateLogo">Company logo (optional)</label>
+          <input
+            id="individualCertificateLogo"
+            class="logo-file-input"
+            type="file"
+            accept="image/*"
+            (change)="onIndividualLogoSelected($event)"
+          />
+          <small class="logo-file-name" *ngIf="individualLogoName">Selected: {{ individualLogoName }}</small>
           <label class="field-label">Training</label>
           <div class="search-select">
-            <button class="select-toggle" type="button" (click)="toggleTrainingDropdown()" [disabled]="!individualCompanyId" [attr.aria-expanded]="isTrainingDropdownOpen">
-              <span>{{ selectedTraining ? getTrainingLabel(selectedTraining) : 'Select Training' }}</span><span aria-hidden="true">&#9662;</span>
+            <button
+              class="select-toggle"
+              type="button"
+              (click)="toggleTrainingDropdown()"
+              [disabled]="!individualCompanyId"
+              [attr.aria-expanded]="isTrainingDropdownOpen"
+            >
+              <span>{{ selectedTraining ? getTrainingLabel(selectedTraining) : 'Select Training' }}</span>
+              <span aria-hidden="true">&#9662;</span>
             </button>
             <div class="select-menu" *ngIf="isTrainingDropdownOpen" role="listbox">
-              <input type="search" [(ngModel)]="trainingSearch" name="trainingSearch" placeholder="Search training" autocomplete="off" />
-              <button type="button" *ngFor="let training of filteredTrainingList; trackBy: trackByTrainingId" (click)="selectTraining(training)">
+              <input
+                type="search"
+                [(ngModel)]="trainingSearch"
+                name="trainingSearch"
+                placeholder="Search training"
+                autocomplete="off"
+              />
+              <button
+                type="button"
+                *ngFor="let training of filteredTrainingList; trackBy: trackByTrainingId"
+                (click)="selectTraining(training)"
+              >
                 <strong>{{ getTrainingLabel(training) }}</strong>
-                <small>{{ getTrainingUserCount(training) }} {{ getTrainingUserCount(training) === 1 ? 'participant' : 'participants' }}</small>
+                <small>
+                  {{ getTrainingUserCount(training) }}
+                  {{ getTrainingUserCount(training) === 1 ? 'participant' : 'participants' }}
+                </small>
               </button>
               <p class="empty-option" *ngIf="!filteredTrainingList.length">No training found.</p>
             </div>
           </div>
 
           <label class="field-label">Date</label>
-          <select class="select-toggle native-flow-select" [(ngModel)]="individualDate" (ngModelChange)="individualDateChanged()" name="individualDate" [disabled]="!selectedTrainingId">
+          <select
+            class="select-toggle native-flow-select"
+            [(ngModel)]="individualDate"
+            (ngModelChange)="individualDateChanged()"
+            name="individualDate"
+            [disabled]="!selectedTrainingId"
+          >
             <option value="">{{ selectedTrainingId ? 'Select Date' : 'Select training first' }}</option>
-            <option *ngFor="let date of individualDates" [value]="date">{{ date | date:'dd MMM yyyy' }}</option>
+            <option *ngFor="let date of individualDates" [value]="date">{{ date | date: 'dd MMM yyyy' }}</option>
           </select>
           <label class="field-label">Participant</label>
           <div class="search-select">
-            <button class="select-toggle" type="button" (click)="toggleUserDropdown()" [disabled]="!individualDate" [attr.aria-expanded]="isUserDropdownOpen">
-              <span>{{ selectedUser ? getUserLabel(selectedUser) : (selectedTrainingId ? 'Select User' : 'Select training first') }}</span><span aria-hidden="true">&#9662;</span>
+            <button
+              class="select-toggle"
+              type="button"
+              (click)="toggleUserDropdown()"
+              [disabled]="!individualDate"
+              [attr.aria-expanded]="isUserDropdownOpen"
+            >
+              <span>
+                {{
+                  selectedUser
+                    ? getUserLabel(selectedUser)
+                    : selectedTrainingId
+                      ? 'Select User'
+                      : 'Select training first'
+                }}
+              </span>
+              <span aria-hidden="true">&#9662;</span>
             </button>
             <div class="select-menu" *ngIf="isUserDropdownOpen" role="listbox">
-              <input type="search" [(ngModel)]="userSearch" name="userSearch" placeholder="Search by name, email or certificate number" autocomplete="off" />
-              <button type="button" *ngFor="let user of filteredUserData; trackBy: trackByUserId" (click)="selectUser(user.certificationDataId)">
+              <input
+                type="search"
+                [(ngModel)]="userSearch"
+                name="userSearch"
+                placeholder="Search by name, email or certificate number"
+                autocomplete="off"
+              />
+              <button
+                type="button"
+                *ngFor="let user of filteredUserData; trackBy: trackByUserId"
+                (click)="selectUser(user.certificationDataId)"
+              >
                 <strong>{{ formatPersonName(user.userName || user.name) }}</strong>
                 <small>{{ user.email || user.certificationNumber }}</small>
               </button>
@@ -339,32 +837,96 @@
         <section class="form-card" [class.is-disabled]="!selectedUserId">
           <div class="section-heading">
             <span class="step-badge" aria-label="Step 2">2</span>
-            <div><h2>Certificate details</h2><p>All fields remain editable before generation.</p></div>
+            <div>
+              <h2>Certificate details</h2>
+              <p>All fields remain editable before generation.</p>
+            </div>
           </div>
 
           <div class="form-grid">
-            <label class="full">Participant name<input type="text" [(ngModel)]="certificate.userName" (blur)="normalizeParticipantName()" name="userName" /></label>
-            <label class="full">Training name<input type="text" [(ngModel)]="certificate.trainingName" name="trainingName" /></label>
-            <label>Training hours<input type="number" min="0.5" step="0.5" [(ngModel)]="certificate.trainingHours" name="trainingHours" /></label>
-            <label>Date of issue<input type="date" [(ngModel)]="certificate.dateOfIssue" name="dateOfIssue" /></label>
-            <label>Location<input type="text" [(ngModel)]="certificate.location" name="location" /></label>
-            <label>Trainer name<input type="text" [(ngModel)]="certificate.trainerName" name="trainerName" /></label>
-            <label class="full">Certificate number<input type="text" [(ngModel)]="certificate.certificateNumber" name="certificateNumber" /></label>
-            <label class="full">Covered topics<textarea rows="5" [ngModel]="certificate.coveredTopics.join(', ')" (ngModelChange)="updateTopics($event)" name="coveredTopics" placeholder="Topic one, Topic two, Topic three, Topic four"></textarea><small>Enter 4 to 6 topics separated by commas. Each topic uses its own colored bullet line in the PDF.</small></label>
+            <label class="full">
+              Participant name
+              <input
+                type="text"
+                [(ngModel)]="certificate.userName"
+                (blur)="normalizeParticipantName()"
+                name="userName"
+              />
+            </label>
+            <label class="full">
+              Training name
+              <input type="text" [(ngModel)]="certificate.trainingName" name="trainingName" />
+            </label>
+            <label>
+              Training hours
+              <input type="number" min="0.5" step="0.5" [(ngModel)]="certificate.trainingHours" name="trainingHours" />
+            </label>
+            <label>
+              Date of issue
+              <input type="date" [(ngModel)]="certificate.dateOfIssue" name="dateOfIssue" />
+            </label>
+            <label>
+              Location
+              <input type="text" [(ngModel)]="certificate.location" name="location" />
+            </label>
+            <label>
+              Trainer name
+              <input type="text" [(ngModel)]="certificate.trainerName" name="trainerName" />
+            </label>
+            <label class="full">
+              Certificate number
+              <input type="text" [(ngModel)]="certificate.certificateNumber" name="certificateNumber" />
+            </label>
+            <label class="full">
+              Covered topics
+              <textarea
+                rows="5"
+                [ngModel]="certificate.coveredTopics.join(', ')"
+                (ngModelChange)="updateTopics($event)"
+                name="coveredTopics"
+                placeholder="Topic one, Topic two, Topic three, Topic four"
+              ></textarea>
+              <small>
+                Enter 4 to 6 topics separated by commas. Each topic uses its own colored bullet line in the PDF.
+              </small>
+            </label>
           </div>
         </section>
 
         <div class="action-bar">
-          <button class="btn btn-outline btn-clear" type="button" (click)="clearAll()" [disabled]="isGenerating || isSending || isBulkGenerating || isBulkEmailSending"><i class="fas fa-rotate-left"></i> Clear All</button>
-          <button class="btn btn-primary" type="button" (click)="preview()" [disabled]="isGenerating || isSending"><i class="fas fa-eye" aria-hidden="true"></i> {{ isGenerating ? 'Generating...' : 'Preview PDF' }}</button>
-          <button class="btn btn-outline" type="button" (click)="download()" [disabled]="isGenerating || isSending"><i class="fas fa-download" aria-hidden="true"></i> Download</button>
+          <button
+            class="btn btn-outline btn-clear"
+            type="button"
+            (click)="clearAll()"
+            [disabled]="isGenerating || isSending || isBulkGenerating || isBulkEmailSending"
+          >
+            <i class="fas fa-rotate-left"></i>
+            Clear All
+          </button>
+          <button class="btn btn-primary" type="button" (click)="preview()" [disabled]="isGenerating || isSending">
+            <i class="fas fa-eye" aria-hidden="true"></i>
+            {{ isGenerating ? 'Generating...' : 'Preview PDF' }}
+          </button>
+          <button class="btn btn-outline" type="button" (click)="download()" [disabled]="isGenerating || isSending">
+            <i class="fas fa-download" aria-hidden="true"></i>
+            Download
+          </button>
           <!-- <button class="btn btn-outline" type="button" (click)="print()" [disabled]="isGenerating || isSending"><i class="fas fa-print" aria-hidden="true"></i> Print</button> -->
-          <button class="btn btn-outline" type="button" (click)="sendEmail()" [disabled]="isGenerating || isSending"><i class="fas fa-envelope"></i> {{ isSending ? 'Sending...' : 'Send to Email' }}</button>
+          <button class="btn btn-outline" type="button" (click)="sendEmail()" [disabled]="isGenerating || isSending">
+            <i class="fas fa-envelope"></i>
+            {{ isSending ? 'Sending...' : 'Send to Email' }}
+          </button>
         </div>
       </form>
 
       <aside id="certificateLiveOutput" class="preview-card">
-        <div class="preview-heading"><div><span>Live output</span><h2>PDF Preview</h2></div><span class="page-size">A4 Landscape</span></div>
+        <div class="preview-heading">
+          <div>
+            <span>Live output</span>
+            <h2>PDF Preview</h2>
+          </div>
+          <span class="page-size">A4 Landscape</span>
+        </div>
         <iframe *ngIf="previewUrl; else previewPlaceholder" [src]="previewUrl" title="Certificate PDF preview"></iframe>
         <ng-template #previewPlaceholder>
           <div class="preview-placeholder">

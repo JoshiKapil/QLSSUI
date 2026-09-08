@@ -1,6 +1,38 @@
+@use 'scss/style';
+@import '~@fortawesome/fontawesome-free/css/all.min.css';
 
-@use "scss/style";
-@import "~@fortawesome/fontawesome-free/css/all.min.css";
+@font-face {
+  font-family: 'QLSS Sans';
+  src: url('assets/fonts/Roboto-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'QLSS Sans';
+  src: url('assets/fonts/Roboto-Medium.ttf') format('truetype');
+  font-weight: 500 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'QLSS Sans';
+  src: url('assets/fonts/Roboto-Bold.ttf') format('truetype');
+  font-weight: 800 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+html,
+body,
+button,
+input,
+select,
+textarea {
+  font-family: 'QLSS Sans', sans-serif;
+}
 .req,
 .required-mark {
   display: inline;

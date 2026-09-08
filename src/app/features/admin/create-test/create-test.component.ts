@@ -16,7 +16,7 @@ import {
   CreateTestQuestion,
   CreateTestQuestionForm,
   CreateTestQuestionType,
-  CreateTestStatus
+  CreateTestStatus,
 } from './create-test.model';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -29,10 +29,9 @@ const DEFAULT_ESTIMATED_TIME_SECONDS = 60;
 @Component({
   selector: 'app-create-test',
   templateUrl: './create-test.component.html',
-  styleUrls: ['./create-test.component.scss']
+  styleUrls: ['./create-test.component.scss'],
 })
 export class CreateTestComponent implements OnInit, OnDestroy {
-
   questionTypes: CreateTestQuestionType[] = ['MCSA', 'MCMA', 'TRUE_FALSE', 'ESSAY'];
   difficulties: CreateTestDifficulty[] = ['Easy', 'Medium', 'Hard'];
   statuses: CreateTestStatus[] = ['Draft', 'Active', 'Inactive'];
@@ -78,7 +77,9 @@ export class CreateTestComponent implements OnInit, OnDestroy {
   assessmentImportFileName = '';
   assessmentImportPreview: AssessmentImportPreview | null = null;
   assessmentImportResult: AssessmentImportResult | null = null;
-  private pendingQuestionMediaFiles: Partial<Record<'questionImageUrl' | 'audioUrl' | 'videoUrl' | 'explanationImageUrl', File>> = {};
+  private pendingQuestionMediaFiles: Partial<
+    Record<'questionImageUrl' | 'audioUrl' | 'videoUrl' | 'explanationImageUrl', File>
+  > = {};
   private pendingOptionImageFiles: Record<number, File> = {};
   private Destroy$ = new Subject<void>();
   private readonly mediaAssetRoot = 'assets/tests/media';
@@ -95,7 +96,11 @@ export class CreateTestComponent implements OnInit, OnDestroy {
   }
 
   get isMappingFull(): boolean {
-    return this.testDetails?.totalQuestions !== null && this.testDetails?.totalQuestions !== undefined && this.questions.length >= (this.testDetails.totalQuestions || 0);
+    return (
+      this.testDetails?.totalQuestions !== null &&
+      this.testDetails?.totalQuestions !== undefined &&
+      this.questions.length >= (this.testDetails.totalQuestions || 0)
+    );
   }
 
   constructor(
@@ -104,7 +109,7 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     private excelImport: TestExcelImportService,
     private http: HttpClient,
     private dataService: DataService,
-    private trainingService: TrainingManagementService
+    private trainingService: TrainingManagementService,
   ) {}
 
   ngOnInit(): void {
@@ -138,18 +143,25 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     const search = this.questionBankSearch.trim().toLowerCase();
 
     return this.questionBank.filter((question) => {
-      const matchesSearch = !search || question.questionText.toLowerCase().includes(search) || question.subject.toLowerCase().includes(search) || question.topic.toLowerCase().includes(search);
+      const matchesSearch =
+        !search ||
+        question.questionText.toLowerCase().includes(search) ||
+        question.subject.toLowerCase().includes(search) ||
+        question.topic.toLowerCase().includes(search);
       const matchesType = !this.questionBankTypeFilter || question.questionType === this.questionBankTypeFilter;
-      const matchesDifficulty = !this.questionBankDifficultyFilter || question.difficulty === this.questionBankDifficultyFilter;
-      const matchesSubject = !this.questionBankSubjectFilter.trim() || question.subject.toLowerCase().includes(this.questionBankSubjectFilter.trim().toLowerCase());
-      const matchesTopic = !this.questionBankTopicFilter.trim() || question.topic.toLowerCase().includes(this.questionBankTopicFilter.trim().toLowerCase());
+      const matchesDifficulty =
+        !this.questionBankDifficultyFilter || question.difficulty === this.questionBankDifficultyFilter;
+      const matchesSubject =
+        !this.questionBankSubjectFilter.trim() ||
+        question.subject.toLowerCase().includes(this.questionBankSubjectFilter.trim().toLowerCase());
+      const matchesTopic =
+        !this.questionBankTopicFilter.trim() ||
+        question.topic.toLowerCase().includes(this.questionBankTopicFilter.trim().toLowerCase());
       const matchesMarks = !this.questionBankMarksFilter || question.marks === this.questionBankMarksFilter;
 
       return matchesSearch && matchesType && matchesDifficulty && matchesSubject && matchesTopic && matchesMarks;
     });
   }
-
-
 
   onTrainingSelected(trainingId: string): void {
     const selected = this.trainingList.find((training) => String(training.trainingId ?? '') === String(trainingId));
@@ -175,7 +187,7 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     //       this.trainingList = trainings
     //         .map((training: any) => this.mapTrainingFromAsset(training))
     //         .sort((a: Training, b: Training) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
-    //       this.syncSelectedTrainingFromDetails(); 
+    //       this.syncSelectedTrainingFromDetails();
     //     },
     //     error: () => {
     //       this.trainingList = [];
@@ -183,19 +195,23 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     //     }
     //   });
 
-   // Future API integration: call this block instead of the asset request above.
-    this.trainingService.getPaged(1, 100).pipe(takeUntil(this.Destroy$)).subscribe({
-      next: (response) => {
-        this.trainingList = (response.items || [])
-          .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
-        this.syncSelectedTrainingFromDetails();
-      },
-      error: (error) => {
-        console.error('Failed to load training data.', { status: error.status });
-        this.trainingList = [];
-        this.syncSelectedTrainingFromDetails();
-      }
-    });
+    // Future API integration: call this block instead of the asset request above.
+    this.trainingService
+      .getPaged(1, 100)
+      .pipe(takeUntil(this.Destroy$))
+      .subscribe({
+        next: (response) => {
+          this.trainingList = (response.items || []).sort(
+            (a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0),
+          );
+          this.syncSelectedTrainingFromDetails();
+        },
+        error: (error) => {
+          console.error('Failed to load training data.', { status: error.status });
+          this.trainingList = [];
+          this.syncSelectedTrainingFromDetails();
+        },
+      });
   }
 
   private mapTrainingFromAsset(training: any): Training {
@@ -209,11 +225,9 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       displayOrder: Number(training.displayOrder ?? training.DisplayOrder ?? 0),
       preTestId: training.preTestId ?? training.PreTestId ?? null,
       postTestId: training.postTestId ?? training.PostTestId ?? null,
-      chalangeTestId: training.chalangeTestId ?? training.ChalangeTestId ?? null
+      chalangeTestId: training.chalangeTestId ?? training.ChalangeTestId ?? null,
     };
   }
-
-
 
   get filteredTrainingList(): Training[] {
     const search = this.trainingSearch.trim().toLowerCase();
@@ -231,9 +245,11 @@ export class CreateTestComponent implements OnInit, OnDestroy {
   }
 
   getTrainingLabel(training: Training): string {
-    return String(training.displayName || '').trim()
-      || String(training.trainingName || '').trim()
-      || String(training.trainingId || 'Training');
+    return (
+      String(training.displayName || '').trim() ||
+      String(training.trainingName || '').trim() ||
+      String(training.trainingId || 'Training')
+    );
   }
 
   openTrainingDropdown(): void {
@@ -256,7 +272,9 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       return 'Select Training';
     }
 
-    const selected = this.trainingList.find((training) => String(training.trainingId ?? '') === String(this.selectedTrainingId));
+    const selected = this.trainingList.find(
+      (training) => String(training.trainingId ?? '') === String(this.selectedTrainingId),
+    );
     return selected ? this.getTrainingLabel(selected) : 'Select Training';
   }
 
@@ -301,7 +319,8 @@ export class CreateTestComponent implements OnInit, OnDestroy {
 
     this.prepareAssessmentImport(file.name);
     this.testStorage.importAssessmentExcelToServer(file);
-    this.excelImport.parseAssessmentExcel(file)
+    this.excelImport
+      .parseAssessmentExcel(file)
       .then((preview) => (this.assessmentImportPreview = preview))
       .catch(() => this.notifier.warningToastr('Assessment Excel file could not be read.'));
     input.value = '';
@@ -312,7 +331,8 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.excelImport.applyAssessmentImport(this.assessmentImportPreview)
+    this.excelImport
+      .applyAssessmentImport(this.assessmentImportPreview)
       .then((result) => {
         this.assessmentImportResult = result;
         const preview = this.assessmentImportPreview;
@@ -360,7 +380,7 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       passingPercentage: definition.passingPercentage,
       instructions: definition.instructions,
       status: definition.status as CreateTestStatus,
-      totalQuestions: definition.totalQuestions
+      totalQuestions: definition.totalQuestions,
     };
     this.syncSelectedTrainingFromDetails();
     this.questions = preview.items
@@ -390,12 +410,13 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       return this.availableTests;
     }
 
-    return this.availableTests.filter((test) => [
-      test.displayName,
-      test.testName,
-      test.testTitle,
-      test.trainingName
-    ].some((value) => String(value || '').toLowerCase().includes(search)));
+    return this.availableTests.filter((test) =>
+      [test.displayName, test.testName, test.testTitle, test.trainingName].some((value) =>
+        String(value || '')
+          .toLowerCase()
+          .includes(search),
+      ),
+    );
   }
 
   get questionBankTotalPages(): number {
@@ -459,7 +480,7 @@ export class CreateTestComponent implements OnInit, OnDestroy {
           return {
             ...test,
             assetFileName,
-            optionKey
+            optionKey,
           };
         })
         .sort((a, b) => (a.displayName || a.testName).localeCompare(b.displayName || b.testName));
@@ -493,7 +514,10 @@ export class CreateTestComponent implements OnInit, OnDestroy {
 
       this.selectedTestKey = selectedKey;
       this.isTestDropdownOpen = false;
-      this.applySelectedTestDefinition(def, attempt.questions.map((question) => ({ ...question, questionNo: question.questionNo } as CreateTestQuestion)));
+      this.applySelectedTestDefinition(
+        def,
+        attempt.questions.map((question) => ({ ...question, questionNo: question.questionNo }) as CreateTestQuestion),
+      );
 
       const availableQuestions = await this.testStorage.loadAvailableQuestionsFromServer(def.testId);
       if (availableQuestions.length) {
@@ -563,7 +587,9 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     this.testDetails = this.buildTestDetailsFromDefinition(definition);
     this.testFileType = this.normalizeTestFileType(definition.testFileType || definition.testType);
     this.syncSelectedTrainingFromDetails();
-    this.questions = mappedQuestions.map((question) => ({ ...question, questionNo: question.questionNo } as CreateTestQuestion));
+    this.questions = mappedQuestions.map(
+      (question) => ({ ...question, questionNo: question.questionNo }) as CreateTestQuestion,
+    );
     this.refreshQuestionNumbers();
   }
 
@@ -579,7 +605,7 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       passingPercentage: definition.passingPercentage || 0,
       instructions: definition.instructions || '',
       status: definition.status as CreateTestStatus,
-      totalQuestions: definition.totalQuestions || definition.mappedQuestionIds?.length || 0
+      totalQuestions: definition.totalQuestions || definition.mappedQuestionIds?.length || 0,
     };
   }
 
@@ -701,7 +727,9 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       this.questionBank = [...this.questionBank, question];
     } else {
       this.questionBank = this.questionBank.map((item, index) => (index === this.editingIndex ? question : item));
-      this.questions = this.questions.map((item) => (item.id === question.id ? { ...question, questionNo: item.questionNo } : item));
+      this.questions = this.questions.map((item) =>
+        item.id === question.id ? { ...question, questionNo: item.questionNo } : item,
+      );
     }
 
     this.refreshQuestionNumbers();
@@ -756,9 +784,10 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     }
 
     const desiredPosition = this.mapQuestionPositions[question.id];
-    const insertIndex = desiredPosition && desiredPosition > 0 && desiredPosition <= this.questions.length + 1
-      ? desiredPosition - 1
-      : this.questions.length;
+    const insertIndex =
+      desiredPosition && desiredPosition > 0 && desiredPosition <= this.questions.length + 1
+        ? desiredPosition - 1
+        : this.questions.length;
 
     const updatedQuestions = [...this.questions];
     updatedQuestions.splice(insertIndex, 0, { ...question, questionNo: insertIndex + 1 });
@@ -831,9 +860,10 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     if (this.questionForm.questionType === 'TRUE_FALSE') {
       this.questionForm.options = this.createTrueFalseOptions();
       this.questionForm.correctOptionIds = [];
-      this.questionForm.correctOptionId = this.questionForm.correctOptionId === 'true' || this.questionForm.correctOptionId === 'false'
-        ? this.questionForm.correctOptionId
-        : '';
+      this.questionForm.correctOptionId =
+        this.questionForm.correctOptionId === 'true' || this.questionForm.correctOptionId === 'false'
+          ? this.questionForm.correctOptionId
+          : '';
       return;
     }
 
@@ -864,7 +894,9 @@ export class CreateTestComponent implements OnInit, OnDestroy {
   removeOption(index: number): void {
     const option = this.questionForm.options[index];
     this.questionForm.options = this.questionForm.options.filter((_item, optionIndex) => optionIndex !== index);
-    this.questionForm.correctOptionIds = this.questionForm.correctOptionIds.filter((optionId) => optionId !== option.id);
+    this.questionForm.correctOptionIds = this.questionForm.correctOptionIds.filter(
+      (optionId) => optionId !== option.id,
+    );
 
     if (this.questionForm.correctOptionId === option.id) {
       this.questionForm.correctOptionId = '';
@@ -905,7 +937,10 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     return `${this.mediaAssetRoot}/${this.mediaFolders[folder]}/${sanitized}`;
   }
 
-  onQuestionMediaFileSelected(field: 'questionImageUrl' | 'audioUrl' | 'videoUrl' | 'explanationImageUrl', event: Event): void {
+  onQuestionMediaFileSelected(
+    field: 'questionImageUrl' | 'audioUrl' | 'videoUrl' | 'explanationImageUrl',
+    event: Event,
+  ): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) {
@@ -942,12 +977,14 @@ export class CreateTestComponent implements OnInit, OnDestroy {
 
   private setOptionImage(optionIndex: number, imageUrl: string): void {
     this.questionForm.options = this.questionForm.options.map((option, index) =>
-      index === optionIndex ? { ...option, imageUrl } : option
+      index === optionIndex ? { ...option, imageUrl } : option,
     );
   }
 
   private async uploadPendingQuestionMediaFiles(): Promise<void> {
-    const mediaFields = Object.entries(this.pendingQuestionMediaFiles) as Array<['questionImageUrl' | 'audioUrl' | 'videoUrl' | 'explanationImageUrl', File]>;
+    const mediaFields = Object.entries(this.pendingQuestionMediaFiles) as Array<
+      ['questionImageUrl' | 'audioUrl' | 'videoUrl' | 'explanationImageUrl', File]
+    >;
 
     for (const [field, file] of mediaFields) {
       const mediaType = field === 'audioUrl' ? 'audio' : field === 'videoUrl' ? 'video' : 'image';
@@ -990,27 +1027,30 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     this.lastPayload = payload;
     this.lastSavedFileName = this.testStorage.buildAssessmentFileName(displayName);
 
-    this.testStorage.saveAssessmentAndGet({
-      ...payload,
-      testFileType: this.testFileType,
-      questions: this.questions as any
-    } as any)
+    this.testStorage
+      .saveAssessmentAndGet({
+        ...payload,
+        testFileType: this.testFileType,
+        questions: this.questions as any,
+      } as any)
       .then((savedTest) => {
         this.lastSavedFileName = `${savedTest.testId}.json`;
         return this.testStorage.saveAssessmentFileToServer(
           {
             ...savedTest,
             testFileType: this.testFileType,
-            questions: this.questions as any
+            questions: this.questions as any,
           } as any,
-          this.testFileType
+          this.testFileType,
         );
       })
       .then(() => {
         // Test-file browser download is intentionally disabled. Keep this code for future use.
         // this.testStorage.exportAssessment(displayName)
         //   .then((blob) => this.testStorage.downloadBlob(blob, this.lastSavedFileName));
-        this.notifier.successToastr(`Encrypted ${this.testFileType} test file saved on the API server: ${this.lastSavedFileName}`);
+        this.notifier.successToastr(
+          `Encrypted ${this.testFileType} test file saved on the API server: ${this.lastSavedFileName}`,
+        );
         this.clearCreateTestForm();
         this.loadAvailableTests();
       })
@@ -1045,7 +1085,9 @@ export class CreateTestComponent implements OnInit, OnDestroy {
   }
 
   private normalizeTestFileType(value: unknown): 'pre' | 'post' {
-    const normalized = String(value || '').trim().toLowerCase();
+    const normalized = String(value || '')
+      .trim()
+      .toLowerCase();
     return normalized === 'post' ? 'post' : 'pre';
   }
   buildPayload(): CreateTestPayload {
@@ -1079,7 +1121,7 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       totalMarks: this.totalMarks,
       mappedQuestionIds,
       questionOrder: mappedQuestionIds,
-      version
+      version,
     };
   }
 
@@ -1088,7 +1130,7 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       MCSA: 'MCSA',
       MCMA: 'MCMA',
       TRUE_FALSE: 'True / False',
-      ESSAY: 'Essay'
+      ESSAY: 'Essay',
     };
 
     return labels[type];
@@ -1107,7 +1149,8 @@ export class CreateTestComponent implements OnInit, OnDestroy {
   }
 
   exportQuestionBank(): void {
-    this.testStorage.exportQuestionBank()
+    this.testStorage
+      .exportQuestionBank()
       .then((blob) => this.testStorage.downloadBlob(blob, 'QuestionBank.json'))
       .catch(() => this.notifier.warningToastr('Question bank export failed.'));
   }
@@ -1120,7 +1163,8 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.testStorage.importQuestionBank(file)
+    this.testStorage
+      .importQuestionBank(file)
       .then((questions) => {
         this.questionBank = questions as any;
         this.questions = [];
@@ -1137,7 +1181,8 @@ export class CreateTestComponent implements OnInit, OnDestroy {
   }
 
   private loadStoredQuestionBank(): void {
-    this.testStorage.loadQuestionBank([])
+    this.testStorage
+      .loadQuestionBank([])
       .then((questions) => {
         this.questionBank = questions as any;
       })
@@ -1145,7 +1190,8 @@ export class CreateTestComponent implements OnInit, OnDestroy {
   }
 
   private saveCurrentQuestionBank(): void {
-    this.testStorage.saveQuestionBank(this.questionBank as any)
+    this.testStorage
+      .saveQuestionBank(this.questionBank as any)
       .catch(() => this.notifier.warningToastr('Question bank could not be saved locally.'));
   }
 
@@ -1174,7 +1220,7 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       explanationImageUrl: question.explanationImageUrl || '',
       marks: question.marks,
       negativeMarks: question.negativeMarks,
-      estimatedTimeSeconds: question.estimatedTimeSeconds
+      estimatedTimeSeconds: question.estimatedTimeSeconds,
     };
   }
 
@@ -1196,14 +1242,14 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     if (!this.testDetails.trainingId) {
       errors.push('Training is required for Pre and Post tests.');
     } else {
-        const training = this.trainingList.find((item) =>
-          String(item.trainingId ?? '') === String(this.testDetails.trainingId)
-        );
-        const linkedTestId = training ? this.getLinkedTestId(training, this.testFileType) : '';
-        const editingTestId = String(this.loadedTestDefinition?.testId ?? '').trim();
-        if (linkedTestId && linkedTestId !== editingTestId) {
-          errors.push(`This training already has a ${this.testFileType} test (Test ID: ${linkedTestId}).`);
-        }
+      const training = this.trainingList.find(
+        (item) => String(item.trainingId ?? '') === String(this.testDetails.trainingId),
+      );
+      const linkedTestId = training ? this.getLinkedTestId(training, this.testFileType) : '';
+      const editingTestId = String(this.loadedTestDefinition?.testId ?? '').trim();
+      if (linkedTestId && linkedTestId !== editingTestId) {
+        errors.push(`This training already has a ${this.testFileType} test (Test ID: ${linkedTestId}).`);
+      }
     }
 
     if (this.testDetails.totalQuestions && this.testDetails.totalQuestions < this.questions.length) {
@@ -1214,11 +1260,7 @@ export class CreateTestComponent implements OnInit, OnDestroy {
   }
 
   private getLinkedTestId(training: Training, type: 'pre' | 'post' | 'chalange'): string {
-    const value = type === 'pre'
-      ? training.preTestId
-      : type === 'post'
-        ? training.postTestId
-        : training.chalangeTestId;
+    const value = type === 'pre' ? training.preTestId : type === 'post' ? training.postTestId : training.chalangeTestId;
     return String(value ?? '').trim();
   }
 
@@ -1246,7 +1288,11 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       errors.push('Select the correct True / False answer.');
     }
 
-    if (questionType === 'ESSAY' && !this.questionForm.expectedAnswer.trim() && !this.questionForm.sampleAnswer.trim()) {
+    if (
+      questionType === 'ESSAY' &&
+      !this.questionForm.expectedAnswer.trim() &&
+      !this.questionForm.sampleAnswer.trim()
+    ) {
       errors.push('Essay question must have an expected answer or sample answer.');
     }
 
@@ -1261,7 +1307,9 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     }
 
     if (allowMultipleCorrect) {
-      const validCorrectIds = this.questionForm.correctOptionIds.filter((optionId) => validOptions.some((option) => option.id === optionId));
+      const validCorrectIds = this.questionForm.correctOptionIds.filter((optionId) =>
+        validOptions.some((option) => option.id === optionId),
+      );
 
       if (!validCorrectIds.length) {
         errors.push('Select at least 1 correct answer.');
@@ -1269,7 +1317,10 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (!this.questionForm.correctOptionId || !validOptions.some((option) => option.id === this.questionForm.correctOptionId)) {
+    if (
+      !this.questionForm.correctOptionId ||
+      !validOptions.some((option) => option.id === this.questionForm.correctOptionId)
+    ) {
       errors.push('Select 1 correct answer.');
     }
   }
@@ -1277,13 +1328,17 @@ export class CreateTestComponent implements OnInit, OnDestroy {
   private buildQuestionFromForm(): CreateTestQuestion {
     const questionType = this.questionForm.questionType;
     const options = this.buildOptionsForQuestion();
-    const correctOptionIds = questionType === 'MCMA'
-      ? this.questionForm.correctOptionIds.filter((optionId) => options.some((option) => option.id === optionId))
-      : (this.questionForm.correctOptionId ? [this.questionForm.correctOptionId] : []);
+    const correctOptionIds =
+      questionType === 'MCMA'
+        ? this.questionForm.correctOptionIds.filter((optionId) => options.some((option) => option.id === optionId))
+        : this.questionForm.correctOptionId
+          ? [this.questionForm.correctOptionId]
+          : [];
 
     return {
       id: this.questionForm.id || Date.now(),
-      questionNo: this.editingIndex === null ? this.questionBank.length + 1 : this.questionBank[this.editingIndex].questionNo,
+      questionNo:
+        this.editingIndex === null ? this.questionBank.length + 1 : this.questionBank[this.editingIndex].questionNo,
       questionType,
       subject: this.getValueOrNA(this.questionForm.subject || this.testDetails.subject),
       topic: this.getValueOrNA(this.questionForm.topic || this.testDetails.topic),
@@ -1293,7 +1348,8 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       audioUrl: this.cleanOptionalValue(this.questionForm.audioUrl),
       videoUrl: this.cleanOptionalValue(this.questionForm.videoUrl),
       options: questionType === 'ESSAY' ? undefined : options,
-      correctOptionId: questionType === 'MCMA' ? correctOptionIds[0] : this.cleanOptionalValue(this.questionForm.correctOptionId),
+      correctOptionId:
+        questionType === 'MCMA' ? correctOptionIds[0] : this.cleanOptionalValue(this.questionForm.correctOptionId),
       correctOptionIds,
       expectedAnswer: this.cleanOptionalValue(this.questionForm.expectedAnswer),
       sampleAnswer: this.cleanOptionalValue(this.questionForm.sampleAnswer),
@@ -1302,7 +1358,7 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       explanationImageUrl: this.cleanOptionalValue(this.questionForm.explanationImageUrl),
       marks: this.getValidMarks(this.questionForm.marks),
       negativeMarks: this.questionForm.negativeMarks || 0,
-      estimatedTimeSeconds: this.getPositiveNumber(this.questionForm.estimatedTimeSeconds, 60)
+      estimatedTimeSeconds: this.getPositiveNumber(this.questionForm.estimatedTimeSeconds, 60),
     };
   }
 
@@ -1316,12 +1372,14 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       .map((option) => ({
         id: option.id,
         text: option.text.trim(),
-        imageUrl: this.cleanOptionalValue(option.imageUrl)
+        imageUrl: this.cleanOptionalValue(option.imageUrl),
       }));
   }
 
-
-  private mergeQuestionBanks(existingQuestions: CreateTestQuestion[], incomingQuestions: CreateTestQuestion[]): CreateTestQuestion[] {
+  private mergeQuestionBanks(
+    existingQuestions: CreateTestQuestion[],
+    incomingQuestions: CreateTestQuestion[],
+  ): CreateTestQuestion[] {
     const questions = new Map<string, CreateTestQuestion>();
     existingQuestions.forEach((question) => questions.set(this.getQuestionMapId(question), question));
     incomingQuestions.forEach((question) => questions.set(this.getQuestionMapId(question), question));
@@ -1345,7 +1403,7 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       passingPercentage: DEFAULT_PASSING_PERCENTAGE,
       instructions: '',
       status: DEFAULT_TEST_STATUS,
-      totalQuestions: null
+      totalQuestions: null,
     };
   }
 
@@ -1370,7 +1428,7 @@ export class CreateTestComponent implements OnInit, OnDestroy {
       explanationImageUrl: '',
       marks: DEFAULT_QUESTION_MARKS,
       negativeMarks: 0,
-      estimatedTimeSeconds: DEFAULT_ESTIMATED_TIME_SECONDS
+      estimatedTimeSeconds: DEFAULT_ESTIMATED_TIME_SECONDS,
     };
   }
 
@@ -1378,14 +1436,14 @@ export class CreateTestComponent implements OnInit, OnDestroy {
     return {
       id: `option-${Date.now()}-${Math.round(Math.random() * 10000)}`,
       text: '',
-      imageUrl: ''
+      imageUrl: '',
     };
   }
 
   private createTrueFalseOptions(): CreateTestOption[] {
     return [
       { id: 'true', text: 'True' },
-      { id: 'false', text: 'False' }
+      { id: 'false', text: 'False' },
     ];
   }
 

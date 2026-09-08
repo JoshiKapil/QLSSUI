@@ -12,23 +12,30 @@ import { ProjectQuotationsComponent } from './quotations/project-quotations.comp
 import { ProjectReportsComponent } from './reports/project-reports.component';
 import { ProjectWorkspaceShellComponent } from './shell/project-workspace-shell.component';
 import { ProjectOperationsComponent } from './operations/project-operations.component';
+import { ProjectInvoicesComponent } from './invoices/project-invoices.component';
 
-const routes: Routes = [{
-  path: '', component: ProjectWorkspaceShellComponent, canActivate: [ProjectWorkspaceGuard], children: [
-    { path: 'dashboard', component: ProjectDashboardComponent },
-    { path: 'enquiries', component: ProjectEnquiriesComponent },
-    { path: 'quotations', component: ProjectQuotationsComponent },
-    { path: 'projects', component: ProjectProjectsComponent },
-    { path: 'approvals', component: ProjectApprovalsComponent },
-    { path: 'documents', component: ProjectDocumentsComponent },
-    { path: 'notifications', component: ProjectNotificationsComponent },
-    { path: 'reports', component: ProjectReportsComponent },
-    { path: 'management', component: ProjectManagementAdminComponent },
-    { path: 'operations', component: ProjectOperationsComponent },
-    { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-    { path: '**', redirectTo: 'dashboard' }
-  ]
-}];
+const routes: Routes = [
+  {
+    path: '',
+    component: ProjectWorkspaceShellComponent,
+    canActivate: [ProjectWorkspaceGuard],
+    children: [
+      { path: 'dashboard', component: ProjectDashboardComponent },
+      { path: 'enquiries', component: ProjectEnquiriesComponent },
+      { path: 'quotations', component: ProjectQuotationsComponent },
+      { path: 'projects', component: ProjectProjectsComponent },
+      { path: 'invoices', component: ProjectInvoicesComponent },
+      { path: 'approvals', component: ProjectApprovalsComponent },
+      { path: 'documents', component: ProjectDocumentsComponent },
+      { path: 'notifications', component: ProjectNotificationsComponent },
+      { path: 'reports', component: ProjectReportsComponent },
+      { path: 'management', component: ProjectManagementAdminComponent },
+      { path: 'operations', component: ProjectOperationsComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: '**', redirectTo: 'dashboard' },
+    ],
+  },
+];
 
 @NgModule({ imports: [RouterModule.forChild(routes)], exports: [RouterModule] })
 export class ProjectManagementRoutingModule {}

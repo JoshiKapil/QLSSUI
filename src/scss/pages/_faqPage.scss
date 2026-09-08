@@ -1,19 +1,27 @@
-@use "../utilities/breakpoints" as *;
+@use '../utilities/breakpoints' as *;
 
-// Keyframes 
+// Keyframes
 @keyframes faq-shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
 
 // HERO (Light Blue Layout)
 .faq-hero {
-  background: var(--bg-light); 
+  background: var(--bg-light);
   padding: 80px 0 72px;
   border-bottom: 1px solid var(--gray-light-mid);
 
-  @include tablet { padding: 64px 0 56px; }
-  @include mobile { padding: 52px 0 44px; }
+  @include tablet {
+    padding: 64px 0 56px;
+  }
+  @include mobile {
+    padding: 52px 0 44px;
+  }
 
   &__inner {
     text-align: center;
@@ -35,14 +43,16 @@
     color: var(--gray-mid);
     line-height: 1.78;
     margin: 0;
-    @include mobile { font-size: 0.875rem; }
+    @include mobile {
+      font-size: 0.875rem;
+    }
   }
 }
 
 .faq-eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 10px; 
+  gap: 10px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -51,7 +61,7 @@
 
   &::before,
   &::after {
-    content: "";
+    content: '';
     display: inline-block;
     width: 22px;
     height: 1.5px;
@@ -60,7 +70,10 @@
     animation: faq-shimmer 2.5s linear infinite;
   }
   @include mobile {
-    &::before, &::after { display: none; }
+    &::before,
+    &::after {
+      display: none;
+    }
   }
 }
 
@@ -68,8 +81,12 @@
 .faq-section {
   background: #fff;
   padding: 72px 0 96px;
-  @include tablet { padding: 56px 0 72px; }
-  @include mobile { padding: 40px 0 56px; }
+  @include tablet {
+    padding: 56px 0 72px;
+  }
+  @include mobile {
+    padding: 40px 0 56px;
+  }
 }
 
 .faq-list-wrap {
@@ -86,7 +103,9 @@
   border-radius: var(--radius-md);
   overflow: hidden;
   background: #fff;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 
   &:hover {
     border-color: var(--blue-light-mid);
@@ -112,9 +131,13 @@
   text-align: left;
   transition: background 0.22s ease;
 
-  &:hover { background: var(--bg-light); }
-  
-  .q-block-item.q-active-panel & { background: var(--bg-light); }
+  &:hover {
+    background: var(--bg-light);
+  }
+
+  .q-block-item.q-active-panel & {
+    background: var(--bg-light);
+  }
 
   @include mobile {
     padding: 16px 18px;
@@ -131,8 +154,12 @@
   line-height: 1.45;
   letter-spacing: -0.01em;
 
-  @include tablet { font-size: 0.92rem; }
-  @include mobile { font-size: 0.875rem; }
+  @include tablet {
+    font-size: 0.92rem;
+  }
+  @include mobile {
+    font-size: 0.875rem;
+  }
 }
 
 // SYSTEM WORKING ARROW WITH ENCLOSING CIRCLE
@@ -142,16 +169,16 @@
   height: 36px !important;
   border: 1.5px solid var(--gray-light-mid, #d8d8d8);
   border-radius: 50% !important;
-  display: inline-flex !important; 
+  display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   color: var(--gray-mid, #6d6e70);
   background: #ffffff !important;
   box-sizing: border-box !important;
-  transition: 
-    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-    background 0.25s ease, 
-    border-color 0.25s ease, 
+  transition:
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.25s ease,
+    border-color 0.25s ease,
     color 0.25s ease;
 
   .arrow-svg {
@@ -162,7 +189,7 @@
     min-height: 16px !important;
     fill: none !important;
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    
+
     path {
       stroke: currentColor !important;
       stroke-width: 2.5px !important;
@@ -193,7 +220,9 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
-    @include mobile { padding: 0 18px 20px; }
+    @include mobile {
+      padding: 0 18px 20px;
+    }
   }
 }
 
@@ -204,18 +233,23 @@
   p {
     font-size: 0.9rem;
     color: var(--gray-mid);
-    line-height: 1.8; 
+    line-height: 1.8;
     margin-bottom: 1rem;
   }
-  strong { color: var(--text-dark); font-weight: 600; }
-  
+  strong {
+    color: var(--text-dark);
+    font-weight: 600;
+  }
+
   a {
     color: var(--primary);
     font-weight: 500;
     text-decoration: underline;
     text-underline-offset: 2px;
     transition: var(--transition);
-    &:hover { color: var(--secondary); }
+    &:hover {
+      color: var(--secondary);
+    }
   }
 }
 
@@ -228,7 +262,10 @@
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   margin: 0;
   margin-top: 1rem;
-  a { color: var(--primary) !important; font-weight: 600; }
+  a {
+    color: var(--primary) !important;
+    font-weight: 600;
+  }
 }
 
 // INTERNAL UL DATA LISTS
@@ -248,7 +285,7 @@
     list-style: none;
 
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       left: 0;
       top: 8px;
@@ -257,7 +294,10 @@
       border-radius: 50%;
       background: var(--primary);
     }
-    strong { color: var(--text-dark); font-weight: 600; }
+    strong {
+      color: var(--text-dark);
+      font-weight: 600;
+    }
   }
 }
 
@@ -331,7 +371,7 @@
   overflow: hidden;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     width: 280px;
     height: 280px;
@@ -375,7 +415,10 @@
     box-shadow: 0 8px 24px rgba(87, 144, 225, 0.35);
     transition: var(--transition);
 
-    svg { width: 16px; height: 16px; }
+    svg {
+      width: 16px;
+      height: 16px;
+    }
 
     &:hover {
       color: var(--text-light);
@@ -391,20 +434,24 @@
     padding: 32px 28px;
     margin-top: 40px;
     border-radius: var(--radius-md);
-    &__btn { align-self: center; }
+    &__btn {
+      align-self: center;
+    }
   }
   @include mobile {
     padding: 28px 20px;
     margin-top: 32px;
-    &__text h3 { font-size: 1.05rem; }
+    &__text h3 {
+      font-size: 1.05rem;
+    }
   }
 }
 
-.faq-cta__text{
-  p,h3{
+.faq-cta__text {
+  p,
+  h3 {
     color: #ffffff;
   }
 }
 
 // OVERRIDE CORE FONT STRINGS FOR CTA LIGHTNESS VALUES
-

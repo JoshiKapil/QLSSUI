@@ -1,7 +1,221 @@
 @import '../workspace.shared.scss';
-.enquiry-form{max-width:1180px}.attachment-zone{padding-top:2px}.quotation-choice{max-width:760px}.outcome-select{height:32px;max-width:170px;border:1px solid #d1deea;border-radius:9px;padding:5px 8px;background:#fff;color:#425d77;font-size:10px}.pm-file small{display:block;margin-top:2px}.pm-table td:nth-child(2){max-width:320px}.pm-table td:nth-child(4){max-width:220px}
-@media(max-width:640px){.enquiry-form,.quotation-choice{max-width:none}.outcome-select{max-width:none;flex:1}}
-.simple-flow{display:flex;align-items:center;justify-content:center;gap:9px;margin:0 0 16px;padding:11px 14px;border:1px solid #dce8f2;border-radius:14px;background:#fff}.simple-flow div{display:flex;align-items:center;gap:6px;color:#667b90;font-size:10px;font-weight:800}.simple-flow b{width:23px;height:23px;display:grid;place-items:center;border-radius:50%;background:#eaf2f8;color:#36729f}.simple-flow .active b{background:#118f87;color:#fff}.simple-flow i{color:#b2c1ce;font-size:8px}@media(max-width:760px){.simple-flow{justify-content:flex-start;overflow-x:auto}.simple-flow div{min-width:max-content}.simple-flow i{flex:0 0 auto}}
-.employee-assignment .pm-chip-grid { margin-top: 9px; }
-.selected-employee-summary { margin-top: 8px; padding: 9px 11px; border: 1px solid #cce5df; border-radius: 10px; background: #f0faf7; color: #315e55; font-size: 11px; }
-.field-help{display:block;margin-top:6px;color:#698096;font-size:11px;line-height:1.4}.field-help i{color:#0f9d8a;margin-right:4px}.scope-field{padding:14px;border:1px solid #dbe8f2;border-radius:14px;background:linear-gradient(180deg,#fbfdff,#f5f9fc)}
+.enquiry-form {
+  max-width: 1180px;
+}
+.attachment-zone {
+  padding-top: 2px;
+}
+.quotation-choice {
+  max-width: 760px;
+}
+.outcome-select {
+  height: 32px;
+  max-width: 170px;
+  border: 1px solid #d1deea;
+  border-radius: 9px;
+  padding: 5px 8px;
+  background: #fff;
+  color: #425d77;
+  font-size: 10px;
+}
+.pm-file small {
+  display: block;
+  margin-top: 2px;
+}
+.pm-table td:nth-child(2) {
+  max-width: 320px;
+}
+.pm-table td:nth-child(4) {
+  max-width: 220px;
+}
+@media (max-width: 640px) {
+  .enquiry-form,
+  .quotation-choice {
+    max-width: none;
+  }
+  .outcome-select {
+    max-width: none;
+    flex: 1;
+  }
+}
+.simple-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin: 0 0 16px;
+  padding: 11px 14px;
+  border: 1px solid #dce8f2;
+  border-radius: 14px;
+  background: #fff;
+}
+.simple-flow div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #667b90;
+  font-size: 10px;
+  font-weight: 800;
+}
+.simple-flow b {
+  width: 23px;
+  height: 23px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #eaf2f8;
+  color: #36729f;
+}
+.simple-flow .active b {
+  background: #118f87;
+  color: #fff;
+}
+.simple-flow i {
+  color: #b2c1ce;
+  font-size: 8px;
+}
+@media (max-width: 760px) {
+  .simple-flow {
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+  .simple-flow div {
+    min-width: max-content;
+  }
+  .simple-flow i {
+    flex: 0 0 auto;
+  }
+}
+.employee-assignment .pm-chip-grid {
+  margin-top: 9px;
+}
+.selected-employee-summary {
+  margin-top: 8px;
+  padding: 9px 11px;
+  border: 1px solid #cce5df;
+  border-radius: 10px;
+  background: #f0faf7;
+  color: #315e55;
+  font-size: 11px;
+}
+.field-help {
+  display: block;
+  margin-top: 6px;
+  color: #698096;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.field-help i {
+  color: #0f9d8a;
+  margin-right: 4px;
+}
+.scope-field {
+  padding: 14px;
+  border: 1px solid #dbe8f2;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fbfdff, #f5f9fc);
+}
+
+/* ENQUIRY_COSMETIC_POLISH_V1 */
+.pm-head {
+  min-height: 0;
+  padding: 24px 28px;
+}
+.pm-head h1 {
+  font-size: clamp(30px, 2.5vw, 40px);
+}
+.simple-flow {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0;
+  margin: 0;
+  padding: 8px 12px;
+  overflow: visible;
+}
+.simple-flow div {
+  position: relative;
+  justify-content: center;
+  min-height: 42px;
+  padding: 6px 14px;
+  font-size: 11px;
+  text-align: center;
+}
+.simple-flow div:not(:last-of-type):after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  width: 22px;
+  height: 1px;
+  background: #cbd9e5;
+}
+.simple-flow > i {
+  display: none;
+}
+.simple-flow b {
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+}
+.pm-filterbar {
+  padding: 13px 15px;
+  gap: 10px;
+}
+.pm-filterbar input,
+.pm-filterbar select {
+  min-height: 42px;
+  font-size: 12px;
+}
+.pm-filterbar > span {
+  font-size: 11px;
+}
+.pm-table th {
+  padding: 13px 15px;
+  font-size: 10px;
+}
+.pm-table td {
+  padding: 15px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.pm-table td strong {
+  font-size: 12px;
+}
+.pm-table td small {
+  font-size: 10px;
+  line-height: 1.45;
+}
+.outcome-select {
+  height: 42px;
+  max-width: 205px;
+  font-size: 11px;
+}
+@media (max-width: 900px) {
+  .simple-flow {
+    display: flex;
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+  .simple-flow div {
+    min-width: 155px;
+  }
+  .simple-flow div:not(:last-of-type):after {
+    right: -11px;
+  }
+  .pm-table {
+    min-width: 920px;
+  }
+}
+@media (max-width: 600px) {
+  .pm-head {
+    padding: 18px;
+  }
+  .pm-head__actions {
+    width: 100%;
+  }
+  .pm-head__actions .pm-btn {
+    flex: 1;
+  }
+  .simple-flow div {
+    min-width: 145px;
+  }
+}

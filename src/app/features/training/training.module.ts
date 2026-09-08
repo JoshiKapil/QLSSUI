@@ -6,6 +6,6 @@ import { FeedbackFormComponent } from './feedback-form/feedback-form.component';
 
 @NgModule({
   declarations: [TrainingComponent, FeedbackFormComponent],
-  imports: [SharedModule, TrainingRoutingModule]
+  imports: [SharedModule, TrainingRoutingModule],
 })
 export class TrainingModule {}

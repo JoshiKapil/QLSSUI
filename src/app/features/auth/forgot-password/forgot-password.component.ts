@@ -7,16 +7,20 @@ import { firstError } from '../auth-form.helpers';
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html',
-  styleUrls: ['./forgot-password.component.scss']
+  styleUrls: ['./forgot-password.component.scss'],
 })
 export class ForgotPasswordComponent {
   isSubmitting = false;
   firstError = firstError;
   form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]]
+    email: ['', [Validators.required, Validators.email]],
   });
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private notifier: NotifierService) {}
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private notifier: NotifierService,
+  ) {}
 
   submit(): void {
     if (this.form.invalid) {
@@ -31,7 +35,7 @@ export class ForgotPasswordComponent {
         this.notifier.warningToastr('Unable to request a password reset. Please try again.');
         this.isSubmitting = false;
       },
-      complete: () => (this.isSubmitting = false)
+      complete: () => (this.isSubmitting = false),
     });
   }
 }

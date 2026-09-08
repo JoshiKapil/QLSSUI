@@ -1,4 +1,4 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
 import { CertificationComponent } from './certification/certification.component';
 import { TrainingAdminComponent } from './training-admin/training-admin.component';
@@ -13,6 +13,9 @@ import { CreateTestQuestionsComponent } from './create-test-questions/create-tes
 import { ApproveCertificateComponent } from './approve-certificate/approve-certificate.component';
 import { PrintCertificationNewComponent } from './print-certification-new/print-certification-new.component';
 import { TestTrainingListsComponent } from './test-training-lists/test-training-lists.component';
+import { SupportTicketsComponent } from './support-tickets/support-tickets.component';
+import { TrainingPresentationEmailComponent } from './training-presentation-email/training-presentation-email.component';
+import { GharBookingsComponent } from './ghar-bookings/ghar-bookings.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +31,10 @@ import { TestTrainingListsComponent } from './test-training-lists/test-training-
     CreateTestQuestionsComponent,
     ApproveCertificateComponent,
     PrintCertificationNewComponent,
-    TestTrainingListsComponent
+    TestTrainingListsComponent,
+    SupportTicketsComponent,
+    TrainingPresentationEmailComponent,
+    GharBookingsComponent,
   ],
   imports: [SharedModule],
   exports: [
@@ -42,13 +48,11 @@ import { TestTrainingListsComponent } from './test-training-lists/test-training-
     CreateQuestionComponent,
     PrintCertificateComponent,
     CreateTestQuestionsComponent,
-    ApproveCertificateComponent
-  ]
+    ApproveCertificateComponent,
+    TrainingPresentationEmailComponent,
+  ],
 })
 export class AdminModule {}
-
-
-
 
 
 

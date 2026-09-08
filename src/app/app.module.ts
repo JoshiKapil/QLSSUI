@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+﻿import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
@@ -13,6 +13,8 @@ import { AuthModule } from './features/auth/auth.module';
 import { AdminModule } from './features/admin/admin.module';
 import { DemoComponent } from './features/demo/demo.component';
 import { AuthTokenInterceptor } from './core/services/auth-token.interceptor';
+import { PmLoadingInterceptor } from './features/project-management/services/pm-loading.interceptor'; // PM_DASHBOARD_LOADER_TOAST_V5
+import { ZeissLoadingInterceptor } from './features/zeiss-management/services/zeiss-loading.interceptor';
 
 @NgModule({
   declarations: [AppComponent, DemoComponent],
@@ -27,10 +29,14 @@ import { AuthTokenInterceptor } from './core/services/auth-token.interceptor';
     AuthModule,
     AdminModule,
     LayoutsModule,
-    AppRoutingModule
+    AppRoutingModule,
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true }],
-  bootstrap: [AppComponent]
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: PmLoadingInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ZeissLoadingInterceptor, multi: true },
+  ],
+  bootstrap: [AppComponent],
 })
 export class AppModule {}
 

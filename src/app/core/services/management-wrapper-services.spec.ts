@@ -17,7 +17,7 @@ describe('management wrapper services', () => {
       'getAll',
       'search',
       'save',
-      'uploadBulk'
+      'uploadBulk',
     ]);
     adminService.getAll.and.returnValue(of([]));
     adminService.search.and.returnValue(of([]));
@@ -36,8 +36,8 @@ describe('management wrapper services', () => {
         LinkedInPostService,
         LinkedInCommentService,
         { provide: ApiClientService, useValue: apiClient },
-        { provide: AdminManagementService, useValue: adminService }
-      ]
+        { provide: AdminManagementService, useValue: adminService },
+      ],
     });
   });
 
@@ -57,7 +57,9 @@ describe('management wrapper services', () => {
 
   it('delegates client, training, post, and comment service calls', () => {
     TestBed.inject(ClientManagementService).search('client').subscribe();
-    TestBed.inject(TrainingManagementService).save({ trainingId: 'T1' } as any).subscribe();
+    TestBed.inject(TrainingManagementService)
+      .save({ trainingId: 'T1' } as any)
+      .subscribe();
     TestBed.inject(LinkedInPostService).getAll().subscribe();
     TestBed.inject(LinkedInCommentService).search('comment').subscribe();
 

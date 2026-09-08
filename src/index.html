@@ -1,192 +1,196 @@
 ﻿<!doctype html>
 <html lang="en">
-<head>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0TRCLTF1B3"></script>
-<script>
-    window.dataLayer = window.dataLayer || [];
+  <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0TRCLTF1B3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
 
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-
-    gtag('js', new Date());
-    gtag('config', 'G-0TRCLTF1B3');
-  </script>
-  <meta charset="utf-8">
-  <title>QLSS Consulting</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="QLSS Business Consulting provides training, operational excellence, analytics, sustainability, financial services, and supply chain consulting.">
-  <link rel="icon" type="image/png" href="assets/icons/bullet.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-</head>
-<body>
-  <app-root></app-root>
-  <!-- QLSS ANGULAR AUTO UPDATE CHECK - 20260821 -->
-  <script id="qlss-angular-auto-update-check">
-    (function () {
-      'use strict';
-
-      var UPDATE_PARAM = '__qlss_update';
-      var CHECK_PARAM = '__qlss_check';
-      var ATTEMPT_PREFIX = 'qlss:auto-update:';
-
-      function isAngularShellAsset(pathname) {
-        var name = pathname.substring(pathname.lastIndexOf('/') + 1);
-        return /^(runtime|polyfills|main|styles|vendor|scripts)(?:\.[^.]+)*\.(?:js|css)$/i.test(name);
+      function gtag() {
+        dataLayer.push(arguments);
       }
 
-      function collectShellAssets(root) {
-        var values = [];
-        var nodes = root.querySelectorAll('script[src], link[rel="stylesheet"][href]');
+      gtag('js', new Date());
+      gtag('config', 'G-0TRCLTF1B3');
+    </script>
+    <meta charset="utf-8" />
+    <title>QLSS Consulting</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="QLSS Business Consulting provides training, operational excellence, analytics, sustainability, financial services, and supply chain consulting."
+    />
+    <link rel="icon" type="image/png" href="assets/icons/bullet.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <app-root></app-root>
+    <!-- QLSS ANGULAR AUTO UPDATE CHECK - 20260821 -->
+    <script id="qlss-angular-auto-update-check">
+      (function () {
+        'use strict';
 
-        Array.prototype.forEach.call(nodes, function (node) {
-          var raw = node.getAttribute('src') || node.getAttribute('href');
-          if (!raw) {
-            return;
+        var UPDATE_PARAM = '__qlss_update';
+        var CHECK_PARAM = '__qlss_check';
+        var ATTEMPT_PREFIX = 'qlss:auto-update:';
+
+        function isAngularShellAsset(pathname) {
+          var name = pathname.substring(pathname.lastIndexOf('/') + 1);
+          return /^(runtime|polyfills|main|styles|vendor|scripts)(?:\.[^.]+)*\.(?:js|css)$/i.test(name);
+        }
+
+        function collectShellAssets(root) {
+          var values = [];
+          var nodes = root.querySelectorAll('script[src], link[rel="stylesheet"][href]');
+
+          Array.prototype.forEach.call(nodes, function (node) {
+            var raw = node.getAttribute('src') || node.getAttribute('href');
+            if (!raw) {
+              return;
+            }
+
+            try {
+              var url = new URL(raw, window.location.origin + '/');
+              if (url.origin === window.location.origin && isAngularShellAsset(url.pathname)) {
+                values.push(url.pathname);
+              }
+            } catch (_) {
+              // Ignore malformed/non-application URLs. They are unrelated to Angular shell versioning.
+            }
+          });
+
+          values.sort();
+          return values;
+        }
+
+        function fingerprint(values) {
+          return values.join('|');
+        }
+
+        function fingerprintKey(value) {
+          var hash = 0;
+          for (var i = 0; i < value.length; i++) {
+            hash = (hash << 5) - hash + value.charCodeAt(i);
+            hash |= 0;
           }
+          return Math.abs(hash).toString(36);
+        }
 
+        function removeTemporaryUpdateParam() {
           try {
-            var url = new URL(raw, window.location.origin + '/');
-            if (url.origin === window.location.origin && isAngularShellAsset(url.pathname)) {
-              values.push(url.pathname);
+            var cleanUrl = new URL(window.location.href);
+            if (!cleanUrl.searchParams.has(UPDATE_PARAM)) {
+              return;
+            }
+
+            cleanUrl.searchParams.delete(UPDATE_PARAM);
+            window.history.replaceState(
+              window.history.state,
+              document.title,
+              cleanUrl.pathname + cleanUrl.search + cleanUrl.hash,
+            );
+          } catch (_) {
+            // URL cleanup is cosmetic only; never interfere with the application.
+          }
+        }
+
+        function clearOldAttemptKeys() {
+          try {
+            for (var i = sessionStorage.length - 1; i >= 0; i--) {
+              var key = sessionStorage.key(i);
+              if (key && key.indexOf(ATTEMPT_PREFIX) === 0) {
+                sessionStorage.removeItem(key);
+              }
             }
           } catch (_) {
-            // Ignore malformed/non-application URLs. They are unrelated to Angular shell versioning.
+            // Storage may be disabled/private; update detection still works.
           }
-        });
-
-        values.sort();
-        return values;
-      }
-
-      function fingerprint(values) {
-        return values.join('|');
-      }
-
-      function fingerprintKey(value) {
-        var hash = 0;
-        for (var i = 0; i < value.length; i++) {
-          hash = ((hash << 5) - hash) + value.charCodeAt(i);
-          hash |= 0;
         }
-        return Math.abs(hash).toString(36);
-      }
 
-      function removeTemporaryUpdateParam() {
-        try {
-          var cleanUrl = new URL(window.location.href);
-          if (!cleanUrl.searchParams.has(UPDATE_PARAM)) {
+        function reloadForNewBuild(latestFingerprint) {
+          var key = ATTEMPT_PREFIX + fingerprintKey(latestFingerprint);
+          var attempts = 0;
+
+          try {
+            attempts = parseInt(sessionStorage.getItem(key) || '0', 10);
+            if (attempts >= 2) {
+              console.warn('[QLSS] New build detected, but automatic refresh was limited to prevent a reload loop.');
+              return;
+            }
+            sessionStorage.setItem(key, String(attempts + 1));
+          } catch (_) {
+            // Continue even when session storage is unavailable.
+          }
+
+          var target = new URL(window.location.href);
+          target.searchParams.set(UPDATE_PARAM, fingerprintKey(latestFingerprint) + '-' + Date.now());
+
+          console.info('[QLSS] New application version detected. Loading the latest version.');
+          window.location.replace(target.toString());
+        }
+
+        function checkForLatestBuild() {
+          var currentFingerprint = fingerprint(collectShellAssets(document));
+
+          // In development or an unusual shell where Angular bundle references are absent,
+          // do nothing rather than risk changing normal navigation.
+          if (!currentFingerprint) {
+            removeTemporaryUpdateParam();
             return;
           }
 
-          cleanUrl.searchParams.delete(UPDATE_PARAM);
-          window.history.replaceState(
-            window.history.state,
-            document.title,
-            cleanUrl.pathname + cleanUrl.search + cleanUrl.hash
-          );
-        } catch (_) {
-          // URL cleanup is cosmetic only; never interfere with the application.
-        }
-      }
+          var checkUrl = new URL('/index.html', window.location.origin);
+          checkUrl.searchParams.set(CHECK_PARAM, String(Date.now()));
 
-      function clearOldAttemptKeys() {
-        try {
-          for (var i = sessionStorage.length - 1; i >= 0; i--) {
-            var key = sessionStorage.key(i);
-            if (key && key.indexOf(ATTEMPT_PREFIX) === 0) {
-              sessionStorage.removeItem(key);
-            }
-          }
-        } catch (_) {
-          // Storage may be disabled/private; update detection still works.
-        }
-      }
-
-      function reloadForNewBuild(latestFingerprint) {
-        var key = ATTEMPT_PREFIX + fingerprintKey(latestFingerprint);
-        var attempts = 0;
-
-        try {
-          attempts = parseInt(sessionStorage.getItem(key) || '0', 10);
-          if (attempts >= 2) {
-            console.warn('[QLSS] New build detected, but automatic refresh was limited to prevent a reload loop.');
-            return;
-          }
-          sessionStorage.setItem(key, String(attempts + 1));
-        } catch (_) {
-          // Continue even when session storage is unavailable.
-        }
-
-        var target = new URL(window.location.href);
-        target.searchParams.set(UPDATE_PARAM, fingerprintKey(latestFingerprint) + '-' + Date.now());
-
-        console.info('[QLSS] New application version detected. Loading the latest version.');
-        window.location.replace(target.toString());
-      }
-
-      function checkForLatestBuild() {
-        var currentFingerprint = fingerprint(collectShellAssets(document));
-
-        // In development or an unusual shell where Angular bundle references are absent,
-        // do nothing rather than risk changing normal navigation.
-        if (!currentFingerprint) {
-          removeTemporaryUpdateParam();
-          return;
-        }
-
-        var checkUrl = new URL('/index.html', window.location.origin);
-        checkUrl.searchParams.set(CHECK_PARAM, String(Date.now()));
-
-        fetch(checkUrl.toString(), {
-          method: 'GET',
-          cache: 'no-store',
-          credentials: 'same-origin',
-          headers: {
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-          }
-        })
-          .then(function (response) {
-            if (!response.ok) {
-              throw new Error('Version check returned HTTP ' + response.status);
-            }
-            return response.text();
+          fetch(checkUrl.toString(), {
+            method: 'GET',
+            cache: 'no-store',
+            credentials: 'same-origin',
+            headers: {
+              'Cache-Control': 'no-cache',
+              Pragma: 'no-cache',
+            },
           })
-          .then(function (html) {
-            var latestDocument = new DOMParser().parseFromString(html, 'text/html');
-            var latestFingerprint = fingerprint(collectShellAssets(latestDocument));
+            .then(function (response) {
+              if (!response.ok) {
+                throw new Error('Version check returned HTTP ' + response.status);
+              }
+              return response.text();
+            })
+            .then(function (html) {
+              var latestDocument = new DOMParser().parseFromString(html, 'text/html');
+              var latestFingerprint = fingerprint(collectShellAssets(latestDocument));
 
-            if (!latestFingerprint) {
+              if (!latestFingerprint) {
+                removeTemporaryUpdateParam();
+                return;
+              }
+
+              if (latestFingerprint !== currentFingerprint) {
+                reloadForNewBuild(latestFingerprint);
+                return;
+              }
+
+              clearOldAttemptKeys();
               removeTemporaryUpdateParam();
-              return;
-            }
+            })
+            .catch(function () {
+              // Never block the running application because of a version-check/network failure.
+              removeTemporaryUpdateParam();
+            });
+        }
 
-            if (latestFingerprint !== currentFingerprint) {
-              reloadForNewBuild(latestFingerprint);
-              return;
-            }
-
-            clearOldAttemptKeys();
-            removeTemporaryUpdateParam();
-          })
-          .catch(function () {
-            // Never block the running application because of a version-check/network failure.
-            removeTemporaryUpdateParam();
-          });
-      }
-
-      window.addEventListener('load', function () {
-        // Let Angular finish its normal startup first. This check is intentionally non-blocking.
-        window.setTimeout(checkForLatestBuild, 250);
-      });
-    })();
-  </script>
-  <!-- END QLSS ANGULAR AUTO UPDATE CHECK -->
-
-</body>
+        window.addEventListener('load', function () {
+          // Let Angular finish its normal startup first. This check is intentionally non-blocking.
+          window.setTimeout(checkForLatestBuild, 250);
+        });
+      })();
+    </script>
+    <!-- END QLSS ANGULAR AUTO UPDATE CHECK -->
+  </body>
 </html>
-

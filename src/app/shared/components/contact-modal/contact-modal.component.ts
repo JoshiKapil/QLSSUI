@@ -5,7 +5,7 @@ import { NotifierService } from '../../../core/services/notifier.service';
 @Component({
   selector: 'app-contact-modal',
   templateUrl: './contact-modal.component.html',
-  styleUrls: ['./contact-modal.component.scss']
+  styleUrls: ['./contact-modal.component.scss'],
 })
 export class ContactModalComponent implements OnInit, OnDestroy {
   visible = false;
@@ -22,11 +22,11 @@ export class ContactModalComponent implements OnInit, OnDestroy {
   private openTimer?: ReturnType<typeof setTimeout>;
   private closeTimer?: ReturnType<typeof setTimeout>;
 
-  constructor(private notifierService: NotifierService) { }
+  constructor(private notifierService: NotifierService) {}
 
-  ngOnInit(): void { 
-     localStorage.setItem('isDisplayed', 'true');
-    if (localStorage.getItem('isDisplayed') == 'false' || this.isDisplayed === 'false') { 
+  ngOnInit(): void {
+    localStorage.setItem('isDisplayed', 'true');
+    if (localStorage.getItem('isDisplayed') == 'false' || this.isDisplayed === 'false') {
       this.openTimer = setTimeout(() => {
         this.visible = true;
         localStorage.setItem('isDisplayed', 'true');
@@ -70,12 +70,7 @@ export class ContactModalComponent implements OnInit, OnDestroy {
 
     this.isSending = true;
     try {
-      await emailjs.send(
-        this.SERVICE_ID,
-        this.TEMPLATE_ID,
-        templateParams,
-        this.PUBLIC_KEY
-      );
+      await emailjs.send(this.SERVICE_ID, this.TEMPLATE_ID, templateParams, this.PUBLIC_KEY);
 
       this.notifierService.successToastr('Message sent successfully!');
       this.name = '';

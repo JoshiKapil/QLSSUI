@@ -7,7 +7,7 @@ import { firstError, passwordMatchValidator, passwordPattern } from '../auth-for
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
-  styleUrls: ['./change-password.component.scss']
+  styleUrls: ['./change-password.component.scss'],
 })
 export class ChangePasswordComponent {
   isSubmitting = false;
@@ -16,12 +16,16 @@ export class ChangePasswordComponent {
     {
       oldPassword: ['', Validators.required],
       newPassword: ['', [Validators.required, Validators.pattern(passwordPattern)]],
-      confirmPassword: ['', Validators.required]
+      confirmPassword: ['', Validators.required],
     },
-    { validators: passwordMatchValidator('newPassword', 'confirmPassword') }
+    { validators: passwordMatchValidator('newPassword', 'confirmPassword') },
   );
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private notifier: NotifierService) {}
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private notifier: NotifierService,
+  ) {}
 
   submit(): void {
     if (this.form.invalid) {
@@ -34,7 +38,7 @@ export class ChangePasswordComponent {
       .changePassword({
         oldPassword: this.form.value.oldPassword || '',
         newPassword: this.form.value.newPassword || '',
-        confirmPassword: this.form.value.confirmPassword || ''
+        confirmPassword: this.form.value.confirmPassword || '',
       })
       .subscribe({
         next: () => this.notifier.successToastr('Password changed successfully.'),
@@ -45,7 +49,7 @@ export class ChangePasswordComponent {
         complete: () => {
           this.form.reset();
           this.isSubmitting = false;
-        }
+        },
       });
   }
 }

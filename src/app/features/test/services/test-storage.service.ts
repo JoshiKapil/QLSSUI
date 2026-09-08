@@ -13,7 +13,7 @@ import {
   TestQuestion,
   TestQuestionType,
   TestSubmission,
-  TestSummaryItem
+  TestSummaryItem,
 } from '../test.model';
 
 @Injectable({ providedIn: 'root' })
@@ -37,7 +37,7 @@ export class TestStorageService {
   readonly assessmentManifestPath = 'assets/test/assessments/index.json';
   readonly submittedServerPath = 'assets/test/submitted';
 
-  constructor(private readonly http: HttpClient) { }
+  constructor(private readonly http: HttpClient) {}
 
   private getAuthHeaders(): HttpHeaders | undefined {
     const token =
@@ -46,9 +46,7 @@ export class TestStorageService {
       localStorage.getItem('token') ||
       sessionStorage.getItem('token');
 
-    return token && !token.startsWith('local-')
-      ? new HttpHeaders({ Authorization: `Bearer ${token}` })
-      : undefined;
+    return token && !token.startsWith('local-') ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
   }
 
   private apiUrl(endpoint: string): string {
@@ -59,8 +57,8 @@ export class TestStorageService {
     const response = await firstValueFrom(
       this.http.get<ApiResponse<T> | T>(this.apiUrl(endpoint), {
         params,
-        headers: this.getAuthHeaders()
-      })
+        headers: this.getAuthHeaders(),
+      }),
     );
 
     return unwrapApiResponse<T>(response);
@@ -69,8 +67,8 @@ export class TestStorageService {
   private async apiPost<T>(endpoint: string, body: any): Promise<T> {
     const response = await firstValueFrom(
       this.http.post<ApiResponse<T> | T>(this.apiUrl(endpoint), body, {
-        headers: this.getAuthHeaders()
-      })
+        headers: this.getAuthHeaders(),
+      }),
     );
 
     return unwrapApiResponse<T>(response);
@@ -79,8 +77,8 @@ export class TestStorageService {
   private async apiPut<T>(endpoint: string, body: any): Promise<T> {
     const response = await firstValueFrom(
       this.http.put<ApiResponse<T> | T>(this.apiUrl(endpoint), body, {
-        headers: this.getAuthHeaders()
-      })
+        headers: this.getAuthHeaders(),
+      }),
     );
 
     return unwrapApiResponse<T>(response);
@@ -90,8 +88,8 @@ export class TestStorageService {
     const response = await firstValueFrom(
       this.http.delete<ApiResponse<T> | T>(this.apiUrl(endpoint), {
         body,
-        headers: this.getAuthHeaders()
-      })
+        headers: this.getAuthHeaders(),
+      }),
     );
 
     return unwrapApiResponse<T>(response);
@@ -153,7 +151,7 @@ export class TestStorageService {
     console.warn(`[TestStorageService] ${action} API failed; using local encrypted fallback.`, {
       message,
       error,
-      responseBody
+      responseBody,
     });
   }
 
@@ -175,7 +173,7 @@ export class TestStorageService {
       questions: [],
       status: test.status,
       metadataJson: JSON.stringify({ testFileType: test.testFileType || 'assessment' }),
-      metadata: { fileName: test.fileName, displayName: test.displayName, testFileType: test.testFileType }
+      metadata: { fileName: test.fileName, displayName: test.displayName, testFileType: test.testFileType },
     };
   }
 
@@ -211,11 +209,12 @@ export class TestStorageService {
     const normalizedName = this.normalizeFileName(testName).toLowerCase();
 
     return (
-      tests.find((test) =>
-        test.testId === testName ||
-        this.normalizeFileName(test.testName).toLowerCase() === normalizedName ||
-        this.normalizeFileName(test.displayName || '').toLowerCase() === normalizedName ||
-        this.normalizeFileName(test.fileName || '').toLowerCase() === normalizedName
+      tests.find(
+        (test) =>
+          test.testId === testName ||
+          this.normalizeFileName(test.testName).toLowerCase() === normalizedName ||
+          this.normalizeFileName(test.displayName || '').toLowerCase() === normalizedName ||
+          this.normalizeFileName(test.fileName || '').toLowerCase() === normalizedName,
       ) || null
     );
   }
@@ -246,7 +245,7 @@ export class TestStorageService {
       const paths = [
         `Test/${encodeURIComponent(serverTestId)}/attempt`,
         `Test/${encodeURIComponent(serverTestId)}/complete`,
-        `Test/attempt/${encodeURIComponent(serverTestId)}`
+        `Test/attempt/${encodeURIComponent(serverTestId)}`,
       ];
 
       let complete: any = null;
@@ -267,17 +266,21 @@ export class TestStorageService {
 
       const definition = this.mapApiTest(complete || test);
       const rawQuestions = this.pickArray(complete, ['questions', 'mappedQuestions', 'testQuestions', 'questionList']);
-      const questions = this.normalizeQuestionBank(rawQuestions.map((question, index) => this.mapApiQuestion(question, index)));
-      const mappedIds = questions.length ? questions.map((question) => this.getQuestionKey(question)) : definition.questionOrder;
+      const questions = this.normalizeQuestionBank(
+        rawQuestions.map((question, index) => this.mapApiQuestion(question, index)),
+      );
+      const mappedIds = questions.length
+        ? questions.map((question) => this.getQuestionKey(question))
+        : definition.questionOrder;
       const testDefinition = this.normalizeAssessment(
         {
           ...definition,
           mappedQuestionIds: mappedIds,
           questionOrder: mappedIds,
           totalQuestions: definition.totalQuestions || mappedIds.length,
-          questions
+          questions,
         },
-        definition.displayName
+        definition.displayName,
       );
 
       return {
@@ -286,7 +289,7 @@ export class TestStorageService {
         missingQuestionIds: [],
         inactiveQuestionIds: questions
           .filter((question) => question.isActive === false)
-          .map((question) => this.getQuestionKey(question))
+          .map((question) => this.getQuestionKey(question)),
       };
     } catch (error) {
       this.logApiFallback('Load complete test', error);
@@ -302,7 +305,9 @@ export class TestStorageService {
 
     try {
       const response = await this.apiGet<any[]>(`TestQuestion/by-test/${encodeURIComponent(serverTestId)}`);
-      return this.normalizeQuestionBank((response || []).map((question, index) => this.mapApiQuestion(question, index)));
+      return this.normalizeQuestionBank(
+        (response || []).map((question, index) => this.mapApiQuestion(question, index)),
+      );
     } catch (error) {
       this.logApiFallback('Load mapped questions', error);
       return [];
@@ -317,7 +322,9 @@ export class TestStorageService {
 
     try {
       const response = await this.apiGet<any[]>(`TestQuestion/available-questions/${encodeURIComponent(serverTestId)}`);
-      return this.normalizeQuestionBank((response || []).map((question, index) => this.mapApiQuestion(question, index)));
+      return this.normalizeQuestionBank(
+        (response || []).map((question, index) => this.mapApiQuestion(question, index)),
+      );
     } catch (error) {
       this.logApiFallback('Load available questions', error);
       return [];
@@ -338,9 +345,9 @@ export class TestStorageService {
         {
           ...normalized,
           ...saved,
-          testId: savedTestId || normalized.testId
+          testId: savedTestId || normalized.testId,
         },
-        this.getAssessmentDisplayName(normalized)
+        this.getAssessmentDisplayName(normalized),
       );
 
       if (savedTestId) {
@@ -437,7 +444,9 @@ export class TestStorageService {
     let encrypted = '';
 
     for (let index = 0; index < text.length; index += 1) {
-      encrypted += String.fromCharCode(text.charCodeAt(index) ^ this.encryptionKey.charCodeAt(index % this.encryptionKey.length));
+      encrypted += String.fromCharCode(
+        text.charCodeAt(index) ^ this.encryptionKey.charCodeAt(index % this.encryptionKey.length),
+      );
     }
 
     return btoa(unescape(encodeURIComponent(encrypted)));
@@ -448,12 +457,13 @@ export class TestStorageService {
     let decrypted = '';
 
     for (let index = 0; index < encrypted.length; index += 1) {
-      decrypted += String.fromCharCode(encrypted.charCodeAt(index) ^ this.encryptionKey.charCodeAt(index % this.encryptionKey.length));
+      decrypted += String.fromCharCode(
+        encrypted.charCodeAt(index) ^ this.encryptionKey.charCodeAt(index % this.encryptionKey.length),
+      );
     }
 
     return JSON.parse(decrypted) as T;
   }
-
 
   private async getStoredValue(key: string): Promise<string | null> {
     return (await this.getIndexedDbValue(key)) || localStorage.getItem(key);
@@ -590,7 +600,9 @@ export class TestStorageService {
     const encrypted = await this.getStoredValue(this.questionBankKey);
 
     if (encrypted) {
-      return this.cleanStoredQuestionBankAfterTwentyOnce(this.normalizeQuestionBank(await this.decryptData<TestQuestion[]>(encrypted)));
+      return this.cleanStoredQuestionBankAfterTwentyOnce(
+        this.normalizeQuestionBank(await this.decryptData<TestQuestion[]>(encrypted)),
+      );
     }
 
     const assetQuestions = await this.readEncryptedAsset<TestQuestion[]>(this.questionBankServerPath);
@@ -630,7 +642,10 @@ export class TestStorageService {
 
     const cleanedQuestions = questions.slice(0, this.questionBankCleanupKeepCount);
     await this.saveQuestionBankLocally(cleanedQuestions);
-    await this.setStoredValue(this.questionBankCleanupKey, await this.encryptData({ cleanedAt: new Date().toISOString(), kept: cleanedQuestions.length }));
+    await this.setStoredValue(
+      this.questionBankCleanupKey,
+      await this.encryptData({ cleanedAt: new Date().toISOString(), kept: cleanedQuestions.length }),
+    );
     return cleanedQuestions;
   }
 
@@ -681,7 +696,9 @@ export class TestStorageService {
 
       const encrypted = await this.getStoredValue(key);
       if (encrypted) {
-        tests.push(this.normalizeAssessment(await this.decryptData<TestDefinition>(encrypted), key.replace(/^.*:/, '')));
+        tests.push(
+          this.normalizeAssessment(await this.decryptData<TestDefinition>(encrypted), key.replace(/^.*:/, '')),
+        );
       }
     }
 
@@ -705,7 +722,7 @@ export class TestStorageService {
 
   async saveAssessmentFileToServer(
     test: TestDefinition,
-    testType: 'pre' | 'post' | 'assessment' | 'chalange'
+    testType: 'pre' | 'post' | 'assessment' | 'chalange',
   ): Promise<void> {
     const normalized = this.normalizeAssessment(test, this.getAssessmentDisplayName(test));
     const envelope = await this.createEncryptedEnvelope('qlss-encrypted-assessment', normalized);
@@ -716,51 +733,44 @@ export class TestStorageService {
     }
 
     // Previous name-based endpoint: Test/save-file/{testType}/{testName}
-    await this.apiPost(
-      `Test/save-file/${encodeURIComponent(testType)}/${encodeURIComponent(testId)}`,
-      envelope
-    );
+    await this.apiPost(`Test/save-file/${encodeURIComponent(testType)}/${encodeURIComponent(testId)}`, envelope);
   }
 
   async resolveAssessmentFileQuestions(
     testName: string,
-    testType: 'pre' | 'post' | 'assessment' | 'chalange'
+    testType: 'pre' | 'post' | 'assessment' | 'chalange',
   ): Promise<TestAttempt> {
     const serverTest = await this.resolveServerTest(testName);
-    let testId = normalizeServerId(serverTest?.testId); 
+    let testId = normalizeServerId(serverTest?.testId);
     if (!testId) {
       throw new Error(`No database test ID was found for ${testName}.`);
     }
 
     // Previous name-based endpoint: Test/file/{testType}/{testName}
-    const envelope = await this.apiGet<any>(
-      `Test/file/${encodeURIComponent(testType)}/${encodeURIComponent(testId)}`
-    );
+    const envelope = await this.apiGet<any>(`Test/file/${encodeURIComponent(testType)}/${encodeURIComponent(testId)}`);
     const payload = await this.decryptData<TestDefinition>(envelope.encryptedPayload);
     const testDefinition = this.normalizeAssessment(payload, testName);
     const questions = this.normalizeQuestionBank(testDefinition.questions || []);
     const mappedIds = testDefinition.questionOrder?.length
       ? testDefinition.questionOrder
       : testDefinition.mappedQuestionIds;
-    const questionById = new Map(
-      questions.map((question) => [this.getQuestionKey(question), question])
-    );
+    const questionById = new Map(questions.map((question) => [this.getQuestionKey(question), question]));
     const orderedQuestions = mappedIds.length
       ? mappedIds
-        .map((questionId) => questionById.get(String(questionId)))
-        .filter((question): question is TestQuestion => !!question)
+          .map((questionId) => questionById.get(String(questionId)))
+          .filter((question): question is TestQuestion => !!question)
       : questions;
 
     return {
       testDefinition,
       questions: orderedQuestions.map((question, index) => ({
         ...question,
-        questionNo: index + 1
+        questionNo: index + 1,
       })),
       missingQuestionIds: mappedIds.filter((questionId) => !questionById.has(String(questionId))),
       inactiveQuestionIds: orderedQuestions
         .filter((question) => question.isActive === false)
-        .map((question) => this.getQuestionKey(question))
+        .map((question) => this.getQuestionKey(question)),
     };
   }
 
@@ -782,7 +792,7 @@ export class TestStorageService {
     return [
       this.getAssessmentKey(normalizedName),
       `${this.legacyTestPrefix}${normalizedName}`,
-      `${this.draftPrefix}${normalizedName}`
+      `${this.draftPrefix}${normalizedName}`,
     ];
   }
 
@@ -825,13 +835,17 @@ export class TestStorageService {
     const questionBank = await this.loadQuestionBank([]);
     const questions = this.resolveMappedQuestions(testDefinition, questionBank);
     const resolvedIds = questions.map((question) => this.getQuestionKey(question));
-    const mappedIds = testDefinition.questionOrder?.length ? testDefinition.questionOrder : testDefinition.mappedQuestionIds;
+    const mappedIds = testDefinition.questionOrder?.length
+      ? testDefinition.questionOrder
+      : testDefinition.mappedQuestionIds;
 
     return {
       testDefinition,
       questions,
       missingQuestionIds: mappedIds.filter((questionId) => !resolvedIds.includes(questionId)),
-      inactiveQuestionIds: questions.filter((question) => question.isActive === false).map((question) => this.getQuestionKey(question))
+      inactiveQuestionIds: questions
+        .filter((question) => question.isActive === false)
+        .map((question) => this.getQuestionKey(question)),
     };
   }
 
@@ -873,15 +887,13 @@ export class TestStorageService {
       .map((item: any) => ({
         trainingId: String(item.trainingId ?? item.TrainingId ?? ''),
         trainingName: item.trainingName ?? item.TrainingName ?? '',
-        displayName: item.displayName ?? item.DisplayName ?? item.trainingName ?? item.TrainingName ?? ''
+        displayName: item.displayName ?? item.DisplayName ?? item.trainingName ?? item.TrainingName ?? '',
       }))
       .filter((item: any) => item.trainingId && item.displayName);
   }
 
   async validatePostTestAccess(email: string, trainingId: string): Promise<boolean> {
-    const params = new HttpParams()
-      .set('email', email.trim())
-      .set('trainingId', trainingId.trim());
+    const params = new HttpParams().set('email', email.trim()).set('trainingId', trainingId.trim());
     const response = await this.apiGet<any>('certification-data/validate-test-access', params);
     // The API verifies the current-year certification and matching pre-test
     // submission. Result JSON files are optional audit/export artifacts and may
@@ -943,11 +955,15 @@ export class TestStorageService {
   }
 
   resolveMappedQuestions(testDefinition: TestDefinition, questionBank: TestQuestion[]): TestQuestion[] {
-    const mappedIds = testDefinition.questionOrder?.length ? testDefinition.questionOrder : testDefinition.mappedQuestionIds;
+    const mappedIds = testDefinition.questionOrder?.length
+      ? testDefinition.questionOrder
+      : testDefinition.mappedQuestionIds;
 
     return mappedIds
       .map((questionId, index) => {
-        const question = questionBank.find((item) => this.getQuestionKey(item) === questionId && item.isActive !== false);
+        const question = questionBank.find(
+          (item) => this.getQuestionKey(item) === questionId && item.isActive !== false,
+        );
         return question ? { ...question, questionNo: index + 1 } : null;
       })
       .filter((question): question is TestQuestion => !!question);
@@ -971,18 +987,21 @@ export class TestStorageService {
       submission.submissionId = savedSubmissionId;
     }
     await this.saveSubmissionFileToServer(normalized);
-    await this.setStoredValue(this.getSubmissionKey(normalized.username, normalized.testName), await this.encryptData(normalized));
+    await this.setStoredValue(
+      this.getSubmissionKey(normalized.username, normalized.testName),
+      await this.encryptData(normalized),
+    );
   }
   private async saveSubmissionFileToServer(submission: TestSubmission): Promise<void> {
     const username = String(submission.username || '').trim();
     const trainingId = String(
-      submission.testDetailsSnapshot?.trainingId
-      || submission.questions.find((question) => question.trainingId)?.trainingId
-      || ''
+      submission.testDetailsSnapshot?.trainingId ||
+        submission.questions.find((question) => question.trainingId)?.trainingId ||
+        '',
     ).trim();
-    const testType = String(
-      submission.testDetailsSnapshot?.testFileType || ''
-    ).trim().toLowerCase();
+    const testType = String(submission.testDetailsSnapshot?.testFileType || '')
+      .trim()
+      .toLowerCase();
 
     if (!username) {
       throw new Error('Username is required to save the result file.');
@@ -996,41 +1015,42 @@ export class TestStorageService {
 
     const envelope = await this.createEncryptedEnvelope(
       'qlss-encrypted-test-submission',
-      this.normalizeSubmission(submission)
+      this.normalizeSubmission(submission),
     );
 
     await this.apiPost(
       `results/save-file/${encodeURIComponent(testType)}/${encodeURIComponent(trainingId)}/${encodeURIComponent(username)}`,
-      envelope
+      envelope,
     );
   }
 
   async loadSubmissionFileFromServer(
     testType: 'pre' | 'post' | 'assessment' | 'chalange',
     trainingId: string,
-    username: string
+    username: string,
   ): Promise<TestSubmission | null> {
     if (!testType || !trainingId.trim() || !username.trim()) {
       throw new Error('Test type, training ID, and username are required to read the result file.');
     }
 
     const envelope = await this.apiGet<any>(
-      `results/file/${encodeURIComponent(testType)}/${encodeURIComponent(trainingId)}/${encodeURIComponent(username)}`
+      `results/file/${encodeURIComponent(testType)}/${encodeURIComponent(trainingId)}/${encodeURIComponent(username)}`,
     );
 
     if (!envelope?.encryptedPayload) {
       return null;
     }
 
-    return this.normalizeSubmission(
-      await this.decryptData<TestSubmission>(envelope.encryptedPayload)
-    );
+    return this.normalizeSubmission(await this.decryptData<TestSubmission>(envelope.encryptedPayload));
   }
 
   async loadSavedSubmission(username: string, testName: string): Promise<TestSubmission | null> {
     const serverSubmission = await this.loadSubmissionFromServer(username, testName);
     if (serverSubmission) {
-      await this.setStoredValue(this.getSubmissionKey(serverSubmission.username, serverSubmission.testName), await this.encryptData(serverSubmission));
+      await this.setStoredValue(
+        this.getSubmissionKey(serverSubmission.username, serverSubmission.testName),
+        await this.encryptData(serverSubmission),
+      );
       return serverSubmission;
     }
 
@@ -1056,7 +1076,18 @@ export class TestStorageService {
         items.push(this.buildSavedResultListItem(key, submission));
       } catch {
         const parts = key.replace(this.submittedPrefix, '').split(':');
-        items.push({ key, username: parts[0] || '', normalizedUsername: parts[0] || '', testName: parts[1] || '', fileName: parts[1] || '', submittedAt: '', percentage: 0, score: 0, passed: false, isAutoSubmitted: false });
+        items.push({
+          key,
+          username: parts[0] || '',
+          normalizedUsername: parts[0] || '',
+          testName: parts[1] || '',
+          fileName: parts[1] || '',
+          submittedAt: '',
+          percentage: 0,
+          score: 0,
+          passed: false,
+          isAutoSubmitted: false,
+        });
       }
     }
 
@@ -1108,7 +1139,18 @@ export class TestStorageService {
       }
 
       const parts = key.replace(this.submittedPrefix, '').split(':');
-      items.push({ key, username: parts[0] || '', normalizedUsername: parts[0] || '', testName: parts[1] || '', fileName: parts[1] || '', submittedAt: '', percentage: 0, score: 0, passed: false, isAutoSubmitted: false });
+      items.push({
+        key,
+        username: parts[0] || '',
+        normalizedUsername: parts[0] || '',
+        testName: parts[1] || '',
+        fileName: parts[1] || '',
+        submittedAt: '',
+        percentage: 0,
+        score: 0,
+        passed: false,
+        isAutoSubmitted: false,
+      });
     }
 
     return items;
@@ -1117,9 +1159,10 @@ export class TestStorageService {
   async exportSubmissionResult(username: string, testName: string): Promise<Blob>;
   async exportSubmissionResult(submission: TestSubmission): Promise<Blob>;
   async exportSubmissionResult(usernameOrSubmission: string | TestSubmission, testName?: string): Promise<Blob> {
-    const submission = typeof usernameOrSubmission === 'string'
-      ? await this.loadSavedSubmission(usernameOrSubmission, testName || '')
-      : usernameOrSubmission;
+    const submission =
+      typeof usernameOrSubmission === 'string'
+        ? await this.loadSavedSubmission(usernameOrSubmission, testName || '')
+        : usernameOrSubmission;
 
     if (!submission) {
       throw new Error('Saved submission not found.');
@@ -1205,7 +1248,6 @@ export class TestStorageService {
     }
   }
 
-
   //   try {
 
   //   try {
@@ -1224,9 +1266,12 @@ export class TestStorageService {
       const submissions = await Promise.all(resultItems.map((item) => this.mapApiSubmission(item)));
       const normalizedTestName = this.normalizeFileName(testName).toLowerCase();
 
-      return submissions.find((submission): submission is TestSubmission =>
-        !!submission && this.normalizeFileName(submission.testName).toLowerCase() === normalizedTestName
-      ) || null;
+      return (
+        submissions.find(
+          (submission): submission is TestSubmission =>
+            !!submission && this.normalizeFileName(submission.testName).toLowerCase() === normalizedTestName,
+        ) || null
+      );
     } catch (error) {
       this.logApiFallback('Load saved submission', error);
       return null;
@@ -1248,7 +1293,6 @@ export class TestStorageService {
     return this.loadAssessmentFromServer(testName);
   }
 
-
   loadTestDraftFromServer(testName: string): Promise<TestDraft | null> {
     return this.loadAssessmentFromServer(testName) as Promise<TestDraft | null>;
   }
@@ -1260,9 +1304,7 @@ export class TestStorageService {
     await this.postFileToServer('Test/import-excel', file, 'Import assessment Excel');
   }
 
-
   //   try {
-
 
   //   try {
 
@@ -1274,7 +1316,12 @@ export class TestStorageService {
     }
 
     try {
-      await this.apiPost('TestQuestion/map', { testId: Number(serverTestId), questionId: serverQuestionId, order: questionNo, questionNo });
+      await this.apiPost('TestQuestion/map', {
+        testId: Number(serverTestId),
+        questionId: serverQuestionId,
+        order: questionNo,
+        questionNo,
+      });
     } catch (error) {
       this.logApiFallback('Map question to test', error);
     }
@@ -1306,14 +1353,19 @@ export class TestStorageService {
       this.logApiFallback('Delete question', error);
     }
   }
-  async uploadMediaFile(mediaType: 'image' | 'audio' | 'video', file: File, scope: 'test' | 'question' | 'answer' | 'generic' = 'generic'): Promise<string | null> {
-    const endpoint = scope === 'test'
-      ? `Media/upload-test/${mediaType}`
-      : scope === 'question'
-        ? `Media/upload-question/${mediaType}`
-        : scope === 'answer'
-          ? `Media/upload-answer/${mediaType}`
-          : `Media/upload/${mediaType}`;
+  async uploadMediaFile(
+    mediaType: 'image' | 'audio' | 'video',
+    file: File,
+    scope: 'test' | 'question' | 'answer' | 'generic' = 'generic',
+  ): Promise<string | null> {
+    const endpoint =
+      scope === 'test'
+        ? `Media/upload-test/${mediaType}`
+        : scope === 'question'
+          ? `Media/upload-question/${mediaType}`
+          : scope === 'answer'
+            ? `Media/upload-answer/${mediaType}`
+            : `Media/upload/${mediaType}`;
     const formData = new FormData();
     formData.append('file', file);
 
@@ -1350,18 +1402,9 @@ export class TestStorageService {
 
   //   try {
 
-
-
   //     try {
 
   //     test.testId === testName ||
-
-
-
-
-
-
-
 
   private mapApiTest(value: any): TestDefinition {
     const source = value?.test || value?.testDefinition || value || {};
@@ -1374,9 +1417,14 @@ export class TestStorageService {
       }
     }
     const rawQuestionIds = this.pickArray(source, ['mappedQuestionIds', 'questionOrder', 'questionIds']);
-    const questions = this.pickArray(source, ['questions', 'mappedQuestions', 'testQuestions']).map((question, index) => this.mapApiQuestion(question, index));
-    const mappedQuestionIds = rawQuestionIds.length ? rawQuestionIds.map((id) => String(id)) : questions.map((question) => this.getQuestionKey(question));
-    const displayName = source.displayName || source.testName || source.name || source.title || source.testTitle || 'Test 1';
+    const questions = this.pickArray(source, ['questions', 'mappedQuestions', 'testQuestions']).map((question, index) =>
+      this.mapApiQuestion(question, index),
+    );
+    const mappedQuestionIds = rawQuestionIds.length
+      ? rawQuestionIds.map((id) => String(id))
+      : questions.map((question) => this.getQuestionKey(question));
+    const displayName =
+      source.displayName || source.testName || source.name || source.title || source.testTitle || 'Test 1';
 
     return this.normalizeAssessment({
       ...source,
@@ -1402,24 +1450,31 @@ export class TestStorageService {
       createdAt: source.createdAt || source.createdOn || new Date().toISOString(),
       updatedAt: source.updatedAt || source.updatedOn || new Date().toISOString(),
       version: Number(source.version || 1),
-      questions
+      questions,
     });
   }
 
   private mapApiQuestion(value: any, index: number): TestQuestion {
     const source = value?.question || value || {};
-    const options = this.pickArray(source, ['options', 'answerOptions', 'answers']).map((option: any, optionIndex: number) => ({
-      id: toStringId(option.id ?? option.optionId ?? option.optionKey ?? option.key ?? optionIndex + 1),
-      text: option.text || option.optionText || option.answerText || '',
-      imageUrl: option.imageUrl || option.mediaUrl || option.imagePath || '',
-      imageAlt: option.imageAlt || ''
-    }));
-    const explicitCorrectOptionIds = this.pickArray(source, ['correctOptionIds', 'correctAnswerIds']).map((id) => toStringId(id));
+    const options = this.pickArray(source, ['options', 'answerOptions', 'answers']).map(
+      (option: any, optionIndex: number) => ({
+        id: toStringId(option.id ?? option.optionId ?? option.optionKey ?? option.key ?? optionIndex + 1),
+        text: option.text || option.optionText || option.answerText || '',
+        imageUrl: option.imageUrl || option.mediaUrl || option.imagePath || '',
+        imageAlt: option.imageAlt || '',
+      }),
+    );
+    const explicitCorrectOptionIds = this.pickArray(source, ['correctOptionIds', 'correctAnswerIds']).map((id) =>
+      toStringId(id),
+    );
     const optionCorrectIds = this.pickArray(source, ['options', 'answerOptions', 'answers'])
       .filter((option: any) => option.isCorrect === true || option.isCorrect === 1 || option.isCorrect === '1')
-      .map((option: any, optionIndex: number) => toStringId(option.id ?? option.optionId ?? option.optionKey ?? option.key ?? optionIndex + 1));
+      .map((option: any, optionIndex: number) =>
+        toStringId(option.id ?? option.optionId ?? option.optionKey ?? option.key ?? optionIndex + 1),
+      );
     const correctOptionIds = explicitCorrectOptionIds.length ? explicitCorrectOptionIds : optionCorrectIds;
-    const externalQuestionId = toStringId(source.externalQuestionId ?? source.questionId ?? source.id) || `q-${Date.now()}-${index}`;
+    const externalQuestionId =
+      toStringId(source.externalQuestionId ?? source.questionId ?? source.id) || `q-${Date.now()}-${index}`;
 
     return {
       ...source,
@@ -1439,7 +1494,11 @@ export class TestStorageService {
       videoUrl: source.videoUrl || source.videoPath || '',
       options: source.questionType === 'ESSAY' ? undefined : options,
       correctOptionId: source.correctOptionId || source.correctAnswerId || correctOptionIds[0] || '',
-      correctOptionIds: correctOptionIds.length ? correctOptionIds : (source.correctOptionId || source.correctAnswerId ? [toStringId(source.correctOptionId || source.correctAnswerId)] : []),
+      correctOptionIds: correctOptionIds.length
+        ? correctOptionIds
+        : source.correctOptionId || source.correctAnswerId
+          ? [toStringId(source.correctOptionId || source.correctAnswerId)]
+          : [],
       expectedAnswer: source.expectedAnswer || '',
       sampleAnswer: source.sampleAnswer || '',
       explanation: source.explanation || '',
@@ -1451,7 +1510,7 @@ export class TestStorageService {
       isActive: source.isActive !== false && source.active !== false,
       version: Number(source.version || 1),
       createdAt: source.createdAt || source.createdOn || new Date().toISOString(),
-      updatedAt: source.updatedAt || source.updatedOn || new Date().toISOString()
+      updatedAt: source.updatedAt || source.updatedOn || new Date().toISOString(),
     } as TestQuestion;
   }
 
@@ -1488,7 +1547,7 @@ export class TestStorageService {
     if (source.encryptedResultPayload) {
       try {
         return this.normalizeSubmission(await this.decryptData<TestSubmission>(source.encryptedResultPayload));
-      } catch { }
+      } catch {}
     }
 
     const rawPayload = source.resultPayloadJson || source.jsonResultPayload || source.payload;
@@ -1504,7 +1563,6 @@ export class TestStorageService {
     }
   }
 
-
   //     id: test.testId,
   //     testId: toStringId(test.testId),
   //     trainingId: toStringId(test.trainingId),
@@ -1519,13 +1577,17 @@ export class TestStorageService {
   private toQuestionDto(question: TestQuestion): any {
     const questionId = question.questionId || toStringId(question.id);
     const trainingId = toStringId(question.trainingId).trim();
-    const selectedOptionIds = (question.correctOptionIds?.length
-      ? question.correctOptionIds
-      : (question.correctOptionId ? [question.correctOptionId] : [])
+    const selectedOptionIds = (
+      question.correctOptionIds?.length
+        ? question.correctOptionIds
+        : question.correctOptionId
+          ? [question.correctOptionId]
+          : []
     ).map((optionId) => toStringId(optionId));
-    const correctOptionIds = question.questionType === 'MCSA' || question.questionType === 'TRUE_FALSE'
-      ? selectedOptionIds.slice(0, 1)
-      : selectedOptionIds;
+    const correctOptionIds =
+      question.questionType === 'MCSA' || question.questionType === 'TRUE_FALSE'
+        ? selectedOptionIds.slice(0, 1)
+        : selectedOptionIds;
     const correctOptionId = correctOptionIds[0] || '';
 
     return {
@@ -1553,7 +1615,7 @@ export class TestStorageService {
           videoUrl: (option as any).videoUrl || '',
           imageAlt: option.imageAlt || '',
           displayOrder: index + 1,
-          isCorrect: correctOptionIds.includes(optionId)
+          isCorrect: correctOptionIds.includes(optionId),
         };
       }),
       correctOptionId,
@@ -1570,23 +1632,24 @@ export class TestStorageService {
       isActive: question.isActive !== false,
       version: question.version || 1,
       createdAt: question.createdAt || new Date().toISOString(),
-      updatedAt: question.updatedAt || new Date().toISOString()
+      updatedAt: question.updatedAt || new Date().toISOString(),
     };
   }
 
   private findTestByNameOrId(tests: TestDefinition[], testName: string): TestDefinition | null {
     const normalizedName = this.normalizeFileName(testName).toLowerCase();
 
-    return tests.find((test) =>
-      test.testId === testName ||
-      this.normalizeFileName(test.testName).toLowerCase() === normalizedName ||
-      this.normalizeFileName(test.displayName || '').toLowerCase() === normalizedName ||
-      this.normalizeFileName(test.fileName || '').toLowerCase() === normalizedName ||
-      this.normalizeFileName(test.testTitle || '').toLowerCase() === normalizedName
-    ) || null;
+    return (
+      tests.find(
+        (test) =>
+          test.testId === testName ||
+          this.normalizeFileName(test.testName).toLowerCase() === normalizedName ||
+          this.normalizeFileName(test.displayName || '').toLowerCase() === normalizedName ||
+          this.normalizeFileName(test.fileName || '').toLowerCase() === normalizedName ||
+          this.normalizeFileName(test.testTitle || '').toLowerCase() === normalizedName,
+      ) || null
+    );
   }
-
-
 
   //     testId: Number(serverTestId),
   //     questionId,
@@ -1603,10 +1666,15 @@ export class TestStorageService {
   private async toUserResultDto(submission: TestSubmission): Promise<any> {
     const normalizedSubmission = this.normalizeSubmission(submission);
     const summary = normalizedSubmission.resultSummary;
-    const toBreakdowns = (breakdownType: string, items: TestSummaryItem[]) => items.map((item) => ({
-      breakdownType, label: item.label, total: item.total, correct: item.correct || 0,
-      marks: item.marks || 0, obtainedMarks: item.obtainedMarks || 0
-    }));
+    const toBreakdowns = (breakdownType: string, items: TestSummaryItem[]) =>
+      items.map((item) => ({
+        breakdownType,
+        label: item.label,
+        total: item.total,
+        correct: item.correct || 0,
+        marks: item.marks || 0,
+        obtainedMarks: item.obtainedMarks || 0,
+      }));
 
     return {
       submissionId: normalizedSubmission.submissionId,
@@ -1624,29 +1692,43 @@ export class TestStorageService {
       totalTimeUsedSeconds: normalizedSubmission.totalTimeUsedSeconds,
       testSnapshotJson: JSON.stringify(normalizedSubmission.testDetailsSnapshot || {}),
       questionSnapshotsJson: JSON.stringify(normalizedSubmission.questionSnapshots || normalizedSubmission.questions),
-      summary: { ...summary, breakdownType: 'total', label: 'Total', total: summary.totalQuestions, marks: summary.totalMarks },
+      summary: {
+        ...summary,
+        breakdownType: 'total',
+        label: 'Total',
+        total: summary.totalQuestions,
+        marks: summary.totalMarks,
+      },
       userAnswers: normalizedSubmission.userAnswers.map((answer) => ({
-        ...answer, submissionId: normalizedSubmission.submissionId, questionId: String(answer.questionId),
+        ...answer,
+        submissionId: normalizedSubmission.submissionId,
+        questionId: String(answer.questionId),
         selectedOptionId: answer.selectedOptionId || '',
         firstVisitedAt: answer.firstVisitedAt ? new Date(answer.firstVisitedAt).toISOString() : null,
-        lastVisitedAt: answer.lastVisitedAt ? new Date(answer.lastVisitedAt).toISOString() : null
+        lastVisitedAt: answer.lastVisitedAt ? new Date(answer.lastVisitedAt).toISOString() : null,
       })),
       questionResults: (normalizedSubmission.questionResults || normalizedSubmission.solutionReview).map((item) => ({
-        ...item, submissionId: normalizedSubmission.submissionId, questionId: String(item.questionId),
-        selectedOptionId: item.selectedOptionId || '', correctOptionId: item.correctOptionId || '',
-        mediaUrlsJson: JSON.stringify(item.mediaUrls || {}), isManualReview: item.evaluationStatus === 'manualReview'
+        ...item,
+        submissionId: normalizedSubmission.submissionId,
+        questionId: String(item.questionId),
+        selectedOptionId: item.selectedOptionId || '',
+        correctOptionId: item.correctOptionId || '',
+        mediaUrlsJson: JSON.stringify(item.mediaUrls || {}),
+        isManualReview: item.evaluationStatus === 'manualReview',
       })),
       breakdowns: [
         ...toBreakdowns('questionType', normalizedSubmission.questionTypeBreakdown),
         ...toBreakdowns('difficulty', normalizedSubmission.difficultyBreakdown),
         ...toBreakdowns('subject', normalizedSubmission.subjectWiseSummary),
-        ...toBreakdowns('topic', normalizedSubmission.topicWiseSummary)
-      ]
+        ...toBreakdowns('topic', normalizedSubmission.topicWiseSummary),
+      ],
     };
   }
 
   private normalizeQuestionType(value: unknown): TestQuestionType {
-    const type = String(value || 'MCSA').trim().toUpperCase();
+    const type = String(value || 'MCSA')
+      .trim()
+      .toUpperCase();
     return (type === 'MSCA' ? 'MCSA' : type) as TestQuestionType;
   }
 
@@ -1691,7 +1773,10 @@ export class TestStorageService {
     return this.createJsonBlob(await this.createEncryptedEnvelope(fileType, payload));
   }
 
-  private async createEncryptedEnvelope(fileType: string, payload: any): Promise<{
+  private async createEncryptedEnvelope(
+    fileType: string,
+    payload: any,
+  ): Promise<{
     fileType: string;
     version: number;
     createdAt: string;
@@ -1701,7 +1786,7 @@ export class TestStorageService {
       fileType,
       version: 1,
       createdAt: new Date().toISOString(),
-      encryptedPayload: await this.encryptData(payload)
+      encryptedPayload: await this.encryptData(payload),
     };
   }
 
@@ -1733,11 +1818,12 @@ export class TestStorageService {
       trainingId: question.trainingId || '',
       trainingName: question.trainingName || '',
       marks: question.marks && question.marks > 0 ? question.marks : 1,
-      estimatedTimeSeconds: question.estimatedTimeSeconds && question.estimatedTimeSeconds > 0 ? question.estimatedTimeSeconds : 60,
+      estimatedTimeSeconds:
+        question.estimatedTimeSeconds && question.estimatedTimeSeconds > 0 ? question.estimatedTimeSeconds : 60,
       isActive: question.isActive !== false,
       version: question.version || 1,
       createdAt: question.createdAt || now,
-      updatedAt: question.updatedAt || now
+      updatedAt: question.updatedAt || now,
     }));
   }
 
@@ -1754,12 +1840,12 @@ export class TestStorageService {
       fileName,
       testTitle: test.testTitle || displayName,
       mappedQuestionIds: test.mappedQuestionIds || [],
-      questionOrder: test.questionOrder?.length ? test.questionOrder : (test.mappedQuestionIds || []),
+      questionOrder: test.questionOrder?.length ? test.questionOrder : test.mappedQuestionIds || [],
       totalQuestions: test.totalQuestions || (test.mappedQuestionIds || []).length,
       totalMarks: test.totalMarks || 0,
       createdAt: test.createdAt || now,
       updatedAt: now,
-      version: test.version || 1
+      version: test.version || 1,
     };
   }
 
@@ -1774,7 +1860,7 @@ export class TestStorageService {
       normalizedUsername: this.normalizeFileName(submission.normalizedUsername || username),
       displayName,
       fileName,
-      testName: displayName
+      testName: displayName,
     };
   }
 
@@ -1789,7 +1875,7 @@ export class TestStorageService {
       percentage: submission.resultSummary.percentage,
       score: submission.resultSummary.obtainedMarks,
       passed: submission.resultSummary.passed,
-      isAutoSubmitted: submission.isAutoSubmitted
+      isAutoSubmitted: submission.isAutoSubmitted,
     };
   }
 

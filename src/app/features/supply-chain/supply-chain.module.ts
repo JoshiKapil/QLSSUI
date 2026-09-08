@@ -5,6 +5,6 @@ import { SupplyChainRoutingModule } from './supply-chain-routing.module';
 
 @NgModule({
   declarations: [SupplyChainComponent],
-  imports: [SharedModule, SupplyChainRoutingModule]
+  imports: [SharedModule, SupplyChainRoutingModule],
 })
 export class SupplyChainModule {}

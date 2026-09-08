@@ -25,8 +25,8 @@ describe('VerifyComponent', () => {
         Title,
         Meta,
         { provide: CertificationService, useValue: certificationService },
-        { provide: SiteInteractionsService, useValue: interactions }
-      ]
+        { provide: SiteInteractionsService, useValue: interactions },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(VerifyComponent);
@@ -49,13 +49,15 @@ describe('VerifyComponent', () => {
   });
 
   it('verifies certificates through the API', () => {
-    certificationService.getByNumber.and.returnValue(of({
-      certificationNumber: 'QLSS/IATF/IA/001',
-      name: 'Learner',
-      date: '2026-01-01',
-      trainingId: 7,
-      trainingName: 'IATF'
-    } as any));
+    certificationService.getByNumber.and.returnValue(
+      of({
+        certificationNumber: 'QLSS/IATF/IA/001',
+        name: 'Learner',
+        date: '2026-01-01',
+        trainingId: 7,
+        trainingName: 'IATF',
+      } as any),
+    );
     component.CertificateNo = '001';
     component.Validate();
 
@@ -67,16 +69,18 @@ describe('VerifyComponent', () => {
 
   [
     ['QLSS/24477', '24477'],
-    ['QLSS/IATF/IA/23011', '23011']
+    ['QLSS/IATF/IA/23011', '23011'],
   ].forEach(([enteredNumber, expectedSearchNumber]) => {
     it(`verifies the full certificate number ${enteredNumber}`, () => {
-      certificationService.getByNumber.and.returnValue(of({
-        certificationNumber: enteredNumber,
-        name: 'Learner',
-        date: '2026-01-01',
-        trainingId: 7,
-        trainingName: 'IATF'
-      } as any));
+      certificationService.getByNumber.and.returnValue(
+        of({
+          certificationNumber: enteredNumber,
+          name: 'Learner',
+          date: '2026-01-01',
+          trainingId: 7,
+          trainingName: 'IATF',
+        } as any),
+      );
       component.CertificateNo = enteredNumber;
 
       component.Validate();
@@ -87,9 +91,7 @@ describe('VerifyComponent', () => {
   });
 
   it('handles a missing certificate', () => {
-    certificationService.getByNumber.and.returnValue(
-      throwError(() => new HttpErrorResponse({ status: 404 }))
-    );
+    certificationService.getByNumber.and.returnValue(throwError(() => new HttpErrorResponse({ status: 404 })));
     component.CertificateNo = 'missing';
     component.Validate();
     expect(component.Certificate).toBeFalse();

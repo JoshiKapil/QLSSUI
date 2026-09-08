@@ -20,8 +20,8 @@ describe('AdminGuard', () => {
         AdminGuard,
         { provide: AuthService, useValue: authService },
         { provide: Router, useValue: router },
-        { provide: NotifierService, useValue: notifier }
-      ]
+        { provide: NotifierService, useValue: notifier },
+      ],
     });
     guard = TestBed.inject(AdminGuard);
   });
@@ -42,7 +42,10 @@ describe('AdminGuard', () => {
     router.createUrlTree.and.returnValue(tree);
 
     expect(guard.canActivate()).toBe(tree);
-    expect(notifier.warningToastr).toHaveBeenCalledWith('You are not authorized to access admin pages.', 'Unauthorized');
+    expect(notifier.warningToastr).toHaveBeenCalledWith(
+      'You are not authorized to access admin pages.',
+      'Unauthorized',
+    );
     expect(router.createUrlTree).toHaveBeenCalledWith(['/']);
   });
 
