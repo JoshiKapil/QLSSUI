@@ -199,6 +199,7 @@ export class FeedbackFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    if (this.submitting) return;
     if (!this.form.valid) {
       this.form.markAllAsTouched();
       return;
@@ -228,6 +229,7 @@ export class FeedbackFormComponent implements OnInit {
     this.feedbackService.submitFeedback(payload).subscribe({
       next: () => {
         this.successMessage = 'Thank you! Your feedback has been submitted successfully.';
+        window.location.assign('https://search.google.com/local/writereview?placeid=ChIJCTy_JvbBwjsRMTXh3hbWnCg');
         this.form.reset({
           trainerId: null,
           trainingId: null,
@@ -247,6 +249,7 @@ export class FeedbackFormComponent implements OnInit {
         this.loadFeedbackHistory();
       },
       error: (error) => {
+        this.submitting = false;
         this.errorMessage = 'Unable to submit feedback at this time. Please try again later.';
         console.error('Training feedback error', error);
       },

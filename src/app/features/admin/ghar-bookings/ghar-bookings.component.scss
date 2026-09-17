@@ -50,7 +50,7 @@
 }
 
 .admin-table {
-  min-width: 1580px;
+  min-width: 1050px;
 }
 
 .admin-table th {
@@ -132,7 +132,7 @@
   color: #166534;
 }
 
-.status-pill[data-status='PaymentRejected'],
+/* .status-pill[data-status='PaymentRejected'], */
 .status-pill[data-status='Cancelled'] {
   background: #fee2e2;
   color: #991b1b;

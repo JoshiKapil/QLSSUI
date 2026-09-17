@@ -4,7 +4,7 @@
       <div>
         <span class="auth-eyebrow">Admin &middot; Fulfilment</span>
         <h1>Ghar 9001 Bookings</h1>
-        <p>Verify payments and manage every order through delivery.</p>
+        <p>Review booking enquiries and manage orders through delivery.</p>
       </div>
       <button class="btn btn-outline" type="button" (click)="load()" [disabled]="isLoading">
         <i class="fa-solid" [ngClass]="isLoading ? 'fa-spinner fa-spin' : 'fa-rotate'"></i>
@@ -31,9 +31,10 @@
           <tr>
             <th>Booking</th>
             <th>Customer</th>
-            <th>Order &amp; Payment</th>
-            <th>Shipping Address</th>
-            <th>Payment Proof</th>
+            <!-- <th>Order details</th> -->
+            <th>Quantity</th>
+            <th>Address</th>
+            <!-- <th>Payment Proof</th> -->
             <th>Delivery Stage</th>
             <th>Dates</th>
           </tr>
@@ -50,29 +51,35 @@
                 <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> {{ row.whatsAppNumber }}
               </a>
             </td>
+            <!-- Pricing is paused for booking enquiries.
             <td>
               <div class="order-lines">
                 <span>Quantity <strong>{{ row.quantity }}</strong></span>
                 <span>Book price <s>&#8377;{{ row.listPricePerCopy }}</s></span>
                 <span>Discounted <strong>&#8377;{{ row.discountedPricePerCopy }}</strong></span>
                 <span>Delivery <strong>&#8377;{{ row.deliveryCharge }}</strong></span>
-                <span class="order-total">Paid amount <strong>&#8377;{{ row.finalAmount }}</strong></span>
-                <span>Transaction <code>{{ row.transactionId || 'Not provided' }}</code></span>
+                <span class="order-total">Order amount <strong>&#8377;{{ row.finalAmount }}</strong></span>
+                <span *ngIf="row.transactionId">Transaction <code>{{ row.transactionId || 'Not provided' }}</code></span>
               </div>
             </td>
+            -->
+            <td><strong>{{ row.quantity }}</strong></td>
             <td>
               <address>{{ row.shippingAddress }}<br />{{ row.city }}, {{ row.state }} &ndash; {{ row.pinCode }}</address>
             </td>
+            <!-- Payment proof is paused for booking enquiries.
             <td>
-              <button class="proof-button" type="button" (click)="viewPaymentProof(row)" [disabled]="!row.paymentScreenshotOriginalName || downloadingBookingId === row.bookingId">
+              <button class="proof-button" *ngIf="row.paymentScreenshotOriginalName" type="button" (click)="viewPaymentProof(row)" [disabled]="!row.paymentScreenshotOriginalName || downloadingBookingId === row.bookingId">
                 <i class="fa-solid" [ngClass]="downloadingBookingId === row.bookingId ? 'fa-spinner fa-spin' : 'fa-image'"></i>
                 {{ downloadingBookingId === row.bookingId ? 'Opening...' : 'View screenshot' }}
               </button>
-              <small>{{ row.paymentScreenshotOriginalName || 'Not uploaded' }}</small>
+              <small>{{ row.paymentScreenshotOriginalName || 'No payment proof required' }}</small>
             </td>
+            -->
             <td>
               <div class="status-editor">
                 <select [(ngModel)]="statusDraft[row.bookingId]" [ngModelOptions]="{ standalone: true }">
+                  <option *ngIf="!statuses.includes(row.status)" [value]="row.status" disabled>Select stage</option>
                   <option *ngFor="let status of statuses" [value]="status">{{ statusLabel(status) }}</option>
                 </select>
                 <textarea [(ngModel)]="remarkDraft[row.bookingId]" [ngModelOptions]="{ standalone: true }" maxlength="500" rows="2" placeholder="Admin remark (optional)"></textarea>

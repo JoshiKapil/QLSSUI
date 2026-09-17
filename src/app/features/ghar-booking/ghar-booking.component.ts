@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { NotifierService } from '../../core/services/notifier.service';
 import { GharBookingService } from './ghar-booking.service';
@@ -8,28 +8,31 @@ import { GharBookingService } from './ghar-booking.service';
   templateUrl: './ghar-booking.component.html',
   styleUrls: ['./ghar-booking.component.scss'],
 })
-export class GharBookingComponent implements OnDestroy {
+export class GharBookingComponent {
   readonly listPricePerCopy = 199;
   readonly discountedPricePerCopy = 149;
   readonly deliveryCharge = 50;
+  /* PhonePe payment is paused.
   readonly maximumScreenshotBytes = 5 * 1024 * 1024;
 
-  isSubmitting = false;
   paymentScreenshot: File | null = null;
   paymentScreenshotPreview = '';
   paymentScreenshotError = '';
+  */
+
+  isSubmitting = false;
 
   readonly form = this.fb.group({
-    name: ['', [Validators.required, Validators.maxLength(200)]],
+    name: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(200)]],
     whatsAppNumber: ['', [Validators.required, Validators.pattern(/^\+?[0-9]{10,15}$/)]],
-    quantity: [1, [Validators.required, Validators.min(1)]],
+    quantity: [1, [Validators.required, Validators.min(1), Validators.max(100), Validators.pattern(/^[0-9]+$/)]],
     homeApartment: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(160)]],
     street: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(160)]],
     area: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(160)]],
-    city: ['', [Validators.required, Validators.maxLength(100)]],
-    state: ['', [Validators.required, Validators.maxLength(100)]],
+    city: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(100)]],
+    state: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(100)]],
     pinCode: ['', [Validators.required, Validators.pattern(/^[A-Za-z0-9 -]{4,10}$/)]],
-    transactionId: ['', [Validators.maxLength(64), Validators.pattern(/^[A-Za-z0-9._/-]{6,64}$/)]],
+    // transactionId: ['', [Validators.maxLength(64), Validators.pattern(/^[A-Za-z0-9._/-]{6,64}$/)]],
   });
 
   constructor(
@@ -59,9 +62,10 @@ export class GharBookingComponent implements OnDestroy {
   }
 
   changeQuantity(change: number): void {
-    this.form.controls.quantity.setValue(Math.max(1, this.quantity + change));
+    this.form.controls.quantity.setValue(Math.min(100, Math.max(1, this.quantity + change)));
   }
 
+  /* PhonePe screenshot handling is paused.
   onPaymentScreenshotSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] || null;
@@ -89,6 +93,8 @@ export class GharBookingComponent implements OnDestroy {
     this.paymentScreenshotError = '';
   }
 
+  */
+
   fieldError(field: keyof typeof this.form.controls, label: string): string {
     const control = this.form.controls[field];
     if (!control.touched || !control.errors) return '';
@@ -100,28 +106,27 @@ export class GharBookingComponent implements OnDestroy {
 
   submit(): void {
     this.form.markAllAsTouched();
-    if (!this.paymentScreenshot) this.paymentScreenshotError = 'Upload your payment screenshot.';
-    if (this.form.invalid || !this.paymentScreenshot || this.isSubmitting) return;
+    if (this.form.invalid || this.isSubmitting) return;
 
     this.isSubmitting = true;
     const { homeApartment, street, area, ...details } = this.form.getRawValue();
     const shippingAddress = [homeApartment, street, area].map((part) => (part || '').trim()).join(', ');
-    this.bookingService.create({ ...details, shippingAddress }, this.paymentScreenshot).subscribe({
+    this.bookingService.create({ ...details, shippingAddress }).subscribe({
       next: (result) => {
-        this.notifier.successToastr(`Booking #${result.bookingId} submitted. Payment will be verified shortly.`);
-        this.form.reset({ quantity: 1, transactionId: '' });
-        this.clearScreenshot();
+        this.notifier.successToastr(`Booking enquiry #${result.bookingId} submitted. Our team will contact you shortly.`);
+        this.form.reset({ quantity: 1 });
         this.isSubmitting = false;
       },
       error: (error) => {
         this.notifier.warningToastr(
-          error?.error?.message || error?.message || 'Booking could not be completed. Please try again.',
+          error?.error?.message || error?.message || 'Booking enquiry could not be submitted. Please try again.',
         );
         this.isSubmitting = false;
       },
     });
   }
 
+  /* PhonePe screenshot cleanup is paused.
   ngOnDestroy(): void {
     this.clearScreenshot();
   }
@@ -131,5 +136,5 @@ export class GharBookingComponent implements OnDestroy {
     this.paymentScreenshot = null;
     this.paymentScreenshotPreview = '';
   }
+  */
 }
-

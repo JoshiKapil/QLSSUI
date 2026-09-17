@@ -9,9 +9,10 @@ import { GharBookingAdminItem, GharBookingService } from '../../ghar-booking/gha
 })
 export class GharBookingsComponent implements OnInit {
   readonly statuses = [
-    'PaymentSubmitted',
-    'PaymentVerified',
-    'PaymentRejected',
+    'New',
+    // 'PaymentSubmitted', // Payment workflow is paused.
+    // 'PaymentVerified', // Payment workflow is paused.
+    // 'PaymentRejected', // Payment workflow is paused.
     'Processing',
     'Packed',
     'Shipped',
@@ -24,7 +25,7 @@ export class GharBookingsComponent implements OnInit {
   isLoading = false;
   loadError = '';
   savingBookingId: number | null = null;
-  downloadingBookingId: number | null = null;
+  // downloadingBookingId: number | null = null; // Payment proof is paused.
   statusFilter = 'All';
   statusDraft: Record<number, string> = {};
   remarkDraft: Record<number, string> = {};
@@ -79,11 +80,15 @@ export class GharBookingsComponent implements OnInit {
         row.updatedDate = new Date().toISOString();
         this.notifier.successToastr(`Booking #${row.bookingId} updated to ${this.statusLabel(status)}.`);
       },
-      error: (error) => this.notifier.warningToastr(error?.message || 'Status could not be updated.'),
+      error: (error) => {
+        this.savingBookingId = null;
+        this.notifier.warningToastr(error?.message || 'Status could not be updated.');
+      },
       complete: () => (this.savingBookingId = null),
     });
   }
 
+  /* Payment proof is paused.
   viewPaymentProof(row: GharBookingAdminItem): void {
     if (!row.paymentScreenshotOriginalName || this.downloadingBookingId !== null) return;
 
@@ -98,12 +103,19 @@ export class GharBookingsComponent implements OnInit {
         anchor.click();
         setTimeout(() => URL.revokeObjectURL(url), 60000);
       },
-      error: (error) => this.notifier.warningToastr(error?.message || 'Payment proof could not be opened.'),
+      error: (error) => {
+        this.downloadingBookingId = null;
+        this.notifier.warningToastr(error?.message || 'Payment proof could not be opened.');
+      },
       complete: () => (this.downloadingBookingId = null),
     });
   }
 
+  */
+
   statusLabel(status: string): string {
+    if (status.startsWith('Payment')) return 'Awaiting review';
+    if (status === 'New') return 'Enquiry Submitted';
     return status.replace(/([a-z])([A-Z])/g, '$1 $2');
   }
 

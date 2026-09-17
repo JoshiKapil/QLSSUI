@@ -3,17 +3,18 @@
     <div class="certification-form-header">
       <span class="auth-eyebrow">Ghar 9001</span>
       <h1>Book Your <span class="heading-highlight">Copy</span></h1>
-      <p>Complete your delivery details, pay securely and submit your payment proof.</p>
+      <p>Fill in your details and submit a booking enquiry. Our team will contact you to confirm your order.</p>
     </div>
 
     <div class="booking-layout">
       <aside class="booking-visual" aria-label="Ghar 9001 book preview">
         <div class="booking-visual__topline">
           <span><i class="fa-solid fa-book-open" aria-hidden="true"></i> Ghar 9001</span>
-          <span class="booking-visual__badge">Special price</span>
+          <!-- <span class="booking-visual__badge">Special price</span> -->
         </div>
         <img src="/assets/img/ghar9001.jpg" alt="Ghar 9001 book" />
-        <div class="book-offer">
+        <!-- Pricing is paused for booking enquiries.
+<div class="book-offer">
           <div>
             <span class="book-offer__label">Price per copy</span>
             <strong>&#8377;{{ discountedPricePerCopy }}</strong>
@@ -21,7 +22,8 @@
           </div>
           <span class="book-offer__saving">Save &#8377;{{ listPricePerCopy - discountedPricePerCopy }}</span>
         </div>
-        <div class="booking-benefits" aria-label="Booking benefits">
+        -->
+<div class="booking-benefits" aria-label="Booking benefits">
           <span><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Secure booking</span>
           <span><i class="fa-solid fa-truck-fast" aria-hidden="true"></i> Doorstep delivery</span>
         </div>
@@ -34,7 +36,7 @@
             <h2>Delivery details</h2>
             <p>Tell us where we should send your copy.</p>
           </div>
-          <span class="form-step">Step 1 of 2</span>
+          <span class="form-step">Booking enquiry</span>
         </div>
 
         <div class="form-grid">
@@ -56,15 +58,16 @@
               <button type="button" class="quantity-button" (click)="changeQuantity(-1)" [disabled]="quantity === 1" aria-label="Decrease quantity">
                 <i class="fa-solid fa-minus" aria-hidden="true"></i>
               </button>
-              <input type="number" formControlName="quantity" min="1" aria-label="Quantity" />
-              <button type="button" class="quantity-button" (click)="changeQuantity(1)" aria-label="Increase quantity">
+              <input type="number" formControlName="quantity" min="1" max="100" step="1" aria-label="Quantity" />
+              <button type="button" class="quantity-button" (click)="changeQuantity(1)" [disabled]="quantity >= 100" aria-label="Increase quantity">
                 <i class="fa-solid fa-plus" aria-hidden="true"></i>
               </button>
             </div>
             <small>{{ fieldError('quantity', 'Quantity') }}</small>
           </div>
 
-          <div class="price-summary" aria-live="polite">
+          <!-- Pricing is paused for booking enquiries.
+<div class="price-summary" aria-live="polite">
             <div class="price-summary__heading">
               <span>Order summary</span>
               <span class="saving-pill">You save &#8377;{{ savings }}</span>
@@ -82,12 +85,13 @@
               <strong>&#8377;{{ deliveryCharge }}</strong>
             </div>
             <div class="price-row price-row--total">
-              <span>Final amount</span>
+              <span>Estimated amount</span>
               <strong>&#8377;{{ finalAmount }}</strong>
             </div>
           </div>
 
-          <div class="address-field">
+          -->
+<div class="address-field">
             <h3>Shipping Address</h3>
             <div class="form-grid">
               <label class="form-field address-field">
@@ -127,6 +131,7 @@
           </label>
         </div>
 
+        <!-- PhonePe payment is paused; retained for future use.
         <div class="payment-section">
           <div class="form-intro payment-section__intro">
             <span class="form-intro__icon form-intro__icon--phonepe"><i class="fa-solid fa-indian-rupee-sign" aria-hidden="true"></i></span>
@@ -178,14 +183,19 @@
           </div>
         </div>
 
+        -->
+
+        <p>No payment is required to submit this enquiry.</p>
         <div class="form-actions">
-          <div class="submit-total">
-            <span>Total payable</span>
+          <!-- Pricing is paused for booking enquiries.
+<div class="submit-total">
+            <span>Estimated total</span>
             <strong>&#8377;{{ finalAmount }}</strong>
           </div>
-          <button class="btn btn-primary" type="submit" [disabled]="isSubmitting">
-            <i class="fa-solid" [ngClass]="isSubmitting ? 'fa-spinner fa-spin' : 'fa-lock'"></i>
-            {{ isSubmitting ? 'Submitting...' : 'Submit Booking & Payment' }}
+          -->
+<button class="btn btn-primary" type="submit" [disabled]="isSubmitting">
+            <i class="fa-solid" [ngClass]="isSubmitting ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i>
+            {{ isSubmitting ? 'Submitting...' : 'Submit Booking Enquiry' }}
           </button>
         </div>
       </form>

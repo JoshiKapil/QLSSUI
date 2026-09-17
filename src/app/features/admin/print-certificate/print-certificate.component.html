@@ -1,4 +1,4 @@
-﻿<section class="certificate-page" [class.exam-only]="isExamDetailsRoute">
+<section class="certificate-page" [class.exam-only]="isExamDetailsRoute">
   <div class="container certificate-shell">
     <header class="page-header">
       <div>
@@ -303,6 +303,19 @@
               <p class="empty-option" *ngIf="!filteredBulkTrainingList.length">No related training found.</p>
             </div>
           </div>
+          <label class="field-label" for="bulkCertificateDate">
+            Certificate date (optional)
+            <input
+              id="bulkCertificateDate"
+              type="date"
+              [(ngModel)]="bulkCertificateDate"
+              name="bulkCertificateDate"
+              [disabled]="isBulkGenerating"
+              aria-describedby="bulkCertificateDateHint"
+            />
+            <small id="bulkCertificateDateHint">Leave blank to use each certificate's existing date.</small>
+          </label>
+
           <div class="bulk-detail-fields" [class.is-disabled]="!selectedBulkTrainingId">
             <label class="field-label">
               Training name

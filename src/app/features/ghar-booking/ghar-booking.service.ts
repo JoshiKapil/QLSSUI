@@ -10,7 +10,7 @@ export interface GharBookingRequest {
   city: string | null;
   state: string | null;
   pinCode: string | null;
-  transactionId: string | null;
+  // transactionId: string | null; // PhonePe payment is paused.
 }
 
 export interface GharBookingResult {
@@ -43,10 +43,11 @@ export interface GharBookingAdminItem extends GharBookingResult {
 export class GharBookingService {
   constructor(private readonly api: ApiClientService) {}
 
-  create(request: GharBookingRequest, paymentScreenshot: File): Observable<GharBookingResult> {
+  create(request: GharBookingRequest): Observable<GharBookingResult> {
     const formData = new FormData();
     Object.entries(request).forEach(([key, value]) => formData.append(key, value == null ? '' : String(value)));
-    formData.append('paymentScreenshot', paymentScreenshot, paymentScreenshot.name);
+    // PhonePe payment is paused: no payment proof is required.
+    // formData.append('paymentScreenshot', paymentScreenshot, paymentScreenshot.name);
     return this.api.post<GharBookingResult>('GharBooking', formData);
   }
 

@@ -1,4 +1,4 @@
-﻿import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -77,6 +77,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   selectedCompanyId = '';
   selectedBulkCityId = '';
   selectedBulkTrainingId = '';
+  bulkCertificateDate = '';
   isBulkGenerating = false;
   bulkProcessed = 0;
   bulkTotal = 0;
@@ -868,6 +869,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       this.bulkTotal = selectedRecords.length;
       for (const record of selectedRecords) {
         const certificate = this.mapBulkCertificate(record, this.bulkLogoUrl);
+        if (this.bulkCertificateDate) certificate.dateOfIssue = this.bulkCertificateDate;
         const bytes = await this.pdfService.generate(certificate);
         const folderName = this.sanitizeFilePart(certificate.trainingName, 'Training');
         const certificateNumber = this.sanitizeFilePart(certificate.certificateNumber, 'Certificate');
@@ -986,6 +988,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   }
 
   clearBulkDownload(): void {
+    this.bulkCertificateDate = '';
     this.selectedCompanyId = '';
     this.selectedBulkCityId = '';
     this.selectedBulkTrainingId = '';
@@ -1151,7 +1154,11 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
   }
 
   getTrainingUserCount(training: Training): number {
-    return this.allUserData.filter((user) => String(user.trainingId) === String(training.trainingId ?? '')).length;
+    return this.allUserData.filter(
+      (user) =>
+        String(user.location) === this.individualCompanyId &&
+        String(user.trainingId) === String(training.trainingId ?? ''),
+    ).length;
   }
 
   getUserLabel(user: any): string {
@@ -1424,6 +1431,7 @@ export class PrintCertificateComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.allUserData = Array.isArray(data) ? data : [];
+          this.updateBulkTrainingList(this.allUserData);
           this.getTrainingUsers();
         },
         error: () => {
