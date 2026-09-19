@@ -1,120 +1,300 @@
-<section class="page">
-  <header>
-    <div>
-      <small>ZEISS MODULE</small>
-      <h1>Dashboard</h1>
-      <p>Same PM-style command view, adapted to Zeiss product sales, stock, PI/TI and customer acknowledgement.</p>
+<section class="page zeiss-workspace-dashboard">
+  <!-- Top Workspace Hero Header -->
+  <header class="workspace-hero-header">
+    <div class="hero-left">
+      <small class="workspace-eyebrow">WORKSPACE</small>
+      <h1 class="workspace-title">Zeiss Workspace</h1>
+      <p class="workspace-desc">Manage sales, inventory, and operations with complete visibility.</p>
     </div>
-    <button class="btn primary" (click)="load()">
-      <i class="fas fa-rotate"></i>
-      Refresh
-    </button>
+    <div class="hero-right">
+      <!-- Zeiss Technology Badge -->
+      <div class="zeiss-brand-card">
+        <div class="zeiss-logo-box">
+          <span class="zeiss-blue-square">ZEISS</span>
+        </div>
+        <div class="zeiss-brand-text">
+          <strong>Technology</strong>
+          <small>Enabling a Brighter World.</small>
+        </div>
+      </div>
+
+      <!-- Today Date Card -->
+      <div class="today-date-card">
+        <i class="fa-regular fa-calendar-days"></i>
+        <div class="date-info">
+          <small>Today</small>
+          <strong>{{ today | date: 'EEE, dd MMM yyyy' }}</strong>
+        </div>
+      </div>
+    </div>
   </header>
+
   <div *ngIf="error" class="errorBox">{{ error }}</div>
+
   <ng-container *ngIf="data as d">
-    <div class="cards">
-      <article>
-        <span>Instruments</span>
-        <strong>{{ d.totalInstruments }}</strong>
-        <small>{{ d.totalStockQuantity }} stock qty</small>
-      </article>
-      <article>
-        <span>Customers</span>
-        <strong>{{ d.totalCustomers }}</strong>
-      </article>
-      <article>
-        <span>Open Enquiries</span>
-        <strong>{{ d.openEnquiries }}</strong>
-      </article>
-      <article>
-        <span>Pending Quotations</span>
-        <strong>{{ d.quotationsPending }}</strong>
-      </article>
-      <article>
-        <span>Active Sales</span>
-        <strong>{{ d.activeSales }}</strong>
-      </article>
-      <article>
-        <span>Pipeline</span>
-        <strong>₹ {{ d.pipelineValue | number: '1.0-0' }}</strong>
-      </article>
-      <article>
-        <span>PI Pending</span>
-        <strong>{{ d.piPending }}</strong>
-      </article>
-      <article>
-        <span>Payment Pending</span>
-        <strong>{{ d.paymentPending }}</strong>
-      </article>
-      <article>
-        <span>Delivery Pending</span>
-        <strong>{{ d.deliveryPending }}</strong>
-      </article>
-      <article>
-        <span>Acknowledgement</span>
-        <strong>{{ d.acknowledgementPending }}</strong>
-      </article>
-      <article class="warn">
-        <span>Low Stock (&lt; 5)</span>
-        <strong>{{ d.lowStockItems }}</strong>
-      </article>
-      <article class="warn">
-        <span>Non-Moving 15 Days</span>
-        <strong>{{ d.nonMovingItems }}</strong>
-      </article>
-    </div>
-    <div class="grid">
-      <article class="panel">
-        <h3>Sales Stage Summary</h3>
-        <div class="row" *ngFor="let x of d.stageCounts">
-          <span>{{ x.stage }}</span>
-          <b>{{ x.count }}</b>
+    <!-- Top 5 KPI Metrics Strip -->
+    <section class="kpi-metrics-grid">
+      <!-- Card 1: Pending PI -->
+      <article class="kpi-card kpi-pi">
+        <div class="kpi-icon-wrap icon-blue">
+          <i class="fa-solid fa-file-lines"></i>
         </div>
-        <p *ngIf="!d.stageCounts.length">No confirmed sales yet.</p>
+        <div class="kpi-body">
+          <span class="kpi-label">Pending PI</span>
+          <strong class="kpi-value">{{ d.piPending }}</strong>
+          <small class="kpi-subtext sub-neutral">
+            {{ d.piPending === 0 ? 'No pending PIs' : d.piPending + ' PIs pending' }}
+          </small>
+        </div>
       </article>
-      <article class="panel">
-        <h3>Stock Attention</h3>
-        <div class="row" *ngFor="let x of d.lowStock">
+
+      <!-- Card 2: Payment Pending -->
+      <article class="kpi-card kpi-payment">
+        <div class="kpi-icon-wrap icon-green">
+          <i class="fa-solid fa-credit-card"></i>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">Payment Pending</span>
+          <strong class="kpi-value">{{ d.paymentPending }}</strong>
+          <small class="kpi-subtext sub-neutral">
+            {{ d.paymentPending === 0 ? 'All payments up to date' : d.paymentPending + ' pending payments' }}
+          </small>
+        </div>
+      </article>
+
+      <!-- Card 3: Delivery Pending -->
+      <article class="kpi-card kpi-delivery">
+        <div class="kpi-icon-wrap icon-amber">
+          <i class="fa-solid fa-truck"></i>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">Delivery Pending</span>
+          <strong class="kpi-value">{{ d.deliveryPending }}</strong>
+          <small class="kpi-subtext sub-neutral">
+            {{ d.deliveryPending === 0 ? 'All deliveries on track' : d.deliveryPending + ' deliveries pending' }}
+          </small>
+        </div>
+      </article>
+
+      <!-- Card 4: Low Stock (< 5) -->
+      <article class="kpi-card kpi-lowstock">
+        <div class="kpi-icon-wrap icon-red">
+          <i class="fa-solid fa-box-open"></i>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">Low Stock (&lt; 5)</span>
+          <strong class="kpi-value">{{ d.lowStockItems }}</strong>
+          <small class="kpi-subtext sub-danger">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            {{ d.lowStockItems > 0 ? d.lowStockItems + ' items below threshold' : 'All stock levels healthy' }}
+          </small>
+        </div>
+      </article>
+
+      <!-- Card 5: Non-Moving 15 Days -->
+      <article class="kpi-card kpi-nonmoving">
+        <div class="kpi-icon-wrap icon-bronze">
+          <i class="fa-solid fa-chart-simple"></i>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">Non-Moving 15 Days</span>
+          <strong class="kpi-value">{{ d.nonMovingItems }}</strong>
+          <small class="kpi-subtext sub-warning">
+            <i class="fa-regular fa-clock"></i>
+            {{ d.nonMovingItems > 0 ? 'No movement in 15 days' : 'Active turnover' }}
+          </small>
+        </div>
+      </article>
+    </section>
+
+    <!-- Middle Section: Sales Stage Summary + Stock Attention -->
+    <section class="dashboard-middle-grid">
+      <!-- Col 1: Sales Stage Summary with Bar Chart -->
+      <article class="panel stage-summary-card">
+        <div class="card-head-row">
           <div>
-            <strong>{{ x.partDescription }}</strong>
-            <small>{{ x.partNumber }}</small>
+            <h2 class="card-title">Sales Stage Summary</h2>
+            <p class="card-subtitle">Track your sales pipeline from enquiry to dispatch.</p>
           </div>
-          <b class="stock-low">{{ x.currentQuantity }}</b>
+          <div class="period-picker">
+            <select [(ngModel)]="selectedPeriod" aria-label="Filter period">
+              <option value="This Month">This Month</option>
+              <option value="This Quarter">This Quarter</option>
+              <option value="This Year">This Year</option>
+            </select>
+          </div>
         </div>
-        <p *ngIf="!d.lowStock.length">No low-stock items.</p>
+
+        <!-- Visual Bar Chart -->
+        <div class="stage-bar-chart">
+          <div class="chart-y-axis">
+            <span>25</span>
+            <span>20</span>
+            <span>15</span>
+            <span>10</span>
+            <span>5</span>
+            <span>0</span>
+          </div>
+          <div class="chart-bars-container">
+            <div class="chart-bar-column" *ngFor="let bar of stageChartBars">
+              <span class="bar-value-label">{{ bar.count }}</span>
+              <div class="bar-pillar-track">
+                <div class="bar-pillar" [ngClass]="bar.colorClass" [style.height.px]="bar.heightPx" [style.background]="bar.color"></div>
+              </div>
+              <span class="bar-stage-label">{{ bar.stage }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary Mini-Stats Strip -->
+        <div class="chart-summary-strip">
+          <div class="summary-chip">
+            <i class="fa-regular fa-newspaper"></i>
+            <div>
+              <strong>{{ totalOpportunities }}</strong>
+              <small>Total Opportunities</small>
+            </div>
+          </div>
+          <div class="summary-chip">
+            <i class="fa-solid fa-tag"></i>
+            <div>
+              <strong>{{ pipelineFormatted }}</strong>
+              <small>Pipeline Value</small>
+            </div>
+          </div>
+          <div class="summary-chip">
+            <i class="fa-solid fa-arrow-trend-up"></i>
+            <div>
+              <strong>{{ conversionRate }}%</strong>
+              <small>Conversion Rate</small>
+            </div>
+          </div>
+        </div>
       </article>
-    </div>
-    <article class="panel table">
-      <h3>Recent Confirmed Sales</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Enquiry</th>
-            <th>Quotation</th>
-            <th>Customer</th>
-            <th>Stage</th>
-            <th>Value</th>
-            <th>PO</th>
-            <th>PI</th>
-            <th>TI</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let x of d.recentSales">
-            <td>{{ x.enquiryNo }}</td>
-            <td>{{ x.quotationNo }}</td>
-            <td>{{ x.customerName }}</td>
-            <td>
-              <span class="stage">{{ x.currentStage }}</span>
-            </td>
-            <td>₹ {{ x.quoteValue | number: '1.2-2' }}</td>
-            <td>{{ x.clientPoNo || '-' }}</td>
-            <td>{{ x.piNo || '-' }}</td>
-            <td>{{ x.tiNo || '-' }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <p *ngIf="!d.recentSales.length">Confirmed sales will appear here after quotation confirmation.</p>
-    </article>
+
+      <!-- Col 2: Stock Attention Table -->
+      <article class="panel stock-attention-card">
+        <div class="card-head-row">
+          <div>
+            <h2 class="card-title">Stock Attention</h2>
+            <p class="card-subtitle">Items that require immediate attention.</p>
+          </div>
+          <a routerLink="/zeiss/inventory" class="card-action-link">View All Inventory &rarr;</a>
+        </div>
+
+        <div class="table-wrap">
+          <table class="zeiss-table">
+            <thead>
+              <tr>
+                <th>PRODUCT</th>
+                <th>PART NO.</th>
+                <th>STOCK</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of (d.lowStock.length ? d.lowStock.slice(0, 6) : d.nonMoving.slice(0, 6))">
+                <td class="td-product">{{ item.partDescription }}</td>
+                <td class="td-partno">{{ item.partNumber }}</td>
+                <td class="td-stock" [class.stock-zero]="item.currentQuantity === 0">{{ item.currentQuantity }}</td>
+                <td>
+                  <span
+                    class="status-pill"
+                    [ngClass]="item.currentQuantity === 0 ? 'pill-danger' : 'pill-warning'"
+                  >
+                    {{ item.currentQuantity === 0 ? 'Out of Stock' : 'Low Stock' }}
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="!d.lowStock.length && !d.nonMoving.length">
+                <td colspan="4" class="empty-cell">All inventory items have sufficient stock levels.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <!-- Bottom Section: Recent Confirmed Sales + Top Customers -->
+    <section class="dashboard-bottom-grid">
+      <!-- Col 1: Recent Confirmed Sales -->
+      <article class="panel recent-sales-card">
+        <div class="card-head-row">
+          <div>
+            <h2 class="card-title">Recent Confirmed Sales</h2>
+            <p class="card-subtitle">Latest confirmed orders and dispatch status.</p>
+          </div>
+          <a routerLink="/zeiss/sales-lifecycle" class="card-action-link">View All Sales &rarr;</a>
+        </div>
+
+        <div class="table-wrap">
+          <table class="zeiss-table">
+            <thead>
+              <tr>
+                <th>ENQUIRY</th>
+                <th>QUOTATION</th>
+                <th>CUSTOMER</th>
+                <th>STAGE</th>
+                <th>VALUE</th>
+                <th>PO</th>
+                <th>PI</th>
+                <th>TI</th>
+                <th>DATE</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let s of (d.recentSales.length ? d.recentSales.slice(0, 6) : [])">
+                <td class="mono-text">{{ s.enquiryNo }}</td>
+                <td class="mono-text">{{ s.quotationNo }}</td>
+                <td class="customer-name-cell">{{ s.customerName }}</td>
+                <td>
+                  <span class="stage-pill" [ngClass]="getStageBadgeClass(s.currentStage)">
+                    {{ s.currentStage }}
+                  </span>
+                </td>
+                <td class="amount-cell">₹ {{ s.quoteValue | number: '1.2-2' }}</td>
+                <td class="mono-cell">{{ s.clientPoNo || '-' }}</td>
+                <td class="mono-cell">{{ s.piNo || '-' }}</td>
+                <td class="mono-cell">{{ s.tiNo || '-' }}</td>
+                <td class="date-cell">{{ (s.clientConfirmedOn || s.createdOnUtc) | date: 'dd MMM yyyy' }}</td>
+              </tr>
+              <tr *ngIf="!d.recentSales.length">
+                <td colspan="9" class="empty-cell">No confirmed sales yet. Confirmed quotations will appear here.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- Col 2: Top Customers -->
+      <article class="panel top-customers-card">
+        <div class="card-head-row">
+          <div>
+            <h2 class="card-title">Top Customers</h2>
+            <p class="card-subtitle">By confirmed sales value (This Month).</p>
+          </div>
+          <a routerLink="/zeiss/customers" class="card-action-link">View All &rarr;</a>
+        </div>
+
+        <div class="table-wrap">
+          <table class="zeiss-table">
+            <thead>
+              <tr>
+                <th>CUSTOMER</th>
+                <th>VALUE</th>
+                <th>ORDERS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of topCustomers">
+                <td class="customer-name-cell">{{ c.customerName }}</td>
+                <td class="amount-cell">₹ {{ c.totalValue | number: '1.2-2' }}</td>
+                <td class="orders-count-cell">{{ c.orderCount }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
   </ng-container>
 </section>

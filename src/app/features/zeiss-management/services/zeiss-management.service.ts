@@ -113,6 +113,11 @@ export class ZeissManagementService {
   quotationPdf(id: number) {
     return this.http.get(`${this.url}/quotations/${id}/pdf`, { responseType: 'blob' });
   }
+  uploadGeneratedQuotationPdf(id: number, file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.url}/quotations/${id}/generated-pdf`, formData);
+  }
   followUps(id: number) {
     return this.http
       .get<ApiResponse<ZeissFollowUp[]> | ZeissFollowUp[]>(`${this.url}/quotations/${id}/follow-ups`)

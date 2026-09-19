@@ -34,18 +34,18 @@
 
 .clients {
   background: var(--text-light);
-  padding: 100px 0 110px;
+  padding: clamp(96px, 8vw, 120px) 0 110px;
   position: relative;
   overflow: hidden;
 
   @include laptop {
-    padding: 80px 0;
+    padding: clamp(90px, 8vw, 110px) 0 90px;
   }
   @include tablet {
-    padding: 70px 0;
+    padding: clamp(88px, 8vw, 104px) 0 80px;
   }
   @include mobile {
-    padding: 56px 0;
+    padding: clamp(84px, 7vw, 96px) 0 60px;
   }
 
   &::before {

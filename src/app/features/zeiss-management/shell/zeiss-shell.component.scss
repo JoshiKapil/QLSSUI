@@ -8,13 +8,21 @@
   --shell-text: #e8f2ff;
   --shell-muted: #9fb3ca;
   --shell-line: rgba(255, 255, 255, 0.13);
+  --shell-primary: var(--primary, #2563eb);
+  --shell-accent: var(--accent, #06b6d4);
+  --shell-bg: var(--app-bg, #f4f7fb);
+  --shell-rail: var(--sidebar-bg, #0f2747);
+  --shell-rail-2: var(--sidebar-bg, #0c1f39);
+  --shell-text: var(--sidebar-text, #e8f2ff);
+  --shell-muted: var(--sidebar-muted, #9fb3ca);
+  --shell-line: var(--sidebar-border, rgba(255, 255, 255, 0.13));
 }
 
 .workspace {
   display: grid;
-  grid-template-columns: 268px minmax(0, 1fr);
-  min-height: calc(100vh - 92px);
-  margin-top: 92px;
+  grid-template-columns: 260px minmax(0, 1fr);
+  min-height: calc(100vh - 64px);
+  margin-top: 64px;
   padding: 0 !important;
   overflow: visible !important;
   background: var(--shell-bg);
@@ -22,6 +30,17 @@
 .workspace__main {
   min-width: 0;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 64px);
+
+  > router-outlet + * {
+    flex: 1 0 auto;
+    padding: 24px clamp(20px, 2.4vw, 36px) 36px;
+    box-sizing: border-box;
+    width: 100%;
+    display: block;
+  }
 }
 .workspace__scrim,
 .workspace__mobilebar,
@@ -31,14 +50,15 @@
 
 /* ------------------------------ Sidebar base ----------------------------- */
 .workspace__rail {
-  position: relative;
-  align-self: stretch;
+  position: sticky;
+  top: 64px;
+  align-self: start;
   width: 100%;
-  height: auto;
-  min-height: calc(100vh - 92px);
-  padding: 16px 13px;
+  height: calc(100vh - 64px);
+  min-height: calc(100vh - 64px);
+  padding: 18px 14px;
   overflow-x: hidden;
-  overflow-y: visible;
+  overflow-y: auto;
   color: var(--shell-text);
   background:
     radial-gradient(circle at 108% 2%, rgba(37, 99, 235, 0.18), transparent 30%),
@@ -150,12 +170,12 @@
   white-space: nowrap;
 }
 .workspace__identity strong {
-  font-size: 11px;
+  font-size: 13.5px;
 }
 .workspace__identity span {
   margin-top: 2px;
   color: var(--shell-muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 /* Compact theme picker. It replaces the old 5-card block that was truncating names. */
@@ -194,27 +214,27 @@
 }
 .workspace__theme-copy small {
   color: var(--shell-muted);
-  font-size: 7px;
-  font-weight: 900;
+  font-size: 9.5px;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .workspace__theme-copy strong {
   margin-top: 2px;
   color: #fff;
-  font-size: 10px;
+  font-size: 12px;
 }
 .workspace__theme select {
   grid-column: 1/-1;
   width: 100%;
-  height: 31px;
+  height: 33px;
   padding: 0 8px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 9px;
   color: #eef6ff;
   background: rgba(8, 23, 45, 0.42);
-  font-size: 9px;
-  font-weight: 750;
+  font-size: 11.5px;
+  font-weight: 650;
   outline: none;
   cursor: pointer;
 }
@@ -227,30 +247,30 @@
   position: relative;
   z-index: 1;
   display: grid;
-  gap: 3px;
+  gap: 4px;
   margin-top: 5px;
 }
 .workspace__nav-label {
-  padding: 10px 10px 4px;
-  color: rgba(202, 220, 240, 0.52);
-  font-size: 8px;
-  font-weight: 900;
-  letter-spacing: 1.25px;
+  padding: 12px 10px 5px;
+  color: rgba(202, 220, 240, 0.65);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
 }
 .workspace__sidenav a {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 40px;
-  padding: 8px 11px;
+  gap: 12px;
+  min-height: 42px;
+  padding: 9px 12px;
   border: 1px solid transparent;
   border-radius: 10px;
-  color: rgba(237, 246, 255, 0.84);
+  color: rgba(237, 246, 255, 0.88);
   text-decoration: none;
-  font-size: 11px;
-  font-weight: 750;
+  font-size: 13.5px;
+  font-weight: 600;
   transition:
     background 0.16s ease,
     border-color 0.16s ease,
@@ -270,14 +290,14 @@
   width: 18px;
   text-align: center;
   color: #a9cef5;
-  font-size: 12px;
+  font-size: 14.5px;
 }
 .workspace__sidenav a b {
   margin-left: auto;
-  padding: 2px 5px;
+  padding: 2px 7px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
-  font-size: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 10px;
   color: #d8f6ff;
 }
 .workspace__sidenav a:hover {
@@ -720,8 +740,8 @@
 @media (max-width: 980px) {
   .workspace {
     display: block;
-    margin-top: 92px;
-    min-height: calc(100vh - 92px);
+    margin-top: 64px;
+    min-height: calc(100vh - 64px);
   }
   .workspace.feature-theme--aurora .workspace__rail {
     display: block;
@@ -731,11 +751,11 @@
   }
   .workspace__rail {
     position: fixed;
-    top: 92px;
+    top: 64px;
     bottom: 0;
     left: 0;
     width: min(86vw, 292px);
-    height: calc(100vh - 92px);
+    height: calc(100vh - 64px);
     transform: translateX(-105%);
     transition: transform 0.22s ease;
     box-shadow: 20px 0 50px rgba(4, 24, 47, 0.28);
@@ -796,19 +816,53 @@
     font-weight: 750;
   }
 }
+
+/* Reference workspace geometry shared by every Zeiss route. */
+.workspace { grid-template-columns: 245px minmax(0, 1fr); min-height: calc(100vh - 64px); margin-top: 64px; background: #f5f6f8; }
+.workspace__rail { position: sticky; top: 64px; height: calc(100vh - 64px); min-height: calc(100vh - 64px); overflow-y: auto; padding: 16px 12px; background: linear-gradient(180deg, #18232a 0%, #10191e 100%); border-right: 0; box-shadow: 8px 0 22px rgba(19, 29, 36, 0.12); }
+.workspace__brand { padding: 4px 6px 14px; gap: 10px; }
+.workspace__brand .workspace-logo img { max-width: 130px; height: auto; }
+.workspace__identity { margin: 10px 2px 6px; padding: 10px; border-radius: 10px; background: rgba(255,255,255,.05); }
+.workspace__avatar { width: 34px; height: 34px; flex-basis: 34px; border-radius: 8px; font-size: 13px; }
+.workspace__identity strong { font-size: 13px; font-weight: 700; }
+.workspace__identity span { font-size: 11px; }
+.workspace__theme { margin: 6px 2px 4px; padding: 8px 10px; border-radius: 10px; }
+.workspace__theme-icon { width: 28px; height: 28px; border-radius: 8px; font-size: 13px; }
+.workspace__theme-copy small { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+.workspace__theme-copy strong { font-size: 12px; font-weight: 700; }
+.workspace__theme select { height: 32px; border-radius: 7px; font-size: 12px; font-weight: 600; padding: 0 8px; }
+.workspace__nav-label { padding: 14px 10px 5px; font-size: 11px; font-weight: 850; letter-spacing: 0.12em; text-transform: uppercase; color: #8ba3be; }
+.workspace__sidenav { gap: 4px; }
+.workspace__sidenav a { min-height: 40px; padding: 9px 12px; gap: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; }
+.workspace__sidenav a i { width: 18px; font-size: 14px; text-align: center; }
+.workspace__sidenav a.active { background: #806a3d; border-color: #a38b59; box-shadow: none; }
+.workspace__sidenav a.active:before { background: #d5b66f; }
+.workspace__role { margin-top: 14px; padding: 10px; border-radius: 10px; }
+.workspace__role-icon { width: 28px; height: 28px; flex-basis: 28px; border-radius: 8px; font-size: 12px; }
+.workspace__role span { font-size: 12px; font-weight: 600; }
+.workspace__role small { font-size: 10.5px; }
+.workspace__main { background: #f5f6f8; }
+.workspace__main > router-outlet + * { min-height: calc(100vh - 64px); }
+.workspace .page > header, .workspace .page > section, .workspace .panel, .workspace .card { border-radius: 8px; box-shadow: 0 4px 14px rgba(26, 38, 48, .05); }
+.workspace.feature-theme--classic, .workspace.feature-theme--executive { --shell-primary: #806a3d; --shell-accent: #b68a43; }
+.workspace.feature-theme--glossy { --shell-primary: #177b74; --shell-accent: #36b8a6; }
+.workspace.feature-theme--glassmorphism { --shell-primary: #4a78a8; --shell-accent: #7eafc7; }
+@media (max-width: 1120px) and (min-width: 981px) { .workspace { grid-template-columns: 220px minmax(0, 1fr); } }
+@media (max-width: 980px) { .workspace { margin-top: 64px; min-height: calc(100vh - 64px); } .workspace__rail { top: 64px; height: calc(100vh - 64px); min-height: calc(100vh - 64px); } .workspace__scrim { inset: 64px 0 0; } .workspace__mobilebar { top: 64px; } }
+
 @media (max-width: 560px) {
   .workspace {
-    margin-top: 82px;
+    margin-top: 64px;
   }
   .workspace__rail {
-    top: 82px;
-    height: calc(100vh - 82px);
+    top: 64px;
+    height: calc(100vh - 64px);
   }
   .workspace__scrim {
-    inset: 82px 0 0;
+    inset: 64px 0 0;
   }
   .workspace__mobilebar {
-    top: 82px;
+    top: 64px;
   }
   .workspace__mobile span {
     display: none;
@@ -983,3 +1037,168 @@
 .zm-operation-loader__card{display:flex;align-items:center;gap:13px;min-width:280px;padding:16px 18px;border:1px solid rgba(255,255,255,.7);border-radius:16px;background:rgba(255,255,255,.94);box-shadow:0 24px 70px rgba(15,23,42,.18);color:#17345d}
 .zm-operation-loader__card strong,.zm-operation-loader__card small{display:block}.zm-operation-loader__card small{margin-top:3px;color:#7185a3}
 .zm-operation-loader__spin{width:30px;height:30px;border:3px solid #dbeafe;border-top-color:#2563eb;border-radius:50%;animation:zmspin .8s linear infinite}@keyframes zmspin{to{transform:rotate(360deg)}}
+
+/* Both workspace themes follow the global header palette. */
+:host .workspace[class*="feature-theme--"] {
+  background: var(--app-bg);
+  .workspace__rail { background: var(--sidebar-bg); color: var(--sidebar-text); border-color: var(--sidebar-border); }
+  .workspace__rail::before { background: none; }
+  .workspace__sidenav a { color: var(--sidebar-text); }
+  .workspace__sidenav a i { color: var(--secondary); }
+  .workspace__sidenav a.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+  .workspace__sidenav a.active::before { background: var(--secondary); }
+  .workspace__sidenav a.active i { color: #fff; }
+  .workspace__sidenav a:hover { background: var(--primary-soft); }
+}
+
+/* ── Nav arrow & Rail Footer (Image 2) ── */
+.workspace__sidenav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .nav-arrow {
+    margin-left: auto;
+    font-size: 9px;
+    color: var(--shell-muted);
+    opacity: 0.45;
+    transition: transform 0.16s ease, opacity 0.16s ease;
+  }
+
+  &:hover .nav-arrow {
+    opacity: 0.9;
+    transform: translateX(2px);
+  }
+
+  &.active .nav-arrow {
+    opacity: 0.95;
+    color: #ffffff;
+  }
+}
+
+.workspace__rail {
+  display: flex;
+  flex-direction: column;
+}
+
+.workspace__rail-footer {
+  margin-top: auto;
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rail-quote-block {
+  padding: 0 4px;
+
+  .rail-quote-text {
+    margin: 0;
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-style: italic;
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.72);
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+  }
+
+  .rail-quote-line {
+    display: block;
+    width: 32px;
+    height: 2px;
+    background: #CBA56B;
+    margin-top: 6px;
+    border-radius: 999px;
+  }
+}
+
+.rail-zeiss-graphic {
+  padding: 12px 10px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+
+  .zeiss-optic-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #93c5fd;
+
+    .zeiss-lens-svg {
+      width: 90px;
+      height: 48px;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+    }
+
+    .optic-label {
+      font-size: 9.5px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #ffffff;
+      margin-top: -8px;
+      background: #003399;
+      padding: 2px 7px;
+      border-radius: 3px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  .rail-motto {
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: 1.5px;
+    color: rgba(255, 255, 255, 0.58);
+    text-transform: uppercase;
+  }
+}
+
+/* ── Precision Heritage Theme Overrides for Zeiss Shell (Image 2) ── */
+:host-context(.theme-heritage) {
+  .workspace__rail {
+    background: #1C2023 !important;
+    border-right: 1px solid rgba(221, 214, 202, 0.15) !important;
+  }
+
+  .workspace__nav-label {
+    color: #707E7A !important;
+  }
+
+  .workspace__sidenav a {
+    color: #DDD6CA !important;
+
+    i {
+      color: #CBA56B !important;
+    }
+
+    &:hover {
+      background: rgba(181, 121, 74, 0.15) !important;
+      color: #ffffff !important;
+    }
+
+    &.active {
+      background: #B5794A !important;
+      color: #ffffff !important;
+      box-shadow: 0 4px 14px rgba(181, 121, 74, 0.35) !important;
+
+      i {
+        color: #ffffff !important;
+      }
+      .nav-arrow {
+        color: #ffffff !important;
+      }
+      &::before {
+        display: none;
+      }
+    }
+  }
+
+  .workspace-logo img {
+    filter: brightness(1.05);
+  }
+}
+

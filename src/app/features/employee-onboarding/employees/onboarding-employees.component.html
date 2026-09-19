@@ -9,10 +9,6 @@
       </p>
     </div>
   </header>
-<app-list-pager [page]="trainingsPage" (changed)="load()"></app-list-pager>
-<app-list-pager [page]="eligibleEmployeesPage" (changed)="reloadeligibleEmployeesPage()"></app-list-pager>
-<app-list-pager [page]="departmentsPage" (changed)="reloaddepartmentsPage()"></app-list-pager>
-<app-list-pager [page]="enrollmentsPage" (changed)="reloadenrollmentsPage()"></app-list-pager>
   <section class="assign-card" *ngIf="employees.length; else noEligible">
     <div class="assign-card__title">
       <i class="fas fa-user-plus"></i>
@@ -146,6 +142,7 @@
         </div>
       </article>
     </div>
+    <app-list-pager [page]="enrollmentsPage" (changed)="reloadenrollmentsPage()"></app-list-pager>
   </section>
 </div>
 <section class="detail-panel" *ngIf="detail?.enrollment as enrollment">

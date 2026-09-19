@@ -1,4 +1,5 @@
 ﻿import { NgModule } from '@angular/core';
+import { WorkspaceHeaderComponent } from '../../shared/components/workspace-header/workspace-header.component';
 import { SharedModule } from '../../shared/shared.module';
 import { OnboardingAccessRequestPublicComponent } from './access-request/onboarding-access-request-public.component';
 import { OnboardingAccessRequestsComponent } from './access-requests/onboarding-access-requests.component';
@@ -21,6 +22,6 @@ import { OnboardingShellComponent } from './shell/onboarding-shell.component';
     OnboardingAccessRequestsComponent,
     OnboardingAccessRequestPublicComponent,
   ],
-  imports: [SharedModule, EmployeeOnboardingRoutingModule],
+  imports: [WorkspaceHeaderComponent, SharedModule, EmployeeOnboardingRoutingModule],
 })
 export class EmployeeOnboardingModule {}

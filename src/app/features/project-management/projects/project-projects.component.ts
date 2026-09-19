@@ -93,6 +93,9 @@ export class ProjectProjectsComponent implements AfterViewInit, OnDestroy, OnIni
   activity: any = this.blankActivity();
   link: any = { moduleCode: 'Training', recordId: '', recordReference: '', remarks: '' };
   closureRemark = '';
+  activityDeleteModal: { open: boolean; activity?: PmActivity } = { open: false };
+  closureDecisionModal: { open: boolean; action: 'Approve' | 'Return'; remark: string } = { open: false, action: 'Approve', remark: '' };
+  finalCloseModal: { open: boolean } = { open: false };
   ackForm: any = {
     status: 'Pending',
     customerName: '',
@@ -399,15 +402,27 @@ export class ProjectProjectsComponent implements AfterViewInit, OnDestroy, OnIni
   }
 
   deleteActivity(a: PmActivity): void {
-    if (!confirm(`Delete activity "${a.activityName}"?`)) return;
+    this.activityDeleteModal = { open: true, activity: a };
+  }
+
+  confirmDeleteActivity(): void {
+    if (!this.activityDeleteModal.activity) return;
+    const a = this.activityDeleteModal.activity;
+    this.error = '';
+    this.success = '';
     this.api.deleteActivity(a.activityId).subscribe({
       next: () => {
         this.success = 'Activity deleted.';
+        this.activityDeleteModal.open = false;
         this.loadActivities();
         this.refresh();
       },
       error: (e) => (this.error = e?.error?.message || 'Unable to delete activity.'),
     });
+  }
+
+  closeActivityDeleteModal(): void {
+    this.activityDeleteModal.open = false;
   }
 
   requestClosure(): void {
@@ -425,18 +440,46 @@ export class ProjectProjectsComponent implements AfterViewInit, OnDestroy, OnIni
 
   closureDecision(action: 'Approve' | 'Return'): void {
     if (!this.selected || !this.isSuperAdmin) return;
-    const remark =
-      action === 'Return'
-        ? window.prompt('Reason / pending activity remark:', this.closureRemark) || ''
-        : this.closureRemark;
-    if (action === 'Return' && !remark.trim()) return;
-    this.api.decideClosure(this.selected.projectId, action, remark, true).subscribe({
+    if (action === 'Approve') {
+      this.error = '';
+      this.success = '';
+      this.api.decideClosure(this.selected.projectId, action, this.closureRemark, true).subscribe({
+        next: () => {
+          this.success = 'Closure approve processed.';
+          this.refresh();
+        },
+        error: (e) => (this.error = e?.error?.message || 'Unable to process closure.'),
+      });
+      return;
+    }
+    this.closureDecisionModal = {
+      open: true,
+      action,
+      remark: this.closureRemark || '',
+    };
+  }
+
+  confirmClosureDecision(): void {
+    if (!this.selected || !this.isSuperAdmin) return;
+    const { action, remark } = this.closureDecisionModal;
+    if (action === 'Return' && !remark.trim()) {
+      this.error = 'Please enter a reason or pending activity remark.';
+      return;
+    }
+    this.error = '';
+    this.success = '';
+    this.api.decideClosure(this.selected.projectId, action, remark.trim(), true).subscribe({
       next: () => {
         this.success = `Closure ${action.toLowerCase()} processed.`;
+        this.closureDecisionModal.open = false;
         this.refresh();
       },
       error: (e) => (this.error = e?.error?.message || 'Unable to process closure.'),
     });
+  }
+
+  closeClosureDecisionModal(): void {
+    this.closureDecisionModal.open = false;
   }
 
   loadAttachments(): void {
@@ -552,14 +595,25 @@ export class ProjectProjectsComponent implements AfterViewInit, OnDestroy, OnIni
       this.error = 'Upload/record the customer-signed acknowledgment as Received before final closure.';
       return;
     }
-    if (!confirm(`Final close project ${this.selected.projectNo}? No pending activities should remain.`)) return;
+    this.finalCloseModal.open = true;
+  }
+
+  confirmFinalClose(): void {
+    if (!this.selected || !this.isSuperAdmin) return;
+    this.error = '';
+    this.success = '';
     this.api.finalClose(this.selected.projectId).subscribe({
       next: () => {
         this.success = 'PROJECT CLOSED successfully.';
+        this.finalCloseModal.open = false;
         this.refresh();
       },
       error: (e) => (this.error = e?.error?.message || 'Unable to close project.'),
     });
+  }
+
+  closeFinalCloseModal(): void {
+    this.finalCloseModal.open = false;
   }
 
   loadLinks(): void {

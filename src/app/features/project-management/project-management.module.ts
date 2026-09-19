@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { WorkspaceHeaderComponent } from '../../shared/components/workspace-header/workspace-header.component';
 import { SharedModule } from '../../shared/shared.module';
 import { ProjectApprovalsComponent } from './approvals/project-approvals.component';
 import { ProjectDashboardComponent } from './dashboard/project-dashboard.component';
@@ -31,6 +32,6 @@ import { ProjectInvoicesComponent } from './invoices/project-invoices.component'
     ProjectOperationsComponent,
     ProjectInvoicesComponent,
   ],
-  imports: [SharedModule, ProjectManagementRoutingModule],
+  imports: [WorkspaceHeaderComponent, SharedModule, ProjectManagementRoutingModule],
 })
 export class ProjectManagementModule {}

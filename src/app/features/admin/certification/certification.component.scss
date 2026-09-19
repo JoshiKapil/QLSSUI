@@ -1,4 +1,4 @@
-﻿.admin-form small {
+.admin-form small {
   min-height: 1rem;
 }
 
@@ -139,7 +139,9 @@
 }
 
 .certification-admin {
-  background: linear-gradient(180deg, #f5f8fd, #fbfcfe);
+  min-height: 100vh;
+  padding: clamp(84px, 7vw, 104px) clamp(16px, 2.5vw, 32px) 64px;
+  background: var(--app-bg, #F7F3EC);
 }
 .certification-header {
   padding: 24px 28px;
@@ -448,5 +450,186 @@
   }
   .certification-header {
     padding: 20px;
+  }
+}
+
+/* ================================================================
+   PRECISION HERITAGE THEME - CERTIFICATION ADMIN
+   ================================================================ */
+:host-context(.theme-heritage) {
+  .certification-admin {
+    background: #F7F3EC !important;
+  }
+
+  .certification-header {
+    background: #FFFFFF !important;
+    border-color: #DDD6CA !important;
+    box-shadow: 0 8px 24px rgba(28, 32, 35, 0.05) !important;
+
+    h1 {
+      font-family: var(--font-heading, 'Playfair Display', serif);
+      color: #1C2023 !important;
+    }
+
+    p {
+      color: #6F767D !important;
+    }
+  }
+
+  .panel-kicker {
+    color: #B5794A !important;
+  }
+
+  .header-metric {
+    background: #FAF8F5 !important;
+    border-color: #DDD6CA !important;
+
+    strong {
+      color: #B5794A !important;
+    }
+  }
+
+  .admin-form,
+  .cert-upload,
+  .upload-guide,
+  .records-panel {
+    background: #FFFFFF !important;
+    border-color: #DDD6CA !important;
+    box-shadow: 0 8px 24px rgba(28, 32, 35, 0.05) !important;
+
+    h2, h3 {
+      font-family: var(--font-heading, 'Playfair Display', serif);
+      color: #1C2023 !important;
+    }
+  }
+
+  .cert-upload__icon {
+    background: linear-gradient(135deg, #B5794A, #CBA56B) !important;
+    box-shadow: 0 8px 18px rgba(181, 121, 74, 0.24) !important;
+  }
+
+  .cert-upload__dropzone {
+    background: #FAF8F5 !important;
+    border-color: #DDD6CA !important;
+
+    > i {
+      color: #B5794A !important;
+    }
+
+    &:hover {
+      border-color: #B5794A !important;
+      background: #F3ECE1 !important;
+    }
+  }
+
+  .form-field input,
+  .form-field select,
+  .form-field textarea,
+  .filter-row input,
+  .filter-row select {
+    background: #FAF8F5 !important;
+    border-color: #DDD6CA !important;
+    color: #1C2023 !important;
+
+    &:focus {
+      border-color: #B5794A !important;
+      box-shadow: 0 0 0 3px rgba(181, 121, 74, 0.15) !important;
+    }
+  }
+
+  .status-options label {
+    background: #FAF8F5 !important;
+    border-color: #DDD6CA !important;
+    color: #1C2023 !important;
+  }
+
+  .payment-fields {
+    background: #FAF8F5 !important;
+    border: 1px solid #DDD6CA !important;
+  }
+
+  .admin-table th {
+    background: #1C2023 !important;
+    color: #F7F3EC !important;
+  }
+
+  .filter-row th {
+    background: #FAF8F5 !important;
+  }
+
+  .admin-table td {
+    border-color: #EFE9DE !important;
+    color: #1C2023 !important;
+  }
+
+  .admin-table tbody tr:hover {
+    background: #FAF8F5 !important;
+  }
+
+  .certificate-number {
+    background: #F5EFEB !important;
+    color: #8C5528 !important;
+  }
+
+  .pagination button {
+    background: #FFFFFF !important;
+    border-color: #DDD6CA !important;
+    color: #1C2023 !important;
+
+    &:hover:not(:disabled),
+    &.active {
+      background: #B5794A !important;
+      border-color: #B5794A !important;
+      color: #FFFFFF !important;
+    }
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #B5794A, #CBA56B) !important;
+    border-color: #CBA56B !important;
+    color: #ffffff !important;
+
+    &:hover {
+      background: linear-gradient(135deg, #9C6338, #B5794A) !important;
+    }
+  }
+
+  .btn-outline {
+    border-color: #DDD6CA !important;
+    color: #1C2023 !important;
+
+    &:hover {
+      border-color: #B5794A !important;
+      color: #B5794A !important;
+    }
+  }
+}
+
+/* ================================================================
+   QLSS CLASSIC THEME - CERTIFICATION ADMIN
+   ================================================================ */
+:host-context(.feature-theme--classic),
+:host-context(.theme-classic) {
+  .certification-admin {
+    background: #f4f6fb !important;
+  }
+
+  .admin-table th {
+    background: #0f2747 !important;
+    color: #ffffff !important;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #0b3b92, #2563eb) !important;
+    border: none !important;
+  }
+
+  .header-metric strong {
+    color: #0b3b92 !important;
+  }
+
+  .pagination button.active {
+    background: #0b3b92 !important;
+    border-color: #0b3b92 !important;
   }
 }

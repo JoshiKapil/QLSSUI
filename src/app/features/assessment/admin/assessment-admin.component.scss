@@ -4,7 +4,7 @@
 }
 .admin-assessment-page {
   min-height: 100vh;
-  padding: 7.2rem 22px 4rem;
+  padding: clamp(84px, 7vw, 104px) clamp(16px, 2.5vw, 32px) 64px;
   background: linear-gradient(180deg, #f4f8fc, #fbfcfe);
 }
 .admin-hero,
@@ -649,3 +649,135 @@
   outline: 3px solid rgba(37, 99, 235, 0.32);
   outline-offset: 2px;
 }
+
+/* ================================================================
+   PRECISION HERITAGE THEME - ASSESSMENT ADMIN
+   ================================================================ */
+:host-context(.theme-heritage) {
+  .admin-assessment-page {
+    background: #F7F3EC !important;
+    color: #1C2023 !important;
+  }
+
+  .admin-hero {
+    background: linear-gradient(135deg, #1C2023 0%, #293035 55%, #1C2023 100%) !important;
+    border: 1px solid rgba(221, 214, 202, 0.2) !important;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22) !important;
+
+    h1 {
+      font-family: var(--font-heading, 'Playfair Display', serif);
+      color: #F7F3EC !important;
+    }
+
+    p {
+      color: #CBA56B !important;
+    }
+
+    span {
+      color: #DDD6CA !important;
+    }
+  }
+
+  .summary-strip > div,
+  .filter-card,
+  .entries-card,
+  .detail-panel {
+    background: #FFFFFF !important;
+    border-color: #DDD6CA !important;
+    box-shadow: 0 8px 24px rgba(28, 32, 35, 0.05) !important;
+
+    h2, h3, h4 {
+      color: #1C2023 !important;
+      font-family: var(--font-heading, inherit);
+    }
+  }
+
+  .detail-panel {
+    header {
+      background: #1C2023 !important;
+      border-bottom: 1px solid rgba(221, 214, 202, 0.2) !important;
+
+      h2 {
+        color: #F7F3EC !important;
+      }
+
+      p, span {
+        color: #CBA56B !important;
+      }
+    }
+
+    .download-btn {
+      background: linear-gradient(135deg, #B5794A, #CBA56B) !important;
+      border: 1px solid #CBA56B !important;
+      color: #FFFFFF !important;
+    }
+  }
+
+  .admin-tabs button {
+    background: #FFFFFF !important;
+    border-color: #DDD6CA !important;
+    color: #6F767D !important;
+
+    &:hover,
+    &.active {
+      border-color: #B5794A !important;
+      background: #F7F3EC !important;
+      color: #B5794A !important;
+    }
+  }
+
+  .entries-card th {
+    background: #1C2023 !important;
+    color: #F7F3EC !important;
+  }
+
+  .entries-card td {
+    border-color: #EFE9DE !important;
+    color: #1C2023 !important;
+  }
+
+  .entries-card tbody tr:hover {
+    background: #FAF8F5 !important;
+  }
+
+  .btn-primary,
+  .btn-save,
+  .action-btn {
+    background: linear-gradient(135deg, #B5794A, #CBA56B) !important;
+    border: 1px solid #CBA56B !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(181, 121, 74, 0.25) !important;
+
+    &:hover {
+      background: linear-gradient(135deg, #9C6338, #B5794A) !important;
+    }
+  }
+}
+
+/* ================================================================
+   QLSS CLASSIC THEME - ASSESSMENT ADMIN
+   ================================================================ */
+:host-context(.feature-theme--classic),
+:host-context(.theme-classic) {
+  .admin-hero {
+    background: linear-gradient(125deg, #0b3b92, #2563eb 58%, #06b6d4) !important;
+  }
+
+  .entries-card th {
+    background: #0f2747 !important;
+    color: #ffffff !important;
+  }
+
+  .btn-primary,
+  .btn-save,
+  .action-btn {
+    background: linear-gradient(135deg, #0b3b92, #2563eb) !important;
+    color: #ffffff !important;
+    border: none !important;
+
+    &:hover {
+      background: linear-gradient(135deg, #072b6b, #1d4ed8) !important;
+    }
+  }
+}
+

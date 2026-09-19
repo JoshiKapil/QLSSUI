@@ -191,6 +191,29 @@
   color: #a05248;
 }
 
+:host-context(.feature-theme--heritage) .pm-search-select__toggle,
+:host-context(.feature-theme--heritage) .pm-search-select__menu,
+:host-context(.feature-theme--heritage) .pm-search-select__search,
+:host-context(body.theme-heritage) .pm-search-select__toggle,
+:host-context(body.theme-heritage) .pm-search-select__menu,
+:host-context(body.theme-heritage) .pm-search-select__search {
+  background: #FAF8F5;
+  border-color: #D8D0C5;
+  color: #1C2023;
+}
+:host-context(.feature-theme--heritage) .pm-search-select__toggle:focus,
+:host-context(body.theme-heritage) .pm-search-select__toggle:focus {
+  border-color: #B5794A;
+  box-shadow: 0 0 0 3px rgba(181, 121, 74, 0.15);
+}
+:host-context(.feature-theme--heritage) .pm-search-select__option:hover,
+:host-context(.feature-theme--heritage) .pm-search-select__option.selected,
+:host-context(body.theme-heritage) .pm-search-select__option:hover,
+:host-context(body.theme-heritage) .pm-search-select__option.selected {
+  background: #F2EDE4;
+  color: #B5794A;
+}
+
 /* Keep every Project Management dropdown above sibling fields and open it upward near a card edge. */
 :host.dropdown-open {
   position: relative;

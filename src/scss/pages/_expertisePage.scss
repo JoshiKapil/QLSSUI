@@ -95,6 +95,8 @@
   padding: 14px 0;
   border-bottom: 1px solid #edf0f8;
   background: #fff;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
 }
 
 .bc-inner {
@@ -103,6 +105,7 @@
   gap: 7px;
   font-size: 0.78rem;
   color: #8492a6;
+  color: var(--text-muted);
 
   a {
     color: var(--secondary);
@@ -130,7 +133,8 @@
 
 .svc-hero {
   background: #fff;
-  padding: 80px 0 96px;
+  background: var(--app-bg);
+  padding: clamp(96px, 8vw, 120px) 0 96px;
   position: relative;
   overflow: hidden;
 
@@ -392,9 +396,12 @@
   left: -22px;
   z-index: 3;
   background: #fff;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 14px 18px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.13);
+  box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -438,6 +445,7 @@
   span {
     font-size: 0.7rem;
     color: #8492a6;
+    color: var(--text-muted);
     display: block;
   }
   span:empty {
@@ -463,6 +471,7 @@
     right: 0;
     height: 58px;
     background: #fff;
+    background: var(--surface);
     clip-path: ellipse(55% 100% at 50% 0%);
   }
 
@@ -512,6 +521,7 @@
 .sec-desc {
   font-size: 0.94rem;
   color: #6b7a99;
+  color: var(--text-muted);
   max-width: 540px;
   margin: 0 auto;
   line-height: 1.8;
@@ -573,15 +583,19 @@
 }
 
 // â”€â”€ Individual Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Individual Card ─────────────────────────────
 
 .svc-card {
   background: #fff;
+  background: var(--surface);
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid rgba(43, 123, 255, 0.08);
   box-shadow:
     var(--shadow-sm),
     0 8px 28px rgba(11, 61, 145, 0.06);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   position: relative;

@@ -7,31 +7,31 @@
 }
 .approval-summary > div {
   padding: 14px;
-  border: 1px solid #d6e6f1;
+  border: 1px solid var(--surface-soft);
   border-radius: 14px;
   background: linear-gradient(145deg, #fff, #f2fbf9);
-  box-shadow: 0 7px 18px rgba(14, 55, 95, 0.05);
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--text-primary) 5%, transparent);
 }
 .approval-summary span,
 .approval-summary strong {
   display: block;
 }
 .approval-summary span {
-  color: #6b7e91;
+  color: var(--text-muted);
   font-size: 9px;
   font-weight: 900;
   text-transform: uppercase;
 }
 .approval-summary strong {
   margin-top: 7px;
-  color: #0b7d77;
+  color: var(--primary);
   font-size: 22px;
 }
 .approval-settings {
   display: flex;
   gap: 12px;
   align-items: center;
-  color: #60768b;
+  color: var(--text-muted);
   font-size: 9px;
 }
 .approval-settings label {
@@ -42,7 +42,7 @@
 .approval-settings input[type='number'] {
   width: 55px;
   height: 30px;
-  border: 1px solid #cedde8;
+  border: 1px solid var(--surface-soft);
   border-radius: 8px;
   padding: 5px;
 }
@@ -56,7 +56,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px;
-  border: 1px solid #dfe9f1;
+  border: 1px solid var(--surface-soft);
   border-radius: 13px;
   background: #fff;
 }
@@ -71,8 +71,8 @@
   display: grid;
   place-items: center;
   border-radius: 10px;
-  background: #eef5ff;
-  color: #347db5;
+  background: var(--surface);
+  color: var(--primary);
 }
 .approval-id--project > i {
   background: #ecf9f5;
@@ -90,19 +90,19 @@
 }
 .approval-id strong {
   font-size: 11px;
-  color: #25425d;
+  color: var(--text-muted);
 }
 .approval-id span {
   font-size: 8px;
-  color: #8493a4;
+  color: var(--text-muted);
 }
 .approval-body strong {
-  color: #183650;
+  color: var(--text-primary);
   font-size: 11px;
 }
 .approval-body span {
   margin-top: 2px;
-  color: #21847d;
+  color: var(--primary);
   font-size: 9px;
 }
 .approval-body p {
@@ -111,7 +111,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #78889a;
+  color: var(--text-muted);
   font-size: 9px;
 }
 .approval-value {
@@ -119,17 +119,17 @@
 }
 .approval-value span {
   font-size: 8px;
-  color: #8291a0;
+  color: var(--text-muted);
   text-transform: uppercase;
 }
 .approval-value strong {
   margin-top: 3px;
-  color: #0e766f;
+  color: var(--primary);
   font-size: 14px;
 }
 .approval-value small {
   margin-top: 2px;
-  color: #8794a4;
+  color: var(--text-muted);
   font-size: 8px;
 }
 .no-access {
@@ -138,12 +138,12 @@
 }
 .no-access > i {
   font-size: 35px;
-  color: #3287b7;
+  color: var(--primary);
 }
 .no-access p {
   max-width: 540px;
   margin: 8px auto;
-  color: #728398;
+  color: var(--text-muted);
   font-size: 11px;
 }
 @media (max-width: 1150px) {

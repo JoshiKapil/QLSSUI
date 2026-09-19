@@ -1,6 +1,7 @@
 import { ListPage } from '../../../shared/list-page';
 import { finalize } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { NotifierService } from '../../../core/services/notifier.service';
 import { ZeissLifecycle } from '../models/zeiss-management.models';
 import { ZeissManagementService } from '../services/zeiss-management.service';
@@ -29,10 +30,21 @@ export class ZeissSalesLifecycleComponent implements OnInit {
   constructor(
     private api: ZeissManagementService,
     private notify: NotifierService,
+    private router: Router,
   ) {}
   ngOnInit() {
     this.stages = ['1 - Enquiry Logged', 'Waiting for Details', '2 - Quotation Sent', '3 - PO Received', '4 - PI Issued', '5 - Payment Received', '6 - Delivered', '7 - Tax Invoice Shared', '8 - Closed/Completed', 'Lost/Cancelled'];
     this.load();
+  }
+
+  goToPi(): void {
+    if (!this.selected) return;
+    if (!this.selected.clientPoNo?.trim()) {
+      this.notify.warningToastr('Please fill Client PO first to generate PI.');
+      this.openEdit();
+      return;
+    }
+    this.router.navigate(['/zeiss/invoices'], { queryParams: { q: this.selected.quotationNo } });
   }
   get filtered() {
     const q = this.q.toLowerCase().trim();

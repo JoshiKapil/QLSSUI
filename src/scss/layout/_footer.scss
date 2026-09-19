@@ -609,15 +609,20 @@
     var(--blue-light) 76%,
     var(--blue-light-mid) 90%,
     var(--blue-mid) 100%
+    var(--surface) 50%,
+    var(--surface-soft) 85%,
+    var(--border) 100%
   );
 
   border-top: 1px solid var(--gray-light-mid);
+  border-top: 1px solid var(--border);
 
   &::before {
     content: '';
     position: absolute;
     inset: 0;
     background-image: radial-gradient(rgba(87, 144, 225, 0.04) 1px, transparent 1px);
+    background-image: radial-gradient(var(--primary-soft) 1px, transparent 1px);
     background-size: 22px 22px;
     pointer-events: none;
     z-index: 0;
@@ -1051,6 +1056,8 @@
   //   var(--primary) 80%,
   //   var(--blue-mid) 100%
   // );
+  background: var(--sidebar-bg);
+  border-top: 1px solid var(--border);
   text-align: center;
   padding: 14px 32px;
 
@@ -1058,6 +1065,7 @@
     font-size: 0.8rem;
     font-weight: 500;
     color: #1a1a1a;
+    color: var(--sidebar-text);
     letter-spacing: 0.04em;
     font-family: 'Poppins', sans-serif;
     margin: 0;

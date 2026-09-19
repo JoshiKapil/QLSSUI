@@ -1,0 +1,287 @@
+{
+   "checksum": "a6a0539d83cc4c571d777377f0db8d04",
+   "roots": {
+      "bookmark_bar": {
+         "children": [ {
+            "children": [ {
+               "date_added": "13224999753510495",
+               "date_last_used": "0",
+               "guid": "4ca6caa1-fdc4-4cd3-a560-f4ddf50ef604",
+               "id": "13",
+               "name": "Dell Auction",
+               "show_icon": false,
+               "source": "sync",
+               "type": "url",
+               "url": "http://www.dellauction.com/",
+               "visit_count": 0
+            }, {
+               "date_added": "13224999753511493",
+               "date_last_used": "0",
+               "guid": "f537edae-727a-4b8f-87ec-6434ecb8154d",
+               "id": "14",
+               "name": "Dell",
+               "show_icon": false,
+               "source": "sync",
+               "type": "url",
+               "url": "http://www.dell.com/",
+               "visit_count": 0
+            }, {
+               "date_added": "13224999753685943",
+               "date_last_used": "0",
+               "guid": "762d62d2-60ea-46eb-ac21-2ab0a9099279",
+               "id": "15",
+               "name": "Support Dell Com",
+               "show_icon": false,
+               "source": "sync",
+               "type": "url",
+               "url": "http://www.dell.com/support/home",
+               "visit_count": 0
+            } ],
+            "date_added": "13237445276505684",
+            "date_last_used": "0",
+            "date_modified": "13237445276505684",
+            "guid": "90fd64d4-b0e6-40c4-afb7-5a70f2a09ecb",
+            "id": "12",
+            "name": "Dell",
+            "source": "unknown",
+            "type": "folder"
+         }, {
+            "date_added": "13224999753686943",
+            "date_last_used": "13428498255313997",
+            "guid": "d82088ef-4e52-446e-a3f5-5e270b81c0af",
+            "id": "16",
+            "name": "Bing",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "http://go.microsoft.com/fwlink/p/?LinkId=255142",
+            "visit_count": 1
+         }, {
+            "date_added": "13281537060623586",
+            "date_last_used": "0",
+            "guid": "f9ee9131-b85c-45c5-ac93-b658c278fa83",
+            "id": "17",
+            "name": "EduChemyAdmin",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "http://localhost:4201/questions",
+            "visit_count": 0
+         }, {
+            "date_added": "13281775682781945",
+            "date_last_used": "0",
+            "guid": "9a75e8f0-93a5-4d20-82d8-d2d96bfefd69",
+            "id": "18",
+            "name": "EduchemyUi",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "http://localhost:4202/test",
+            "visit_count": 0
+         }, {
+            "date_added": "13282231117127261",
+            "date_last_used": "0",
+            "guid": "14b4d92d-63b0-4bc5-b42c-d2f9b1a45b42",
+            "id": "19",
+            "name": "SQL Server select where datetimeoffset older than 1 hour - Stack Overflow",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://stackoverflow.com/questions/2055082/sql-server-select-where-datetimeoffset-older-than-1-hour",
+            "visit_count": 0
+         }, {
+            "date_added": "13363082388408433",
+            "date_last_used": "0",
+            "guid": "784a27c6-c077-4c3b-9dbb-bba2aec925e4",
+            "id": "20",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "bd8f0cebfe22c81e9ae2431651070eec.pdf",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://images.collegedunia.com/public/image/bd8f0cebfe22c81e9ae2431651070eec.pdf",
+            "visit_count": 0
+         }, {
+            "date_added": "13380874917660686",
+            "date_last_used": "0",
+            "guid": "3196614d-3615-4f56-9cce-7d56d42ed6a2",
+            "id": "21",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "Tutor-Student",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "http://localhost:4203/sessions",
+            "visit_count": 1
+         }, {
+            "date_added": "13390328733223951",
+            "date_last_used": "0",
+            "guid": "9fd14e4c-30ee-40f7-a7ea-43cbc359a214",
+            "id": "22",
+            "name": "Photo - Google Photos",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://photos.google.com/photo/AF1QipO1IXHO8EENkZ8S1P3bi0DOmO-LvmJ_AlD9XXL4",
+            "visit_count": 1
+         }, {
+            "date_added": "13417949217464515",
+            "date_last_used": "0",
+            "guid": "50d00410-d7da-44ac-95dc-a83f5ead7413",
+            "id": "23",
+            "name": "Senior Specialist, Full-Stack Engineer - BNY External Career Site Careers",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://eofe.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/job/75072/apply/email?src=JB-10200",
+            "visit_count": 1
+         }, {
+            "date_added": "13428498260458945",
+            "date_last_used": "0",
+            "guid": "6fc91a6d-9109-4310-91e2-4fed86caaab7",
+            "id": "24",
+            "name": "Azure Certification Learning Path & Roadmap | Kodekloud",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://kodekloud.com/learning-path/azure/",
+            "visit_count": 1
+         }, {
+            "date_added": "13428515430579231",
+            "date_last_used": "0",
+            "guid": "fe64f656-56b1-466f-b25b-3400a2c75a1b",
+            "id": "25",
+            "name": "QLSS-Document - Google Drive",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://drive.google.com/drive/folders/1WR2CegR8tKeTcEG1nSXJRDTbH-cuxPRI",
+            "visit_count": 1
+         }, {
+            "date_added": "13428642519607807",
+            "date_last_used": "13428744316000223",
+            "guid": "f003438d-5183-4e56-a83b-6f343c3c7f9d",
+            "id": "26",
+            "name": "(21) Az 900 Full Course | Microsoft Azure Fundamentals Full Course in Hindi | ICNT Gyan - YouTube",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://www.youtube.com/watch?v=bqbTMZzlMWw",
+            "visit_count": 2
+         }, {
+            "date_added": "13430414355643139",
+            "date_last_used": "0",
+            "guid": "1b056650-9cef-44e6-9b85-352916779bc1",
+            "id": "27",
+            "name": "Angular CORS Configuration",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://chatgpt.com/c/6a734972-609c-83ee-b421-4b4cc87d4082",
+            "visit_count": 1
+         }, {
+            "date_added": "13434231469409537",
+            "date_last_used": "0",
+            "guid": "d2a64434-c490-4fbf-abc5-7ddd0fedd1ec",
+            "id": "9",
+            "name": "Lenovo Support",
+            "show_icon": false,
+            "source": "oem_preload",
+            "type": "url",
+            "url": "https://support.lenovo.com/",
+            "visit_count": 0
+         }, {
+            "date_added": "13434231469409474",
+            "date_last_used": "0",
+            "guid": "6cae1561-df23-49f5-8bb9-219415ee316f",
+            "id": "8",
+            "name": "Lenovo",
+            "show_icon": false,
+            "source": "oem_preload",
+            "type": "url",
+            "url": "https://www.lenovo.com/",
+            "visit_count": 0
+         }, {
+            "date_added": "13434231469409266",
+            "date_last_used": "0",
+            "guid": "c40932a2-4b98-4cb6-a972-5f75e7e43a1a",
+            "id": "7",
+            "name": "McAfee",
+            "show_icon": false,
+            "source": "oem_preload",
+            "type": "url",
+            "url": "https://www.mcafee.com/consumer/v/browserfav/lenovo.html",
+            "visit_count": 0
+         } ],
+         "date_added": "13434231469225443",
+         "date_last_used": "0",
+         "date_modified": "13434231469409537",
+         "guid": "0bc5d13f-2cba-5d74-951f-3f233fe6c908",
+         "id": "1",
+         "name": "Favourites bar",
+         "source": "unknown",
+         "type": "folder"
+      },
+      "other": {
+         "children": [  ],
+         "date_added": "13434231469225443",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "82b081ec-3dd3-529c-8475-ab6c344590dd",
+         "id": "2",
+         "name": "Other favourites",
+         "source": "unknown",
+         "type": "folder"
+      },
+      "synced": {
+         "children": [ {
+            "date_added": "13189233379375657",
+            "date_last_used": "0",
+            "guid": "ee9d98a1-c10b-40c5-af96-9ea394bc2427",
+            "id": "10",
+            "name": "New tab",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "chrome-native://newtab/",
+            "visit_count": 0
+         }, {
+            "date_added": "13214824221159638",
+            "date_last_used": "0",
+            "guid": "3cc745d0-f131-45ba-9ac4-79155f02ace8",
+            "id": "11",
+            "name": "ajit kadake song mp3 download - Google शोध",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://www.google.com/search?biw=393&bih=682&sxsrf=ACYBGNTDlEj9sIYOyym7sc-ZjnpKyFD1Sw%3A1570269682440&ei=8mmYXdPFGpf6rQGwwZ3oDg&q=ajit+kadake+song+mp3+download&oq=ajit+kadake+so&gs_l=mobile-gws-wiz-serp.1.2.33i160l3.7640.22408..23736...4.1..2.263.6977.0j42j2......0....1.......8..0i71j35i362i39j35i362i39i19j35i39j0i131j0j0i324j46j46i324j46i131j46i131i275j46i203i275j46i203j0i203j46i10i203j0i10i203j0i10j46i10i203i275j0i22i10i30.FayBeJaXogo",
+            "visit_count": 0
+         } ],
+         "date_added": "13434231469225443",
+         "date_last_used": "0",
+         "date_modified": "13214824221159638",
+         "guid": "4cf2e351-0e85-532b-bb37-df045d8f8d0f",
+         "id": "3",
+         "name": "Mobile favourites",
+         "source": "unknown",
+         "type": "folder"
+      },
+      "workspaces_v2": {
+         "children": [  ],
+         "date_added": "13434231469225443",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "75aa6670-344f-549d-b742-660f029506ab",
+         "id": "5",
+         "name": "Workspaces",
+         "source": "unknown",
+         "type": "folder"
+      }
+   },
+   "sync_metadata": "CjEKDgiIgQISCPDX4bWgAQAAEgAqGCtpK0cvZ25mTXlGeDIxZzZMeFNUeUE9PUgDoAYHEq4BCBoSqQEKHGhaeC8yR1MxMWtrVHhra09yNjNqYWh4NDVkUT0SJGYwMDM0MzhkLTUxODMtNGU1Ni1hODNiLTZmMzQzYzNjN2Y5ZBgAIAAoADDdk8r29jM445+FxvYzQOOfhcb2M0ocNkN2RjRUUkEzeDEza1g1YnA3VVN6dnU3d0tRPVogIh7/3FdTeE1CaU05dTRFeDZGalRXOVkrUlQ3NjJZdz1lUELD0sI+AmAFEq0BCBgSqAEKHDUyL05qWXVxM2xueUZ3eC9zU2NDeTJpd2lkWT0SJDZmYzkxYTZkLTkxMDktNDMxMC05MWUyLTRmZWQ4NmNhYWFiNxgAIAAoADCPlqCB9jM4kpmggfYzQJKZoIH2M0ocRjVmcGdLUE5qMGs4Tkg1eEhITVU4VnpObUFzPVofIh3/ckxFWFJVT2I5R0pGMnlVOExiSlpteURGbVJvPWXXhdNqwj4CYAUSrQEIFhKoAQocOStmZzZtVXEvZWRZYlFWT240eTJXbHZCWG5BPRIkOWZkMTRlNGMtMzBlZS00MGY3LWE3ZWEtNDNjYmMzNTlhMjE0GAAgACgAMO609O+rMzjQgM3o5zJA0IDN6OcyShxlKytVRU81dTlGa1JQMGZ2UGRoWCtzMUpuOFE9Wh8iHf5WeFFPVitNYWYrK1c5STQ5QW5JTGVCdFJIblk9ZauKVXTCPgJgBRKtAQgVEqgBChxiaXhUODJtVFlXQWhEKzA0T1hoaGFMUXhoaTA9EiQzMTk2NjE0ZC0zNjE1LTRmNTYtOWNjZS03ZDU2ZDQyZWQ2YTIYACAAKAAw1KG+sJozOOm729XEMkDpu9vVxDJKHCtFOXFxYitYcEVTNm5aZFBKUUNibkFlUTM2VT1aHyId/ThOdkxJcDlBc0g1dWYvWTJhSmlRTXFaMVVXOD1lL0TaysI+AmAFEq4BCBkSqQEKHDVRSWNPYld1d1d3eTZ5VlRMMHFvclVzSFlQaz0SJGZlNjRmNjU2LTU2YjEtNDY2Zi1iMjViLTM0MDBhMmM3NWExYhgAIAAoADCCjbiJ9jM4y6O4ifYzQMujuIn2M0ocRFlldFpreTFjU2xDT3R6OG5VakN4cjcyck1FPVogIh7/uTdzNUhKeWZobWptMGwrR2N0K3Ezc0I5Zmh3dz1lGGZrLsI+AmAFEq0BCBISqAEKHGFzckRGQmh0bVZ0YXF0WWZkNnZHRWJWTGQ4MD0SJDlhNzVlOGYwLTkzYTUtNGQyMC04MmQ4LWQyZDk2YmZlZmQ2ORgAIAAoADCHnIeq0TE4nJvv8+svQJyb7/PrL0ocdE9iWkxya0VNaGJ3VVFRZVUyTVlzSFAvelgwPVofIh3tbVNkbDBWbTd3VFpraFBPdEJqOElrV0JaUkd3PWXe8nBnwj4CYAUSjAEIAhKHAQocWWNTVG9udkVTUHdxQ3M0TDJjclZodjY4TDk4PRIkZjBhYTAxYjItMjg2Ny01OTFiLWI3MzYtOTg1MDhhMjk3ODJlGAAgACgAMNPss9+wMDjNw+rz6y9AzcPq8+svShxvUFZraHdCUmJWNjVLQ1dSMitJT05IV29PdTg9ZQAAAADCPgJgABKsAQgMEqcBChxOZEF6eVNWQWtJVHpVc3NEUlZBcVlqbTJCM2s9EiQwMzg2YTBkNC1mMTMyLTRjZTMtYTIwYi02Y2E0NDUxMDE4OGYYACAAKAAw/siOpK4uOJjF6vPrL0CYxerz6y9KHElPZkI3S0lqdEh4RzczeUVCQlVqQ0s5M1J2dz1aHiIcaThDY2FHbHNwakdaK05rQUZta2o0VU5oWFJVPWUAAAAAwj4CYAASrQEIERKoAQocYURFMjJVcUxZVnZiU2JwUE9UaUMxOGcxYlNvPRIkZjllZTkxMzEtYjg1Yy00NWM1LWFjOTMtYjY1OGMyNzhmYTgzGAAgACgAMJ+iq/aOMziMm+/z6y9AjJvv8+svShwwTXQzREgwTE5KSk9rUmRIcjZaMCtKMnVNZkE9Wh8iHdpPSWFybnhTTjcvYUpGRmwrcXA1N01qaU5uWG89ZQDszb3CPgJgBRKsAQgKEqcBChxjaDNWT1c3VmtudktUMncvVlFRaGpINHFrZDA9EiRlZTlkOThhMS1jMTBiLTQwYzUtYWY5Ni05ZWEzOTRiYzI0MjcYACAAKAAwpaLPtr4wOJSjz7a+MECUo8+2vjBKHDE3dTgvYm5IVUdvaG4xYmhKYVhDdUQ0SVFvND1aHiIcSFRPNWZ2OCtFaDZ5clN2RDdvbjdWT3lrckswPWUAAAAAwj4CYAUSrAEIDRKnAQocMVEydEtDTjBhVXRVeHBOOW1CZXcrWmxnOEJVPRIkYWU3MGNhMTItMjZmZS00ZjE0LTlhY2ItZjFhZGQ5OWQ5ZWE2GAAgACgAMP/IjqSuLji4xerz6y9AuMXq8+svShxNUEcvMkNyeUtUYkttUFlMMFdCemgvNnNiVjQ9Wh4iHERyTlNSdVhwQyt4MEUwUEhSeWlkS3E3dEtrYz1lAAAAAMI+AmAFEq0BCBASqAEKHHlkVTJlaERNMnhCNmZIYnZ3bGlUNndCOVVxTT0SJDYxMmEwMDFlLTc0ZDgtNDU3Mi05NDNlLThjZTk4MmJmZGNmYxgAIAAoADDJ75+B9jM46cTq8+svQOnE6vPrL0oceERJbmNVanZURlRkU2t1TkcwUllNNjR3anBzPVofIh20SmtIWEdxZ2Y1VlluQjdYb0dOUm5WYjdLMk8wPWVeOQFhwj4CYAUSrQEIDhKoAQocRHMzYmNMWnRMZ1J4VUpNMlUvOWhIdE1QS0UwPRIkNjY1MDE1N2ItMWU2Ny00MThhLWIzOTQtZDE3N2UyMDFmNmUyGAAgACgAMIDJjqSuLjjHxerz6y9Ax8Xq8+svShwvZlZodlBDRXNVMEJ4c1o4MUFSUXZmK2RtbDg9Wh8iHaI3OG5uYktYNE9NbXg1S3E1d0FDL0hGT2F3Y1E9ZQAAAADCPgJgBRKtAQgPEqgBChx1OTVqY0t2Qit5dmdzZ0ozeWwzOEJZQWQra1E9EiQ5ODM4NTg1ZS05NWMxLTRlYTEtYWVhNy1lNmE5ZDhhYmY4NTQYACAAKAAwgcmOpK4uONfF6vPrL0DXxerz6y9KHHB5WDQxODV3ZThHOTNOVHV2Nk1WTmdnUVk4Yz1aHyId0TNEZFBXb1ZxL3VpbFBiTEFRanlQQ2VoSjJLQT1lAAAAAMI+AmAFEowBCAEShwEKHHl4Si82ZnZrZWNyN2twNUVRekI0dFdMcGRiRT0SJGQ3NjAzMDE3LTU2MjYtNTdhZi1iOGRlLTM4NWMzMTg0Mjg3YxgAIAAoADDT7LPfsDA4vsPq8+svQL7D6vPrL0ocYVJDV0xnaEY5YjVJbnFLSUR2dUovanZRa0ZjPWUAAAAAwj4CYAASrgEIGxKpAQocUHJuNUNQcVhCSEM2MFg4WHJuWFJqd2owOGNFPRIkMWIwNTY2NTAtOWNlZi00NGU2LTliODUtMzUyOTE2Nzc5YmMxGAAgACgAMMOzjeD9MzjLpPWS/TNAy6T1kv0zShxRdllHUHFDZUh6N2M5SnF0SU5ERzQ1ZzJWQ2s9WiAiHv/udUg4QXR5MHgzeGdaTkRIQU5lZ0VkVm1aamZBPWWGpdjIwj4CYAUSjAEIAxKHAQocbmpnRHU4OGVDcnZYcDg2cEQ3ZkhHY3FGcDg4PRIkNjJlYjQxYTktZDM3NS01ODNjLTkwZTYtYmNiZjk5MzljYThhGAAgACgAMNPss9+wMDjKxOrz6y9AysTq8+svShx5ek5CMDFjbjU0QTdjUlUwdVQrL1BnbVR0VW89ZQAAAADCPgJgABKtAQgUEqgBChxXS2o2OFIxNHJLaStHazAxcndXSXQ5RGlYQWc9EiQ3ODRhMjdjNi1jMDc3LTRjM2ItOWRiYi1iYmEyYWVjOTI1ZTQYACAAKAAwhY7EqIIyOKGTxKiCMkChk8SogjJKHG1IektNbmFVd01ad2JaZlRBMTVPZzh0d3ZKaz1aHyId+2h4clZBNzdRb1E2OWhTUWJ2cUhvSGhBY0hkbz1lw+vHxMI+AmAFEqwBCAsSpwEKHFo4OHFBM240MVZIR1c3WlpqLzRzalZkN21uWT0SJDNjYzc0NWQwLWYxMzEtNDViYS05YWM0LTc5MTU1ZjAyYWNlOBgAIAAoADClos+2vjA4wKTPtr4wQMCkz7a+MEoceWFvZ0g1TkR5UjU2bTZUb2c3UGlCSmw5b05RPVoeIhxqNjVWWUZESWFTOTBPYTI5VU8xT2FIR1Q3UXM9ZQAAAADCPgJgBRKtAQgXEqgBChxBckcyZ3hyS2FOOXQ5QlBTSWV4MVozT0UvMjg9EiQ1MGQwMDQxMC1kN2RhLTQ0YWMtOTVkYy1hODNmNWVhZDc0MTMYACAAKAAwusqJ284zOLDOidvOM0CwzonbzjNKHHEzUHUrNDVXbThjU2FxbFJ1NWJYeEZLTFUyST1aHyId/0V2azBWVGY2SGtlMk5vZC93VFczT2xtM0luRT1lAAAAAMI+AmAFEq0BCBMSqAEKHHl1cDE1a01SQWs2S2trd2JpZ3o0a25hSzdncz0SJDE0YjRkOTJkLTYzYjAtNGJjNS1iNDJjLWQyZjliMWE0NWI0MhgAIAAoADDA85CjkDM4k57v8+svQJOe7/PrL0ocSHlWU0M4ZTBPTnNrRk5QaXFHb2U2RG5VRlVjPVofIh32R0tBRGh2US9Kbm95blFqM1hHMkpBZWhGMUNBPWU4jKtZwj4CYAUSjAEIBRKHAQocd1JCclpMKzZQQTlhdktnak5QN0pYRExjZnZzPRIkYTE3ZmY0YzYtNTA4Mi01MDRiLWJjOWYtN2E2NWQ0M2FlNTMwGAAgACgAMMqJsuSkMzi3jLLkpDNAt4yy5KQzShxubXg2NXNRRHZ4SThUZ0VlditBK250dG9TbjQ9ZQAAAADCPgJgADAAOAA=",
+   "version": 1
+}

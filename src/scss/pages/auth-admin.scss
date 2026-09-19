@@ -1,23 +1,28 @@
 .auth-section,
 .admin-section {
   min-height: calc(100vh - 88px);
-  padding: 7rem 0 4rem;
-  background: linear-gradient(180deg, var(--bg-light), #ffffff 62%);
+  padding: clamp(84px, 7vw, 104px) clamp(16px, 2.5vw, 32px) 64px;
+  background: var(--app-bg, #F7F3EC);
+  box-sizing: border-box;
 }
 
 .auth-shell,
 .admin-shell {
   position: relative;
+  max-width: 1360px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .auth-panel,
 .admin-form,
 .admin-tools,
 .admin-table-wrap {
-  background: #ffffff;
-  border: 1px solid var(--gray-light-mid);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-md);
+  background: var(--surface, #FFFFFF);
+  border: 1px solid var(--border, #DDD6CA);
+  border-radius: var(--radius-md, 14px);
+  box-shadow: var(--shadow-sm, 0 4px 14px rgba(28, 32, 35, 0.07));
+  box-sizing: border-box;
 }
 
 .auth-panel {
@@ -38,17 +43,20 @@
   font-weight: 700;
   text-transform: uppercase;
   font-size: 0.78rem;
+  letter-spacing: 0.5px;
 }
 
 .auth-panel h1,
 .admin-header h1 {
   color: var(--text-dark);
+  color: var(--text-primary);
   margin: 0 0 0.5rem;
 }
 
 .auth-panel p {
   margin: 0;
   color: var(--gray-mid);
+  color: var(--text-muted);
 }
 
 .auth-form,
@@ -61,6 +69,7 @@
 .admin-layout {
   display: grid;
   grid-template-columns: 5fr 7fr; // repeat(2, minmax(0, 1fr));
+  grid-template-columns: 5fr 7fr;
   gap: 1rem;
 }
 
@@ -68,6 +77,7 @@
   display: grid;
   gap: 0.45rem;
   color: var(--text-dark);
+  color: var(--text-primary);
   font-weight: 600;
 }
 
@@ -76,29 +86,45 @@
 .form-field select,
 .admin-search input {
   width: 100%;
-  border: 1px solid var(--gray-light-mid);
-  border-radius: var(--radius-sm);
-  padding: 0.8rem 0.9rem;
+  min-height: 44px;
+  border: 1px solid var(--input-border, #D8D0C5);
+  border-radius: var(--radius-sm, 8px);
+  padding: 10px 14px;
   font: inherit;
-  color: var(--text-dark);
-  background: #ffffff;
+  font-size: 13.5px;
+  color: var(--text-primary, #1C2023);
+  background: var(--input-bg, #FAF8F5);
+  box-sizing: border-box;
+  outline: none;
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary, #B5794A);
+    background: var(--surface, #FFFFFF);
+    box-shadow: 0 0 0 3px var(--primary-soft, rgba(181, 121, 74, 0.14));
+  }
 }
 
 .form-field small,
 .form-error {
   color: #b42318;
+  color: var(--danger);
   font-weight: 500;
 }
 
 .input-action {
   display: flex;
   border: 1px solid var(--gray-light-mid);
+  border: 1px solid var(--input-border);
   border-radius: var(--radius-sm);
   overflow: hidden;
+  background: var(--input-bg);
 }
 
 .input-action input {
   border: 0;
+  background: transparent;
 }
 
 .input-action button,
@@ -108,6 +134,11 @@
   color: var(--primary);
   font-weight: 700;
   cursor: pointer;
+  transition: var(--transition);
+
+  &:hover {
+    color: var(--primary-hover);
+  }
 }
 
 .input-action button {
@@ -119,6 +150,7 @@
   align-items: center;
   gap: 0.5rem;
   color: var(--gray-dark-mid);
+  color: var(--text-secondary);
 }
 
 .auth-submit {
@@ -134,6 +166,11 @@
 .auth-links a {
   color: var(--primary);
   font-weight: 700;
+  transition: var(--transition);
+
+  &:hover {
+    color: var(--primary-hover);
+  }
 }
 
 .admin-header {
@@ -152,6 +189,7 @@
 .admin-form h2,
 .admin-view h2 {
   margin: 0 0 0.5rem;
+  color: var(--text-primary);
 }
 
 .admin-actions,
@@ -162,9 +200,27 @@
 }
 
 .btn-outline {
-  border: 1px solid var(--primary);
-  background: #ffffff;
-  color: var(--primary);
+  border: 1px solid var(--border, #DDD6CA);
+  background: var(--surface, #FFFFFF);
+  color: var(--text-primary, #1C2023);
+  border-radius: var(--radius-pill, 9999px);
+  min-height: 40px;
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: var(--shadow-xs);
+  transition: all 0.2s ease;
+  text-decoration: none;
+
+  &:hover {
+    border-color: var(--primary, #B5794A);
+    color: var(--primary, #B5794A);
+    background: var(--surface-soft, #F7F3EC);
+  }
 }
 
 .bulk-upload,
@@ -172,6 +228,7 @@
   margin-top: 1rem;
   padding-top: 1rem;
   border-top: 1px solid var(--gray-light-mid);
+  border-top: 1px solid var(--border);
 }
 
 .admin-view dl {
@@ -183,6 +240,11 @@
 
 .admin-view dt {
   font-weight: 700;
+  color: var(--text-primary);
+}
+
+.admin-view dd {
+  color: var(--text-secondary);
 }
 
 .admin-table-wrap {
@@ -193,24 +255,37 @@
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  // min-width: 760px;
 }
 
 .admin-table th,
 .admin-table td {
-  padding: 0.85rem 1rem;
-  border-bottom: 1px solid var(--gray-light-mid);
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--border, #EFE9DF);
   text-align: left;
-  vertical-align: top;
+  vertical-align: middle;
+  color: var(--text-primary, #1C2023);
 }
 
 .admin-table th {
-  background: var(--bg-light);
-  color: var(--text-dark);
+  background: var(--table-header-bg, #EFE9DF);
+  color: var(--text-primary, #1C2023);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.admin-table tbody tr {
+  transition: var(--transition);
+
+  &:hover {
+    background: var(--table-row-hover, #F5EFE6);
+  }
 }
 
 .admin-loading {
   padding: 1rem;
+  color: var(--text-muted);
 }
 
 .auth-nav-btn {
@@ -220,7 +295,7 @@
 @media (max-width: 768px) {
   .auth-section,
   .admin-section {
-    padding-top: 6rem;
+    padding: clamp(76px, 6vw, 90px) 14px 48px;
   }
 
   .auth-grid,
@@ -231,7 +306,7 @@
   .auth-panel,
   .admin-form,
   .admin-tools {
-    padding: 1rem;
+    padding: 16px;
   }
 
   .admin-header {
@@ -241,5 +316,27 @@
 
   .auth-submit {
     width: 100%;
+  }
+}
+
+/* ================================================================
+   THEME OVERRIDES - AUTH & ADMIN
+   ================================================================ */
+
+body.theme-classic {
+  .btn-outline:hover {
+    border-color: #2563eb !important;
+    color: #2563eb !important;
+    background: #eff6ff !important;
+  }
+
+  .admin-table th {
+    background: #0f2747 !important;
+    color: #FFFFFF !important;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #0b3b92, #2563eb) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
   }
 }

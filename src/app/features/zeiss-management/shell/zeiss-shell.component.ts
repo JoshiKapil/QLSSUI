@@ -14,7 +14,7 @@ import { ZeissLoadingService } from '../services/zeiss-loading.service';
 })
 export class ZeissShellComponent {
   menuOpen = false;
-  theme: PmOnboardingThemeId;
+  get theme(): PmOnboardingThemeId { return this.themeService.getTheme(); }
   readonly themeOptions: ReadonlyArray<PmOnboardingThemeOption>;
   readonly loaderState$: ZeissLoadingService['state$'];
 
@@ -27,7 +27,6 @@ export class ZeissShellComponent {
     // This keeps PM and Zeiss visually synchronized without sharing PM business data.
     this.themeOptions = this.themeService.options;
     this.loaderState$ = this.loading.state$;
-    this.theme = this.themeService.getTheme();
   }
 
   get role(): string {
@@ -51,7 +50,6 @@ export class ZeissShellComponent {
   }
 
   setTheme(theme: PmOnboardingThemeId): void {
-    this.theme = theme;
     this.themeService.setTheme(theme);
   }
 

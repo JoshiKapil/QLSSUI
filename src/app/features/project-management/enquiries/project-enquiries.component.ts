@@ -70,6 +70,13 @@ export class ProjectEnquiriesComponent implements OnInit {
   employeeSearch = '';
   pendingFile?: File;
 
+  outcomeModal: {
+    open: boolean;
+    enquiry?: PmEnquiry;
+    status: string;
+    remark: string;
+  } = { open: false, status: '', remark: '' };
+
   form: any = this.emptyForm();
 
   constructor(
@@ -304,14 +311,32 @@ export class ProjectEnquiriesComponent implements OnInit {
   }
 
   updateOutcome(item: PmEnquiry, status: string): void {
-    const remark = window.prompt(`Remark for ${status}:`, '') || '';
-    this.api.updateEnquiryStatus(item.enquiryId, status, remark).subscribe({
+    if (!item || !status) return;
+    this.outcomeModal = {
+      open: true,
+      enquiry: item,
+      status,
+      remark: '',
+    };
+  }
+
+  confirmOutcome(): void {
+    if (!this.outcomeModal.enquiry || !this.outcomeModal.status) return;
+    const { enquiry, status, remark } = this.outcomeModal;
+    this.error = '';
+    this.success = '';
+    this.api.updateEnquiryStatus(enquiry.enquiryId, status, remark.trim()).subscribe({
       next: () => {
         this.success = `Enquiry status changed to ${status}.`;
+        this.outcomeModal.open = false;
         this.refresh();
       },
       error: (e) => (this.error = e?.error?.message || 'Unable to update enquiry status.'),
     });
+  }
+
+  closeOutcomeModal(): void {
+    this.outcomeModal.open = false;
   }
 
   fileSelected(event: Event): void {

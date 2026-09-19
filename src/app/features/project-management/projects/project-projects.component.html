@@ -15,7 +15,7 @@
       </button>
     </div>
   </header>
-<details><summary>Search selection options</summary>
+<details style="display: none;"><summary>Search selection options</summary>
 <app-list-pager [page]="categoriesOptionsPage" (changed)="loadcategoriesOptions()"></app-list-pager>
 <app-list-pager [page]="usersOptionsPage" (changed)="loadusersOptions()"></app-list-pager>
 <app-list-pager [page]="quotationTemplatesOptionsPage" (changed)="loadquotationTemplatesOptions()"></app-list-pager>
@@ -23,7 +23,6 @@
 <app-list-pager [page]="clientsOptionsPage" (changed)="loadclientsOptions()"></app-list-pager>
 <app-list-pager [page]="trainingsOptionsPage" (changed)="loadtrainingsOptions()"></app-list-pager>
 </details>
-<app-list-pager [page]="projectsPage" (changed)="reloadprojectsPage()"></app-list-pager>
 
   <p *ngIf="error" class="pm-error">{{ error }}</p>
   <p *ngIf="success" class="pm-success">{{ success }}</p>
@@ -80,6 +79,7 @@
           </button>
         </div>
         <div *ngIf="!filteredItems.length" class="pm-empty">No projects match your filters.</div>
+        <app-list-pager [page]="projectsPage" (changed)="reloadprojectsPage()"></app-list-pager>
       </section>
     </aside>
 
@@ -648,4 +648,148 @@
       </section>
     </main>
   </div>
+
+  <!-- Activity Delete Confirmation Modal -->
+  <section
+    *ngIf="activityDeleteModal.open && activityDeleteModal.activity as act"
+    class="pm-panel pm-modal pm-modal--compact"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="pmActivityDeleteTitle"
+  >
+    <div class="pm-panel__head">
+      <div>
+        <small>CONFIRM ACTION</small>
+        <h2 id="pmActivityDeleteTitle">Delete Activity</h2>
+      </div>
+      <button
+        type="button"
+        class="pm-btn pm-btn--ghost pm-btn--sm"
+        aria-label="Close"
+        (click)="closeActivityDeleteModal()"
+      >
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+    <div class="pm-panel__body" style="padding: 18px 20px;">
+      <p style="margin-bottom: 8px; font-size: 0.95rem; color: #1e293b;">
+        Are you sure you want to delete activity <strong>"{{ act.activityName }}"</strong>?
+      </p>
+      <p style="font-size: 0.85rem; color: #64748b; margin: 0;">
+        This action cannot be undone. Any progress logged against this activity will be removed.
+      </p>
+    </div>
+    <div class="pm-panel__foot">
+      <button type="button" class="pm-btn pm-btn--ghost" (click)="closeActivityDeleteModal()">Cancel</button>
+      <button
+        type="button"
+        class="pm-btn pm-btn--danger"
+        (click)="confirmDeleteActivity()"
+      >
+        <i class="fas fa-trash"></i>
+        Delete Activity
+      </button>
+    </div>
+  </section>
+
+  <!-- Closure Decision (Return) Remark Modal -->
+  <section
+    *ngIf="closureDecisionModal.open"
+    class="pm-panel pm-modal pm-modal--compact"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="pmProjectClosureTitle"
+  >
+    <div class="pm-panel__head">
+      <div>
+        <small>CLOSURE REVIEW</small>
+        <h2 id="pmProjectClosureTitle">Return Project Closure Request</h2>
+      </div>
+      <button
+        type="button"
+        class="pm-btn pm-btn--ghost pm-btn--sm"
+        aria-label="Close"
+        (click)="closeClosureDecisionModal()"
+      >
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+    <div class="pm-panel__body" style="padding: 18px 20px;">
+      <p style="margin-bottom: 12px; font-size: 0.9rem; color: #475569;">
+        Please specify the reason or pending activities required before this project can be closed.
+      </p>
+      <div class="pm-field pm-field--full">
+        <label>Reason / Pending Activities <strong style="color: #ef4444;">*</strong></label>
+        <textarea
+          rows="3"
+          [(ngModel)]="closureDecisionModal.remark"
+          placeholder="Enter pending tasks or feedback for the team..."
+          style="width: 100%;"
+        ></textarea>
+      </div>
+    </div>
+    <div class="pm-panel__foot">
+      <button type="button" class="pm-btn pm-btn--ghost" (click)="closeClosureDecisionModal()">Cancel</button>
+      <button
+        type="button"
+        class="pm-btn pm-btn--primary"
+        [disabled]="!closureDecisionModal.remark.trim()"
+        (click)="confirmClosureDecision()"
+      >
+        Return Closure Request
+      </button>
+    </div>
+  </section>
+
+  <!-- Final Close Confirmation Modal -->
+  <section
+    *ngIf="finalCloseModal.open && selected"
+    class="pm-panel pm-modal pm-modal--compact"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="pmFinalCloseTitle"
+  >
+    <div class="pm-panel__head">
+      <div>
+        <small>FINAL CLOSURE</small>
+        <h2 id="pmFinalCloseTitle">Final Close Project {{ selected.projectNo }}?</h2>
+      </div>
+      <button
+        type="button"
+        class="pm-btn pm-btn--ghost pm-btn--sm"
+        aria-label="Close"
+        (click)="closeFinalCloseModal()"
+      >
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+    <div class="pm-panel__body" style="padding: 18px 20px;">
+      <div style="display: flex; gap: 14px; align-items: flex-start;">
+        <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(30, 94, 219, 0.1); color: #1e5edb; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;">
+          <i class="fas fa-flag-checkered"></i>
+        </div>
+        <div>
+          <p style="font-weight: 600; margin: 0 0 6px; color: #0f172a;">
+            You are about to mark this project as officially CLOSED.
+          </p>
+          <p style="font-size: 0.88rem; color: #475569; margin: 0;">
+            Customer: <strong>{{ selected.customerName }}</strong><br />
+            Title: <strong>{{ selected.projectTitle }}</strong><br />
+            Signed Acknowledgment: <strong>{{ ackForm.status || acknowledgement?.status }}</strong>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="pm-panel__foot">
+      <button type="button" class="pm-btn pm-btn--ghost" (click)="closeFinalCloseModal()">Cancel</button>
+      <button
+        type="button"
+        class="pm-btn pm-btn--primary"
+        (click)="confirmFinalClose()"
+      >
+        <i class="fas fa-check"></i>
+        Yes, Final Close Project
+      </button>
+    </div>
+  </section>
 </div>

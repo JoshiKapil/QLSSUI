@@ -1,11 +1,14 @@
-<section class="import-page">
-  <header>
-    <p class="eyebrow">Question administration</p>
-    <h1>Create Test Questions</h1>
-    <p>Upload a Word document, preview validation, and save valid questions.</p>
-  </header>
+<section class="admin-section create-test-questions-page">
+  <div class="container admin-shell create-test-questions-shell">
+    <div class="admin-header">
+      <div>
+        <span class="auth-eyebrow">Question Administration</span>
+        <h1>Create Test Questions</h1>
+        <p>Upload a Word document, preview validation, and save valid questions.</p>
+      </div>
+    </div>
 
-  <div class="panel controls">
+    <div class="admin-form form-card controls-card">
     <label class="training-search-field">
       <span class="field-label-text">
         Training
@@ -72,10 +75,10 @@
     </label>
   </div>
 
-  <p class="note">
-    Word Training Name and Test Type are ignored. Select both fields above; the test is created and all valid questions
-    are mapped, and the matching training test field is updated.
-  </p>
+  <div class="note-banner">
+    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+    <p>Word Training Name and Test Type are ignored. Select both fields above; the test is created and all valid questions are mapped, and the matching training test field is updated.</p>
+  </div>
 
   <div class="progress" *ngIf="progress">
     <span [style.width.%]="progress"></span>
@@ -259,4 +262,5 @@ Answer: B # D</pre>
       </table>
     </div>
   </section>
+  </div>
 </section>

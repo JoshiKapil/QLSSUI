@@ -1,4 +1,4 @@
-﻿:host {
+:host {
   display: block;
 }
 .field-label1{
@@ -9,9 +9,9 @@
 }
 .certificate-page {
   min-height: 100vh;
-  padding: 120px 0 64px;
-  background: linear-gradient(145deg, #f3f7fb 0%, #fbfaf7 55%, #eef4f8 100%);
-  color: #14283d;
+  padding: clamp(84px, 7vw, 104px) 0 64px;
+  background: var(--app-bg);
+  color: var(--text-primary);
 }
 
 .certificate-shell {
@@ -1444,6 +1444,85 @@ select:disabled {
     grid-template-columns: 1fr;
   }
 }
+
+:host-context(.theme-heritage) {
+  .certificate-page {
+    background: #F7F3EC;
+  }
+
+  .page-header {
+    h1 {
+      color: #1C2023;
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    .eyebrow {
+      color: #B5794A;
+    }
+
+    p {
+      color: #707E7A;
+    }
+  }
+
+  .name-correction-card,
+  .form-card,
+  .operations-section,
+  .email-card {
+    background: #FFFFFF;
+    border: 1px solid #DDD6CA;
+    box-shadow: 0 4px 18px rgba(28, 32, 35, 0.05);
+
+    h2,
+    h3 {
+      color: #1C2023;
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    .name-correction-icon,
+    .card-icon,
+    .email-heading .email-icon {
+      background: rgba(181, 121, 74, 0.12);
+      color: #B5794A;
+    }
+
+    input,
+    select,
+    textarea {
+      background: #FAF8F5;
+      border: 1px solid #DDD6CA;
+      color: #1C2023;
+
+      &:focus {
+        border-color: #B5794A;
+        box-shadow: 0 0 0 3px rgba(181, 121, 74, 0.2);
+      }
+    }
+  }
+
+  .btn-primary,
+  .btn-download-all,
+  button.btn-primary {
+    background: #B5794A !important;
+    border: 1px solid #CBA56B !important;
+    color: #ffffff !important;
+
+    &:hover {
+      background: #9C6338 !important;
+    }
+  }
+
+  .btn-outline {
+    border-color: #B5794A;
+    color: #B5794A;
+
+    &:hover {
+      background: #B5794A;
+      color: #ffffff;
+    }
+  }
+}
+
 
 
 

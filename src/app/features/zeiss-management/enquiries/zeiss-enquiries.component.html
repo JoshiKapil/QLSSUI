@@ -109,10 +109,14 @@
     <div class="form">
       <label class="span2">
         Customer
-        <select [(ngModel)]="form.customerId">
-          <option [ngValue]="null">Select customer</option>
-          <option *ngFor="let c of customers" [ngValue]="c.customerId">{{ c.customerName }} - {{ c.iBaseId }}</option>
-        </select>
+        <zm-search-select
+          [options]="customers"
+          labelKey="customerName"
+          detailKey="iBaseId"
+          valueKey="customerId"
+          placeholder="Search customer by name or iBase ID..."
+          [(ngModel)]="form.customerId"
+        ></zm-search-select>
       </label>
       <label>
         Enquiry Date
@@ -133,12 +137,16 @@
     </div>
     <div class="lookup-tools"><app-list-pager [compact]="true" [page]="instrumentsPage" (changed)="loadInstruments()"></app-list-pager></div>
     <div class="itemline" *ngFor="let item of form.items; let i = index">
-      <select [(ngModel)]="item.instrumentId">
-        <option [ngValue]="null">Select item</option>
-        <option *ngFor="let z of instruments" [ngValue]="z.instrumentId">
-          {{ z.partNumber }} - {{ z.partDescription }} (Stock {{ z.currentQuantity }})
-        </option>
-      </select>
+      <zm-search-select
+        class="item-search-dd"
+        [options]="instruments"
+        labelKey="partNumber"
+        detailKey="partDescription"
+        valueKey="instrumentId"
+        [showStock]="true"
+        placeholder="Search item by part no or description..."
+        [(ngModel)]="item.instrumentId"
+      ></zm-search-select>
       <input aria-label="Quantity" type="number" min="1" [(ngModel)]="item.quantity" placeholder="Qty" />
       <input [(ngModel)]="item.note" placeholder="Note" />
       <button class="btn danger" (click)="removeItem(i)" aria-label="Remove item" title="Remove item">&times;</button>

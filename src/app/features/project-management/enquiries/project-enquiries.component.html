@@ -19,7 +19,7 @@
       </button>
     </div>
   </header>
-<details><summary>Search selection options</summary>
+<details style="display: none;"><summary>Search selection options</summary>
 <app-list-pager [page]="categoriesOptionsPage" (changed)="loadcategoriesOptions()"></app-list-pager>
 <app-list-pager [page]="usersOptionsPage" (changed)="loadusersOptions()"></app-list-pager>
 <app-list-pager [page]="quotationTemplatesOptionsPage" (changed)="loadquotationTemplatesOptions()"></app-list-pager>
@@ -27,7 +27,6 @@
 <app-list-pager [page]="clientsOptionsPage" (changed)="loadclientsOptions()"></app-list-pager>
 <app-list-pager [page]="trainingsOptionsPage" (changed)="loadtrainingsOptions()"></app-list-pager>
 </details>
-<app-list-pager [page]="enquiriesPage" (changed)="reloadenquiriesPage()"></app-list-pager>
 
   <p *ngIf="error && !showForm" class="pm-error">{{ error }}</p>
   <p *ngIf="success" class="pm-success">{{ success }}</p>
@@ -331,6 +330,55 @@
           </tr>
         </tbody>
       </table>
+    </div>
+    <app-list-pager [page]="enquiriesPage" (changed)="reloadenquiriesPage()"></app-list-pager>
+  </section>
+
+  <!-- Outcome Remark Modal -->
+  <section
+    *ngIf="outcomeModal.open && outcomeModal.enquiry as enq"
+    class="pm-panel pm-modal pm-modal--compact"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="pmEnquiryOutcomeTitle"
+  >
+    <div class="pm-panel__head">
+      <div>
+        <small>COMMERCIAL OUTCOME</small>
+        <h2 id="pmEnquiryOutcomeTitle">Update Outcome: {{ outcomeModal.status }}</h2>
+      </div>
+      <button
+        type="button"
+        class="pm-btn pm-btn--ghost pm-btn--sm"
+        aria-label="Close"
+        (click)="closeOutcomeModal()"
+      >
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+    <div class="pm-panel__body" style="padding: 18px 20px;">
+      <p style="margin-bottom: 12px; font-size: 0.9rem; color: #475569;">
+        Update status for enquiry <strong>{{ enq.enquiryNo }}</strong> ({{ enq.customerName }}) to <strong>{{ outcomeModal.status }}</strong>.
+      </p>
+      <div class="pm-field pm-field--full">
+        <label>Remark / Notes</label>
+        <textarea
+          rows="3"
+          [(ngModel)]="outcomeModal.remark"
+          placeholder="Enter reason or notes regarding this status change..."
+          style="width: 100%;"
+        ></textarea>
+      </div>
+    </div>
+    <div class="pm-panel__foot">
+      <button type="button" class="pm-btn pm-btn--ghost" (click)="closeOutcomeModal()">Cancel</button>
+      <button
+        type="button"
+        class="pm-btn pm-btn--primary"
+        (click)="confirmOutcome()"
+      >
+        Save Outcome
+      </button>
     </div>
   </section>
 </div>

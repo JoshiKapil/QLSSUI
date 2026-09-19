@@ -1,60 +1,10 @@
-<section class="onb-shell" [ngClass]="themeClass">
+<section class="onb-shell workspace-reference" [class.navigation-collapsed]="menuOpen" [ngClass]="themeClass">
   <button class="onb-scrim" *ngIf="menuOpen" (click)="close()" aria-label="Close menu"></button>
 
-  <!-- Aurora Nav mirrors SystemUI behaviour: desktop navigation moves to the top. -->
-  <div class="onb-aurora-bar" aria-label="Employee onboarding top navigation">
-    <div class="onb-aurora-brand">
-      <span><i class="fas fa-user-graduate"></i></span>
-      <div>
-        <strong>QLSS Onboarding</strong>
-        <small>Learn · Validate · Ready</small>
-      </div>
-    </div>
-    <nav class="onb-aurora-nav">
-      <a routerLink="my-learning" routerLinkActive="active">
-        <i class="fas fa-circle-play"></i>
-        My Learning
-      </a>
-      <a *ngIf="isAdmin" routerLink="dashboard" routerLinkActive="active">
-        <i class="fas fa-gauge-high"></i>
-        Dashboard
-      </a>
-      <a *ngIf="isAdmin" routerLink="employees" routerLinkActive="active">
-        <i class="fas fa-users-gear"></i>
-        Employees
-      </a>
-      <a *ngIf="canSetupOnboarding" routerLink="setup-studio" routerLinkActive="active">
-        <i class="fas fa-screwdriver-wrench"></i>
-        Setup Studio
-      </a>
-      <a *ngIf="canSetupOnboarding" routerLink="master-setup" routerLinkActive="active">
-        <i class="fas fa-diagram-project"></i>
-        Master Setup
-      </a>
-      <a *ngIf="isSuperAdmin" routerLink="access-requests" routerLinkActive="active">
-        <i class="fas fa-user-shield"></i>
-        Login Approvals
-      </a>
-      <a routerLink="/workspace/dashboard">
-        <i class="fas fa-briefcase"></i>
-        Projects
-      </a>
-    </nav>
-    <label class="onb-aurora-theme">
-      <i class="fas fa-palette"></i>
-      <select [ngModel]="theme" (ngModelChange)="setTheme($event)" aria-label="Onboarding theme">
-        <option *ngFor="let option of themeOptions" [ngValue]="option.id">{{ option.name }}</option>
-      </select>
-    </label>
-  </div>
 
   <aside class="onb-rail" [class.open]="menuOpen">
     <div class="onb-brand">
-      <div class="onb-brand__mark"><i class="fas fa-user-graduate"></i></div>
-      <div class="onb-brand__copy">
-        <strong>QLSS Onboarding</strong>
-        <span>Learn · Validate · Ready</span>
-      </div>
+      <a class="workspace-logo" routerLink="/"><img src="assets/logos/logo.png" alt="QLSS Business Consulting" /></a>
       <button class="onb-close" (click)="close()" aria-label="Close menu"><i class="fas fa-times"></i></button>
     </div>
 
@@ -66,32 +16,24 @@
       </div>
     </div>
 
-    <label class="onb-theme" aria-label="Employee Onboarding theme">
-      <span class="onb-theme__icon"><i class="fas fa-palette"></i></span>
-      <span class="onb-theme__copy">
-        <small>Workspace theme</small>
-        <strong>{{ themeName }}</strong>
-      </span>
-      <select [ngModel]="theme" (ngModelChange)="setTheme($event)" aria-label="Select onboarding theme">
-        <option *ngFor="let option of themeOptions" [ngValue]="option.id">{{ option.name }}</option>
-      </select>
-    </label>
-
     <nav class="onb-nav">
       <small>MY INDUCTION</small>
       <a routerLink="my-learning" routerLinkActive="active" (click)="close()">
         <i class="fas fa-circle-play"></i>
         <span>My Learning Path</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
       <ng-container *ngIf="isAdmin">
         <small>ADMIN CONTROL</small>
         <a routerLink="dashboard" routerLinkActive="active" (click)="close()">
           <i class="fas fa-gauge-high"></i>
           <span>Onboarding Dashboard</span>
+          <i class="fas fa-chevron-right nav-arrow"></i>
         </a>
         <a routerLink="employees" routerLinkActive="active" (click)="close()">
           <i class="fas fa-users-gear"></i>
           <span>Employee Assignment</span>
+          <i class="fas fa-chevron-right nav-arrow"></i>
         </a>
       </ng-container>
       <ng-container *ngIf="canSetupOnboarding">
@@ -99,47 +41,53 @@
         <a routerLink="setup-studio" routerLinkActive="active" (click)="close()">
           <i class="fas fa-screwdriver-wrench"></i>
           <span>Setup Studio</span>
-          <b>SA</b>
+          <i class="fas fa-chevron-right nav-arrow"></i>
         </a>
         <a routerLink="master-setup" routerLinkActive="active" (click)="close()">
           <i class="fas fa-diagram-project"></i>
           <span>Master Setup & Mapping</span>
-          <b>SA</b>
+          <i class="fas fa-chevron-right nav-arrow"></i>
         </a>
       </ng-container>
       <a *ngIf="isSuperAdmin" routerLink="access-requests" routerLinkActive="active" (click)="close()">
         <i class="fas fa-user-shield"></i>
         <span>Login Approvals</span>
-        <b>SA</b>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
       <small>OTHER WORKSPACE</small>
       <a routerLink="/workspace/dashboard" (click)="close()">
         <i class="fas fa-briefcase"></i>
         <span>Project Workspace</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
     </nav>
 
-    <div class="onb-rail-note">
-      <i class="fas fa-shield-heart"></i>
-      <div>
-        <strong>Mandatory induction</strong>
-        <span>Progress and attempts are saved automatically.</span>
+    <!-- Bottom LHS Inspiration & Brand Graphic -->
+    <div class="onb-rail-footer">
+      <div class="rail-quote-block">
+        <p class="rail-quote-text">"Better Processes. Brighter Futures."</p>
+        <span class="rail-quote-line"></span>
+      </div>
+      <div class="rail-brand-graphic">
+        <div class="brand-graphic-box">
+          <svg viewBox="0 0 120 70" class="brand-symbol-svg" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="25" y="15" width="30" height="30" rx="6" fill="#B5794A" fill-opacity="0.8"/>
+            <rect x="65" y="15" width="30" height="30" rx="6" fill="#CBA56B" fill-opacity="0.8"/>
+            <rect x="45" y="30" width="30" height="30" rx="6" fill="#5E7068" fill-opacity="0.9"/>
+          </svg>
+          <span class="brand-label">QLSS ONBOARDING</span>
+        </div>
+        <small class="rail-motto">EMPOWERING TALENT</small>
       </div>
     </div>
   </aside>
 
   <main class="onb-main">
-    <div class="onb-mobilebar">
-      <button (click)="menuOpen = !menuOpen">
-        <i class="fas fa-bars"></i>
-        <span>Employee Onboarding</span>
-      </button>
-      <label>
-        <select [ngModel]="theme" (ngModelChange)="setTheme($event)" aria-label="Onboarding theme">
-          <option *ngFor="let option of themeOptions" [ngValue]="option.id">{{ option.name }}</option>
-        </select>
-      </label>
-    </div>
-    <router-outlet></router-outlet>
+    <button class="workspace__mobile-menu-btn" (click)="menuOpen = !menuOpen" aria-label="Toggle Onboarding Navigation">
+      <i class="fas fa-bars"></i>
+      <span>Onboarding Navigation</span>
+    </button>
+    <div class="workspace-content"><router-outlet></router-outlet></div>
+    <footer class="workspace-footer"><a routerLink="/"><img src="assets/logos/logo.png" alt="QLSS Business Consulting" /></a><span>People &nbsp; | &nbsp; Process &nbsp; | &nbsp; Possibilities</span><nav><a routerLink="/training">Training</a><a routerLink="/expertise">Expertise</a><a routerLink="/contact">Contact</a></nav><small>QLSS Business Consulting</small></footer>
   </main>
 </section>

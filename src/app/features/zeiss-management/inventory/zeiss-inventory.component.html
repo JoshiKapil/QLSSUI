@@ -155,12 +155,14 @@
       </label>
       <label>
         Instrument
-        <select [(ngModel)]="grnForm.instrumentId">
-          <option [ngValue]="0">Select</option>
-          <option *ngFor="let x of instruments" [ngValue]="x.instrumentId">
-            {{ x.partNumber }} - {{ x.partDescription }}
-          </option>
-        </select>
+        <zm-search-select
+          [options]="instruments"
+          labelKey="partNumber"
+          detailKey="partDescription"
+          valueKey="instrumentId"
+          placeholder="Search instrument..."
+          [(ngModel)]="grnForm.instrumentId"
+        ></zm-search-select>
       </label>
       <label>
         Quantity

@@ -350,10 +350,7 @@
 /* ONBOARDING_CONTENT_SKY_GLASS_V6
    Every onboarding screen imports this file. It prevents the marketing-site 90px section padding
    and gives QLSS Classic the same sky/white glass language as Project Management. */
-:host section {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-}
+/* Keep component card padding; application sections have a low-specificity global reset. */
 :host-context(.feature-theme--classic) {
   color: #173f59;
 }
@@ -2078,4 +2075,119 @@ a {
   :host .options > div {
     grid-template-columns: 20px minmax(0, 1fr) 30px;
   }
+}
+
+/* Precision Heritage Support */
+:host-context(.feature-theme--heritage),
+:host-context(body.theme-heritage),
+:host-context(.theme-heritage) {
+  --feature-primary: #B5794A;
+  --feature-secondary: #CBA56B;
+  --feature-accent: #CBA56B;
+  --feature-text: #1C2023;
+  --feature-muted: #707E7A;
+  --feature-surface: #FFFFFF;
+  --feature-surface-soft: #F2EDE4;
+  --feature-border: #E5DED5;
+  --feature-shadow: 0 10px 28px rgba(28, 32, 35, 0.08);
+}
+:host-context(.feature-theme--heritage) .page-head,
+:host-context(.feature-theme--heritage) .panel,
+:host-context(.feature-theme--heritage) .assign-card,
+:host-context(.feature-theme--heritage) .tracker,
+:host-context(.feature-theme--heritage) .master-list,
+:host-context(.feature-theme--heritage) .editor,
+:host-context(.feature-theme--heritage) .list,
+:host-context(.feature-theme--heritage) .review,
+:host-context(.feature-theme--heritage) .path-card,
+:host-context(.feature-theme--heritage) .content-card,
+:host-context(.feature-theme--heritage) .reminders,
+:host-context(.feature-theme--heritage) .summary-strip > *,
+:host-context(.feature-theme--heritage) .kpis article,
+:host-context(.feature-theme--heritage) .cards > * {
+  background: #FFFFFF !important;
+  border-color: #E5DED5 !important;
+  box-shadow: 0 8px 24px rgba(28, 32, 35, 0.07) !important;
+}
+:host-context(.feature-theme--heritage) .page-head {
+  background: linear-gradient(135deg, #FFFFFF, #F7F3EC) !important;
+}
+:host-context(.feature-theme--heritage) h1,
+:host-context(.feature-theme--heritage) h2,
+:host-context(.feature-theme--heritage) h3 {
+  color: #1C2023 !important;
+}
+:host-context(.feature-theme--heritage) .eyebrow,
+:host-context(.feature-theme--heritage) header > span,
+:host-context(.feature-theme--heritage) .section-title small,
+:host-context(.feature-theme--heritage) .builder-head small,
+:host-context(.feature-theme--heritage) .tracker small,
+:host-context(.feature-theme--heritage) .panel small {
+  color: #B5794A !important;
+}
+:host-context(.feature-theme--heritage) .primary,
+:host-context(.feature-theme--heritage) .primary-btn,
+:host-context(.feature-theme--heritage) .assign-btn,
+:host-context(.feature-theme--heritage) .approve {
+  background: #B5794A !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 7px 18px rgba(181, 121, 74, 0.25) !important;
+}
+:host-context(.feature-theme--heritage) input,
+:host-context(.feature-theme--heritage) select,
+:host-context(.feature-theme--heritage) textarea {
+  background: #FAF8F5 !important;
+  border-color: #D8D0C5 !important;
+  color: #1C2023 !important;
+}
+:host-context(.feature-theme--heritage) input:focus,
+:host-context(.feature-theme--heritage) select:focus,
+:host-context(.feature-theme--heritage) textarea:focus {
+  border-color: #B5794A !important;
+  box-shadow: 0 0 0 3px rgba(181, 121, 74, 0.15) !important;
+}
+:host-context(.feature-theme--heritage) table th {
+  background: #EFE9DF !important;
+  color: #707E7A !important;
+}
+:host-context(.feature-theme--heritage) table td {
+  border-color: #E5DED5 !important;
+  color: #1C2023 !important;
+}
+:host-context(.feature-theme--heritage) .progress span,
+:host-context(.feature-theme--heritage) .bar span {
+  background: linear-gradient(90deg, #B5794A, #CBA56B) !important;
+}
+:host-context(.feature-theme--heritage) .kpis i {
+  background: #FAF3EA !important;
+  color: #B5794A !important;
+}
+
+
+/* Resolve module roles from the active application theme. */
+:host-context(body[data-theme]) {
+  --feature-primary: var(--primary);
+  --feature-secondary: var(--secondary);
+  --feature-accent: var(--accent);
+  --feature-text: var(--text-primary);
+  --feature-muted: var(--text-muted);
+  --feature-surface: var(--surface);
+  --feature-surface-soft: var(--surface-soft);
+  --feature-border: var(--border);
+  --feature-shadow: var(--shadow-sm);
+}
+
+:host-context(body[data-theme]) {
+  .page-head, .panel, .assign-card, .tracker, .master-list, .editor, .list, .review, .path-card, .content-card, .reminders, .kpis article {
+    background: var(--surface) !important;
+    border-color: var(--border) !important;
+    box-shadow: var(--shadow-sm) !important;
+    color: var(--text-primary);
+  }
+  input, select, textarea { background: var(--input-bg) !important; border-color: var(--input-border) !important; color: var(--text-primary) !important; }
+  input:focus, select:focus, textarea:focus { border-color: var(--input-focus) !important; box-shadow: 0 0 0 3px var(--primary-soft) !important; }
+  .primary, .primary-btn, .assign-btn, .approve { background: var(--primary) !important; color: white !important; box-shadow: var(--shadow-sm) !important; }
+  table th { background: var(--table-header-bg) !important; color: var(--text-primary) !important; }
+  table td { border-color: var(--border) !important; color: var(--text-primary) !important; }
+  .progress span, .bar span { background: linear-gradient(90deg, var(--primary), var(--secondary)) !important; }
 }

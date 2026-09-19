@@ -1,19 +1,17 @@
-﻿<header class="navbar" [class.navbar--public]="!isLoggedIn" [class.navbar--logged-in]="isLoggedIn">
-  <div class="container navbar-wrapper">
+<header class="navbar" [class.navbar--public]="!isLoggedIn" [class.navbar--logged-in]="isLoggedIn">
+  <div class="navbar-wrapper">
     <!-- LEFT: Logo -->
     <div class="navbar-logo">
       <img (click)="closeMenu()" routerLink="/" style="cursor: pointer" src="assets/logos/logo.png" alt="QLSS Logo" />
     </div>
 
     <!-- CENTER: Nav links -->
-    <nav class="">
+    <nav class="navbar-nav-center">
       <div class="navbar-menu" [class.active]="menuOpen">
         <!-- Mobile-only header inside fullscreen menu -->
         <div class="navbar-menu__header">
           <img src="assets/logos/logo.png" alt="QLSS Logo" />
-          <!-- <span>Business Consulting</span> -->
         </div>
-        <!-- <a (click)="closeMenu()" routerLink="/">Home</a> -->
         <a (click)="closeMenu()" routerLink="/training" routerLinkActive="active-link">Training</a>
         <a (click)="closeMenu()" routerLink="/expertise" routerLinkActive="active-link">Expertise</a>
         <a (click)="closeMenu()" routerLink="/about" routerLinkActive="active-link">About Us</a>
@@ -21,7 +19,8 @@
         <a (click)="closeMenu()" routerLink="/contact" routerLinkActive="active-link">Contact</a>
         <a (click)="closeMenu()" routerLink="/test" routerLinkActive="active-link">Test</a>
         <a (click)="closeMenu()" routerLink="/ghar-9001" routerLinkActive="active-link">Ghar 9001</a>
-        <!-- <a (click)="closeMenu()" routerLink="/login" routerLink="/contact">Login</a> -->
+
+        <span *ngIf="isLoggedIn" class="navbar-divider" aria-hidden="true"></span>
 
         <div *ngIf="isLoggedIn" class="navbar-account">
           <div *ngIf="hasZeissAccess" class="account-nav-item">
@@ -163,7 +162,19 @@
     </nav>
 
     <!-- RIGHT: Button + Hamburger -->
+    <!-- RIGHT: Theme Switcher + Button + Hamburger -->
     <div class="navbar-right">
+      <button
+        type="button"
+        class="theme-toggle-btn"
+        (click)="toggleTheme()"
+        [attr.aria-label]="isHeritage ? 'Switch to QLSS Classic theme' : 'Switch to Precision Heritage theme'"
+        [title]="isHeritage ? 'Active: Precision Heritage (Click to switch to Classic)' : 'Active: QLSS Classic (Click to switch to Heritage)'"
+      >
+        <i class="fas" [ngClass]="isHeritage ? 'fa-gem' : 'fa-shield-halved'"></i>
+        <span class="theme-toggle-label">{{ isHeritage ? 'Heritage' : 'Classic' }}</span>
+      </button>
+
       <a
         (click)="closeMenu()"
         routerLink="/verify"

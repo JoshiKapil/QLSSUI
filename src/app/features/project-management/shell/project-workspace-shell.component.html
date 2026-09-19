@@ -1,4 +1,4 @@
-<section class="workspace" [ngClass]="themeClass">
+<section class="workspace workspace-reference" [class.navigation-collapsed]="menuOpen" [ngClass]="themeClass">
   <!-- PM operation feedback stays above every PM screen. -->
   <ng-container *ngIf="loaderState$ | async as loader">
     <div class="pm-operation-loader" *ngIf="loader.active" role="status" aria-live="polite" aria-busy="true">
@@ -14,60 +14,10 @@
 
   <button class="workspace__scrim" *ngIf="menuOpen" aria-label="Close workspace menu" (click)="closeMenu()"></button>
 
-  <!-- SystemUI Aurora Nav behaviour: desktop sidebar becomes a clean top navigation. -->
-  <div class="workspace__aurora-bar" aria-label="Project workspace top navigation">
-    <div class="workspace__aurora-brand">
-      <span class="workspace__aurora-mark">Q</span>
-      <div>
-        <strong>QLSS Projects</strong>
-        <small>Enquiry → Closure</small>
-      </div>
-    </div>
-    <nav class="workspace__aurora-nav">
-      <a routerLink="dashboard" routerLinkActive="active">
-        <i class="fas fa-chart-pie"></i>
-        Dashboard
-      </a>
-      <a routerLink="enquiries" routerLinkActive="active">
-        <i class="fas fa-inbox"></i>
-        Enquiries
-      </a>
-      <a routerLink="quotations" routerLinkActive="active">
-        <i class="fas fa-file-invoice-dollar"></i>
-        Quotations
-      </a>
-      <a routerLink="projects" routerLinkActive="active">
-        <i class="fas fa-diagram-project"></i>
-        Projects
-      </a>
-      <a routerLink="invoices" routerLinkActive="active">
-        <i class="fas fa-receipt"></i>
-        Invoices
-      </a>
-      <a *ngIf="isSuperAdmin" routerLink="approvals" routerLinkActive="active">
-        <i class="fas fa-square-check"></i>
-        Approvals
-      </a>
-      <a routerLink="reports" routerLinkActive="active">
-        <i class="fas fa-chart-column"></i>
-        Reports
-      </a>
-    </nav>
-    <label class="workspace__aurora-theme">
-      <i class="fas fa-palette" aria-hidden="true"></i>
-      <select [ngModel]="theme" (ngModelChange)="setTheme($event)" aria-label="Workspace theme">
-        <option *ngFor="let option of themeOptions" [ngValue]="option.id">{{ option.name }}</option>
-      </select>
-    </label>
-  </div>
 
   <aside class="workspace__rail" [class.workspace__rail--open]="menuOpen">
     <div class="workspace__brand">
-      <div class="workspace__brand-mark"><span>Q</span></div>
-      <div class="workspace__brand-copy">
-        <strong>QLSS Projects</strong>
-        <small>Enquiry → Closure</small>
-      </div>
+      <a class="workspace-logo" routerLink="/"><img src="assets/logos/logo.png" alt="QLSS Business Consulting" /></a>
       <button class="workspace__rail-close" aria-label="Close menu" (click)="closeMenu()">
         <i class="fas fa-times"></i>
       </button>
@@ -81,54 +31,50 @@
       </div>
     </div>
 
-    <!-- Compact picker: all SystemUI theme names stay readable and do not consume the rail. -->
-    <label class="workspace__theme" aria-label="Project workspace theme">
-      <span class="workspace__theme-icon"><i class="fas fa-palette" aria-hidden="true"></i></span>
-      <span class="workspace__theme-copy">
-        <small>Workspace theme</small>
-        <strong>{{ themeName }}</strong>
-      </span>
-      <select [ngModel]="theme" (ngModelChange)="setTheme($event)" aria-label="Select project workspace theme">
-        <option *ngFor="let option of themeOptions" [ngValue]="option.id">{{ option.name }}</option>
-      </select>
-    </label>
 
     <nav class="workspace__sidenav">
       <small class="workspace__nav-label">Workspace</small>
       <a routerLink="dashboard" routerLinkActive="active" (click)="closeMenu()">
         <i class="fas fa-chart-pie"></i>
         <span>Dashboard</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
       <a routerLink="enquiries" routerLinkActive="active" (click)="closeMenu()">
         <i class="fas fa-inbox"></i>
         <span>Enquiries</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
       <a routerLink="quotations" routerLinkActive="active" (click)="closeMenu()">
         <i class="fas fa-file-invoice-dollar"></i>
         <span>Quotations</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
       <a routerLink="projects" routerLinkActive="active" (click)="closeMenu()">
         <i class="fas fa-diagram-project"></i>
         <span>Projects</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
       <a routerLink="invoices" routerLinkActive="active" (click)="closeMenu()">
         <i class="fas fa-receipt"></i>
         <span>Invoices</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
 
       <small class="workspace__nav-label">Control</small>
       <a *ngIf="isSuperAdmin" routerLink="approvals" routerLinkActive="active" (click)="closeMenu()">
         <i class="fa-solid fa-square-check"></i>
         <span>Approvals</span>
-        <b>SA</b>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
       <a routerLink="documents" routerLinkActive="active" (click)="closeMenu()">
         <i class="fas fa-folder-open"></i>
         <span>Documents</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
       <a routerLink="notifications" routerLinkActive="active" (click)="closeMenu()">
         <i class="fas fa-bell"></i>
         <span>Notifications</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
 
       <small class="workspace__nav-label">People & learning</small>
@@ -139,46 +85,53 @@
       >
         <i class="fas fa-graduation-cap"></i>
         <span>Employee Onboarding</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
 
       <small class="workspace__nav-label">Insights</small>
       <a routerLink="reports" routerLinkActive="active" (click)="closeMenu()">
         <i class="fas fa-chart-column"></i>
         <span>Reports</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
       <a *ngIf="isAdminLike" routerLink="management" routerLinkActive="active" (click)="closeMenu()">
         <i class="fas fa-sliders"></i>
         <span>Management</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
       <a *ngIf="isAdminLike" routerLink="operations" routerLinkActive="active" (click)="closeMenu()">
         <i class="fas fa-gears"></i>
         <span>Operations</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
     </nav>
 
-    <div class="workspace__role">
-      <div class="workspace__role-icon"><i class="fas fa-lock"></i></div>
-      <div>
-        <span>{{ isSuperAdmin ? 'SuperAdmin Control' : 'Role Based Access' }}</span>
-        <small>
-          {{ isSuperAdmin ? 'Approvals · assignment · final closure' : 'Only permitted project records are shown' }}
-        </small>
+    <!-- Bottom LHS Inspiration & QLSS Brand Graphic -->
+    <div class="workspace__rail-footer">
+      <div class="rail-quote-block">
+        <p class="rail-quote-text">"Better Processes. Brighter Futures."</p>
+        <span class="rail-quote-line"></span>
+      </div>
+      <div class="rail-brand-graphic">
+        <div class="brand-graphic-box">
+          <svg viewBox="0 0 120 70" class="brand-symbol-svg" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="25" y="15" width="30" height="30" rx="6" fill="#B5794A" fill-opacity="0.8"/>
+            <rect x="65" y="15" width="30" height="30" rx="6" fill="#CBA56B" fill-opacity="0.8"/>
+            <rect x="45" y="30" width="30" height="30" rx="6" fill="#5E7068" fill-opacity="0.9"/>
+          </svg>
+          <span class="brand-label">QLSS CONSULTING</span>
+        </div>
+        <small class="rail-motto">PRECISION &amp; EXCELLENCE</small>
       </div>
     </div>
   </aside>
 
   <main class="workspace__main">
-    <div class="workspace__mobilebar">
-      <button class="workspace__mobile" (click)="menuOpen = !menuOpen">
-        <i class="fas fa-bars"></i>
-        <span>Project workspace</span>
-      </button>
-      <label class="workspace__mobile-theme">
-        <select [ngModel]="theme" (ngModelChange)="setTheme($event)" aria-label="Workspace theme">
-          <option *ngFor="let option of themeOptions" [ngValue]="option.id">{{ option.name }}</option>
-        </select>
-      </label>
-    </div>
-    <router-outlet></router-outlet>
+    <button class="workspace__mobile-menu-btn" (click)="menuOpen = !menuOpen" aria-label="Toggle Project Navigation">
+      <i class="fas fa-bars"></i>
+      <span>Project Navigation</span>
+    </button>
+    <div class="workspace-content"><router-outlet></router-outlet></div>
+    <footer class="workspace-footer"><a routerLink="/"><img src="assets/logos/logo.png" alt="QLSS Business Consulting" /></a><span>People &nbsp; | &nbsp; Process &nbsp; | &nbsp; Possibilities</span><nav><a routerLink="/training">Training</a><a routerLink="/expertise">Expertise</a><a routerLink="/contact">Contact</a></nav><small>QLSS Business Consulting</small></footer>
   </main>
 </section>

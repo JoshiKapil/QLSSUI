@@ -1,100 +1,216 @@
-// :root {
-//   --primary: #0b3d91;
-//   --secondary: #2b7bff;
-//   --accent: #1e90ff;
-
-//   --text-dark: #1a1a1a;
-//   --text-light: #ffffff;
-
-//   --bg-light: #f4f6fb;
-//   --bg-dark: #0c1c3c;
-
-//   --glass-bg: rgba(255, 255, 255, 0.08);
-//   --glass-border: rgba(255, 255, 255, 0.2);
-
-//   --radius-sm: 8px;
-//   --radius-md: 16px;
-//   --radius-lg: 28px;
-
-//   --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.05);
-//   --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.08);
-
-//   --transition: all 0.3s ease;
-
-//   --font-heading: sans-serif;
-//   --font-body: sans-serif;
-// }
-
 // ================================================================
-//  _variables.scss    QLSS Design System
+//  _variables.scss — QLSS UNIFIED 2-THEME DESIGN SYSTEM
 //
-//  Color Reference (from brand color guide):
-//
-//  BASIC       Black #000B1D  |  White #FFFFFF
-//  GRAY        Light #F4F4F4  |  Light Medium #D8D8D8
-//              Medium #6D6E70 |  Medium Dark #252627  |  Dark #171818
-//  WARM BLUE   Light #EBF2FD  |  Light Medium #CEE1FC
-//              Medium #83AAE3 |  Medium Dark #5790E1
-//
-//  NOTE: Variable NAMES are unchanged  every page continues to work.
-//  Only the color VALUES have been updated to match the brand palette.
+//  THEME 1: QLSS Classic (Corporate Blue / Slate)
+//  THEME 2: QLSS Precision Heritage (Obsidian / Warm Porcelain / Burnished Copper)
 // ================================================================
 
-:root {
-  // â”€â”€ Primary brand colors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  // primary   â†’ Warm Blue Medium Dark  (main CTA, headings, links)
-  // secondary â†’ Warm Blue Medium       (hover states, gradients)
-  // accent    â†’ Warm Blue Light Medium (subtle highlights, icons)
+// ----------------------------------------------------------------
+//  THEME 1: QLSS Classic
+// ----------------------------------------------------------------
+:root,
+body.theme-classic,
+[data-theme="classic"] {
+  // ── Surface & Layout ──
+  --app-bg: #f4f7fc;
+  --surface: #ffffff;
+  --surface-soft: #ebf2fd;
+  --surface-raised: #ffffff;
 
-  --primary: #2f7ce8; // Warm Blue  Medium Dark
-  --secondary: #5992e8; // Warm Blue  Medium
-  --accent: #cee1fc; // Warm Blue  Light Medium
+  // ── Sidebar ──
+  --sidebar-bg: #000b1d;
+  --sidebar-text: #ffffff;
+  --sidebar-muted: #83aae3;
+  --sidebar-active: #2f7ce8;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
 
-  // â”€â”€ Text colors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  // text-dark  â†’ Basic Black  (body copy, headings)
-  // text-light â†’ Basic White  (text on dark/colored backgrounds)
+  // ── Header / Navbar ──
+  --header-height: 64px;
+  --header-bg: #ffffff;
+  --header-text: #000b1d;
+  --header-border: rgba(0, 11, 29, 0.08);
 
-  --text-dark: #000b1d; // Basic Black
-  --text-light: #ffffff; // Basic White
+  // ── Brand Accents ──
+  --primary: #2f7ce8;
+  --primary-hover: #1d64ca;
+  --primary-soft: rgba(47, 124, 232, 0.12);
+  --secondary: #5992e8;
+  --accent: #5790e1;
+  --accent-soft: rgba(87, 144, 225, 0.15);
 
-  // â”€â”€ Background colors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  // bg-light â†’ Warm Blue Light  (section backgrounds, cards)
-  // bg-dark  â†’ Gray Dark        (footer, dark sections)
+  // ── Typography ──
+  --text-primary: #000b1d;
+  --text-secondary: #252627;
+  --text-muted: #6d6e70;
 
-  --bg-light: #ebf2fd; // Warm Blue  Light
-  --bg-dark: #171818; // Gray  Dark
+  // ── Borders ──
+  --border: #e0e6f0;
+  --border-strong: #cee1fc;
 
-  // â”€â”€ Glass / overlay effects â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Form Controls ──
+  --input-bg: #ffffff;
+  --input-border: #d8e2f0;
+  --input-focus: #2f7ce8;
+
+  // ── Data Tables ──
+  --table-header-bg: #ebf2fd;
+  --table-row-hover: #f2f7fe;
+
+  // ── Semantic Status Colors ──
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+
+  // ── Shadows ──
+  --shadow-xs: 0 1px 3px rgba(0, 11, 29, 0.05);
+  --shadow-sm: 0 4px 12px rgba(47, 124, 232, 0.08);
+  --shadow-md: 0 10px 25px rgba(47, 124, 232, 0.14);
+  --shadow-modal: 0 20px 45px rgba(0, 11, 29, 0.22);
+
+  // ── Radius & Spacing ──
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  --radius-pill: 9999px;
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  --transition: all 0.3s ease;
+  --font-heading: 'Poppins', sans-serif;
+  --font-body: 'Poppins', sans-serif;
+
+  // ── Glass / Overlay ──
   --glass-bg: rgba(255, 255, 255, 0.08);
   --glass-border: rgba(255, 255, 255, 0.2);
 
-  // â”€â”€ Extended gray scale (available for borders, dividers, etc) â”€
-  --gray-light: #f4f4f4; // Gray  Light
-  --gray-light-mid: #d8d8d8; // Gray  Light Medium
-  --gray-mid: #6d6e70; // Gray  Medium
-  --gray-dark-mid: #252627; // Gray  Medium Dark
-  --gray-dark: #171818; // Gray  Dark
+  // ── Legacy Aliases ──
+  --text-dark: var(--text-primary);
+  --text-light: #ffffff;
+  --bg-light: var(--surface-soft);
+  --bg-dark: var(--sidebar-bg);
+  --gray-light: #f4f4f4;
+  --gray-light-mid: #d8d8d8;
+  --gray-mid: #6d6e70;
+  --gray-dark-mid: #252627;
+  --gray-dark: #171818;
+  --blue-light: #ebf2fd;
+  --blue-light-mid: #cee1fc;
+  --blue-mid: #83aae3;
+  --blue-dark-mid: #5790e1;
+}
 
-  // â”€â”€ Extended warm blue scale (for gradients, tints) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  --blue-light: #ebf2fd; // Warm Blue  Light
-  --blue-light-mid: #cee1fc; // Warm Blue  Light Medium
-  --blue-mid: #83aae3; // Warm Blue  Medium
-  --blue-dark-mid: #5790e1; // Warm Blue  Medium Dark
+// ----------------------------------------------------------------
+//  THEME 2: QLSS Precision Heritage (Master Showcase Specification)
+//  Obsidian (#1C2023) | Warm Porcelain (#F7F3EC) | Burnished Copper (#B5794A)
+//  Soft Brass (#CBA56B) | Mineral Gray (#707E7A) | Sage (#5E7068) | Error (#A94F4F)
+// ----------------------------------------------------------------
+body.theme-heritage,
+[data-theme="heritage"] {
+  // ── Surface & Layout ──
+  --app-bg: #F7F3EC;           // Warm Porcelain Canvas
+  --surface: #FFFFFF;          // Pure White Card Surface
+  --surface-soft: #F2EDE4;     // Soft Warm Porcelain/Linen
+  --surface-raised: #FFFFFF;
 
-  // â”€â”€ Border radius â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Sidebar ──
+  --sidebar-bg: #1C2023;       // Deep Obsidian
+  --sidebar-text: #F7F3EC;     // Porcelain text
+  --sidebar-muted: #707E7A;    // Mineral Gray
+  --sidebar-active: #B5794A;   // Burnished Copper
+  --sidebar-border: rgba(230, 223, 213, 0.15);
+
+  // ── Header / Navbar ──
+  --header-height: 64px;
+  --header-bg: #1C2023;        // Dark Obsidian top nav
+  --header-text: #F7F3EC;      // Porcelain links
+  --header-border: rgba(230, 223, 213, 0.18);
+
+  // ── Brand Accents ──
+  --primary: #B5794A;          // Burnished Copper
+  --primary-hover: #9C6338;
+  --primary-soft: rgba(181, 121, 74, 0.14);
+  --secondary: #CBA56B;        // Soft Brass
+  --accent: #CBA56B;           // Soft Brass
+  --accent-soft: rgba(203, 165, 107, 0.16);
+
+  // ── Typography ──
+  --text-primary: #1C2023;     // Deep Obsidian Body
+  --text-secondary: #4A5552;   // Muted Slate
+  --text-muted: #707E7A;       // Mineral Gray
+
+  // ── Borders ──
+  --border: #E5DED5;          // Warm Stone Border
+  --border-strong: #C8BFB3;
+
+  // ── Form Controls ──
+  --input-bg: #FAF8F5;
+  --input-border: #D8D0C5;
+  --input-focus: #B5794A;
+
+  // ── Data Tables ──
+  --table-header-bg: #EFE9DF;
+  --table-row-hover: #F5EFE6;
+
+  // ── Semantic Status Colors ──
+  --success: #5E7068;          // Sage Green
+  --warning: #CBA56B;          // Soft Brass
+  --danger: #A94F4F;           // Error Burgundy
+  --info: #707E7A;             // Mineral Gray
+
+  // ── Shadows ──
+  --shadow-xs: 0 1px 3px rgba(28, 32, 35, 0.05);
+  --shadow-sm: 0 4px 14px rgba(28, 32, 35, 0.07);
+  --shadow-md: 0 10px 28px rgba(28, 32, 35, 0.11);
+  --shadow-modal: 0 24px 50px rgba(28, 32, 35, 0.28);
+
+  // ── Radius & Spacing ──
   --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 28px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  --radius-pill: 9999px;
 
-  // â”€â”€ Shadows â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  // Adjusted to use brand primary color tint instead of pure black
-  --shadow-sm: 0 4px 10px rgba(87, 144, 225, 0.08);
-  --shadow-md: 0 10px 25px rgba(87, 144, 225, 0.14);
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
 
-  // â”€â”€ Global transition â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  --transition: all 0.3s ease;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  // â”€â”€ Typography â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  --font-heading: sans-serif;
-  --font-body: sans-serif;
+  // ── Specific Palette Aliases ──
+  --obsidian: #1C2023;
+  --porcelain: #F7F3EC;
+  --copper: #B5794A;
+  --copper-hover: #9C6338;
+  --brass: #CBA56B;
+  --mineral: #707E7A;
+  --warm-stone: #DDD6CA;
+  --sage: #5E7068;
+  --burgundy: #A94F4F;
+
+  // ── Glass / Overlay ──
+  --glass-bg: rgba(28, 32, 35, 0.92);
+  --glass-border: rgba(230, 223, 213, 0.22);
+
+  // ── Legacy Aliases ──
+  --text-dark: var(--text-primary);
+  --text-light: #ffffff;
+  --bg-light: var(--surface-soft);
+  --bg-dark: var(--sidebar-bg);
+  --gray-light: #ede6dc;
+  --gray-light-mid: #d8d0c5;
+  --gray-mid: var(--text-muted);
+  --gray-dark-mid: #333a38;
+  --gray-dark: var(--sidebar-bg);
+  --blue-light: #f5efe6;
+  --blue-light-mid: #ebdcc9;
+  --blue-mid: #cba56b;
+  --blue-dark-mid: #b5794a;
 }

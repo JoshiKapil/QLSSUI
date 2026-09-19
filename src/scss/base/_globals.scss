@@ -37,6 +37,8 @@ body {
 
   color: var(--text-dark);
   background: #ffffff;
+  color: var(--text-primary);
+  background: var(--app-bg);
 
   line-height: 1.6;
 
@@ -63,7 +65,7 @@ body {
    SECTION DEFAULT
 ============================ */
 
-section {
+:where(section:not(.workspace):not(.workspace-reference):not(.pm-page):not(.onb-shell):not(.page):not(.kpi-metrics-grid):not(.dashboard-middle-grid):not(.dashboard-bottom-grid):not(.simple-flow)) {
   padding: 90px 0;
   position: relative;
   overflow-x: hidden;
@@ -203,10 +205,11 @@ select {
 
 ::-webkit-scrollbar {
   width: 8px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #eee;
+  background: var(--surface-soft);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -325,7 +328,7 @@ select {
 }
 
 @media (max-width: 768px) {
-  section {
+  :where(section:not(.workspace):not(.workspace-reference):not(.pm-page):not(.onb-shell):not(.page):not(.kpi-metrics-grid):not(.dashboard-middle-grid):not(.dashboard-bottom-grid):not(.simple-flow)) {
     padding: 70px 0;
   }
 
@@ -414,3 +417,7 @@ img:hover {
     background-size: contain;
   }
 }
+
+/* Consistent compact scrollbars for tables, timelines and all overflow panels. */
+* { scrollbar-width: thin; scrollbar-color: var(--primary) var(--surface-soft); }
+::-webkit-scrollbar-corner { background: var(--surface-soft); }

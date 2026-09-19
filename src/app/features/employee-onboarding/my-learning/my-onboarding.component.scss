@@ -1,6 +1,6 @@
 :host {
   display: block;
-  color: #10213f;
+  color: var(--text-primary);
 }
 .onb-page {
   max-width: 1500px;
@@ -15,9 +15,9 @@
   justify-content: space-between;
   gap: 24px;
   background:
-    radial-gradient(circle at 88% 0, rgba(38, 223, 196, 0.24), transparent 28%),
-    linear-gradient(130deg, #102543, #143d64 58%, #0b6970);
-  box-shadow: 0 20px 55px rgba(19, 46, 78, 0.15);
+    radial-gradient(circle at 88% 0, color-mix(in srgb, var(--primary) 24%, transparent), transparent 28%),
+    linear-gradient(130deg, var(--text-primary), var(--text-primary) 58%, var(--text-primary));
+  box-shadow: 0 20px 55px color-mix(in srgb, var(--text-primary) 15%, transparent);
 }
 .eyebrow {
   display: inline-flex;
@@ -25,7 +25,7 @@
   align-items: center;
   font-size: 11px;
   letter-spacing: 0.08em;
-  color: #99f0e2;
+  color: var(--border);
   font-weight: 800;
 }
 .hero h1 {
@@ -35,7 +35,7 @@
 .hero p {
   max-width: 680px;
   margin: 0;
-  color: #d3e4f2;
+  color: var(--surface-soft);
   font-size: 13px;
   line-height: 1.6;
 }
@@ -53,7 +53,7 @@
   place-content: center;
   text-align: center;
   background:
-    radial-gradient(circle closest-side, #123653 78%, transparent 80% 100%),
+    radial-gradient(circle closest-side, var(--text-primary) 78%, transparent 80% 100%),
     conic-gradient(#43dfc5 var(--progress), rgba(255, 255, 255, 0.14) 0);
 }
 .progress-ring strong {
@@ -61,7 +61,7 @@
 }
 .progress-ring span {
   font-size: 9px;
-  color: #bcd6e7;
+  color: var(--border);
   text-transform: uppercase;
 }
 .deadline {
@@ -74,7 +74,7 @@
 }
 .deadline small {
   font-size: 10px;
-  color: #9eb9cf;
+  color: var(--text-muted);
   text-transform: uppercase;
 }
 .deadline strong {
@@ -102,14 +102,14 @@
 }
 .summary-strip > div {
   background: #fff;
-  border: 1px solid rgba(21, 55, 92, 0.09);
+  border: 1px solid color-mix(in srgb, var(--text-primary) 9%, transparent);
   border-radius: 16px;
   padding: 14px;
   display: grid;
   grid-template-columns: 36px 1fr auto;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 7px 24px rgba(13, 45, 80, 0.04);
+  box-shadow: 0 7px 24px color-mix(in srgb, var(--text-primary) 4%, transparent);
 }
 .summary-strip i {
   width: 36px;
@@ -117,19 +117,19 @@
   display: grid;
   place-items: center;
   border-radius: 11px;
-  background: #eff7ff;
+  background: var(--surface);
   color: var(--primary, #1769ff);
 }
 .summary-strip span {
   font-size: 11px;
-  color: #73849a;
+  color: var(--text-muted);
 }
 .summary-strip strong {
   font-size: 18px;
 }
 .reminders {
   background: #fff;
-  border: 1px solid rgba(21, 55, 92, 0.09);
+  border: 1px solid color-mix(in srgb, var(--text-primary) 9%, transparent);
   border-radius: 16px;
   padding: 11px 13px;
   margin-bottom: 14px;
@@ -151,7 +151,7 @@
 }
 .reminders__head > span {
   font-size: 9px;
-  color: #7c91a5;
+  color: var(--text-muted);
 }
 .reminders button {
   width: 100%;
@@ -164,19 +164,19 @@
   text-align: left;
   padding: 7px;
   border-radius: 9px;
-  color: #3f5871;
+  color: var(--text-muted);
   cursor: pointer;
 }
 .reminders button:hover {
-  background: #f6f9fc;
+  background: var(--surface);
 }
 .reminders button > i {
   font-size: 5px;
   margin-top: 5px;
-  color: #bdcad6;
+  color: var(--border);
 }
 .reminders button.unread > i {
-  color: #18a890;
+  color: var(--primary);
 }
 .reminders button strong,
 .reminders button span {
@@ -187,12 +187,12 @@
 }
 .reminders button span {
   font-size: 8px;
-  color: #8295a7;
+  color: var(--text-muted);
   margin-top: 2px;
 }
 .reminders button small {
   font-size: 8px;
-  color: #9aa9b7;
+  color: var(--text-muted);
   white-space: nowrap;
 }
 .learning-grid {
@@ -203,9 +203,9 @@
 .path-card,
 .content-card {
   background: #fff;
-  border: 1px solid rgba(21, 55, 92, 0.09);
+  border: 1px solid color-mix(in srgb, var(--text-primary) 9%, transparent);
   border-radius: 20px;
-  box-shadow: 0 10px 32px rgba(17, 48, 80, 0.055);
+  box-shadow: 0 10px 32px color-mix(in srgb, var(--text-primary) 6%, transparent);
 }
 .path-card {
   padding: 14px;
@@ -219,7 +219,7 @@
 }
 .path-card__head small {
   font-size: 9px;
-  color: #7790aa;
+  color: var(--text-muted);
   letter-spacing: 0.12em;
 }
 .path-card__head h2 {
@@ -229,7 +229,7 @@
 .path-card__head > span {
   font-size: 11px;
   background: #eef8f6;
-  color: #0b806f;
+  color: var(--primary);
   padding: 5px 8px;
   border-radius: 9px;
   font-weight: 800;
@@ -246,12 +246,12 @@
   padding: 10px 8px;
   border-radius: 13px;
   margin: 2px 0;
-  color: #152b49;
+  color: var(--text-primary);
   cursor: pointer;
 }
 .path-item:hover,
 .path-item.selected {
-  background: #f0f6fd;
+  background: var(--surface);
 }
 .path-item.done {
   background: #f0fbf8;
@@ -264,8 +264,8 @@
   width: 35px;
   height: 35px;
   border-radius: 11px;
-  background: #eaf2fb;
-  color: #42617f;
+  background: var(--surface);
+  color: var(--text-muted);
   display: grid;
   place-items: center;
   font-weight: 800;
@@ -285,17 +285,17 @@
 }
 .path-item__copy span {
   font-size: 10px;
-  color: #7b8da2;
+  color: var(--text-muted);
   margin-top: 2px;
 }
 .path-item__copy small {
   font-size: 9px;
-  color: #0b937d;
+  color: var(--primary);
   margin-top: 3px;
 }
 .arrow {
   font-size: 10px;
-  color: #9bb0c4;
+  color: var(--text-muted);
 }
 .content-card {
   padding: 22px;
@@ -309,7 +309,7 @@
 .module-no {
   font-size: 9px;
   letter-spacing: 0.12em;
-  color: #138f81;
+  color: var(--primary);
   font-weight: 900;
 }
 .content-card h2 {
@@ -318,7 +318,7 @@
 }
 .content-card header p {
   font-size: 12px;
-  color: #6f8299;
+  color: var(--text-muted);
   margin: 0;
 }
 .status {
@@ -328,8 +328,8 @@
   font-size: 9px;
   font-weight: 900;
   text-transform: uppercase;
-  background: #edf3fa;
-  color: #506b88;
+  background: var(--surface);
+  color: var(--text-muted);
 }
 .status.completed {
   background: #e4f9f1;
@@ -340,7 +340,7 @@
   color: #96600a;
 }
 .video-wrap {
-  background: #0b1728;
+  background: var(--text-primary);
   border-radius: 16px;
   overflow: hidden;
 }
@@ -348,11 +348,11 @@
   display: block;
   width: 100%;
   max-height: 510px;
-  background: #020713;
+  background: var(--text-primary);
 }
 .watch-meter {
-  background: #122238;
-  color: #dce9f4;
+  background: var(--text-primary);
+  color: var(--surface-soft);
   padding: 12px 14px;
 }
 .watch-meter > div:first-child {
@@ -362,7 +362,7 @@
 }
 .watch-meter .bar {
   height: 5px;
-  background: #2a3b51;
+  background: var(--text-primary);
   border-radius: 99px;
   margin: 8px 0 6px;
   overflow: hidden;
@@ -375,7 +375,7 @@
 }
 .watch-meter small {
   font-size: 9px;
-  color: #8fa6bb;
+  color: var(--text-muted);
 }
 .completed-banner {
   min-height: 115px;
@@ -410,7 +410,7 @@
   padding: 18px;
   border-radius: 16px;
   background: #f7fafc;
-  border: 1px solid #e3ebf3;
+  border: 1px solid var(--surface-soft);
 }
 .assignment__head {
   display: flex;
@@ -419,7 +419,7 @@
 .assignment__head span {
   font-size: 9px;
   letter-spacing: 0.12em;
-  color: #7c91a7;
+  color: var(--text-muted);
   font-weight: 900;
 }
 .assignment__head h3 {
@@ -428,16 +428,16 @@
 }
 .assignment__head p {
   font-size: 10px;
-  color: #778a9f;
+  color: var(--text-muted);
   margin: 0;
 }
 .assignment__head > i {
   font-size: 28px;
-  color: #79a0c8;
+  color: var(--primary);
 }
 .question {
   background: #fff;
-  border: 1px solid #e5edf5;
+  border: 1px solid var(--surface-soft);
   border-radius: 13px;
   padding: 13px;
   margin-top: 12px;
@@ -452,8 +452,8 @@
   width: 24px;
   height: 24px;
   border-radius: 7px;
-  background: #eaf3fd;
-  color: #2262a9;
+  background: var(--surface);
+  color: var(--primary);
   display: grid;
   place-items: center;
   font-size: 10px;
@@ -464,7 +464,7 @@
 }
 .question__title span {
   font-size: 9px;
-  color: #8fa0b1;
+  color: var(--text-muted);
 }
 .question label {
   display: flex;
@@ -474,11 +474,11 @@
   padding: 7px 9px;
   border-radius: 9px;
   font-size: 11px;
-  color: #455d76;
+  color: var(--text-muted);
   cursor: pointer;
 }
 .question label:hover {
-  background: #f4f8fc;
+  background: var(--surface);
 }
 .primary-btn {
   margin-top: 14px;
@@ -489,7 +489,7 @@
   padding: 11px 15px;
   font-weight: 800;
   font-size: 11px;
-  box-shadow: 0 8px 22px rgba(23, 105, 255, 0.2);
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--primary) 20%, transparent);
 }
 .primary-btn i {
   margin-right: 7px;
@@ -523,7 +523,7 @@
   background: #e9f7f4;
   display: grid;
   place-items: center;
-  color: #0d9a83;
+  color: var(--primary);
   font-size: 27px;
 }
 .empty-state h2 {
@@ -532,11 +532,11 @@
 }
 .empty-state p {
   font-size: 12px;
-  color: #71849a;
+  color: var(--text-muted);
 }
 .page-loader {
   gap: 8px;
-  color: #667f98;
+  color: var(--text-muted);
 }
 .page-loader i {
   font-size: 25px;

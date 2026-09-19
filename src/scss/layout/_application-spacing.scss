@@ -1,0 +1,38 @@
+/* A real wrapper owns the gutter: routed hosts do not inherit a shell's Angular scope. */
+.workspace-content {
+  --workspace-gutter: clamp(20px, 2vw, 32px);
+  flex: 1 0 auto;
+  min-width: 0;
+  width: 100%;
+  padding: 28px var(--workspace-gutter) 36px;
+  box-sizing: border-box;
+}
+.workspace-content > router-outlet + * {
+  display: block;
+  min-width: 0;
+  width: 100%;
+}
+/* Only the page root loses its duplicate gutter; section/card padding stays local. */
+.workspace-content > router-outlet + * > :is(.page, .pm-page, .admin-page, .setup-page, .master-page, .onb-page, .employees-page, .approval-page) {
+  padding: 0 !important;
+  margin: 0;
+  min-height: 0;
+  max-width: none;
+}
+.workspace-content :is(.split, .grid, .pm-grid, .pm-split-workspace, .dashboard-middle-grid, .dashboard-bottom-grid) > * {
+  min-width: 0;
+}
+.application-layout :is(.import-panel__header, .admin-header, .pm-section-head, .panel-header) > div {
+  min-width: 0;
+}
+.application-layout :is(.import-panel__header, .admin-header, .pm-section-head, .panel-header) p {
+  margin-top: 6px;
+  line-height: 1.55;
+}
+@media (max-width: 992px) {
+  .workspace-content { padding-top: 20px; }
+}
+@media (max-width: 600px) {
+  .workspace-content { --workspace-gutter: 16px; padding-top: 16px; padding-bottom: 24px; }
+  .application-layout :is(.admin-header, .import-panel__header, .pm-section-head, .panel-header) { flex-wrap: wrap; gap: 12px; }
+}

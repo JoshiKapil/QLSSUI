@@ -1,4 +1,5 @@
 @use 'scss/style';
+@use 'scss/layout/application-spacing';
 @import '~@fortawesome/fontawesome-free/css/all.min.css';
 
 @font-face {
@@ -40,3 +41,96 @@ textarea {
   font-weight: 800;
   line-height: 1;
 }
+
+/* ── Universal Workspace Footer (Image 2 Reference) ── */
+.workspace-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 20px !important;
+  padding: 14px 28px !important;
+  background: var(--surface, #FFFFFF) !important;
+  border-top: 1px solid var(--border, #E5E7EB) !important;
+  font-size: 11.5px !important;
+  color: var(--text-muted, #6B7280) !important;
+  flex-wrap: wrap !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  margin-top: auto !important;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-secondary, #4B5563);
+    font-weight: 600;
+    font-size: 11.5px;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: var(--primary, #B5794A);
+    }
+  }
+
+  img {
+    height: 26px !important;
+    max-height: 26px !important;
+    width: auto !important;
+    max-width: 130px !important;
+    object-fit: contain !important;
+    display: block !important;
+  }
+
+  span {
+    color: var(--text-muted, #6B7280);
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+  }
+
+  nav {
+    display: flex !important;
+    align-items: center !important;
+    gap: 18px !important;
+    position: static !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    min-width: 0 !important;
+  }
+
+  small {
+    color: var(--text-muted, #9CA3AF);
+    font-size: 11px;
+  }
+}
+
+/* Application sections use their component's own spacing, rather than marketing-page defaults.
+   :where keeps this reset below component selectors, including Angular scoped styles. */
+:where(.application-layout section) {
+  padding: 0;
+  overflow: visible;
+  max-width: none;
+}
+
+/* Mobile sidebar toggle button inside workspace shells */
+.workspace__mobile-menu-btn {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  margin: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border, #DDD6CA);
+  background: var(--surface, #FFFFFF);
+  color: var(--text-primary, #1C2023);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+
+  @media (max-width: 992px) {
+    display: inline-flex;
+  }
+}
+
+

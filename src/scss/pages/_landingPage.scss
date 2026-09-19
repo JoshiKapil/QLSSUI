@@ -384,10 +384,10 @@
 .hero-slide__content {
   position: relative;
   z-index: 3;
-  padding-top: 80px; // clears fixed navbar
+  padding-top: clamp(84px, 7vw, 104px); // clears fixed navbar
 
   @include mobile {
-    padding-top: 70px;
+    padding-top: clamp(76px, 7vw, 90px);
   }
 }
 
@@ -2296,9 +2296,13 @@
   &__box {
     position: relative;
     background: #fff;
+    background: var(--surface);
+    border: 1px solid var(--border);
     width: 95%;
     max-width: 500px;
     border-radius: 12px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-modal);
     padding: 30px;
     z-index: 2;
     animation: modalFade 0.4s ease;
@@ -2311,6 +2315,7 @@
     font-size: 22px;
     border: none;
     background: transparent;
+    color: var(--text-muted);
     cursor: pointer;
   }
 
@@ -2324,11 +2329,14 @@
       font-size: 22px;
       font-weight: 600;
       line-height: 1.4;
+      color: var(--text-primary);
     }
   }
 
   &__icon {
     background: #eef3ff;
+    background: var(--primary-soft);
+    color: var(--primary);
     padding: 12px;
     border-radius: 10px;
     font-size: 20px;
@@ -2358,6 +2366,8 @@
       font-size: 13px;
       margin-bottom: 5px;
       color: #555;
+      color: var(--text-secondary);
+      font-weight: 600;
     }
 
     input,
@@ -2365,11 +2375,16 @@
       padding: 10px;
       border-radius: 6px;
       border: 1px solid #ddd;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text-primary);
       font-size: 14px;
       outline: none;
 
       &:focus {
         border-color: #6c63ff;
+        border-color: var(--input-focus);
+        box-shadow: 0 0 0 3px var(--primary-soft);
       }
     }
   }
@@ -2385,7 +2400,11 @@
       border-radius: 6px;
       border: 1px solid #ccc;
       background: #f5f5f5;
+      border: 1px solid var(--border);
+      background: var(--surface-soft);
+      color: var(--text-secondary);
       cursor: pointer;
+      font-weight: 600;
     }
 
     .btnSubmit {
@@ -2393,9 +2412,12 @@
       border-radius: 6px;
       border: none;
       background: linear-gradient(135deg, #6c63ff, #7b61ff);
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
       color: #fff;
       cursor: pointer;
       font-weight: 500;
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
     }
   }
 }

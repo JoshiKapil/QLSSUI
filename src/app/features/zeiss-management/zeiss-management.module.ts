@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { WorkspaceHeaderComponent } from '../../shared/components/workspace-header/workspace-header.component';
 import { SharedModule } from '../../shared/shared.module';
 import { ZeissManagementRoutingModule } from './zeiss-management-routing.module';
 import { ZeissShellComponent } from './shell/zeiss-shell.component';
@@ -12,6 +13,9 @@ import { ZeissCustomersComponent } from './customers/zeiss-customers.component';
 import { ZeissInventoryComponent } from './inventory/zeiss-inventory.component';
 import { ZeissNotificationsComponent } from './notifications/zeiss-notifications.component';
 
+import { ZmSearchSelectComponent } from './shared/zm-search-select.component';
+import { ZeissQuotationPdfService } from './services/zeiss-quotation-pdf.service';
+
 @NgModule({
   declarations: [
     ZeissShellComponent,
@@ -24,7 +28,10 @@ import { ZeissNotificationsComponent } from './notifications/zeiss-notifications
     ZeissCustomersComponent,
     ZeissInventoryComponent,
     ZeissNotificationsComponent,
+    ZmSearchSelectComponent,
   ],
-  imports: [SharedModule, ZeissManagementRoutingModule],
+  imports: [WorkspaceHeaderComponent, SharedModule, ZeissManagementRoutingModule],
+  providers: [ZeissQuotationPdfService],
+  exports: [ZmSearchSelectComponent],
 })
 export class ZeissManagementModule {}

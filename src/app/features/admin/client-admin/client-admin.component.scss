@@ -280,3 +280,67 @@
     white-space: normal;
   }
 }
+
+/* ================================================================
+   PRECISION HERITAGE THEME - CLIENT ADMIN
+   ================================================================ */
+:host-context(.theme-heritage) {
+  .client-search-menu {
+    background: #FFFFFF !important;
+    border-color: #DDD6CA !important;
+
+    input {
+      background: #FAF8F5 !important;
+      border-color: #DDD6CA !important;
+      color: #1C2023 !important;
+    }
+  }
+
+  .client-search-option {
+    color: #1C2023 !important;
+
+    &:hover {
+      background: #FAF8F5 !important;
+      color: #B5794A !important;
+    }
+  }
+
+  .city-manager__item {
+    background: #FAF8F5 !important;
+    border-color: #DDD6CA !important;
+    color: #1C2023 !important;
+  }
+
+  .client-pagination {
+    background: #FFFFFF !important;
+    border-color: #DDD6CA !important;
+    box-shadow: 0 4px 18px rgba(28, 32, 35, 0.05) !important;
+  }
+
+  .client-pagination__dot {
+    background: #B5794A !important;
+    box-shadow: 0 0 0 4px rgba(181, 121, 74, 0.15) !important;
+  }
+
+  .client-pagination__page,
+  .client-pagination__arrow {
+    border-color: #DDD6CA !important;
+    color: #1C2023 !important;
+
+    &:hover:not(:disabled) {
+      border-color: #B5794A !important;
+      color: #B5794A !important;
+    }
+  }
+
+  .client-pagination__page--active {
+    background: linear-gradient(135deg, #B5794A, #CBA56B) !important;
+    color: #ffffff !important;
+    box-shadow: 0 7px 16px rgba(181, 121, 74, 0.25) !important;
+  }
+
+  .client-pagination__jump button {
+    background: #1C2023 !important;
+    color: #FAF8F5 !important;
+  }
+}

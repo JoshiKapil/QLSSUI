@@ -1,24 +1,38 @@
 .feedback-page {
-  max-width: 980px;
+  max-width: 1040px;
   margin: 0 auto;
+  min-height: 100vh;
+  padding: clamp(84px, 7vw, 104px) clamp(16px, 2.5vw, 32px) 64px;
 }
 
 .page-header {
   margin-bottom: 28px;
+
+  h2 {
+    font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+    margin: 4px 0 0;
+    color: var(--text-primary, #111827);
+  }
 }
 
 .section-label {
   display: inline-block;
-  margin-bottom: 10px;
-  font-size: 0.9rem;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #0f5bb6;
+  color: var(--primary, #0f5bb6);
 }
 
 .feedback-form {
   display: grid;
   gap: 24px;
+  padding: clamp(20px, 3vw, 32px);
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm, 0 4px 16px rgba(0,0,0,0.04));
 }
 
 .form-grid {
@@ -41,18 +55,29 @@
   display: grid;
   gap: 10px;
   font-size: 0.95rem;
-  color: #1f2937;
+  color: var(--text-primary, #1f2937);
+  font-weight: 600;
 }
 
+.form-field input,
 .form-field select,
 .form-field textarea {
   width: 100%;
   min-height: 44px;
-  padding: 12px 14px;
-  border: 1px solid #d2d6dc;
-  border-radius: 12px;
-  background: #fff;
-  color: #111827;
+  padding: 11px 14px;
+  border: 1px solid var(--border, #d2d6dc);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #111827);
+  font: inherit;
+  font-size: 0.92rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    border-color: var(--primary, #0f5bb6);
+    box-shadow: 0 0 0 3px rgba(181, 121, 74, 0.15);
+  }
 }
 
 .form-field textarea {
@@ -304,5 +329,84 @@
   .history-header,
   .history-card__top {
     flex-direction: column;
+  }
+}
+
+/* ================================================================
+   PRECISION HERITAGE THEME - FEEDBACK FORM
+   ================================================================ */
+:host-context(.theme-heritage) {
+  .page-header h2 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    color: #1C2023 !important;
+  }
+
+  .section-label {
+    color: #B5794A !important;
+  }
+
+  .feedback-form,
+  .history-card {
+    background: #FFFFFF !important;
+    border: 1px solid #DDD6CA !important;
+    box-shadow: 0 8px 24px rgba(28, 32, 35, 0.05) !important;
+  }
+
+  .history-header h2 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    color: #1C2023 !important;
+  }
+
+  .history-count {
+    background: #F5EFEB !important;
+    color: #8C5528 !important;
+  }
+
+  .form-field input,
+  .form-field select,
+  .form-field textarea,
+  .picker-toggle {
+    background: #FAF8F5 !important;
+    border-color: #DDD6CA !important;
+    color: #1C2023 !important;
+
+    &:focus {
+      border-color: #B5794A !important;
+      box-shadow: 0 0 0 3px rgba(181, 121, 74, 0.15) !important;
+    }
+  }
+
+  .rating-field {
+    background: #FAF8F5 !important;
+    border-color: #DDD6CA !important;
+  }
+
+  .star-rating button.active {
+    color: #B5794A !important;
+  }
+
+  .history-rating {
+    color: #B5794A !important;
+  }
+
+  .history-pagination button {
+    border-color: #DDD6CA !important;
+    color: #1C2023 !important;
+
+    &.active {
+      background: #B5794A !important;
+      border-color: #B5794A !important;
+      color: #FFFFFF !important;
+    }
+  }
+
+  .btn-outline {
+    background: linear-gradient(135deg, #B5794A, #CBA56B) !important;
+    border-color: #CBA56B !important;
+    color: #ffffff !important;
+
+    &:hover {
+      background: linear-gradient(135deg, #9C6338, #B5794A) !important;
+    }
   }
 }

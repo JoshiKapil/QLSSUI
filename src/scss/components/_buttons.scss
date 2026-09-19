@@ -1,0 +1,129 @@
+/* ================================================================
+   COMPONENTS: BUTTONS
+   ================================================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 22px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  border-radius: var(--radius-pill);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition);
+  white-space: nowrap;
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  &:disabled,
+  &[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: var(--shadow-sm);
+
+  &:hover {
+    background: var(--primary-hover);
+    color: #ffffff;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-secondary {
+  background: var(--surface-soft);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+
+  &:hover {
+    background: var(--border);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+  }
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--primary);
+  border-color: var(--primary);
+
+  &:hover {
+    background: var(--primary);
+    color: #ffffff;
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+.btn-soft {
+  background: var(--primary-soft);
+  color: var(--primary);
+  border-color: transparent;
+
+  &:hover {
+    background: var(--primary);
+    color: #ffffff;
+  }
+}
+
+.btn-accent {
+  background: var(--accent);
+  color: #ffffff;
+
+  &:hover {
+    filter: brightness(0.92);
+    color: #ffffff;
+  }
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: #ffffff;
+
+  &:hover {
+    filter: brightness(0.9);
+    color: #ffffff;
+  }
+}
+
+.btn-success {
+  background: var(--success);
+  color: #ffffff;
+
+  &:hover {
+    filter: brightness(0.9);
+    color: #ffffff;
+  }
+}
+
+.btn-sm {
+  padding: 6px 14px;
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+}
+
+.btn-lg {
+  padding: 14px 28px;
+  font-size: 16px;
+  border-radius: var(--radius-md);
+}
+

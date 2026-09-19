@@ -37,7 +37,7 @@
               Client PO:
               <b>{{ sale.clientPoNo || 'Pending' }}</b>
               · Vendor ID:
-              <b>{{ sale.vendorCode || 'Pending' }}</b>
+              <b>{{ sale.vendorCode || 'Not provided' }}</b>
             </p>
           </div>
           <span class="stage">{{ sale.currentStage }}</span>
@@ -142,16 +142,10 @@
 
         <article class="panel next-action">
           <small>NEXT ACTION</small>
-          <ng-container *ngIf="!sale.vendorCode || !sale.clientPoNo">
-            <h3>Vendor ID and Client PO required</h3>
-            <p>Update them in Sales Lifecycle before PI generation.</p>
-            <a class="btn secondary" routerLink="/zeiss/sales-lifecycle">Open Sales Lifecycle</a>
-          </ng-container>
-          <ng-container *ngIf="sale.vendorCode && sale.clientPoNo && !pi">
+          <ng-container *ngIf="!pi">
             <h3>Generate Proforma Invoice</h3>
             <p>
-              PI is created from the confirmed Zeiss item quantities and quotation values. It is not emailed
-              automatically.
+              PI is created from confirmed quotation values. Client PO and Vendor ID are optional.
             </p>
             <button class="btn primary" (click)="generatePi()" [disabled]="saving || !canGeneratePi">
               <i class="fas fa-file-pdf"></i>
@@ -262,7 +256,7 @@
           <div class="empty-doc">
             <i class="fas fa-file-invoice"></i>
             <strong>No PI/TI generated yet.</strong>
-            <span>Complete Vendor ID and Client PO, then generate the PI.</span>
+            <span>Generate the Proforma Invoice below. Client PO and Vendor ID are optional.</span>
           </div>
         </ng-template>
       </section>

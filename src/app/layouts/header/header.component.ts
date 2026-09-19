@@ -1,6 +1,7 @@
-﻿import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
+import { ThemeService } from '../../core/services/theme.service';
 
 @Component({
   selector: 'app-header',
@@ -18,7 +19,10 @@ export class HeaderComponent implements OnDestroy {
   userName = 'User';
   private destroy$ = new Subject<void>();
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    public themeService: ThemeService,
+  ) {
     this.authService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
       this.isLoggedIn = this.authService.isLoggedIn();
       this.isAdmin = this.authService.isAdmin();
@@ -27,6 +31,18 @@ export class HeaderComponent implements OnDestroy {
       this.hasZeissAccess = (user?.role || '').toLowerCase() === 'superadmin' || (user?.email || '').toLowerCase() === 'consultant@qlssconsulting.com';
       this.userName = user?.name || user?.email || 'User';
     });
+  }
+
+  get isHeritage(): boolean {
+    return this.themeService.isHeritage;
+  }
+
+  get hasOnboardingAccess(): boolean {
+    return this.isLoggedIn;
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
   }
 
   toggleMenu(): void {
@@ -61,8 +77,8 @@ export class HeaderComponent implements OnDestroy {
   }
 
   get truncatedUserName(): string {
-    if (this.userName.length > 8) {
-      return this.userName.substring(0, 5) + '...';
+    if (this.userName.length > 18) {
+      return this.userName.substring(0, 15) + '...';
     }
     return this.userName;
   }

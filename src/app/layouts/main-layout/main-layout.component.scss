@@ -1,0 +1,19 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.workspace-layout {
+  margin: 0;
+  padding: 0;
+  min-height: calc(100vh - 64px);
+  background: var(--header-bg, #1C2023);
+}

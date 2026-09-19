@@ -1,1 +1,137 @@
-@use '../zeiss-shared.scss';.split{display:grid;grid-template-columns:390px 1fr;gap:16px}.listPane{padding:12px}.listRow{width:100%;display:grid;grid-template-columns:1fr auto;gap:5px;text-align:left;padding:12px;border:0;border-bottom:1px solid var(--zm-border);background:transparent;color:var(--zm-ink);cursor:pointer}.listRow div{display:grid}.listRow span{font-size:12px;color:var(--zm-muted)}.listRow .stage{grid-column:1/-1;width:max-content}.listRow.active{background:var(--zm-soft);border-radius:10px}.detailHead{display:flex;justify-content:space-between;gap:14px}.detailHead h2{margin:2px 0}.command{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.flow{display:flex;overflow:auto;gap:0;padding:18px 4px;margin:14px 0}.flow div{min-width:145px;position:relative;padding-top:18px;color:var(--zm-muted)}.flow div:before{content:'';position:absolute;top:6px;left:8px;right:-8px;height:2px;background:var(--zm-border)}.flow span{position:absolute;top:0;left:0;width:14px;height:14px;border-radius:50%;background:var(--zm-border)}.flow .current span{background:var(--zm-primary);box-shadow:0 0 0 4px color-mix(in srgb,var(--zm-primary) 15%,transparent)}.flow .current small{color:var(--zm-primary);font-weight:800}.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}.facts div,.ruleBox{padding:12px;border:1px solid var(--zm-border);border-radius:12px;background:var(--zm-soft)}.facts small,.facts b,.facts span,.ruleBox span{display:block}.facts span,.ruleBox span{font-size:12px;color:var(--zm-muted);margin-top:3px}.ruleBox{margin-top:16px}.small{width:min(800px,95vw)}@media(max-width:1000px){.split{grid-template-columns:1fr}.facts{grid-template-columns:1fr 1fr}}
+@use '../zeiss-shared.scss';
+
+.split {
+  display: grid;
+  grid-template-columns: 390px minmax(0, 1fr);
+  gap: 16px;
+}
+
+.listPane { padding: 12px; }
+
+.listRow {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 5px;
+  text-align: left;
+  padding: 12px;
+  border: 0;
+  border-bottom: 1px solid var(--zm-border);
+  background: transparent;
+  color: var(--zm-ink);
+  cursor: pointer;
+}
+.listRow div { display: grid; }
+.listRow span { font-size: 12px; color: var(--zm-muted); }
+.listRow .stage { grid-column: 1/-1; width: max-content; }
+.listRow.active { background: var(--zm-soft); border-radius: 10px; }
+
+.detailHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.detailHead h2 { margin: 2px 0; }
+
+/* ── Command button group ── */
+.command {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 4px 0;
+}
+.command .btn {
+  min-width: 140px;
+  justify-content: center;
+  font-size: 13px;
+  padding: 9px 16px;
+  border-radius: 10px;
+}
+.command .btn span { line-height: 1.2; }
+
+/* ── Flow timeline ── */
+.flow {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--zm-primary) var(--zm-soft);
+  gap: 0;
+  padding: 18px 4px;
+  margin: 14px 0;
+}
+.flow::-webkit-scrollbar { height: 6px; }
+.flow::-webkit-scrollbar-track { background: var(--zm-soft); border-radius: 3px; }
+.flow::-webkit-scrollbar-thumb { background: var(--zm-primary); border-radius: 3px; }
+.flow div {
+  min-width: 145px;
+  position: relative;
+  padding-top: 18px;
+  color: var(--zm-muted);
+}
+.flow div:before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  right: -8px;
+  height: 2px;
+  background: var(--zm-border);
+}
+.flow span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--zm-border);
+}
+.flow .current span {
+  background: var(--zm-primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--zm-primary) 15%, transparent);
+}
+.flow .current small { color: var(--zm-primary); font-weight: 800; }
+
+/* ── Fact cards ── */
+.facts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 14px 0;
+}
+.facts div, .ruleBox {
+  padding: 12px;
+  border: 1px solid var(--zm-border);
+  border-radius: 12px;
+  background: var(--zm-soft);
+}
+.facts small, .facts b, .facts span, .ruleBox span { display: block; }
+.facts span, .ruleBox span { font-size: 12px; color: var(--zm-muted); margin-top: 3px; }
+.ruleBox { margin-top: 16px; }
+
+.small { width: min(800px, 95vw); }
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+  .split { grid-template-columns: 320px minmax(0, 1fr); }
+}
+@media (max-width: 900px) {
+  .split { grid-template-columns: 1fr; }
+  .facts { grid-template-columns: 1fr 1fr; }
+  .detailHead { flex-direction: column; }
+  .command { justify-content: flex-start; }
+  .command .btn { min-width: 0; flex: 1 1 auto; }
+}
+@media (max-width: 600px) {
+  .facts { grid-template-columns: 1fr 1fr; }
+  .command { gap: 6px; }
+  .command .btn { font-size: 12px; padding: 8px 12px; }
+}
+@media (max-width: 420px) {
+  .command .btn { flex: 1 1 100%; }
+}
+

@@ -84,6 +84,19 @@ export class ProjectQuotationsComponent implements AfterViewInit, OnDestroy, OnI
   projectTemplates: PmProjectTemplate[] = [];
   submitConfirmation?: PmQuotation;
 
+  decisionModal: {
+    open: boolean;
+    quotation?: PmQuotation;
+    action: 'Approve' | 'Reject' | 'Return';
+    remark: string;
+  } = { open: false, action: 'Approve', remark: '' };
+
+  outcomeModal: {
+    open: boolean;
+    status: string;
+    remark: string;
+  } = { open: false, status: '', remark: '' };
+
   search = '';
   statusFilter = '';
   error = '';
@@ -382,16 +395,45 @@ export class ProjectQuotationsComponent implements AfterViewInit, OnDestroy, OnI
   }
 
   decide(q: PmQuotation, action: 'Approve' | 'Reject' | 'Return'): void {
-    const remark = action === 'Approve' ? '' : (window.prompt(`${action} remark:`, '') || '').trim();
-    if (action !== 'Approve' && !remark) return;
+    if (action === 'Approve') {
+      this.clearMessage();
+      this.api.decideQuotation(q.quotationId, action, '', false, this.sendForm.followUpDays).subscribe({
+        next: () => {
+          this.success = `Quotation approve completed.`;
+          this.refresh();
+        },
+        error: (e) => (this.error = e?.error?.message || 'Unable to save quotation decision.'),
+      });
+      return;
+    }
+    this.decisionModal = {
+      open: true,
+      quotation: q,
+      action,
+      remark: '',
+    };
+  }
+
+  confirmDecision(): void {
+    if (!this.decisionModal.quotation) return;
+    const { quotation, action, remark } = this.decisionModal;
+    if (action !== 'Approve' && !remark.trim()) {
+      this.error = `Please enter a remark for ${action}.`;
+      return;
+    }
     this.clearMessage();
-    this.api.decideQuotation(q.quotationId, action, remark, false, this.sendForm.followUpDays).subscribe({
+    this.api.decideQuotation(quotation.quotationId, action, remark.trim(), false, this.sendForm.followUpDays).subscribe({
       next: () => {
         this.success = `Quotation ${action.toLowerCase()} completed.`;
+        this.decisionModal.open = false;
         this.refresh();
       },
       error: (e) => (this.error = e?.error?.message || 'Unable to save quotation decision.'),
     });
+  }
+
+  closeDecisionModal(): void {
+    this.decisionModal.open = false;
   }
 
   async send(q: PmQuotation): Promise<void> {
@@ -493,14 +535,29 @@ export class ProjectQuotationsComponent implements AfterViewInit, OnDestroy, OnI
 
   setOutcome(status: string): void {
     if (!this.selected || !status) return;
-    const remark = window.prompt(`Remark for "${status}":`, '') || '';
-    this.api.updateEnquiryStatus(this.selected.enquiryId, status, remark).subscribe({
+    this.outcomeModal = {
+      open: true,
+      status,
+      remark: '',
+    };
+  }
+
+  confirmOutcome(): void {
+    if (!this.selected || !this.outcomeModal.status) return;
+    const { status, remark } = this.outcomeModal;
+    this.clearMessage();
+    this.api.updateEnquiryStatus(this.selected.enquiryId, status, remark.trim()).subscribe({
       next: () => {
         this.success = `Enquiry status changed to ${status}.`;
+        this.outcomeModal.open = false;
         this.refresh();
       },
       error: (e) => (this.error = e?.error?.message || 'Unable to update enquiry outcome.'),
     });
+  }
+
+  closeOutcomeModal(): void {
+    this.outcomeModal.open = false;
   }
 
   toggleMember(userId: number, checked: boolean): void {

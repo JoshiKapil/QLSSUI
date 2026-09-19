@@ -210,3 +210,79 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ================================================================
+   PRECISION HERITAGE THEME - PRESENTATION EMAIL
+   ================================================================ */
+:host-context(.theme-heritage) {
+  .admin-header h1 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    color: #1C2023 !important;
+  }
+
+  .admin-form,
+  .recipient-panel,
+  .history-section {
+    background: #FFFFFF !important;
+    border-color: #DDD6CA !important;
+    box-shadow: 0 8px 24px rgba(28, 32, 35, 0.05) !important;
+
+    h2 {
+      font-family: var(--font-heading, 'Playfair Display', serif);
+      color: #1C2023 !important;
+    }
+  }
+
+  .presentation-picker__toggle,
+  .presentation-picker__menu,
+  .form-field input,
+  .form-field textarea {
+    background: #FAF8F5 !important;
+    border-color: #DDD6CA !important;
+    color: #1C2023 !important;
+
+    &:focus,
+    &:focus-visible {
+      border-color: #B5794A !important;
+      box-shadow: 0 0 0 3px rgba(181, 121, 74, 0.15) !important;
+    }
+  }
+
+  .presentation-picker__option:hover {
+    background: #F3ECE1 !important;
+    color: #B5794A !important;
+  }
+
+  .presentation-picker__option strong i,
+  .presentation-picker__toggle .dropdown-icon {
+    color: #B5794A !important;
+  }
+
+  .recipient-row {
+    border-color: #EFE9DE !important;
+
+    input {
+      accent-color: #B5794A !important;
+    }
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #B5794A, #CBA56B) !important;
+    border-color: #CBA56B !important;
+    color: #ffffff !important;
+
+    &:hover {
+      background: linear-gradient(135deg, #9C6338, #B5794A) !important;
+    }
+  }
+
+  .btn-outline {
+    border-color: #DDD6CA !important;
+    color: #1C2023 !important;
+
+    &:hover {
+      border-color: #B5794A !important;
+      color: #B5794A !important;
+    }
+  }
+}

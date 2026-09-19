@@ -229,99 +229,77 @@ export class CertificatePdfService {
     return this.qlssLogoBytes;
   }
 
-  protected async embedCompanyLogo(document: PDFDocument, logoUrl: string): Promise<ReturnType<PDFDocument['embedPng']>> {
+  protected async embedCompanyLogo(document: PDFDocument, logoUrl: string): Promise<PDFImage> {
     const bytes = logoUrl.startsWith('data:')
       ? await fetch(logoUrl).then((response) => response.arrayBuffer())
       : await firstValueFrom(this.http.get(logoUrl, { responseType: 'arraybuffer' }));
-    const transparentPng = await this.removeLogoBackground(bytes);
-    return document.embedPng(transparentPng);
+
+    const u8 = new Uint8Array(bytes);
+
+    // 1. Direct embedding for PNG: Exact same lossless mechanism as QLSS logo.
+    // Retains full native resolution, vector-raster clarity, and alpha transparency when zooming.
+    if (this.isPng(u8)) {
+      try {
+        return await document.embedPng(bytes);
+      } catch (err) {
+        console.warn('Direct embedPng failed, falling back to high-res converter', err);
+      }
+    }
+
+    // 2. Direct embedding for JPEG: Exact same native fidelity mechanism as QLSS logo.
+    // Retains 100% original JPEG native resolution without recompression or downsampling.
+    if (this.isJpg(u8)) {
+      try {
+        return await document.embedJpg(bytes);
+      } catch (err) {
+        console.warn('Direct embedJpg failed, falling back to high-res converter', err);
+      }
+    }
+
+    // 3. High-resolution supersampled lossless fallback for WebP, GIF, SVG, or exotic formats.
+    const highResPng = await this.convertToHighQualityPng(bytes);
+    return await document.embedPng(highResPng);
   }
 
-  private async removeLogoBackground(bytes: ArrayBuffer): Promise<Uint8Array> {
+  private isPng(bytes: Uint8Array): boolean {
+    return (
+      bytes.length >= 8 &&
+      bytes[0] === 0x89 &&
+      bytes[1] === 0x50 &&
+      bytes[2] === 0x4e &&
+      bytes[3] === 0x47 &&
+      bytes[4] === 0x0d &&
+      bytes[5] === 0x0a &&
+      bytes[6] === 0x1a &&
+      bytes[7] === 0x0a
+    );
+  }
+
+  private isJpg(bytes: Uint8Array): boolean {
+    return bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+  }
+
+  private async convertToHighQualityPng(bytes: ArrayBuffer): Promise<Uint8Array> {
     const blob = new Blob([bytes]);
     const image = await createImageBitmap(blob);
+    // Supersample up to 2400px on the longest dimension (or 2x original) to ensure extreme zoom sharpness
+    const maxDim = Math.max(image.width, image.height);
+    const targetDim = Math.min(2400, Math.max(maxDim * 2, 1200));
+    const scale = targetDim / maxDim;
+
     const canvas = document.createElement('canvas');
-    canvas.width = image.width;
-    canvas.height = image.height;
+    canvas.width = Math.round(image.width * scale);
+    canvas.height = Math.round(image.height * scale);
     const context = canvas.getContext('2d');
     if (!context) return new Uint8Array(bytes);
 
-    context.drawImage(image, 0, 0);
-    const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
-    const background = this.getCornerColor(pixels, canvas.width, canvas.height);
-    for (let index = 0; index < pixels.data.length; index += 4) {
-      if (pixels.data[index + 3] === 0) continue;
-      const distance = Math.max(
-        Math.abs(pixels.data[index] - background.red),
-        Math.abs(pixels.data[index + 1] - background.green),
-        Math.abs(pixels.data[index + 2] - background.blue),
-      );
-      if (distance <= 18) pixels.data[index + 3] = 0;
-    }
-    context.putImageData(pixels, 0, 0);
-    const bounds = this.getVisibleBounds(pixels, canvas.width, canvas.height);
-    const output = document.createElement('canvas');
-    if (bounds) {
-      const padding = 2;
-      output.width = bounds.width + padding * 2;
-      output.height = bounds.height + padding * 2;
-      output.getContext('2d')?.drawImage(
-        canvas,
-        bounds.x,
-        bounds.y,
-        bounds.width,
-        bounds.height,
-        padding,
-        padding,
-        bounds.width,
-        bounds.height,
-      );
-    } else {
-      output.width = canvas.width;
-      output.height = canvas.height;
-      output.getContext('2d')?.drawImage(canvas, 0, 0);
-    }
-    const png = await new Promise<Blob | null>((resolve) => output.toBlob(resolve, 'image/png'));
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = 'high';
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
     image.close();
+
+    const png = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
     return png ? new Uint8Array(await png.arrayBuffer()) : new Uint8Array(bytes);
-  }
-
-  private getVisibleBounds(
-    pixels: ImageData,
-    width: number,
-    height: number,
-  ): { x: number; y: number; width: number; height: number } | null {
-    let left = width;
-    let top = height;
-    let right = -1;
-    let bottom = -1;
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        if (pixels.data[(y * width + x) * 4 + 3] < 12) continue;
-        left = Math.min(left, x);
-        top = Math.min(top, y);
-        right = Math.max(right, x);
-        bottom = Math.max(bottom, y);
-      }
-    }
-    return right < left || bottom < top
-      ? null
-      : { x: left, y: top, width: right - left + 1, height: bottom - top + 1 };
-  }
-
-  private getCornerColor(
-    pixels: ImageData,
-    width: number,
-    height: number,
-  ): { red: number; green: number; blue: number } {
-    const samples = [0, width - 1, (height - 1) * width, height * width - 1];
-    const values = samples.map((pixel) => pixel * 4).filter((index) => pixels.data[index + 3] > 0);
-    const safeValues = values.length ? values : [0];
-    return {
-      red: safeValues.reduce((sum, index) => sum + pixels.data[index], 0) / safeValues.length,
-      green: safeValues.reduce((sum, index) => sum + pixels.data[index + 1], 0) / safeValues.length,
-      blue: safeValues.reduce((sum, index) => sum + pixels.data[index + 2], 0) / safeValues.length,
-    };
   }
 
   protected async drawDynamicBranding(document: PDFDocument, page: PDFPage, logoUrl?: string): Promise<void> {

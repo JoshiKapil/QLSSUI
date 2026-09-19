@@ -5,6 +5,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { NotifierService } from '../../../core/services/notifier.service';
 import { ZeissFollowUp, ZeissInstrument, ZeissQuotation } from '../models/zeiss-management.models';
 import { ZeissManagementService } from '../services/zeiss-management.service';
+import { ZeissQuotationPdfService } from '../services/zeiss-quotation-pdf.service';
 @Component({
   selector: 'app-zeiss-quotations',
   templateUrl: './zeiss-quotations.component.html',
@@ -27,6 +28,20 @@ export class ZeissQuotationsComponent implements OnInit {
   edit = false;
   send = false;
   confirm = false;
+
+  // Themed modal states
+  followUpModal = false;
+  followUpDays = 2;
+  followUpNotes = 'Quotation follow-up';
+
+  completeFollowUpModal = false;
+  completeFollowUpTarget: ZeissFollowUp | null = null;
+  completionNote = '';
+
+  decisionModal = false;
+  decisionAction: 'Approve' | 'Reject' | 'Return' = 'Approve';
+  decisionRemark = '';
+
   form: any = {};
   sendForm: any = { to: '', cc: '', subject: '', message: '', followUpDays: 2 };
   confirmForm: any = { confirmedOn: this.today(), vendorCode: '', remarks: '' };
@@ -34,6 +49,7 @@ export class ZeissQuotationsComponent implements OnInit {
     private api: ZeissManagementService,
     private notify: NotifierService,
     private auth: AuthService,
+    private pdfService: ZeissQuotationPdfService,
   ) {}
   ngOnInit() {
     this.loadInstruments();
@@ -129,17 +145,29 @@ export class ZeissQuotationsComponent implements OnInit {
         error: (e) => this.err(e),
       });
   }
-  decision(action: 'Approve' | 'Reject' | 'Return') {
-    if (!this.selected) return;
-    const remark = action === 'Approve' ? '' : prompt('Remark');
-    if (remark === null) return;
-    if (this.saving) return;
+  openDecision(action: 'Approve' | 'Reject' | 'Return') {
+    this.decisionAction = action;
+    this.decisionRemark = '';
+    if (action === 'Approve') {
+      this.executeDecision('');
+    } else {
+      this.decisionModal = true;
+    }
+  }
+
+  submitDecision() {
+    this.executeDecision(this.decisionRemark);
+  }
+
+  private executeDecision(remark: string) {
+    if (!this.selected || this.saving) return;
     this.saving = true;
     this.api
-      .decideQuotation(this.selected.quotationId, action, remark)
+      .decideQuotation(this.selected.quotationId, this.decisionAction, remark)
       .pipe(finalize(() => (this.saving = false)))
       .subscribe({
         next: (x) => {
+          this.decisionModal = false;
           this.selected = x;
           this.load();
         },
@@ -172,30 +200,64 @@ export class ZeissQuotationsComponent implements OnInit {
         error: (e) => this.err(e),
       });
   }
-  viewPdf() {
+  async viewPdf() {
     if (!this.selected) return;
-    this.api
-      .quotationPdf(this.selected.quotationId)
-      .subscribe({ next: (b) => this.openBlob(b), error: (e) => this.err(e) });
+    try {
+      // 1. Generate exact high-fidelity 2-page quotation PDF with pdf-lib matching Berry Automation template
+      const blob = await this.pdfService.buildBlob(this.selected);
+      this.openBlob(blob);
+
+      // 2. Upload to server in background so email attachment uses the exact same generated document
+      const file = new File([blob], `Zeiss_Quotation_${this.selected.quotationNo}.pdf`, { type: 'application/pdf' });
+      this.api.uploadGeneratedQuotationPdf(this.selected.quotationId, file).subscribe({
+        error: () => { /* Background upload fallback silently */ },
+      });
+    } catch {
+      // Fallback to server endpoint
+      this.api
+        .quotationPdf(this.selected.quotationId)
+        .subscribe({ next: (b) => this.openBlob(b), error: (e) => this.err(e) });
+    }
   }
-  addFollowUp() {
-    if (!this.selected) return;
-    const days = Number(prompt('Follow-up after how many days?', '2') || 2);
-    const notes = prompt('Follow-up note', 'Quotation follow-up') || '';
-    if (this.saving) return;
+  openAddFollowUp() {
+    this.followUpDays = 2;
+    this.followUpNotes = 'Quotation follow-up';
+    this.followUpModal = true;
+  }
+  saveFollowUp() {
+    if (!this.selected || this.saving) return;
     this.saving = true;
     this.api
-      .addFollowUp(this.selected.quotationId, days, notes)
+      .addFollowUp(this.selected.quotationId, Number(this.followUpDays) || 2, this.followUpNotes)
       .pipe(finalize(() => (this.saving = false)))
-      .subscribe({ next: () => this.select(this.selected), error: (e) => this.err(e) });
+      .subscribe({
+        next: () => {
+          this.followUpModal = false;
+          this.notify.successToastr('Follow-up scheduled.');
+          this.select(this.selected);
+        },
+        error: (e) => this.err(e),
+      });
   }
-  complete(f: ZeissFollowUp) {
-    if (this.saving) return;
+  openComplete(f: ZeissFollowUp) {
+    this.completeFollowUpTarget = f;
+    this.completionNote = '';
+    this.completeFollowUpModal = true;
+  }
+  saveCompleteFollowUp() {
+    if (!this.completeFollowUpTarget || this.saving) return;
     this.saving = true;
     this.api
-      .completeFollowUp(f.followUpId, prompt('Completion note', '') || '')
+      .completeFollowUp(this.completeFollowUpTarget.followUpId, this.completionNote)
       .pipe(finalize(() => (this.saving = false)))
-      .subscribe({ next: () => this.select(this.selected), error: (e) => this.err(e) });
+      .subscribe({
+        next: () => {
+          this.completeFollowUpModal = false;
+          this.notify.successToastr('Follow-up marked complete.');
+          this.select(this.selected);
+        },
+        error: (e) => this.err(e),
+      });
   }
   openConfirm() {
     this.confirmForm = { confirmedOn: this.today(), vendorCode: '', remarks: '' };

@@ -38,14 +38,15 @@
         <div class="command">
           <button class="btn secondary" (click)="viewPdf()">
             <i class="fas fa-eye"></i>
-            View PDF
+            <span>View PDF</span>
           </button>
           <button
             class="btn secondary"
             *ngIf="x.status === 'Draft Quotation' || x.status === 'Returned for Modification'"
             (click)="openEdit()"
           >
-            Edit
+            <i class="fas fa-pen"></i>
+            <span>Edit</span>
           </button>
           <button
             [disabled]="saving"
@@ -53,31 +54,35 @@
             *ngIf="x.status === 'Draft Quotation' || x.status === 'Returned for Modification'"
             (click)="submit()"
           >
-            Submit
+            <i class="fas fa-paper-plane"></i>
+            <span>Submit</span>
           </button>
           <button
             [disabled]="saving"
             class="btn success"
             *ngIf="isSuperAdmin && x.status === 'Approval Pending'"
-            (click)="decision('Approve')"
+            (click)="openDecision('Approve')"
           >
-            Approve
+            <i class="fas fa-circle-check"></i>
+            <span>Approve</span>
           </button>
           <button
             [disabled]="saving"
             class="btn danger"
             *ngIf="isSuperAdmin && x.status === 'Approval Pending'"
-            (click)="decision('Reject')"
+            (click)="openDecision('Reject')"
           >
-            Reject
+            <i class="fas fa-ban"></i>
+            <span>Reject</span>
           </button>
           <button
             [disabled]="saving"
             class="btn secondary"
             *ngIf="isSuperAdmin && x.status === 'Approval Pending'"
-            (click)="decision('Return')"
+            (click)="openDecision('Return')"
           >
-            Return
+            <i class="fas fa-rotate-left"></i>
+            <span>Return</span>
           </button>
           <button
             class="btn primary"
@@ -85,14 +90,15 @@
             (click)="openSend()"
           >
             <i class="fas fa-paper-plane"></i>
-            Send
+            <span>Send</span>
           </button>
           <button
             class="btn success"
             *ngIf="x.status === 'Quotation Sent' && !x.clientResponse?.includes('CONFIRMED')"
             (click)="openConfirm()"
           >
-            Client Confirmed
+            <i class="fas fa-handshake"></i>
+            <span>Client Confirmed</span>
           </button>
         </div>
       </div>
@@ -156,7 +162,7 @@
       </div>
       <div class="followHead">
         <h3>Follow-ups</h3>
-        <button [disabled]="saving" class="btn secondary" (click)="addFollowUp()">+ Schedule</button>
+        <button [disabled]="saving" class="btn secondary" (click)="openAddFollowUp()">+ Schedule</button>
       </div>
       <div class="row" *ngFor="let f of followups">
         <div>
@@ -165,7 +171,7 @@
         </div>
         <div>
           <span class="stage">{{ f.status }}</span>
-          <button [disabled]="saving" class="eye" *ngIf="f.status === 'Pending'" (click)="complete(f)">Complete</button>
+          <button [disabled]="saving" class="eye" *ngIf="f.status === 'Pending'" (click)="openComplete(f)">Complete</button>
         </div>
       </div>
     </article>
@@ -213,11 +219,17 @@
     </div>
     <div class="lookup-tools"><app-list-pager [compact]="true" [page]="instrumentsPage" (changed)="loadInstruments()"></app-list-pager></div>
     <div class="itemline" *ngFor="let i of form.items; let n = index">
-      <select [(ngModel)]="i.instrumentId" (ngModelChange)="itemChanged(i)">
-        <option *ngFor="let z of instruments" [ngValue]="z.instrumentId">
-          {{ z.partNumber }} - {{ z.partDescription }}
-        </option>
-      </select>
+      <zm-search-select
+        class="item-search-dd"
+        [options]="instruments"
+        labelKey="partNumber"
+        detailKey="partDescription"
+        valueKey="instrumentId"
+        [showStock]="true"
+        placeholder="Search item by part no or description..."
+        [(ngModel)]="i.instrumentId"
+        (ngModelChange)="itemChanged(i)"
+      ></zm-search-select>
       <input aria-label="Quantity" type="number" min="1" [(ngModel)]="i.quantity" />
       <input aria-label="Unit price" type="number" min="0" [(ngModel)]="i.unitPrice" />
       <button class="btn danger" (click)="removeItem(n)" aria-label="Remove item" title="Remove item">&times;</button>
@@ -283,6 +295,83 @@
     <div class="actions">
       <button [disabled]="saving" class="btn success" (click)="confirmClient()">
         Confirm & Create Sales Lifecycle
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Themed Schedule Follow-Up Modal (replaces window.prompt) -->
+<div class="modal" *ngIf="followUpModal && selected">
+  <div class="dialog small" role="dialog" aria-modal="true" aria-label="Schedule Follow-up">
+    <header>
+      <h2>Schedule Follow-up for {{ selected.quotationNo }}</h2>
+      <button class="btn secondary" (click)="followUpModal = false">Close</button>
+    </header>
+    <div class="form">
+      <label class="span4">
+        Follow-up after how many days?
+        <input type="number" min="1" max="90" [(ngModel)]="followUpDays" />
+      </label>
+      <label class="span4">
+        Follow-up Note / Purpose
+        <textarea rows="3" [(ngModel)]="followUpNotes" placeholder="e.g. Call client regarding quotation review and pricing approval"></textarea>
+      </label>
+    </div>
+    <div class="actions">
+      <button class="btn secondary" (click)="followUpModal = false">Cancel</button>
+      <button [disabled]="saving" class="btn primary" (click)="saveFollowUp()">
+        <i class="fas fa-calendar-check"></i>
+        Schedule Follow-up
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Themed Complete Follow-Up Modal (replaces window.prompt) -->
+<div class="modal" *ngIf="completeFollowUpModal && completeFollowUpTarget">
+  <div class="dialog small" role="dialog" aria-modal="true" aria-label="Complete Follow-up">
+    <header>
+      <h2>Complete Follow-up #{{ completeFollowUpTarget.followUpNo }}</h2>
+      <button class="btn secondary" (click)="completeFollowUpModal = false">Close</button>
+    </header>
+    <div class="form">
+      <label class="span4">
+        Completion Note (optional)
+        <textarea rows="3" [(ngModel)]="completionNote" placeholder="e.g. Discussed with client, awaiting PO by Monday..."></textarea>
+      </label>
+    </div>
+    <div class="actions">
+      <button class="btn secondary" (click)="completeFollowUpModal = false">Cancel</button>
+      <button [disabled]="saving" class="btn success" (click)="saveCompleteFollowUp()">
+        <i class="fas fa-check"></i>
+        Mark as Completed
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Themed Quotation Decision Modal (replaces window.prompt) -->
+<div class="modal" *ngIf="decisionModal && selected">
+  <div class="dialog small" role="dialog" aria-modal="true" aria-label="Quotation Decision">
+    <header>
+      <h2>{{ decisionAction }} {{ selected.quotationNo }}</h2>
+      <button class="btn secondary" (click)="decisionModal = false">Close</button>
+    </header>
+    <div class="form">
+      <label class="span4">
+        {{ decisionAction }} Remark / Reason
+        <textarea rows="3" [(ngModel)]="decisionRemark" placeholder="Enter reason or revision instructions..."></textarea>
+      </label>
+    </div>
+    <div class="actions">
+      <button class="btn secondary" (click)="decisionModal = false">Cancel</button>
+      <button
+        [disabled]="saving"
+        class="btn"
+        [ngClass]="decisionAction === 'Reject' ? 'danger' : 'secondary'"
+        (click)="submitDecision()"
+      >
+        Confirm {{ decisionAction }}
       </button>
     </div>
   </div>

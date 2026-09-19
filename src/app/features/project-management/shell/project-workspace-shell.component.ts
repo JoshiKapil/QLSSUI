@@ -14,7 +14,7 @@ import {
 })
 export class ProjectWorkspaceShellComponent {
   menuOpen = false;
-  theme: PmOnboardingThemeId;
+  get theme(): PmOnboardingThemeId { return this.themeService.getTheme(); }
   readonly themeOptions: ReadonlyArray<PmOnboardingThemeOption>;
   readonly loaderState$: PmLoadingService['state$'];
 
@@ -25,7 +25,6 @@ export class ProjectWorkspaceShellComponent {
   ) {
     this.loaderState$ = this.pmLoader.state$;
     this.themeOptions = this.themeService.options;
-    this.theme = this.themeService.getTheme();
   }
 
   get role(): string {
@@ -48,7 +47,6 @@ export class ProjectWorkspaceShellComponent {
   }
 
   setTheme(theme: PmOnboardingThemeId): void {
-    this.theme = theme;
     this.themeService.setTheme(theme);
   }
 

@@ -1,6 +1,7 @@
 import { ListPage } from '../../../shared/list-page';
 import { finalize } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { NotifierService } from '../../../core/services/notifier.service';
 import { ZeissBilling, ZeissInvoice, ZeissLifecycle } from '../models/zeiss-management.models';
@@ -30,6 +31,7 @@ export class ZeissInvoicesComponent implements OnInit {
   constructor(
     private readonly api: ZeissManagementService,
     private readonly notifier: NotifierService,
+    private readonly route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
@@ -53,7 +55,7 @@ export class ZeissInvoicesComponent implements OnInit {
   }
 
   get canGeneratePi(): boolean {
-    return !!this.billing && !!this.selected?.vendorCode && !!this.selected?.clientPoNo && !this.pi;
+    return !!this.billing && !this.pi;
   }
 
   get canGenerateTi(): boolean {
@@ -64,8 +66,15 @@ export class ZeissInvoicesComponent implements OnInit {
     this.api.lifecycles(this.lifecyclesPage).subscribe({
       next: (rows) => {
         this.sales = rows;
+        const queryQ = (this.route.snapshot.queryParams['q'] || this.route.snapshot.queryParams['quotationNo'] || '').toLowerCase();
+        if (queryQ) {
+          this.search = queryQ;
+        }
         const currentId = this.selected?.lifecycleId;
-        const next = rows.find((x) => x.lifecycleId === currentId) || rows[0];
+        const matched = queryQ
+          ? rows.find((x) => x.quotationNo?.toLowerCase().includes(queryQ) || x.enquiryNo?.toLowerCase().includes(queryQ))
+          : null;
+        const next = matched || rows.find((x) => x.lifecycleId === currentId) || rows[0];
         if (next) this.select(next);
         else {
           this.selected = undefined;

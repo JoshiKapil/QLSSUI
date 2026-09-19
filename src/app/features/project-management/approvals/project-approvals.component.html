@@ -116,4 +116,102 @@
       </div>
     </section>
   </ng-container>
+
+  <!-- Quotation Decision Remark Modal -->
+  <section
+    *ngIf="quotationDecisionModal.open && quotationDecisionModal.quotation as q"
+    class="pm-panel pm-modal pm-modal--compact"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="pmApprovalQuoteDecisionTitle"
+  >
+    <div class="pm-panel__head">
+      <div>
+        <small>QUOTATION REVIEW</small>
+        <h2 id="pmApprovalQuoteDecisionTitle">{{ quotationDecisionModal.action }} Quotation {{ q.quotationNo }}</h2>
+      </div>
+      <button
+        type="button"
+        class="pm-btn pm-btn--ghost pm-btn--sm"
+        aria-label="Close"
+        (click)="closeQuotationDecisionModal()"
+      >
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+    <div class="pm-panel__body" style="padding: 18px 20px;">
+      <p style="margin-bottom: 12px; font-size: 0.9rem; color: #475569;">
+        Please enter the reason or adjustments needed for <strong>{{ quotationDecisionModal.action }}</strong>.
+      </p>
+      <div class="pm-field pm-field--full">
+        <label>Remark / Instructions <strong style="color: #ef4444;">*</strong></label>
+        <textarea
+          rows="3"
+          [(ngModel)]="quotationDecisionModal.remark"
+          placeholder="Enter reason or requested adjustments..."
+          style="width: 100%;"
+        ></textarea>
+      </div>
+    </div>
+    <div class="pm-panel__foot">
+      <button type="button" class="pm-btn pm-btn--ghost" (click)="closeQuotationDecisionModal()">Cancel</button>
+      <button
+        type="button"
+        [class]="quotationDecisionModal.action === 'Reject' ? 'pm-btn pm-btn--danger' : 'pm-btn pm-btn--primary'"
+        [disabled]="!quotationDecisionModal.remark.trim()"
+        (click)="confirmQuotationDecision()"
+      >
+        Confirm {{ quotationDecisionModal.action }}
+      </button>
+    </div>
+  </section>
+
+  <!-- Project Closure Decision Remark Modal -->
+  <section
+    *ngIf="closureDecisionModal.open && closureDecisionModal.project as p"
+    class="pm-panel pm-modal pm-modal--compact"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="pmApprovalClosureDecisionTitle"
+  >
+    <div class="pm-panel__head">
+      <div>
+        <small>CLOSURE REVIEW</small>
+        <h2 id="pmApprovalClosureDecisionTitle">{{ closureDecisionModal.action }} Closure: {{ p.projectNo }}</h2>
+      </div>
+      <button
+        type="button"
+        class="pm-btn pm-btn--ghost pm-btn--sm"
+        aria-label="Close"
+        (click)="closeClosureDecisionModal()"
+      >
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+    <div class="pm-panel__body" style="padding: 18px 20px;">
+      <p style="margin-bottom: 12px; font-size: 0.9rem; color: #475569;">
+        Please state any pending activities or reason for returning closure request.
+      </p>
+      <div class="pm-field pm-field--full">
+        <label>Pending Activities / Remark <strong style="color: #ef4444;">*</strong></label>
+        <textarea
+          rows="3"
+          [(ngModel)]="closureDecisionModal.remark"
+          placeholder="Describe pending activities or feedback..."
+          style="width: 100%;"
+        ></textarea>
+      </div>
+    </div>
+    <div class="pm-panel__foot">
+      <button type="button" class="pm-btn pm-btn--ghost" (click)="closeClosureDecisionModal()">Cancel</button>
+      <button
+        type="button"
+        class="pm-btn pm-btn--primary"
+        [disabled]="!closureDecisionModal.remark.trim()"
+        (click)="confirmClosureDecision()"
+      >
+        Confirm Return
+      </button>
+    </div>
+  </section>
 </div>

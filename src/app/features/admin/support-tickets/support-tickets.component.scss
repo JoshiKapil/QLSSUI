@@ -1,4 +1,4 @@
-.support-page{padding:8rem 0 4rem;background:var(--bg-light,#f6f8fb);min-height:70vh;color:var(--text-dark,#1f2937)}
+.support-page{padding:clamp(84px, 7vw, 104px) clamp(16px, 2.5vw, 32px) 64px;background:var(--app-bg,#f6f8fb);min-height:100vh;color:var(--text-dark,#1f2937)}
 .support-header{margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.support-header h1{margin:4px 0 8px;color:var(--text-dark,#13233a)}.support-header p{margin:0;color:var(--gray-mid,#667085);max-width:850px}.eyebrow{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--primary,#0f7f83)}
 .ticket-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:16px 0}.ticket-kpi,.ticket-panel,.manual-ticket{background:var(--theme-card-bg,#fff);border:1px solid var(--gray-light-mid,#dfe5ec);border-radius:14px;box-shadow:var(--theme-card-shadow,0 8px 24px rgba(15,35,55,.06));color:var(--text-dark,#1f2937)}.ticket-kpi{padding:14px 16px}.ticket-kpi span{display:block;color:var(--gray-mid,#667085);font-size:12px}.ticket-kpi strong{display:block;margin-top:4px;font-size:25px;color:var(--text-dark,#13233a)}
 .manual-ticket{padding:18px;margin:0 0 16px}.manual-title{display:flex;justify-content:space-between;margin-bottom:14px}.manual-title strong,.manual-title span{display:block}.manual-title span{margin-top:3px;color:var(--gray-mid,#667085);font-size:12px}.manual-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.manual-grid label{display:grid;gap:6px;font-size:12px;font-weight:700}.manual-grid label.full,.manual-grid .check-row{grid-column:1/-1}.manual-grid input,.manual-grid select,.manual-grid textarea{width:100%;border:1px solid var(--gray-light-mid,#ccd5df);border-radius:9px;padding:10px 11px;background:var(--theme-control-bg,#fff);color:var(--text-dark,#1f2937);outline:none}.manual-grid input:focus,.manual-grid select:focus,.manual-grid textarea:focus{box-shadow:0 0 0 3px var(--theme-control-focus,rgba(15,127,131,.12))}.manual-grid .check-row{display:flex;align-items:center;gap:8px;font-weight:600}.manual-grid .check-row input{width:auto}.manual-note{margin-top:12px;padding:10px 12px;border-radius:9px;background:var(--bg-light,#eef7f7);color:var(--gray-mid,#667085);font-size:12px}.manual-actions{display:flex;justify-content:flex-end;margin-top:12px}
@@ -91,4 +91,83 @@
   .ticket-panel,.manual-ticket,.ticket-filters { border-radius:20px; }
   .detail-top { flex-wrap:wrap; }
   .detail-grid > .btn,.reply-box > .btn,.resolve-box > div > .btn { justify-self:stretch; }
+}
+
+/* ================================================================
+   PRECISION HERITAGE THEME - SUPPORT TICKETS
+   ================================================================ */
+:host-context(.theme-heritage) {
+  .support-page {
+    background: #F7F3EC !important;
+  }
+
+  .support-header h1 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    color: #1C2023 !important;
+  }
+
+  .eyebrow {
+    color: #B5794A !important;
+  }
+
+  .ticket-kpi,
+  .ticket-panel,
+  .manual-ticket,
+  .ticket-filters {
+    background: #FFFFFF !important;
+    border: 1px solid #DDD6CA !important;
+    box-shadow: 0 8px 24px rgba(28, 32, 35, 0.05) !important;
+
+    h2, h3 {
+      font-family: var(--font-heading, 'Playfair Display', serif);
+      color: #1C2023 !important;
+    }
+  }
+
+  .ticket-kpi {
+    border-top: 3px solid #B5794A !important;
+
+    strong {
+      color: #B5794A !important;
+    }
+  }
+
+  .ticket-row:hover,
+  .ticket-row.active {
+    background: #FAF8F5 !important;
+  }
+
+  .ticket-row.active {
+    border-left: 3px solid #B5794A !important;
+  }
+
+  .ticket-row strong,
+  .detail-top > div > span {
+    color: #B5794A !important;
+  }
+
+  .status-pill {
+    background: #F5EFEB !important;
+    color: #8C5528 !important;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #B5794A, #CBA56B) !important;
+    border-color: #CBA56B !important;
+    color: #ffffff !important;
+
+    &:hover {
+      background: linear-gradient(135deg, #9C6338, #B5794A) !important;
+    }
+  }
+
+  .btn-outline {
+    border-color: #DDD6CA !important;
+    color: #1C2023 !important;
+
+    &:hover {
+      border-color: #B5794A !important;
+      color: #B5794A !important;
+    }
+  }
 }

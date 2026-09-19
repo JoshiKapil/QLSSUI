@@ -13,14 +13,14 @@
 // HERO (Light Blue Layout)
 .faq-hero {
   background: var(--bg-light);
-  padding: 80px 0 72px;
+  padding: clamp(96px, 8vw, 120px) 0 72px;
   border-bottom: 1px solid var(--gray-light-mid);
 
   @include tablet {
-    padding: 64px 0 56px;
+    padding: clamp(88px, 8vw, 104px) 0 56px;
   }
   @include mobile {
-    padding: 52px 0 44px;
+    padding: clamp(84px, 7vw, 96px) 0 44px;
   }
 
   &__inner {
@@ -80,6 +80,7 @@
 // MAIN CONTENT SECTION
 .faq-section {
   background: #fff;
+  background: var(--surface);
   padding: 72px 0 96px;
   @include tablet {
     padding: 56px 0 72px;
@@ -103,6 +104,7 @@
   border-radius: var(--radius-md);
   overflow: hidden;
   background: #fff;
+  background: var(--surface);
   transition:
     border-color 0.25s ease,
     box-shadow 0.25s ease;
@@ -126,6 +128,7 @@
   gap: 16px;
   padding: 20px 24px;
   background: #fff;
+  background: var(--surface);
   border: none;
   cursor: pointer;
   text-align: left;

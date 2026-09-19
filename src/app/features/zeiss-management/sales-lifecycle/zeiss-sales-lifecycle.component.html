@@ -4,7 +4,7 @@
       <small>PRIMARY FLOW</small>
       <h1>Sales Lifecycle Tracker</h1>
       <p>
-        This is the fulfilment tracker after client confirms the quotation — not the enquiry/quotation screen. Vendor ID
+        This is the fulfilment tracker after client confirms the quotation — not the enquiry/quotation screen. Vendor ID (optional)
         → Client PO → PI → Payment → Delivery → Client Acknowledgement → Tax Invoice → Close.
       </p>
     </div>
@@ -35,12 +35,43 @@
           <p>{{ x.enquiryNo }} · ₹ {{ x.quoteValue | number: '1.2-2' }}</p>
         </div>
         <div class="command">
-          <button class="btn secondary" (click)="openEdit()">Vendor / PO / Payment</button>
-          <button class="btn primary" [disabled]="!x.paymentReceivedDate || !!x.deliveryDate" (click)="openDelivery()">
-            Post Delivery
+          <button
+            class="btn secondary"
+            (click)="openEdit()"
+            title="Update Vendor ID, Client PO and Payment details"
+            aria-label="Update vendor, PO and payment details"
+          >
+            <i class="fas fa-edit"></i>
+            <span>Vendor / PO / Payment</span>
           </button>
-          <button class="btn success" [disabled]="!x.deliveryDate || x.acknowledgementReceived" (click)="openAck()">
-            Client Acknowledgement
+          <button
+            class="btn primary"
+            (click)="goToPi()"
+            [title]="x.piNo ? 'View Proforma Invoice ' + x.piNo : 'Generate Proforma Invoice in Billing & Invoices'"
+            [attr.aria-label]="x.piNo ? 'View Proforma Invoice ' + x.piNo : 'Generate Proforma Invoice'"
+          >
+            <i class="fas fa-file-invoice"></i>
+            <span>{{ x.piNo ? 'View PI · ' + x.piNo : 'Generate PI' }}</span>
+          </button>
+          <button
+            class="btn warning"
+            [disabled]="!x.paymentReceivedDate || !!x.deliveryDate"
+            (click)="openDelivery()"
+            [title]="!x.paymentReceivedDate ? 'Awaiting payment before delivery can be posted' : x.deliveryDate ? 'Delivery already posted' : 'Post delivery and deduct stock'"
+            aria-label="Post delivery"
+          >
+            <i class="fas fa-truck"></i>
+            <span>Post Delivery</span>
+          </button>
+          <button
+            class="btn success"
+            [disabled]="!x.deliveryDate || x.acknowledgementReceived"
+            (click)="openAck()"
+            [title]="!x.deliveryDate ? 'Delivery must be posted first' : x.acknowledgementReceived ? 'Acknowledgement already received' : 'Record client acknowledgement'"
+            aria-label="Record client acknowledgement"
+          >
+            <i class="fas fa-circle-check"></i>
+            <span>Client Acknowledgement</span>
           </button>
         </div>
       </div>
@@ -56,13 +87,13 @@
           <b>{{ x.clientConfirmedOn | date: 'dd-MMM-yyyy' }}</b>
         </div>
         <div>
-          <small>Vendor ID</small>
-          <b>{{ x.vendorCode || 'Pending' }}</b>
+          <small>Vendor ID (optional)</small>
+          <b>{{ x.vendorCode || 'Not provided' }}</b>
         </div>
         <div>
-          <small>Client PO</small>
-          <b>{{ x.clientPoNo || 'Pending' }}</b>
-          <span>{{ x.poDate | date: 'dd-MMM-yyyy' }}</span>
+          <small>Client PO (optional)</small>
+          <b>{{ x.clientPoNo || 'Not provided' }}</b>
+          <span *ngIf="x.poDate">{{ x.poDate | date: 'dd-MMM-yyyy' }}</span>
         </div>
         <div>
           <small>PI</small>
@@ -112,7 +143,7 @@
       <div class="ruleBox">
         <b>Document rule</b>
         <span>
-          PI is generated from the Invoices page after Vendor ID + Client PO. Delivery deducts item stock. TI stays
+          PI is generated from the Invoices page (Vendor ID &amp; Client PO are optional). Delivery deducts item stock. TI stays
           blocked until client acknowledgement.
         </span>
       </div>
@@ -127,15 +158,15 @@
     </header>
     <div class="form">
       <label>
-        Vendor ID / Code
+        Vendor ID / Code (optional)
         <input [(ngModel)]="form.vendorCode" />
       </label>
       <label>
-        Client PO No.
+        Client PO No. (optional)
         <input [(ngModel)]="form.clientPoNo" />
       </label>
       <label>
-        PO Date
+        PO Date (optional)
         <input type="date" [(ngModel)]="form.poDate" />
       </label>
       <label>

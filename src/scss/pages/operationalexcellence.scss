@@ -273,18 +273,18 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-top: 100px;
+  padding: clamp(96px, 8vw, 128px) 0 64px;
   overflow: hidden;
   max-width: 100%;
 
   @include tablet {
     min-height: auto;
-    padding-top: 90px;
+    padding: clamp(88px, 8vw, 110px) 0 48px;
   }
 
   @include mobile {
     min-height: auto;
-    padding-top: 80px;
+    padding: clamp(84px, 7vw, 100px) 0 40px;
   }
 
   // Background image layer

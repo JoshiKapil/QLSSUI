@@ -1,0 +1,121 @@
+/* ================================================================
+   COMPONENTS: CARDS & SURFACES
+   ================================================================ */
+
+.card,
+.card-surface {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
+  transition: var(--transition);
+  color: var(--text-primary);
+}
+
+.card-soft {
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  color: var(--text-primary);
+}
+
+.card-raised {
+  background: var(--surface-raised);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 24px;
+  color: var(--text-primary);
+}
+
+.card-interactive {
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+}
+
+.kpi-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--shadow-xs);
+  transition: var(--transition);
+
+  &:hover {
+    box-shadow: var(--shadow-sm);
+    border-color: var(--border-strong);
+  }
+
+  .kpi-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .kpi-value {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.1;
+  }
+
+  .kpi-meta {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+
+  &--primary {
+    background: var(--primary-soft);
+    color: var(--primary);
+  }
+
+  &--accent {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  &--success {
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--success);
+  }
+
+  &--warning {
+    background: rgba(245, 158, 11, 0.14);
+    color: var(--warning);
+  }
+
+  &--danger {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--danger);
+  }
+
+  &--muted {
+    background: var(--surface-soft);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+}
+

@@ -9,17 +9,17 @@
       </p>
     </div>
   </header>
-<details><summary>Search selection options</summary>
-<app-list-pager [page]="categoriesOptionsPage" (changed)="loadcategoriesOptions()"></app-list-pager>
-<app-list-pager [page]="usersOptionsPage" (changed)="loadusersOptions()"></app-list-pager>
-<app-list-pager [page]="quotationTemplatesOptionsPage" (changed)="loadquotationTemplatesOptions()"></app-list-pager>
-<app-list-pager [page]="projectTemplatesOptionsPage" (changed)="loadprojectTemplatesOptions()"></app-list-pager>
-<app-list-pager [page]="clientsOptionsPage" (changed)="loadclientsOptions()"></app-list-pager>
-<app-list-pager [page]="trainingsOptionsPage" (changed)="loadtrainingsOptions()"></app-list-pager>
-</details>
-<app-list-pager [page]="quotationTemplatesPage" (changed)="reloadquotationTemplatesPage()"></app-list-pager>
-<app-list-pager [page]="projectTemplatesPage" (changed)="reloadprojectTemplatesPage()"></app-list-pager>
-<app-list-pager [page]="usersPage" (changed)="reloadusersPage()"></app-list-pager>
+<div style="display: none;">
+  <app-list-pager [page]="categoriesOptionsPage" (changed)="loadcategoriesOptions()"></app-list-pager>
+  <app-list-pager [page]="usersOptionsPage" (changed)="loadusersOptions()"></app-list-pager>
+  <app-list-pager [page]="quotationTemplatesOptionsPage" (changed)="loadquotationTemplatesOptions()"></app-list-pager>
+  <app-list-pager [page]="projectTemplatesOptionsPage" (changed)="loadprojectTemplatesOptions()"></app-list-pager>
+  <app-list-pager [page]="clientsOptionsPage" (changed)="loadclientsOptions()"></app-list-pager>
+  <app-list-pager [page]="trainingsOptionsPage" (changed)="loadtrainingsOptions()"></app-list-pager>
+  <app-list-pager [page]="quotationTemplatesPage" (changed)="reloadquotationTemplatesPage()"></app-list-pager>
+  <app-list-pager [page]="projectTemplatesPage" (changed)="reloadprojectTemplatesPage()"></app-list-pager>
+  <app-list-pager [page]="usersPage" (changed)="reloadusersPage()"></app-list-pager>
+</div>
   <p *ngIf="error" class="pm-error">{{ error }}</p>
   <p *ngIf="success" class="pm-success">{{ success }}</p>
 

@@ -1,4 +1,4 @@
-<section class="workspace" [ngClass]="themeClass">
+<section class="workspace workspace-reference" [class.navigation-collapsed]="menuOpen" [ngClass]="themeClass">
   <ng-container *ngIf="loaderState$ | async as loader">
     <div class="zm-operation-loader" *ngIf="loader.active" role="status" aria-live="polite" aria-busy="true">
       <div class="zm-operation-loader__card">
@@ -17,58 +17,10 @@
     (click)="closeMenu()"
   ></button>
 
-  <!-- Same Aurora top-navigation behaviour used by PM. -->
-  <div class="workspace__aurora-bar" aria-label="Zeiss workspace top navigation">
-    <div class="workspace__aurora-brand">
-      <span class="workspace__aurora-mark">Z</span>
-      <div>
-        <strong>QLSS Zeiss</strong>
-        <small>Sales &amp; Inventory</small>
-      </div>
-    </div>
-
-    <nav class="workspace__aurora-nav">
-      <a routerLink="dashboard" routerLinkActive="active">
-        <i class="fas fa-chart-pie"></i>
-        Dashboard
-      </a>
-      <a routerLink="enquiries" routerLinkActive="active">
-        <i class="fas fa-inbox"></i>
-        Enquiries
-      </a>
-      <a routerLink="quotations" routerLinkActive="active">
-        <i class="fas fa-file-signature"></i>
-        Quotations
-      </a>
-      <a routerLink="sales-lifecycle" routerLinkActive="active">
-        <i class="fas fa-route"></i>
-        Sales Lifecycle
-      </a>
-      <a routerLink="invoices" routerLinkActive="active">
-        <i class="fas fa-file-invoice-dollar"></i>
-        PI / Tax Invoice
-      </a>
-      <a routerLink="inventory" routerLinkActive="active">
-        <i class="fas fa-boxes-stacked"></i>
-        Inventory
-      </a>
-    </nav>
-
-    <label class="workspace__aurora-theme">
-      <i class="fas fa-palette" aria-hidden="true"></i>
-      <select [ngModel]="theme" (ngModelChange)="setTheme($event)" aria-label="Zeiss workspace theme">
-        <option *ngFor="let option of themeOptions" [ngValue]="option.id">{{ option.name }}</option>
-      </select>
-    </label>
-  </div>
 
   <aside class="workspace__rail" [class.workspace__rail--open]="menuOpen">
     <div class="workspace__brand">
-      <div class="workspace__brand-mark"><span>Z</span></div>
-      <div class="workspace__brand-copy">
-        <strong>QLSS Zeiss</strong>
-        <small>Sales &amp; Inventory</small>
-      </div>
+      <a class="workspace-logo" routerLink="/"><img src="assets/logos/logo.png" alt="QLSS Business Consulting" /></a>
       <button class="workspace__rail-close" aria-label="Close menu" (click)="closeMenu()">
         <i class="fas fa-times"></i>
       </button>
@@ -82,83 +34,86 @@
       </div>
     </div>
 
-    <!-- Exact same 5-theme selector/service used by Project Management. -->
-    <label class="workspace__theme" aria-label="Zeiss workspace theme">
-      <span class="workspace__theme-icon"><i class="fas fa-palette" aria-hidden="true"></i></span>
-      <span class="workspace__theme-copy">
-        <small>Workspace theme</small>
-        <strong>{{ themeName }}</strong>
-      </span>
-      <select [ngModel]="theme" (ngModelChange)="setTheme($event)" aria-label="Select Zeiss workspace theme">
-        <option *ngFor="let option of themeOptions" [ngValue]="option.id">{{ option.name }}</option>
-      </select>
-    </label>
 
     <nav class="workspace__sidenav">
-      <small class="workspace__nav-label">Sales Flow</small>
+      <small class="workspace__nav-label">MAIN</small>
       <a routerLink="dashboard" routerLinkActive="active" (click)="closeMenu()">
         <i class="fas fa-chart-pie"></i>
         <span>Dashboard</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
       <a routerLink="enquiries" routerLinkActive="active" (click)="closeMenu()">
-        <i class="fas fa-inbox"></i>
-        <span>Enquiries</span>
+        <i class="fas fa-chart-line"></i>
+        <span>Sales</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
       <a routerLink="quotations" routerLinkActive="active" (click)="closeMenu()">
-        <i class="fas fa-file-signature"></i>
+        <i class="fas fa-file-invoice"></i>
         <span>Quotations</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
       <a routerLink="sales-lifecycle" routerLinkActive="active" (click)="closeMenu()">
-        <i class="fas fa-route"></i>
-        <span>Sales Lifecycle</span>
+        <i class="fas fa-cart-shopping"></i>
+        <span>Orders</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
-      <a routerLink="invoices" routerLinkActive="active" (click)="closeMenu()">
-        <i class="fas fa-file-invoice-dollar"></i>
-        <span>PI &amp; Tax Invoice</span>
-      </a>
-
-      <small class="workspace__nav-label">Zeiss Masters</small>
-      <a routerLink="instruments" routerLinkActive="active" (click)="closeMenu()">
-        <i class="fas fa-microscope"></i>
-        <span>Instrument List</span>
-      </a>
-      <a routerLink="customers" routerLinkActive="active" (click)="closeMenu()">
-        <i class="fas fa-building"></i>
-        <span>Customer List</span>
-      </a>
-
-      <small class="workspace__nav-label">Stock &amp; Control</small>
       <a routerLink="inventory" routerLinkActive="active" (click)="closeMenu()">
         <i class="fas fa-boxes-stacked"></i>
-        <span>Inventory / GRN / QC</span>
+        <span>Inventory</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
+      <a routerLink="customers" routerLinkActive="active" (click)="closeMenu()">
+        <i class="fas fa-users"></i>
+        <span>Customers</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
+      </a>
+      <a routerLink="invoices" routerLinkActive="active" (click)="closeMenu()">
+        <i class="fas fa-truck-fast"></i>
+        <span>Dispatch</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
+      </a>
+      <a routerLink="instruments" routerLinkActive="active" (click)="closeMenu()">
+        <i class="fas fa-microscope"></i>
+        <span>Instruments</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
+      </a>
+
+      <small class="workspace__nav-label">SYSTEM</small>
       <a routerLink="notifications" routerLinkActive="active" (click)="closeMenu()">
-        <i class="fas fa-bell"></i>
-        <span>Notifications</span>
+        <i class="fas fa-gear"></i>
+        <span>Workspace Settings</span>
+        <i class="fas fa-chevron-right nav-arrow"></i>
       </a>
     </nav>
 
-    <div class="workspace__role">
-      <div class="workspace__role-icon"><i class="fas fa-lock"></i></div>
-      <div>
-        <span>{{ isSuperAdmin ? 'SuperAdmin Control' : 'Zeiss Workspace Access' }}</span>
-        <small>Zeiss data, stock and lifecycle remain separate from Project Management.</small>
+    <!-- Bottom LHS Inspiration & Zeiss Optics Graphic (Image 2) -->
+    <div class="workspace__rail-footer">
+      <div class="rail-quote-block">
+        <p class="rail-quote-text">"Better Processes. Brighter Futures."</p>
+        <span class="rail-quote-line"></span>
+      </div>
+      <div class="rail-zeiss-graphic">
+        <div class="zeiss-optic-box">
+          <svg viewBox="0 0 120 70" class="zeiss-lens-svg" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="60" cy="35" rx="46" ry="24" stroke="currentColor" stroke-width="2" stroke-opacity="0.3"/>
+            <ellipse cx="60" cy="35" rx="36" ry="18" stroke="currentColor" stroke-width="2.5" stroke-opacity="0.6"/>
+            <ellipse cx="60" cy="35" rx="26" ry="12" stroke="currentColor" stroke-width="2" stroke-opacity="0.9"/>
+            <path d="M 14 35 L 34 35 M 86 35 L 106 35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="60" cy="35" r="4" fill="currentColor"/>
+          </svg>
+          <span class="optic-label">ZEISS</span>
+        </div>
+        <small class="rail-motto">A STRONGER TOMORROW TOGETHER.</small>
       </div>
     </div>
   </aside>
 
   <main class="workspace__main">
-    <div class="workspace__mobilebar">
-      <button class="workspace__mobile" (click)="menuOpen = !menuOpen">
-        <i class="fas fa-bars"></i>
-        <span>Zeiss workspace</span>
-      </button>
-      <label class="workspace__mobile-theme">
-        <select [ngModel]="theme" (ngModelChange)="setTheme($event)" aria-label="Zeiss workspace theme">
-          <option *ngFor="let option of themeOptions" [ngValue]="option.id">{{ option.name }}</option>
-        </select>
-      </label>
-    </div>
-    <router-outlet></router-outlet>
+    <button class="workspace__mobile-menu-btn" (click)="menuOpen = !menuOpen" aria-label="Toggle Zeiss Navigation">
+      <i class="fas fa-bars"></i>
+      <span>Zeiss Navigation</span>
+    </button>
+    <div class="workspace-content"><router-outlet></router-outlet></div>
+    <footer class="workspace-footer"><a routerLink="/"><img src="assets/logos/logo.png" alt="QLSS Business Consulting" /></a><span>People &nbsp; | &nbsp; Process &nbsp; | &nbsp; Possibilities</span><nav><a routerLink="/training">Training</a><a routerLink="/expertise">Expertise</a><a routerLink="/contact">Contact</a></nav><small>QLSS Business Consulting</small></footer>
   </main>
 </section>

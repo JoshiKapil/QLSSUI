@@ -1,6 +1,6 @@
 :host {
   display: block;
-  color: #112643;
+  color: var(--text-primary);
 }
 .approval-page {
   max-width: 1350px;
@@ -24,12 +24,12 @@ header h1 {
 }
 header p {
   font-size: 11px;
-  color: #74879c;
+  color: var(--text-muted);
   margin: 0;
 }
 header select {
   height: 37px;
-  border: 1px solid #dbe5ee;
+  border: 1px solid var(--surface-soft);
   border-radius: 10px;
   padding: 0 10px;
   background: #fff;
@@ -42,11 +42,11 @@ header select {
   justify-content: center;
   gap: 11px;
   min-height: 150px;
-  border: 1px solid rgba(18, 55, 95, 0.09);
+  border: 1px solid color-mix(in srgb, var(--text-primary) 9%, transparent);
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 10px 30px rgba(17, 54, 91, 0.05);
-  color: #8194a7;
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--text-primary) 5%, transparent);
+  color: var(--text-muted);
 }
 .empty-state i {
   width: 40px;
@@ -64,7 +64,7 @@ header select {
 }
 .empty-state strong {
   font-size: 13px;
-  color: #294761;
+  color: var(--text-muted);
 }
 .empty-state span {
   max-width: 560px;
@@ -80,10 +80,10 @@ header select {
 .list,
 .review {
   background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(18, 55, 95, 0.09);
+  border: 1px solid color-mix(in srgb, var(--text-primary) 9%, transparent);
   border-radius: 18px;
   padding: 13px;
-  box-shadow: 0 10px 32px rgba(17, 54, 91, 0.05);
+  box-shadow: 0 10px 32px color-mix(in srgb, var(--text-primary) 5%, transparent);
 }
 .list {
   align-self: start;
@@ -101,12 +101,12 @@ header select {
   gap: 9px;
   text-align: left;
   align-items: center;
-  color: #233d59;
+  color: var(--text-primary);
   cursor: pointer;
 }
 .list button:hover,
 .list button.active {
-  background: #f2f7fc;
+  background: var(--surface);
 }
 .avatar {
   width: 38px;
@@ -128,11 +128,11 @@ header select {
 }
 .list span {
   font-size: 9px;
-  color: #8497aa;
+  color: var(--text-muted);
 }
 .list small {
   font-size: 8px;
-  color: #9aa9b9;
+  color: var(--text-muted);
   margin-top: 3px;
 }
 .list b {
@@ -152,7 +152,7 @@ header select {
 }
 .review__head small {
   font-size: 9px;
-  color: #8d9eb0;
+  color: var(--text-muted);
 }
 .review__head h2 {
   font-size: 21px;
@@ -160,7 +160,7 @@ header select {
 }
 .review__head span {
   font-size: 10px;
-  color: #7c8fa3;
+  color: var(--text-muted);
 }
 .score {
   text-align: center;
@@ -183,21 +183,21 @@ header select {
 .reason {
   margin: 17px 0;
   background: #f8fafc;
-  border: 1px solid #e8eef4;
+  border: 1px solid var(--surface-soft);
   border-radius: 13px;
   padding: 13px;
 }
 .reason span,
 .review label > span {
   font-size: 9px;
-  color: #788ca1;
+  color: var(--text-muted);
   font-weight: 800;
   text-transform: uppercase;
 }
 .reason p {
   font-size: 12px;
   line-height: 1.6;
-  color: #344f6a;
+  color: var(--text-muted);
   margin: 7px 0;
 }
 .facts {
@@ -217,7 +217,7 @@ header select {
 }
 .facts span {
   font-size: 8px;
-  color: #8b9cad;
+  color: var(--text-muted);
 }
 .facts strong {
   font-size: 10px;
@@ -239,11 +239,11 @@ header select {
 }
 .days b {
   font-size: 10px;
-  color: #657c92;
+  color: var(--text-muted);
 }
 .review input,
 .review textarea {
-  border: 1px solid #dbe5ee;
+  border: 1px solid var(--surface-soft);
   border-radius: 10px;
   padding: 9px;
   background: #fbfdff;
@@ -280,7 +280,7 @@ header select {
   color: #b83c36;
 }
 .approve {
-  background: linear-gradient(135deg, #12a98e, #087967);
+  background: linear-gradient(135deg, #12a98e, var(--primary));
   color: #fff;
 }
 .prompt {
@@ -299,7 +299,7 @@ header select {
 }
 .prompt p {
   font-size: 11px;
-  color: #8193a5;
+  color: var(--text-muted);
 }
 @media (max-width: 900px) {
   .approval-grid {

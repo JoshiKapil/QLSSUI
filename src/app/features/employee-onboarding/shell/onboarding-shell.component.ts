@@ -13,7 +13,7 @@ import {
 })
 export class OnboardingShellComponent {
   menuOpen = false;
-  theme: PmOnboardingThemeId;
+  get theme(): PmOnboardingThemeId { return this.themeService.getTheme(); }
   readonly themeOptions: ReadonlyArray<PmOnboardingThemeOption>;
 
   constructor(
@@ -21,7 +21,6 @@ export class OnboardingShellComponent {
     private readonly themeService: PmOnboardingThemeService,
   ) {
     this.themeOptions = this.themeService.options;
-    this.theme = this.themeService.getTheme();
   }
 
   get role(): string {
@@ -48,7 +47,6 @@ export class OnboardingShellComponent {
   }
 
   setTheme(theme: PmOnboardingThemeId): void {
-    this.theme = theme;
     this.themeService.setTheme(theme);
   }
 

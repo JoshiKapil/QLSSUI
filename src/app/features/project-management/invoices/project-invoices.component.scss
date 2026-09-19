@@ -776,7 +776,7 @@
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgba(15, 23, 42, 0.44);
+  background: color-mix(in srgb, var(--text-primary) 44%, transparent);
   backdrop-filter: blur(4px);
 }
 .invoice-modal {
@@ -786,7 +786,7 @@
   border: 1px solid var(--pm-border);
   border-radius: 17px;
   background: var(--pm-surface);
-  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.28);
+  box-shadow: 0 28px 80px color-mix(in srgb, var(--text-primary) 28%, transparent);
 }
 .invoice-modal > header {
   display: flex;
